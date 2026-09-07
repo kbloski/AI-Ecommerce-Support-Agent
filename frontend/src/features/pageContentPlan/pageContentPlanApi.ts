@@ -27,13 +27,13 @@ export const pageContentPlanApi = api.injectEndpoints({
       invalidatesTags: (_result, _err, { id }) => [itemTag('PageContentPlan', id)],
     }),
     generatePageContentPlan: builder.mutation<Entity, number>({
-      query: (pageBlueprintId) => `/page-blueprint/${pageBlueprintId}/page-content-plan/generate`,
+      query: (pageBlueprintId) => ({ url: `/page-blueprint/${pageBlueprintId}/page-content-plan/generate`, method: 'POST' }),
       invalidatesTags: (_result, _err, pageBlueprintId) => [
         listTag('PageContentPlan', pageBlueprintId),
       ],
     }),
     deletePageContentPlan: builder.mutation<void, { id: number; pageBlueprintId: number }>({
-      query: ({ id }) => `/page-content-plan/${id}/delete`,
+      query: ({ id }) => ({ url: `/page-content-plan/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, pageBlueprintId }) => [
         listTag('PageContentPlan', pageBlueprintId),
         itemTag('PageContentPlan', id),

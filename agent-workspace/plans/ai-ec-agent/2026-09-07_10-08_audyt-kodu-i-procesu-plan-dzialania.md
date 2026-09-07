@@ -66,7 +66,7 @@ Nie uruchamiano rzeczywistego LLM, aplikacji na danych użytkownika, przeglądar
 
 | Pakiet prac | Zadania | Warunek zakończenia |
 | --- | --- | --- |
-| 1. Ochrona danych i pilne błędy UI | Z01, Z02, Z03, Z04; równolegle Z08 i Z10 | Regresje danych/formularzy przechodzą; migracja sprawdzona na kopii; projekt daje się jednoznacznie zlokalizować. |
+| 1. Ochrona danych i pilne błędy UI | Z01, Z03, Z04; równolegle Z08 i Z10 | Regresje danych/formularzy przechodzą; projekt daje się jednoznacznie zlokalizować. |
 | 2. Kontrakty i powtarzalne sprawdzanie | Z05, Z06, Z07, Z09, Z13 | Niepoprawne wejście/wyjście nie trafia do DB; API ma określone statusy; CI odtwarza testy i build. |
 | 3. Proces i codzienna użyteczność | Z11, Z12, Z14, Z15 | Dokumenty są spójne, plany mają statusy, listy i cache pokazują poprawne dane; uzgodniona polityka faktów. |
 | 4. Kontrolowany rozwój generowania | Z16, Z17, Z18 | Mierzalna jakość, ślad generacji, wznawianie i optymalizacje oparte na pomiarze. |
@@ -84,16 +84,6 @@ Test regresji dla danego defektu powstaje razem z jego poprawką; nie należy cz
 **Zmiana:** jedna granica transakcji na operację biznesową; repozytoria używają `flush`, a commit/rollback/close kontroluje use case lub jednostka pracy. Najpierw poprawić zagrożone operacje, później migrować wzorzec stopniowo. `di/container.py:87` ma singleton sesji na instancję kontenera, a nie jedną globalną sesję wszystkich requestów; problemem jest brak jawnego kończenia jej życia. Generator `infrastructure/database/db.py:37` jest punktem odniesienia. Kontekstowe zarządzanie transakcją i sesją opisuje [SQLAlchemy Session Basics](https://docs.sqlalchemy.org/en/20/orm/session_basics.html).
 
 **Odbiór:** wymuszony błąd drugiego zapisu zachowuje stary zestaw i cofa pierwszy zapis; nieistniejący rodzic nie pozostawia osieroconej analizy/checklisty; po udanych i nieudanych requestach połączenia są zwalniane. Nie trzymać otwartej transakcji zapisu przez czas generacji LLM.
-
-### Z02 — P1: wersjonowane migracje i naprawa brakującego FK
-
-- [ ] Wybrać i wdrożyć jedno wykonywalne źródło migracji; proponowany Alembic, ponieważ zależność już istnieje. Dodać brakujące środowisko/revizje zamiast zakładać, że README opisuje gotową konfigurację.
-
-**Dowód:** `backend/infrastructure/database/init_db.py:47` dodaje `page_requirements_id INTEGER` bez FK; `domain/models/page_blueprint/page_blueprint.py:24` deklaruje `ON DELETE CASCADE`. Odczyt istniejącej bazy potwierdza FK tylko do `page_strategy`, więc usunięcie wymagań może pozostawić blueprinty. Dodatkowo `backend/main.py:17` zmienia schemat podczas importu; `scripts/` zawiera osobne ręczne migracje.
-
-**Zmiana:** inwentaryzacja schematu, kopia zapasowa i próba migracji na kopii, wykrycie istniejących osieroconych relacji, jawna polityka ich naprawy, odbudowa tabeli SQLite z wymaganym FK. Oddzielić utworzenie świeżej bazy od aktualizacji istniejącej; przenieść migrację poza import aplikacji. Procedura i rewizje mają być zapisane w repo; [Alembic tutorial](https://alembic.sqlalchemy.org/en/latest/tutorial.html) opisuje wymagane środowisko migracyjne.
-
-**Odbiór:** świeża i zmigrowana baza mają te same constraints; `PRAGMA foreign_key_check` jest puste; kasowanie PageRequirements obejmuje właściwą gałąź; ponowne uruchomienie nie zmienia schematu; sprawdzona procedura odtworzenia kopii. Nie kasować automatycznie wykrytych sierot.
 
 ### Z03 — P1: formularze nie mogą nadpisywać innego rekordu
 
@@ -218,7 +208,7 @@ Wersjonować uzgodnioną wiedzę, reguły i szablony; jawnie określić prywatne
 
 **Zmiana:** sprawdzić kompatybilność i zadeklarować wspierany Python oraz Node w plikach konfiguracyjnych i README. Dokumentować bezpośrednie wywołanie `backend/venv/Scripts/python.exe` na Windows oraz odpowiednik POSIX. W odtwarzalnej instalacji frontendu używać lockfile (`npm ci`). Rozdzielić testy z atrapą modelu od małego, jawnie uruchamianego smoke testu prawdziwego Ollama.
 
-**Minimalny zestaw:** regresje Z01–Z06; API success/error/not-found i metody HTTP; test migracji świeżej/starej bazy; frontend tworzenie/edycja/cache; eksport pipeline dla ADS, UGC, PAGE i starego blueprintu bez `page_requirements_id`. W procesie CI uruchamiać backend tests, `pip check`, frontend lint/build/tests i audyty zależności. Nie wprowadzać arbitralnego progu pokrycia, który nagradza testy powtarzające implementację.
+**Minimalny zestaw:** regresje Z01, Z03–Z06; API success/error/not-found i metody HTTP; frontend tworzenie/edycja/cache; eksport pipeline dla ADS, UGC, PAGE i starego blueprintu bez `page_requirements_id`. W procesie CI uruchamiać backend tests, `pip check`, frontend lint/build/tests i audyty zależności. Nie wprowadzać arbitralnego progu pokrycia, który nagradza testy powtarzające implementację.
 
 **Odbiór:** czysty checkout daje powtarzalne wyniki na deklarowanym środowisku; testy nie wymagają prywatnego `.env`, realnych ID, działającego modelu ani zapisu do `app.db`. Procesy testowe mają rozpoznawalny PID/port/wersję, a sprzątanie obejmuje tylko zasoby danego uruchomienia.
 
@@ -280,7 +270,7 @@ Wprowadzić budżet wejścia z rezerwą na wyjście i jasną strategią redukcji
 ## Decyzje potrzebne przy realizacji, bez blokowania obecnego planu
 
 1. Czy aplikacja pozostaje osobistym narzędziem lokalnym, czy będzie udostępniana w LAN/zespołowi? To określa wariant Z09.
-2. Jaka jest polityka zachowania danych po usunięciu rodzica i naprawy już osieroconych rekordów? Obecne modele sugerują kaskadę; potwierdzić przed Z02 na rzeczywistej bazie.
+2. Jaka jest polityka zachowania danych po usunięciu rodzica i naprawy już osieroconych rekordów? Obecne modele sugerują kaskadę; potwierdzić na rzeczywistej bazie. Migracje schematu (Alembic, naprawa brakującego FK) są poza zakresem tego planu — nie mają być wprowadzane na razie.
 3. Które statusy faktów/akceptacji dopuszczają generację roboczą i publikacyjną? Ustalić przed Z15.
 4. Czy pełne prompty/odpowiedzi i materiały biznesowe mają być utrwalane, przez jaki czas i w jakim miejscu? Dotyczy Z09/Z12/Z16.
 
@@ -288,7 +278,6 @@ Wprowadzić budżet wejścia z rezerwą na wyjście i jasną strategią redukcji
 
 - [ ] Każde rozpoczęte zadanie ma właściciela, wynik i dowody walidacji; pozostały backlog jest jawnie oznaczony.
 - [ ] Poprawki P1 mają regresje odtwarzające konkretne scenariusze z audytu.
-- [ ] Migracje zweryfikowano na kopii i świeżej bazie, a procedurę odtworzenia sprawdzono przed zmianą danych użytkownika.
 - [ ] API, frontend i raporty zależności są zgodne; nieudane generowanie nie jest raportowane jako sukces.
 - [ ] README, konfiguracja projektów, pamięć i historyczne plany opisują rzeczywisty stan oraz granice wykonanej walidacji.
 

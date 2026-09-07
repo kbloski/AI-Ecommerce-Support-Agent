@@ -11,7 +11,7 @@ class ChecklistRepository:
     # ➕ CREATE
     def create(self, item : Checklist) -> Checklist:
         self.db.add(item)
-        self.db.commit()
+        self.db.flush()
         self.db.refresh(item)
         return item
 

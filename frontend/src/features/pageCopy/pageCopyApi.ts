@@ -24,13 +24,13 @@ export const pageCopyApi = api.injectEndpoints({
       invalidatesTags: (_result, _err, { id }) => [itemTag('PageCopy', id)],
     }),
     generatePageCopy: builder.mutation<Entity, number>({
-      query: (pageContentPlanId) => `/page-content-plan/${pageContentPlanId}/page-copy/generate`,
+      query: (pageContentPlanId) => ({ url: `/page-content-plan/${pageContentPlanId}/page-copy/generate`, method: 'POST' }),
       invalidatesTags: (_result, _err, pageContentPlanId) => [
         listTag('PageCopy', pageContentPlanId),
       ],
     }),
     deletePageCopy: builder.mutation<void, { id: number; pageContentPlanId: number }>({
-      query: ({ id }) => `/page-copy/${id}/delete`,
+      query: ({ id }) => ({ url: `/page-copy/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, pageContentPlanId }) => [
         listTag('PageCopy', pageContentPlanId),
         itemTag('PageCopy', id),

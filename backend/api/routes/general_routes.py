@@ -1,7 +1,14 @@
+import json
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import AnyHttpUrl, BaseModel, Field
+
+# Handlers below parse raw LLM JSON and index into it directly; any of these
+# means the model returned data that doesn't match the expected shape, which
+# is a 502 (upstream/model contract failure), not a 500 (our bug) or a
+# silent 200 with an error body.
+LLM_RESPONSE_ERRORS = (json.JSONDecodeError, KeyError, TypeError, ValueError)
 from domain.enums.fact_status import FactStatus
 from domain.enums.review_status import ReviewStatus
 from domain.enums.offer_insight_type import OfferInsightType
@@ -129,6 +136,7 @@ from application.handlers.settings.save_ollama_settings_handler import save_olla
 from application.handlers.settings.list_ollama_models_handler import list_ollama_models_handler
 from application.handlers.pipeline.get_pipeline_path_handler import get_pipeline_path_handler
 from domain.enums.pipeline_entity_type import PipelineEntityType
+from application.services.llm_result_validation import LlmGenerationError
 
 
 class SaveOutputPromptRequest(BaseModel):
@@ -137,6 +145,18 @@ class SaveOutputPromptRequest(BaseModel):
 
 class UpdateFieldsRequest(BaseModel):
     fields: Dict[str, Any]
+
+
+class OllamaSettingsFields(BaseModel):
+    ollama_url: Optional[AnyHttpUrl] = None
+    ollama_model: Optional[str] = None
+    ollama_timeout: Optional[int] = Field(default=None, gt=0)
+    ollama_context_length: Optional[int] = Field(default=None, gt=0)
+    ollama_temperature: Optional[float] = Field(default=None, ge=0, le=2)
+
+
+class SaveOllamaSettingsRequest(BaseModel):
+    fields: OllamaSettingsFields
 
 
 class PipelinePathRequest(BaseModel):
@@ -203,6 +223,96 @@ class UpdateTargetAudienceRequest(BaseModel):
 
 def register_general_routes(router: APIRouter):
 
+    # -----------------------------
+    # Legacy GET endpoints for routes moved to POST/DELETE above.
+    # Kept only to return a clear 410 instead of silently mutating data via GET.
+    # -----------------------------
+    @router.get("/offers/{id}/knowledges/generate")
+    def _legacy_get_0(id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offers/{id}/knowledges/generate")
+
+    @router.get("/knowledges/{knowledge_id}/target-audiences/generate")
+    def _legacy_get_1(knowledge_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /knowledges/{knowledge_id}/target-audiences/generate")
+
+    @router.get("/knowledges/{knowledge_id}/analysis/{analyse_id}/answers/generate")
+    def _legacy_get_2(knowledge_id: str, analyse_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /knowledges/{knowledge_id}/analysis/{analyse_id}/answers/generate")
+
+    @router.get("/knowledges/{knowledge_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
+    def _legacy_get_3(knowledge_id: str, analyse_id: str, checklist_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /knowledges/{knowledge_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
+
+    @router.get("/knowledges/{knowledge_id}/brand-marketing/generate")
+    def _legacy_get_4(knowledge_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /knowledges/{knowledge_id}/brand-marketing/generate")
+
+    @router.get("/knowledges/{knowledge_id}/brand-marketing/{brand_markeging_id}/marketing-strategy/generate")
+    def _legacy_get_5(knowledge_id: str, brand_markeging_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /knowledges/{knowledge_id}/brand-marketing/{brand_markeging_id}/marketing-strategy/generate")
+
+    @router.get("/marketing-strategy/{marketing_strategy_id}/offer-strategy/generate")
+    def _legacy_get_6(marketing_strategy_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /marketing-strategy/{marketing_strategy_id}/offer-strategy/generate")
+
+    @router.get("/offer-strategy/{offer_strategy_id}/message-strategy/generate")
+    def _legacy_get_7(offer_strategy_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-strategy/{offer_strategy_id}/message-strategy/generate")
+
+    @router.get("/message-strategy/{message_strategy_id}/ugc-creatives/generate")
+    def _legacy_get_8(message_strategy_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /message-strategy/{message_strategy_id}/ugc-creatives/generate")
+
+    @router.get("/message-strategy/{message_strategy_id}/ad-strategy/generate")
+    def _legacy_get_9(message_strategy_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /message-strategy/{message_strategy_id}/ad-strategy/generate")
+
+    @router.get("/ad-strategy/{ad_strategy_id}/creative-strategy/generate")
+    def _legacy_get_10(ad_strategy_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /ad-strategy/{ad_strategy_id}/creative-strategy/generate")
+
+    @router.get("/message-strategy/{message_strategy_id}/page-strategy/generate")
+    def _legacy_get_11(message_strategy_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /message-strategy/{message_strategy_id}/page-strategy/generate")
+
+    @router.get("/page-requirements/{page_requirements_id}/page-blueprint/generate")
+    def _legacy_get_12(page_requirements_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /page-requirements/{page_requirements_id}/page-blueprint/generate")
+
+    @router.get("/page-blueprint/{page_blueprint_id}/page-content-plan/generate")
+    def _legacy_get_13(page_blueprint_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /page-blueprint/{page_blueprint_id}/page-content-plan/generate")
+
+    @router.get("/page-content-plan/{page_content_plan_id}/page-copy/generate")
+    def _legacy_get_14(page_content_plan_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /page-content-plan/{page_content_plan_id}/page-copy/generate")
+
+    @router.get("/knowledges/{knowledge_id}/analysis/create")
+    def _legacy_get_15(knowledge_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /knowledges/{knowledge_id}/analysis/create")
+
+    @router.get("/knowledges/{knowledge_id}/analysis/{analysis_id}/checklists/create")
+    def _legacy_get_16(knowledge_id: str, analysis_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /knowledges/{knowledge_id}/analysis/{analysis_id}/checklists/create")
+
+    @router.get("/page-strategy/{page_strategy_id}/page-requirements/create")
+    def _legacy_get_17(page_strategy_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /page-strategy/{page_strategy_id}/page-requirements/create")
+
+    @router.get("/offers/create")
+    def _legacy_get_18():
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offers/create")
+
+    @router.get("/creative-strategy/{creative_strategy_id}/ad-execution/create")
+    def _legacy_get_19(creative_strategy_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /creative-strategy/{creative_strategy_id}/ad-execution/create")
+
+    @router.get("/ad-execution/{ad_execution_id}/creative-execution/generate")
+    def _legacy_get_20(ad_execution_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /ad-execution/{ad_execution_id}/creative-execution/generate")
+
+
+
 
     # -----------------------------
     # Offers
@@ -213,7 +323,7 @@ def register_general_routes(router: APIRouter):
         return get_offers( page=page )
 
     # POST in future
-    @router.get("/offers/create")
+    @router.post("/offers/create")
     def create_offer_route(
         name: str,
         buying_price: float,
@@ -238,17 +348,26 @@ def register_general_routes(router: APIRouter):
 
     @router.post("/offers/{offer_id}/insights/generate")
     def generate_offer_insights_route(offer_id: int, payload: GenerateOfferInsightsRequest):
-        return generate_offer_insights_handler(offer_id=offer_id, types=payload.types)
+        try:
+            return generate_offer_insights_handler(offer_id=offer_id, types=payload.types)
+        except LLM_RESPONSE_ERRORS as e:
+            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
-    # DELETE in future
-    @router.get("/offers/{id}/delete")
+    @router.delete("/offers/{id}/delete")
     def delete_offer_route(id: int):
         return delete_offer_handler(id=id)
 
-    # DELETE in future
-    @router.get("/offer-insights/{id}/delete")
+    @router.get("/offers/{id}/delete")
+    def delete_offer_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /offers/{id}/delete")
+
+    @router.delete("/offer-insights/{id}/delete")
     def delete_offer_insight_route(id: int):
         return delete_offer_insight_handler(id=id)
+
+    @router.get("/offer-insights/{id}/delete")
+    def delete_offer_insight_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /offer-insights/{id}/delete")
 
     @router.get("/offer-insights/{id}")
     def get_offer_insight_route(id: int):
@@ -277,10 +396,13 @@ def register_general_routes(router: APIRouter):
             details=payload.details,
         )
 
-    # DELETE in future
-    @router.get("/offer-items/{id}/delete")
+    @router.delete("/offer-items/{id}/delete")
     def delete_offer_item_route(id: int):
         return delete_offer_item_handler(id=id)
+
+    @router.get("/offer-items/{id}/delete")
+    def delete_offer_item_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /offer-items/{id}/delete")
 
     @router.get("/offer-items/{id}")
     def get_offer_item_route(id: int):
@@ -297,9 +419,12 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
 
     # POST in future
-    @router.get("/offers/{id}/knowledges/generate")
+    @router.post("/offers/{id}/knowledges/generate")
     def knowledge_generate(id: int):
-        return knowledge_generate_handler(offer_id=id)
+        try:
+            return knowledge_generate_handler(offer_id=id)
+        except LLM_RESPONSE_ERRORS as e:
+            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
     #  POST in future
     @router.get("/offers/{offer_id}/knowledges")
@@ -320,15 +445,21 @@ def register_general_routes(router: APIRouter):
     # def suggest_knowledge_data(knowledge_id: int):
     #     return suggest_knowledge_data_handler(knowledge_id=knowledge_id)
 
-    # DELETE in future
-    @router.get("/knowledges/{id}/delete")
+    @router.delete("/knowledges/{id}/delete")
     def delete_knowledge_route(id: int):
         return delete_knowledge_handler(id=id)
 
-    # DELETE in future
-    @router.get("/knowledge-insights/{id}/delete")
+    @router.get("/knowledges/{id}/delete")
+    def delete_knowledge_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /knowledges/{id}/delete")
+
+    @router.delete("/knowledge-insights/{id}/delete")
     def delete_knowledge_insight_route(id: int):
         return delete_knowledge_insight_handler(id=id)
+
+    @router.get("/knowledge-insights/{id}/delete")
+    def delete_knowledge_insight_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /knowledge-insights/{id}/delete")
 
     @router.get("/knowledge-insights/{id}")
     def get_knowledge_insight_route(id: int):
@@ -349,9 +480,12 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
 
     #  POST in future
-    @router.get("/knowledges/{knowledge_id}/target-audiences/generate")
+    @router.post("/knowledges/{knowledge_id}/target-audiences/generate")
     def generate_target_audience(knowledge_id: int):
-        return generate_target_audience_handler( knowledge_id=knowledge_id)
+        try:
+            return generate_target_audience_handler( knowledge_id=knowledge_id)
+        except LLM_RESPONSE_ERRORS as e:
+            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
     # #  GET in future
     @router.get("/knowledges/{knowledge_id}/target-audiences")
@@ -363,10 +497,13 @@ def register_general_routes(router: APIRouter):
     def get_target_audience_preview( target_audience_id: int):
         return get_target_audience_preview_handler( target_audience_id=target_audience_id)
 
-    # DELETE in future
-    @router.get("/target-audiences/{id}/delete")
+    @router.delete("/target-audiences/{id}/delete")
     def delete_target_audience_route(id: int):
         return delete_target_audience_handler(id=id)
+
+    @router.get("/target-audiences/{id}/delete")
+    def delete_target_audience_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /target-audiences/{id}/delete")
 
     @router.post("/target-audiences/{id}/update")
     def update_target_audience_route(id: int, payload: UpdateTargetAudienceRequest):
@@ -385,7 +522,7 @@ def register_general_routes(router: APIRouter):
     def get_anlysis_by_id(analyse_id: int):
         return get_analysis_by_id_handler( analyse_id=analyse_id)
 
-    @router.get("/knowledges/{knowledge_id}/analysis/create")
+    @router.post("/knowledges/{knowledge_id}/analysis/create")
     def create_analysis_for_knowledge(knowledge_id: int):
         return create_analysis_for_knowledge_handler(knowledge_id=knowledge_id)
 
@@ -394,19 +531,28 @@ def register_general_routes(router: APIRouter):
         return get_analysis_for_knowledge_handler(knowledge_id=knowledge_id)
 
     # POST in future
-    @router.get("/knowledges/{knowledge_id}/analysis/{analyse_id}/answers/generate")
+    @router.post("/knowledges/{knowledge_id}/analysis/{analyse_id}/answers/generate")
     def knowledge_analysis_answers_generate(knowledge_id: int, analyse_id: int):
-        return knowledge_analysis_answers_generate_handler( knowledge_id=knowledge_id, analyse_id=analyse_id)
+        try:
+            return knowledge_analysis_answers_generate_handler( knowledge_id=knowledge_id, analyse_id=analyse_id)
+        except LLM_RESPONSE_ERRORS as e:
+            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
-    # DELETE in future
-    @router.get("/analysis/{id}/delete")
+    @router.delete("/analysis/{id}/delete")
     def delete_analysis_route(id: int):
         return delete_analysis_handler(id=id)
 
-    # DELETE in future
-    @router.get("/analysis-questions/{id}/delete")
+    @router.get("/analysis/{id}/delete")
+    def delete_analysis_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /analysis/{id}/delete")
+
+    @router.delete("/analysis-questions/{id}/delete")
     def delete_analysis_question_route(id: int):
         return delete_analysis_question_handler(id=id)
+
+    @router.get("/analysis-questions/{id}/delete")
+    def delete_analysis_question_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /analysis-questions/{id}/delete")
 
 
 
@@ -417,37 +563,49 @@ def register_general_routes(router: APIRouter):
     def get_checklist_for_analysis( checklist_id: int):
         return get_checklist_by_id_handler( checklist_id=checklist_id)
 
-    # DELETE in future
-    @router.get("/checklists/{id}/delete")
+    @router.delete("/checklists/{id}/delete")
     def delete_checklist_route(id: int):
         return delete_checklist_handler(id=id)
 
-    @router.get("/knowledges/{knowledge_id}/analysis/{analysis_id}/checklists/create")
+    @router.get("/checklists/{id}/delete")
+    def delete_checklist_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /checklists/{id}/delete")
+
+    @router.post("/knowledges/{knowledge_id}/analysis/{analysis_id}/checklists/create")
     def create_analyse_checklist(knowledge_id: int, analysis_id: int):
         return create_checklist_for_analysis_handler( analysis_id=analysis_id)
 
     # POST in future
-    @router.get("/knowledges/{knowledge_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
+    @router.post("/knowledges/{knowledge_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
     def analyse_checklist_generate(knowledge_id: int, analyse_id: int, checklist_id: int):
-        return analyse_checklist_generate_handler( knowledge_id=knowledge_id, analyse_id=analyse_id, checklist_id=checklist_id)
+        try:
+            return analyse_checklist_generate_handler( knowledge_id=knowledge_id, analyse_id=analyse_id, checklist_id=checklist_id)
+        except LLM_RESPONSE_ERRORS as e:
+            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
     @router.get("/analysis/{analysis_id}/checklists")
     def get_checklist_for_analysis( analysis_id: int):
         return get_analyse_checklists_handler( analyse_id=analysis_id)
 
-    # DELETE in future
-    @router.get("/checklist-items/{id}/delete")
+    @router.delete("/checklist-items/{id}/delete")
     def delete_checklist_item_route(id: int):
         return delete_checklist_item_handler(id=id)
+
+    @router.get("/checklist-items/{id}/delete")
+    def delete_checklist_item_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /checklist-items/{id}/delete")
 
 
 
     # -----------------------------
     # Brand marketing
     # -----------------------------
-    @router.get("/knowledges/{knowledge_id}/brand-marketing/generate")
+    @router.post("/knowledges/{knowledge_id}/brand-marketing/generate")
     def knowledge_brand_marketing_generate( knowledge_id: int ):
-        return generate_brand_marketing_handler( knowledge_id=knowledge_id )
+        try:
+            return generate_brand_marketing_handler( knowledge_id=knowledge_id )
+        except LLM_RESPONSE_ERRORS as e:
+            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
     @router.get("/knowledges/{knowledge_id}/brand-marketing")
     def get_knowledge_brand_marketing( knowledge_id: int ):
@@ -461,18 +619,26 @@ def register_general_routes(router: APIRouter):
     def update_brand_marketing_route(id: int, payload: UpdateFieldsRequest):
         return update_brand_marketing_handler(id=id, fields=payload.fields)
 
-    # DELETE in future
-    @router.get("/brand-marketing/{id}/delete")
-    def delete_brand_marketing_route( id: int ):
+    @router.delete("/brand-marketing/{id}/delete")
+    def delete_brand_marketing_route(id: int):
         return delete_brand_marketing_handler(id=id)
+
+    @router.get("/brand-marketing/{id}/delete")
+    def delete_brand_marketing_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /brand-marketing/{id}/delete")
 
 
     # -----------------------------
     # Marketing strategy
     # -----------------------------
-    @router.get("/knowledges/{knowledge_id}/brand-marketing/{brand_markeging_id}/marketing-strategy/generate")
+    @router.post("/knowledges/{knowledge_id}/brand-marketing/{brand_markeging_id}/marketing-strategy/generate")
     def knowledge_marketing_strategy_generate( knowledge_id: int, brand_markeging_id: int ):
-        return generate_marketing_strategy_handler( knowledge_id=knowledge_id, brand_markeging_id=brand_markeging_id )
+        try:
+            return generate_marketing_strategy_handler( knowledge_id=knowledge_id, brand_markeging_id=brand_markeging_id )
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        except (json.JSONDecodeError, KeyError, TypeError) as e:
+            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
     @router.get("/brand-marketing/{brand_marketing_id}/marketing-strategy")
     def get_brand_marketing_marketing_strategies( brand_marketing_id: int ):
@@ -486,20 +652,26 @@ def register_general_routes(router: APIRouter):
     def update_marketing_strategy_route(id: int, payload: UpdateFieldsRequest):
         return update_marketing_strategy_handler(id=id, fields=payload.fields)
 
-    # DELETE in future
-    @router.get("/marketing-strategy/{id}/delete")
-    def delete_marketing_strategy_route( id: int ):
+    @router.delete("/marketing-strategy/{id}/delete")
+    def delete_marketing_strategy_route(id: int):
         return delete_marketing_strategy_handler(id=id)
+
+    @router.get("/marketing-strategy/{id}/delete")
+    def delete_marketing_strategy_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /marketing-strategy/{id}/delete")
 
 
     # -----------------------------
     # Offer strategy
     # -----------------------------
-    @router.get("/marketing-strategy/{marketing_strategy_id}/offer-strategy/generate")
+    @router.post("/marketing-strategy/{marketing_strategy_id}/offer-strategy/generate")
     def knowledge_offer_strategy_generate(  marketing_strategy_id: int ):
-        return generate_offer_strategy_handler(
-            marketing_strategy_id=marketing_strategy_id
-        )
+        try:
+            return generate_offer_strategy_handler(
+                marketing_strategy_id=marketing_strategy_id
+            )
+        except LLM_RESPONSE_ERRORS as e:
+            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
     @router.get("/marketing-strategy/{marketing_strategy_id}/offer-strategy")
     def get_marketing_strategy_offer_strategies( marketing_strategy_id: int ):
@@ -513,20 +685,26 @@ def register_general_routes(router: APIRouter):
     def update_offer_strategy_route(id: int, payload: UpdateFieldsRequest):
         return update_offer_strategy_handler(id=id, fields=payload.fields)
 
-    # DELETE in future
-    @router.get("/offer-strategy/{id}/delete")
-    def delete_offer_strategy_route( id: int ):
+    @router.delete("/offer-strategy/{id}/delete")
+    def delete_offer_strategy_route(id: int):
         return delete_offer_strategy_handler(id=id)
+
+    @router.get("/offer-strategy/{id}/delete")
+    def delete_offer_strategy_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /offer-strategy/{id}/delete")
 
 
     # -----------------------------
     # Message strategy
     # -----------------------------
-    @router.get("/offer-strategy/{offer_strategy_id}/message-strategy/generate")
+    @router.post("/offer-strategy/{offer_strategy_id}/message-strategy/generate")
     def knowledge_message_strategy_generate( offer_strategy_id: int ):
-        return generate_message_strategy_handler(
-            offer_strategy_id=offer_strategy_id
-        )
+        try:
+            return generate_message_strategy_handler(
+                offer_strategy_id=offer_strategy_id
+            )
+        except LLM_RESPONSE_ERRORS as e:
+            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
     @router.get("/offer-strategy/{offer_strategy_id}/message-strategy")
     def get_offer_strategy_message_strategies( offer_strategy_id: int ):
@@ -540,21 +718,27 @@ def register_general_routes(router: APIRouter):
     def update_message_strategy_route(id: int, payload: UpdateFieldsRequest):
         return update_message_strategy_handler(id=id, fields=payload.fields)
 
-    # DELETE in future
-    @router.get("/message-strategy/{id}/delete")
-    def delete_message_strategy_route( id: int ):
+    @router.delete("/message-strategy/{id}/delete")
+    def delete_message_strategy_route(id: int):
         return delete_message_strategy_handler(id=id)
+
+    @router.get("/message-strategy/{id}/delete")
+    def delete_message_strategy_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /message-strategy/{id}/delete")
 
 
 
     # -----------------------------
     # UGC creatives
     # -----------------------------
-    @router.get("/message-strategy/{message_strategy_id}/ugc-creatives/generate")
+    @router.post("/message-strategy/{message_strategy_id}/ugc-creatives/generate")
     def knowledge_ugc_creatives_generate( message_strategy_id: int ):
-        return generate_ugc_creatives_handler(
-            message_strategy_id=message_strategy_id
-        )
+        try:
+            return generate_ugc_creatives_handler(
+                message_strategy_id=message_strategy_id
+            )
+        except LLM_RESPONSE_ERRORS as e:
+            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
     @router.get("/message-strategy/{message_strategy_id}/ugc-creatives")
     def get_message_strategy_ugc_creatives( message_strategy_id: int ):
@@ -564,21 +748,27 @@ def register_general_routes(router: APIRouter):
     def get_ugc_creative( id: int ):
         return get_ugc_creative_handler( id=id )
 
-    # DELETE in future
-    @router.get("/ugc-creatives/{id}/delete")
-    def delete_ugc_creative_route( id: int ):
+    @router.delete("/ugc-creatives/{id}/delete")
+    def delete_ugc_creative_route(id: int):
         return delete_ugc_creative_handler(id=id)
+
+    @router.get("/ugc-creatives/{id}/delete")
+    def delete_ugc_creative_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /ugc-creatives/{id}/delete")
     
     
     
     # -----------------------------
     # Ad strategy
     # -----------------------------
-    @router.get("/message-strategy/{message_strategy_id}/ad-strategy/generate")
+    @router.post("/message-strategy/{message_strategy_id}/ad-strategy/generate")
     def knowledge_ad_strategy_generate( message_strategy_id: int ):
-        return generate_ad_strategy_handler(
-            message_strategy_id=message_strategy_id
-        )
+        try:
+            return generate_ad_strategy_handler(
+                message_strategy_id=message_strategy_id
+            )
+        except LLM_RESPONSE_ERRORS as e:
+            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
     @router.get("/message-strategy/{message_strategy_id}/ad-strategy")
     def get_message_strategy_ad_strategies( message_strategy_id: int ):
@@ -592,21 +782,27 @@ def register_general_routes(router: APIRouter):
     def update_ad_strategy_route(id: int, payload: UpdateFieldsRequest):
         return update_ad_strategy_handler(id=id, fields=payload.fields)
 
-    # DELETE in future
-    @router.get("/ad-strategy/{id}/delete")
-    def delete_ad_strategy_route( id: int ):
+    @router.delete("/ad-strategy/{id}/delete")
+    def delete_ad_strategy_route(id: int):
         return delete_ad_strategy_handler(id=id)
+
+    @router.get("/ad-strategy/{id}/delete")
+    def delete_ad_strategy_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /ad-strategy/{id}/delete")
 
 
 
     # -----------------------------
     # Creative strategy
     # -----------------------------
-    @router.get("/ad-strategy/{ad_strategy_id}/creative-strategy/generate")
+    @router.post("/ad-strategy/{ad_strategy_id}/creative-strategy/generate")
     def knowledge_creative_strategy_generate( ad_strategy_id: int ):
-        return generate_creative_strategy_handler(
-            ad_strategy_id=ad_strategy_id
-        )
+        try:
+            return generate_creative_strategy_handler(
+                ad_strategy_id=ad_strategy_id
+            )
+        except LLM_RESPONSE_ERRORS as e:
+            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
     @router.get("/ad-strategy/{ad_strategy_id}/creative-strategy")
     def get_ad_strategy_creative_strategies( ad_strategy_id: int ):
@@ -620,16 +816,19 @@ def register_general_routes(router: APIRouter):
     def update_creative_strategy_route(id: int, payload: UpdateFieldsRequest):
         return update_creative_strategy_handler(id=id, fields=payload.fields)
 
-    # DELETE in future
-    @router.get("/creative-strategy/{id}/delete")
-    def delete_creative_strategy_route( id: int ):
+    @router.delete("/creative-strategy/{id}/delete")
+    def delete_creative_strategy_route(id: int):
         return delete_creative_strategy_handler(id=id)
+
+    @router.get("/creative-strategy/{id}/delete")
+    def delete_creative_strategy_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /creative-strategy/{id}/delete")
 
 
     # -----------------------------
     # Ad execution
     # -----------------------------
-    @router.get("/creative-strategy/{creative_strategy_id}/ad-execution/create")
+    @router.post("/creative-strategy/{creative_strategy_id}/ad-execution/create")
     def creative_strategy_ad_execution_create(
         creative_strategy_id: int,
         creative_type: str,
@@ -657,10 +856,13 @@ def register_general_routes(router: APIRouter):
     def update_ad_execution_route(id: int, payload: UpdateFieldsRequest):
         return update_ad_execution_handler(id=id, fields=payload.fields)
 
-    # DELETE in future
-    @router.get("/ad-execution/{id}/delete")
-    def delete_ad_execution_route( id: int ):
+    @router.delete("/ad-execution/{id}/delete")
+    def delete_ad_execution_route(id: int):
         return delete_ad_execution_handler(id=id)
+
+    @router.get("/ad-execution/{id}/delete")
+    def delete_ad_execution_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /ad-execution/{id}/delete")
 
 
     # -----------------------------
@@ -697,7 +899,7 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     # Creative execution
     # -----------------------------
-    @router.get("/ad-execution/{ad_execution_id}/creative-execution/generate")
+    @router.post("/ad-execution/{ad_execution_id}/creative-execution/generate")
     def ad_execution_creative_execution_generate(
         ad_execution_id: int,
         duration_seconds: int | None = None,
@@ -706,14 +908,17 @@ def register_general_routes(router: APIRouter):
         creative_angle_id: str | None = None,
         execution_style_id: str | None = None
     ):
-        return generate_creative_execution_handler(
-            ad_execution_id=ad_execution_id,
-            duration_seconds=duration_seconds,
-            number_of_slides=number_of_slides,
-            ad_framework_id=ad_framework_id,
-            creative_angle_id=creative_angle_id,
-            execution_style_id=execution_style_id
-        )
+        try:
+            return generate_creative_execution_handler(
+                ad_execution_id=ad_execution_id,
+                duration_seconds=duration_seconds,
+                number_of_slides=number_of_slides,
+                ad_framework_id=ad_framework_id,
+                creative_angle_id=creative_angle_id,
+                execution_style_id=execution_style_id
+            )
+        except LLM_RESPONSE_ERRORS as e:
+            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
     @router.get("/ad-execution/{ad_execution_id}/creative-execution")
     def get_ad_execution_creative_executions( ad_execution_id: int ):
@@ -727,20 +932,26 @@ def register_general_routes(router: APIRouter):
     def update_creative_execution_route(id: int, payload: UpdateFieldsRequest):
         return update_creative_execution_handler(id=id, fields=payload.fields)
 
-    # DELETE in future
-    @router.get("/creative-execution/{id}/delete")
-    def delete_creative_execution_route( id: int ):
+    @router.delete("/creative-execution/{id}/delete")
+    def delete_creative_execution_route(id: int):
         return delete_creative_execution_handler(id=id)
+
+    @router.get("/creative-execution/{id}/delete")
+    def delete_creative_execution_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /creative-execution/{id}/delete")
 
 
     # -----------------------------
     # Page strategy
     # -----------------------------
-    @router.get("/message-strategy/{message_strategy_id}/page-strategy/generate")
+    @router.post("/message-strategy/{message_strategy_id}/page-strategy/generate")
     def message_strategy_page_strategy_generate( message_strategy_id: int ):
-        return generate_page_strategy_json_handler(
-            message_strategy_id=message_strategy_id
-        )
+        try:
+            return generate_page_strategy_json_handler(
+                message_strategy_id=message_strategy_id
+            )
+        except LLM_RESPONSE_ERRORS as e:
+            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
     @router.get("/message-strategy/{message_strategy_id}/page-strategy")
     def get_message_strategy_page_strategies( message_strategy_id: int ):
@@ -754,16 +965,19 @@ def register_general_routes(router: APIRouter):
     def update_page_strategy_route(id: int, payload: UpdateFieldsRequest):
         return update_page_strategy_handler(id=id, fields=payload.fields)
 
-    # DELETE in future
-    @router.get("/page-strategy/{id}/delete")
-    def delete_page_strategy_route( id: int ):
+    @router.delete("/page-strategy/{id}/delete")
+    def delete_page_strategy_route(id: int):
         return delete_page_strategy_handler(id=id)
+
+    @router.get("/page-strategy/{id}/delete")
+    def delete_page_strategy_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /page-strategy/{id}/delete")
 
 
     # -----------------------------
     # Page requirements
     # -----------------------------
-    @router.get("/page-strategy/{page_strategy_id}/page-requirements/create")
+    @router.post("/page-strategy/{page_strategy_id}/page-requirements/create")
     def page_strategy_page_requirements_create( page_strategy_id: int ):
         return create_page_requirements_handler(page_strategy_id=page_strategy_id)
 
@@ -782,20 +996,26 @@ def register_general_routes(router: APIRouter):
             section_requirements=[item.dict() for item in payload.section_requirements],
         )
 
-    # DELETE in future
-    @router.get("/page-requirements/{id}/delete")
-    def delete_page_requirements_route( id: int ):
+    @router.delete("/page-requirements/{id}/delete")
+    def delete_page_requirements_route(id: int):
         return delete_page_requirements_handler(id=id)
+
+    @router.get("/page-requirements/{id}/delete")
+    def delete_page_requirements_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /page-requirements/{id}/delete")
 
 
     # -----------------------------
     # Page blueprint
     # -----------------------------
-    @router.get("/page-requirements/{page_requirements_id}/page-blueprint/generate")
+    @router.post("/page-requirements/{page_requirements_id}/page-blueprint/generate")
     def page_requirements_page_blueprint_generate( page_requirements_id: int ):
-        return generate_page_blueprint_handler(
-            page_requirements_id=page_requirements_id
-        )
+        try:
+            return generate_page_blueprint_handler(
+                page_requirements_id=page_requirements_id
+            )
+        except LlmGenerationError as e:
+            raise HTTPException(status_code=502, detail=e.message)
 
     @router.get("/page-requirements/{page_requirements_id}/page-blueprint")
     def get_page_requirements_page_blueprints( page_requirements_id: int ):
@@ -809,20 +1029,26 @@ def register_general_routes(router: APIRouter):
     def update_page_blueprint_route(id: int, payload: UpdateFieldsRequest):
         return update_page_blueprint_handler(id=id, fields=payload.fields)
 
-    # DELETE in future
-    @router.get("/page-blueprint/{id}/delete")
-    def delete_page_blueprint_route( id: int ):
+    @router.delete("/page-blueprint/{id}/delete")
+    def delete_page_blueprint_route(id: int):
         return delete_page_blueprint_handler(id=id)
+
+    @router.get("/page-blueprint/{id}/delete")
+    def delete_page_blueprint_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /page-blueprint/{id}/delete")
 
 
     # -----------------------------
     # Page content plan
     # -----------------------------
-    @router.get("/page-blueprint/{page_blueprint_id}/page-content-plan/generate")
+    @router.post("/page-blueprint/{page_blueprint_id}/page-content-plan/generate")
     def page_blueprint_page_content_plan_generate( page_blueprint_id: int ):
-        return generate_page_content_plan_handler(
-            page_blueprint_id=page_blueprint_id
-        )
+        try:
+            return generate_page_content_plan_handler(
+                page_blueprint_id=page_blueprint_id
+            )
+        except LLM_RESPONSE_ERRORS as e:
+            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
     @router.get("/page-blueprint/{page_blueprint_id}/page-content-plan")
     def get_page_blueprint_page_content_plans( page_blueprint_id: int ):
@@ -836,20 +1062,26 @@ def register_general_routes(router: APIRouter):
     def update_page_content_plan_route(id: int, payload: UpdateFieldsRequest):
         return update_page_content_plan_handler(id=id, fields=payload.fields)
 
-    # DELETE in future
-    @router.get("/page-content-plan/{id}/delete")
-    def delete_page_content_plan_route( id: int ):
+    @router.delete("/page-content-plan/{id}/delete")
+    def delete_page_content_plan_route(id: int):
         return delete_page_content_plan_handler(id=id)
+
+    @router.get("/page-content-plan/{id}/delete")
+    def delete_page_content_plan_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /page-content-plan/{id}/delete")
 
 
     # -----------------------------
     # Page copy
     # -----------------------------
-    @router.get("/page-content-plan/{page_content_plan_id}/page-copy/generate")
+    @router.post("/page-content-plan/{page_content_plan_id}/page-copy/generate")
     def page_content_plan_page_copy_generate( page_content_plan_id: int ):
-        return generate_page_copy_handler(
-            page_content_plan_id=page_content_plan_id
-        )
+        try:
+            return generate_page_copy_handler(
+                page_content_plan_id=page_content_plan_id
+            )
+        except LlmGenerationError as e:
+            raise HTTPException(status_code=502, detail=e.message)
 
     @router.get("/page-content-plan/{page_content_plan_id}/page-copy")
     def get_page_content_plan_page_copies( page_content_plan_id: int ):
@@ -863,10 +1095,13 @@ def register_general_routes(router: APIRouter):
     def update_page_copy_route(id: int, payload: UpdateFieldsRequest):
         return update_page_copy_handler(id=id, fields=payload.fields)
 
-    # DELETE in future
-    @router.get("/page-copy/{id}/delete")
-    def delete_page_copy_route( id: int ):
+    @router.delete("/page-copy/{id}/delete")
+    def delete_page_copy_route(id: int):
         return delete_page_copy_handler(id=id)
+
+    @router.get("/page-copy/{id}/delete")
+    def delete_page_copy_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /page-copy/{id}/delete")
 
 
     # -----------------------------
@@ -885,8 +1120,9 @@ def register_general_routes(router: APIRouter):
         return get_ollama_settings_handler()
 
     @router.post("/settings/ollama")
-    def save_ollama_settings_route( payload: UpdateFieldsRequest ):
-        return save_ollama_settings_handler( fields=payload.fields )
+    def save_ollama_settings_route( payload: SaveOllamaSettingsRequest ):
+        fields = payload.fields.model_dump(exclude_unset=True, mode="json")
+        return save_ollama_settings_handler( fields=fields )
 
     @router.get("/settings/ollama/models")
     def list_ollama_models_route( url: Optional[str] = None ):

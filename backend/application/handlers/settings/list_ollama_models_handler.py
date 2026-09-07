@@ -11,14 +11,16 @@ def list_ollama_models_handler(url: Optional[str] = None):
     settings = container.settings()
     repository = container.app_ollama_settings_repository()
 
+    overrides = repository.get()
     if url:
         host = url
     else:
-        overrides = repository.get()
         host = (overrides.ollama_url if overrides else None) or settings.get_ollama_url()
 
+    timeout = (overrides.ollama_timeout if overrides else None) or settings.get_ollama_timeout()
+
     try:
-        client = Client(host=host)
+        client = Client(host=host, timeout=timeout)
         response = client.list()
     except Exception as e:
         raise HTTPException(

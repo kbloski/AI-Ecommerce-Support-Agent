@@ -16,23 +16,23 @@ export const analysisApi = api.injectEndpoints({
       providesTags: (_result, _err, id) => [itemTag('Analysis', id)],
     }),
     createAnalysis: builder.mutation<Entity, { knowledgeId: number }>({
-      query: ({ knowledgeId }) => `/knowledges/${knowledgeId}/analysis/create`,
+      query: ({ knowledgeId }) => ({ url: `/knowledges/${knowledgeId}/analysis/create`, method: 'POST' }),
       invalidatesTags: (_result, _err, { knowledgeId }) => [listTag('Analysis', knowledgeId)],
     }),
     generateAnalysisAnswers: builder.mutation<Entity, { knowledgeId: number; analysisId: number }>({
       query: ({ knowledgeId, analysisId }) =>
-        `/knowledges/${knowledgeId}/analysis/${analysisId}/answers/generate`,
+        ({ url: `/knowledges/${knowledgeId}/analysis/${analysisId}/answers/generate`, method: 'POST' }),
       invalidatesTags: (_result, _err, { analysisId }) => [itemTag('Analysis', analysisId)],
     }),
     deleteAnalysis: builder.mutation<void, { id: number; knowledgeId: number }>({
-      query: ({ id }) => `/analysis/${id}/delete`,
+      query: ({ id }) => ({ url: `/analysis/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, knowledgeId }) => [
         listTag('Analysis', knowledgeId),
         itemTag('Analysis', id),
       ],
     }),
     deleteAnalysisQuestion: builder.mutation<void, { id: number; analysisId: number }>({
-      query: ({ id }) => `/analysis-questions/${id}/delete`,
+      query: ({ id }) => ({ url: `/analysis-questions/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { analysisId }) => [itemTag('Analysis', analysisId)],
     }),
   }),

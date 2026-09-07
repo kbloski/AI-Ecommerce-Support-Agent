@@ -22,7 +22,7 @@ export const pageRequirementsApi = api.injectEndpoints({
       providesTags: (_result, _err, id) => [itemTag('PageRequirements', id)],
     }),
     createPageRequirements: builder.mutation<Entity, number>({
-      query: (pageStrategyId) => `/page-strategy/${pageStrategyId}/page-requirements/create`,
+      query: (pageStrategyId) => ({ url: `/page-strategy/${pageStrategyId}/page-requirements/create`, method: 'POST' }),
       invalidatesTags: (_result, _err, pageStrategyId) => [listTag('PageRequirements', pageStrategyId)],
     }),
     updatePageRequirements: builder.mutation<
@@ -37,7 +37,7 @@ export const pageRequirementsApi = api.injectEndpoints({
       invalidatesTags: (_result, _err, { id }) => [itemTag('PageRequirements', id)],
     }),
     deletePageRequirements: builder.mutation<void, { id: number; pageStrategyId: number }>({
-      query: ({ id }) => `/page-requirements/${id}/delete`,
+      query: ({ id }) => ({ url: `/page-requirements/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, pageStrategyId }) => [
         listTag('PageRequirements', pageStrategyId),
         itemTag('PageRequirements', id),

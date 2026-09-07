@@ -17,11 +17,11 @@ export const ugcCreativesApi = api.injectEndpoints({
     }),
     /** ctx: the parent MessageStrategy entity. */
     generateUgcCreatives: builder.mutation<Entity[], Entity>({
-      query: (ms) => `/message-strategy/${ms.id}/ugc-creatives/generate`,
+      query: (ms) => ({ url: `/message-strategy/${ms.id}/ugc-creatives/generate`, method: 'POST' }),
       invalidatesTags: (_result, _err, ms) => [listTag('UgcCreative', ms.id)],
     }),
     deleteUgcCreative: builder.mutation<void, { id: number; messageStrategyId: number }>({
-      query: ({ id }) => `/ugc-creatives/${id}/delete`,
+      query: ({ id }) => ({ url: `/ugc-creatives/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, messageStrategyId }) => [
         listTag('UgcCreative', messageStrategyId),
         itemTag('UgcCreative', id),

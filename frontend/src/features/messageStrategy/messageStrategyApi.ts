@@ -17,11 +17,11 @@ export const messageStrategyApi = api.injectEndpoints({
     }),
     /** ctx: the parent OfferStrategy entity. */
     generateMessageStrategy: builder.mutation<Entity, Entity>({
-      query: (os) => `/offer-strategy/${os.id}/message-strategy/generate`,
+      query: (os) => ({ url: `/offer-strategy/${os.id}/message-strategy/generate`, method: 'POST' }),
       invalidatesTags: (_result, _err, os) => [listTag('MessageStrategy', os.id)],
     }),
     deleteMessageStrategy: builder.mutation<void, { id: number; offerStrategyId: number }>({
-      query: ({ id }) => `/message-strategy/${id}/delete`,
+      query: ({ id }) => ({ url: `/message-strategy/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, offerStrategyId }) => [
         listTag('MessageStrategy', offerStrategyId),
         itemTag('MessageStrategy', id),

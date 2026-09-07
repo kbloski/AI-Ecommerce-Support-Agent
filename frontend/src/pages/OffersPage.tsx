@@ -26,7 +26,8 @@ export default function OffersPage() {
     e.preventDefault()
     setFormError(null)
 
-    const formData = new FormData(e.currentTarget)
+    const form = e.currentTarget
+    const formData = new FormData(form)
     const parsed = createOfferSchema.safeParse({
       name: formData.get('name'),
       buying_price: formData.get('buying_price'),
@@ -40,7 +41,7 @@ export default function OffersPage() {
     }
 
     await createOffer(parsed.data).unwrap()
-    e.currentTarget.reset()
+    form.reset()
     setShowCreateForm(false)
   }
 

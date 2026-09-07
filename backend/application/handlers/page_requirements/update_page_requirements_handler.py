@@ -3,6 +3,7 @@ from typing import Any, Dict, List
 from di.container import Container
 from domain.enums.page_section_requirement_type import PageSectionRequirementType
 from domain.models.page_requirements.page_section_requirement import PageSectionRequirement
+from infrastructure.database.unit_of_work import unit_of_work
 
 ALLOWED_REQUIREMENT_TYPES = {item.value for item in PageSectionRequirementType}
 
@@ -46,9 +47,10 @@ def update_page_requirements_handler(id: int, section_requirements: List[Dict[st
         for entry in section_requirements
     ]
 
-    page_section_requirements_repository.replace_for_page_requirements(
-        page_requirements_id=id,
-        items=items,
-    )
+    with unit_of_work(container.db()):
+        page_section_requirements_repository.replace_for_page_requirements(
+            page_requirements_id=id,
+            items=items,
+        )
 
     return page_requirements_service.get_page_requirements_by_id(id=id)

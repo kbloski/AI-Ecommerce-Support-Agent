@@ -1,9 +1,13 @@
-import json
-
 from di.container import Container
 from domain.models.llm.llm_message import LlmMessage
 from domain.enums.llm_message_role import LlmMessageRole
 from domain.models.page_copy.page_copy import PageCopy
+from application.services.llm_result_validation import (
+    parse_llm_json,
+    require_dict,
+    require_list,
+    validate_ordered_sections,
+)
 
 
 
@@ -150,36 +154,18 @@ def generate_page_copy_handler(
     
     
 
-    try:
-        content = response.content.strip()
-
-        if content.startswith("```"):
-            content = content.replace(
-                "```json",
-                ""
-            )
-            content = content.replace(
-                "```",
-                ""
-            ).strip()
-
-        result = json.loads(content)
-    except Exception as e:
-        return {
-            "error": "Invalid JSON response",
-            "exception": str(e),
-            "raw_response": response.content
-        }
-
-
-
-    if "page_copy" not in result:
-        return {
-            "error": "Missing page_copy",
-            "raw_response": response.content
-        }
-
-    page_copy_data = result.get("page_copy", {})
+    result = parse_llm_json(response.content)
+    page_copy_data = require_dict(result.get("page_copy"), "page_copy", raw_response=response.content)
+    sections = require_list(
+        page_copy_data.get("sections"), "page_copy.sections", raw_response=response.content
+    )
+    allowed_section_types = {section["id"] for section in page_sections_service.get_all()}
+    validate_ordered_sections(
+        sections,
+        allowed_section_types=allowed_section_types,
+        allowed_priorities=set(),
+        raw_response=response.content,
+    )
 
     entity = PageCopy(
         page_content_plan_id=page_content_plan_id,

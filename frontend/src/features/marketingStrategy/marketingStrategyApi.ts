@@ -29,13 +29,16 @@ export const marketingStrategyApi = api.injectEndpoints({
     /** ctx: the parent BrandMarketing entity (carries knowledge_id + id). */
     generateMarketingStrategy: builder.mutation<Entity, Entity>({
       query: (brandMarketing) =>
-        `/knowledges/${brandMarketing.knowledge_id}/brand-marketing/${brandMarketing.id}/marketing-strategy/generate`,
+        ({
+          url: `/knowledges/${brandMarketing.knowledge_id}/brand-marketing/${brandMarketing.id}/marketing-strategy/generate`,
+          method: 'POST',
+        }),
       invalidatesTags: (_result, _err, brandMarketing) => [
         listTag('MarketingStrategy', brandMarketing.id),
       ],
     }),
     deleteMarketingStrategy: builder.mutation<void, { id: number; brandMarketingId: number }>({
-      query: ({ id }) => `/marketing-strategy/${id}/delete`,
+      query: ({ id }) => ({ url: `/marketing-strategy/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, brandMarketingId }) => [
         listTag('MarketingStrategy', brandMarketingId),
         itemTag('MarketingStrategy', id),

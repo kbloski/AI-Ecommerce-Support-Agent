@@ -1,1 +1,0 @@
-Główny katalog projektu znajduje się dwa poziomy wyżej (../../)

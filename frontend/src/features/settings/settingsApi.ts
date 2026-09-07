@@ -34,6 +34,7 @@ export const settingsApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getOutputPrompt: builder.query<OutputPrompt, void>({
       query: () => '/settings/output-prompt',
+      providesTags: ['OutputPrompt'],
     }),
     saveOutputPrompt: builder.mutation<OutputPrompt, string>({
       query: (content) => ({
@@ -41,9 +42,11 @@ export const settingsApi = api.injectEndpoints({
         method: 'POST',
         body: { content },
       }),
+      invalidatesTags: ['OutputPrompt'],
     }),
     getOllamaSettings: builder.query<OllamaSettings, void>({
       query: () => '/settings/ollama',
+      providesTags: ['OllamaSettings'],
     }),
     saveOllamaSettings: builder.mutation<OllamaSettings, OllamaSettingsFields>({
       query: (fields) => ({
@@ -51,6 +54,7 @@ export const settingsApi = api.injectEndpoints({
         method: 'POST',
         body: { fields },
       }),
+      invalidatesTags: ['OllamaSettings'],
     }),
     listOllamaModels: builder.query<OllamaModelsResponse, string | undefined>({
       query: (url) => ({

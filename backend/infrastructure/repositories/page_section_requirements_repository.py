@@ -15,7 +15,7 @@ class PageSectionRequirementsRepository:
             return []
 
         self.db.add_all(items)
-        self.db.commit()
+        self.db.flush()
 
         for item in items:
             self.db.refresh(item)
@@ -51,6 +51,6 @@ class PageSectionRequirementsRepository:
 
         for existing_item in existing_items:
             self.db.delete(existing_item)
-        self.db.commit()
+        self.db.flush()
 
         return self.create_many(items)

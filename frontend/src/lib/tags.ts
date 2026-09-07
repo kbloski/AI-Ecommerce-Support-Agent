@@ -21,6 +21,8 @@ export const TAG_TYPES = [
   'PageBlueprint',
   'PageContentPlan',
   'PageCopy',
+  'OllamaSettings',
+  'OutputPrompt',
 ] as const
 
 export type Tag = (typeof TAG_TYPES)[number]

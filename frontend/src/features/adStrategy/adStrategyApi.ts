@@ -25,11 +25,11 @@ export const adStrategyApi = api.injectEndpoints({
     }),
     /** ctx: the parent MessageStrategy entity. */
     generateAdStrategy: builder.mutation<Entity, Entity>({
-      query: (ms) => `/message-strategy/${ms.id}/ad-strategy/generate`,
+      query: (ms) => ({ url: `/message-strategy/${ms.id}/ad-strategy/generate`, method: 'POST' }),
       invalidatesTags: (_result, _err, ms) => [listTag('AdStrategy', ms.id)],
     }),
     deleteAdStrategy: builder.mutation<void, { id: number; messageStrategyId: number }>({
-      query: ({ id }) => `/ad-strategy/${id}/delete`,
+      query: ({ id }) => ({ url: `/ad-strategy/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, messageStrategyId }) => [
         listTag('AdStrategy', messageStrategyId),
         itemTag('AdStrategy', id),

@@ -28,11 +28,11 @@ export const creativeStrategyApi = api.injectEndpoints({
     }),
     /** ctx: the parent AdStrategy entity. */
     generateCreativeStrategy: builder.mutation<Entity, Entity>({
-      query: (as) => `/ad-strategy/${as.id}/creative-strategy/generate`,
+      query: (as) => ({ url: `/ad-strategy/${as.id}/creative-strategy/generate`, method: 'POST' }),
       invalidatesTags: (_result, _err, as) => [listTag('CreativeStrategy', as.id)],
     }),
     deleteCreativeStrategy: builder.mutation<void, { id: number; adStrategyId: number }>({
-      query: ({ id }) => `/creative-strategy/${id}/delete`,
+      query: ({ id }) => ({ url: `/creative-strategy/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, adStrategyId }) => [
         listTag('CreativeStrategy', adStrategyId),
         itemTag('CreativeStrategy', id),

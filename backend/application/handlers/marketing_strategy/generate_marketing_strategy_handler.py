@@ -15,10 +15,18 @@ def generate_marketing_strategy_handler(
 
     knowledge_service = container.knowledge_service()
     brand_marketing_service = container.brand_marketing_service()
+    brand_marketing_repository = container.brand_marketing_repository()
     ai_service = container.ai_service()
     marketing_strategy_repository = container.marketing_strategy_repository()
     marketing_strategy_service = container.marketing_strategy_service()
 
+    brand_marketing = brand_marketing_repository.get_by_id(brand_markeging_id)
+    if brand_marketing is None:
+        raise ValueError(f"Brand marketing {brand_markeging_id} not found")
+    if brand_marketing.knowledge_id != knowledge_id:
+        raise ValueError(
+            f"Brand marketing {brand_markeging_id} does not belong to knowledge {knowledge_id}"
+        )
 
     knowledge_context = knowledge_service.build_llm_context(knowledge_id=knowledge_id)
 

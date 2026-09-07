@@ -44,14 +44,14 @@ export const targetAudiencesApi = api.injectEndpoints({
       providesTags: (_result, _err, id) => [itemTag('TargetAudience', id)],
     }),
     generateTargetAudiences: builder.mutation<Entity[], { knowledgeId: number }>({
-      query: ({ knowledgeId }) => `/knowledges/${knowledgeId}/target-audiences/generate`,
+      query: ({ knowledgeId }) => ({ url: `/knowledges/${knowledgeId}/target-audiences/generate`, method: 'POST' }),
       invalidatesTags: (_result, _err, { knowledgeId }) => [
         listTag('TargetAudience', knowledgeId),
         itemTag('Knowledge', knowledgeId),
       ],
     }),
     deleteTargetAudience: builder.mutation<void, { id: number; knowledgeId: number }>({
-      query: ({ id }) => `/target-audiences/${id}/delete`,
+      query: ({ id }) => ({ url: `/target-audiences/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, knowledgeId }) => [
         listTag('TargetAudience', knowledgeId),
         itemTag('TargetAudience', id),

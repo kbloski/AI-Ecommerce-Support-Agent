@@ -75,6 +75,7 @@ export function DetailShell({
         {data && (
           <div>
             <EditableFields
+              key={String(data.id)}
               data={data}
               exclude={exclude}
               itemActions={itemActions}

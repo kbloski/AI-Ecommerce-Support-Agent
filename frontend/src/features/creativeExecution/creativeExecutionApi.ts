@@ -39,6 +39,7 @@ export const creativeExecutionApi = api.injectEndpoints({
     >({
       query: ({ adExecutionId, ...params }) => ({
         url: `/ad-execution/${adExecutionId}/creative-execution/generate`,
+        method: 'POST',
         params,
       }),
       invalidatesTags: (_result, _err, { adExecutionId }) => [
@@ -46,7 +47,7 @@ export const creativeExecutionApi = api.injectEndpoints({
       ],
     }),
     deleteCreativeExecution: builder.mutation<void, { id: number; adExecutionId: number }>({
-      query: ({ id }) => `/creative-execution/${id}/delete`,
+      query: ({ id }) => ({ url: `/creative-execution/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, adExecutionId }) => [
         listTag('CreativeExecution', adExecutionId),
         itemTag('CreativeExecution', id),

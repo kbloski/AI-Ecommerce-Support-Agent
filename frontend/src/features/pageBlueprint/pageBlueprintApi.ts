@@ -24,11 +24,11 @@ export const pageBlueprintApi = api.injectEndpoints({
       invalidatesTags: (_result, _err, { id }) => [itemTag('PageBlueprint', id)],
     }),
     generatePageBlueprint: builder.mutation<Entity, number>({
-      query: (pageRequirementsId) => `/page-requirements/${pageRequirementsId}/page-blueprint/generate`,
+      query: (pageRequirementsId) => ({ url: `/page-requirements/${pageRequirementsId}/page-blueprint/generate`, method: 'POST' }),
       invalidatesTags: (_result, _err, pageRequirementsId) => [listTag('PageBlueprint', pageRequirementsId)],
     }),
     deletePageBlueprint: builder.mutation<void, { id: number; pageRequirementsId: number }>({
-      query: ({ id }) => `/page-blueprint/${id}/delete`,
+      query: ({ id }) => ({ url: `/page-blueprint/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, pageRequirementsId }) => [
         listTag('PageBlueprint', pageRequirementsId),
         itemTag('PageBlueprint', id),

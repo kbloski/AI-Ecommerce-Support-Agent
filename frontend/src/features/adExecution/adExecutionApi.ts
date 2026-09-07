@@ -34,6 +34,7 @@ export const adExecutionApi = api.injectEndpoints({
     createAdExecution: builder.mutation<Entity, CreateAdExecutionArgs>({
       query: ({ creativeStrategyId, ...params }) => ({
         url: `/creative-strategy/${creativeStrategyId}/ad-execution/create`,
+        method: 'POST',
         params,
       }),
       invalidatesTags: (_result, _err, { creativeStrategyId }) => [
@@ -41,7 +42,7 @@ export const adExecutionApi = api.injectEndpoints({
       ],
     }),
     deleteAdExecution: builder.mutation<void, { id: number; creativeStrategyId: number }>({
-      query: ({ id }) => `/ad-execution/${id}/delete`,
+      query: ({ id }) => ({ url: `/ad-execution/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, creativeStrategyId }) => [
         listTag('AdExecution', creativeStrategyId),
         itemTag('AdExecution', id),

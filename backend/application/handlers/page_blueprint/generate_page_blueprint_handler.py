@@ -1,9 +1,16 @@
-import json
-
 from di.container import Container
 from domain.enums.llm_message_role import LlmMessageRole
 from domain.models.llm.llm_message import LlmMessage
 from domain.models.page_blueprint.page_blueprint import PageBlueprint
+from application.services.llm_result_validation import (
+    LlmGenerationError,
+    parse_llm_json,
+    require_dict,
+    require_list,
+    validate_ordered_sections,
+)
+
+ALLOWED_SECTION_PRIORITIES = {"required", "optional"}
 
 
 def generate_page_blueprint_handler(page_requirements_id: int):
@@ -148,49 +155,27 @@ def generate_page_blueprint_handler(page_requirements_id: int):
     )
 
     # -------------------------------------------------------------------------
-    # Minimal technical parsing
+    # Parse and validate response structure before any write
     # -------------------------------------------------------------------------
 
     try:
         result = parse_llm_json(response.content)
-
-    except Exception as e:
-        logger.error(
-            "generate_page_blueprint_handler: "
-            f"invalid JSON response - {e}"
+        page_blueprint_data = require_dict(
+            result.get("page_blueprint"), "page_blueprint", raw_response=response.content
         )
-
-        return {
-            "error": "Invalid JSON response",
-            "exception": str(e),
-            "raw_response": response.content,
-        }
-
-    page_blueprint_data = result.get("page_blueprint")
-
-    if not isinstance(page_blueprint_data, dict):
-        logger.error(
-            "generate_page_blueprint_handler: "
-            "response missing valid 'page_blueprint'"
+        sections = require_list(
+            page_blueprint_data.get("sections"), "page_blueprint.sections", raw_response=response.content
         )
-
-        return {
-            "error": "Missing page_blueprint",
-            "raw_response": response.content,
-        }
-
-    sections = page_blueprint_data.get("sections")
-
-    if not isinstance(sections, list):
-        logger.error(
-            "generate_page_blueprint_handler: "
-            "'sections' is not a list"
+        allowed_section_types = page_sections_service.get_allowed_ids()
+        validate_ordered_sections(
+            sections,
+            allowed_section_types=allowed_section_types,
+            allowed_priorities=ALLOWED_SECTION_PRIORITIES,
+            raw_response=response.content,
         )
-
-        return {
-            "error": "Sections must be list",
-            "raw_response": response.content,
-        }
+    except LlmGenerationError as e:
+        logger.error(f"generate_page_blueprint_handler: {e.message}")
+        raise
 
     logger.info(
         "generate_page_blueprint_handler: "
@@ -249,33 +234,6 @@ def generate_page_blueprint_handler(page_requirements_id: int):
     )
 
     return saved
-
-
-def parse_llm_json(raw_content: str) -> dict:
-    if not isinstance(raw_content, str) or not raw_content.strip():
-        raise ValueError("LLM returned empty response")
-
-    content = raw_content.strip()
-
-    if content.startswith("```"):
-        lines = content.splitlines()
-
-        if lines and lines[0].strip().startswith("```"):
-            lines = lines[1:]
-
-        if lines and lines[-1].strip() == "```":
-            lines = lines[:-1]
-
-        content = "\n".join(lines).strip()
-
-    result = json.loads(content)
-
-    if not isinstance(result, dict):
-        raise ValueError(
-            "Root JSON value must be an object"
-        )
-
-    return result
 
 
 def get_system_prompt() -> str:

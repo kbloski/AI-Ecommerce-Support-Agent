@@ -12,7 +12,7 @@ class AnalysisRepository:
     # ➕ CREATE
     def create(self, item : Analysis) -> Analysis:
         self.db.add(item)
-        self.db.commit()
+        self.db.flush()
         self.db.refresh(item)
         return item
 

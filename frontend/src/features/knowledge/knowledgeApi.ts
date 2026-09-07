@@ -24,18 +24,18 @@ export const knowledgeApi = api.injectEndpoints({
       invalidatesTags: (_result, _err, { id }) => [itemTag('Knowledge', id)],
     }),
     generateKnowledge: builder.mutation<Entity, { offerId: number }>({
-      query: ({ offerId }) => `/offers/${offerId}/knowledges/generate`,
+      query: ({ offerId }) => ({ url: `/offers/${offerId}/knowledges/generate`, method: 'POST' }),
       invalidatesTags: (_result, _err, { offerId }) => [listTag('Knowledge', offerId)],
     }),
     deleteKnowledge: builder.mutation<void, { id: number; offerId: number }>({
-      query: ({ id }) => `/knowledges/${id}/delete`,
+      query: ({ id }) => ({ url: `/knowledges/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, offerId }) => [
         listTag('Knowledge', offerId),
         itemTag('Knowledge', id),
       ],
     }),
     deleteKnowledgeInsight: builder.mutation<void, { id: number; knowledgeId: number }>({
-      query: ({ id }) => `/knowledge-insights/${id}/delete`,
+      query: ({ id }) => ({ url: `/knowledge-insights/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { knowledgeId }) => [itemTag('Knowledge', knowledgeId)],
     }),
     getKnowledgeInsight: builder.query<Entity, number>({

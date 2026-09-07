@@ -48,15 +48,15 @@ export const offersApi = api.injectEndpoints({
       invalidatesTags: (_result, _err, { id }) => [itemTag('Offer', id)],
     }),
     createOffer: builder.mutation<Entity, CreateOfferArgs>({
-      query: (params) => ({ url: '/offers/create', params }),
+      query: (params) => ({ url: '/offers/create', method: 'POST', params }),
       invalidatesTags: [listTag('Offer', 'root')],
     }),
     deleteOffer: builder.mutation<void, number>({
-      query: (id) => `/offers/${id}/delete`,
+      query: (id) => ({ url: `/offers/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, id) => [listTag('Offer', 'root'), itemTag('Offer', id)],
     }),
     deleteOfferItem: builder.mutation<void, { id: number; offerId: number }>({
-      query: ({ id }) => `/offer-items/${id}/delete`,
+      query: ({ id }) => ({ url: `/offer-items/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { offerId }) => [itemTag('Offer', offerId)],
     }),
     createOfferItem: builder.mutation<Entity, CreateOfferItemArgs>({
@@ -86,7 +86,7 @@ export const offersApi = api.injectEndpoints({
       ],
     }),
     deleteOfferInsight: builder.mutation<void, { id: number; offerId: number }>({
-      query: ({ id }) => `/offer-insights/${id}/delete`,
+      query: ({ id }) => ({ url: `/offer-insights/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { offerId }) => [itemTag('Offer', offerId)],
     }),
     getOfferInsight: builder.query<Entity, number>({

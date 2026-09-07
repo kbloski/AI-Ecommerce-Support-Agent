@@ -24,11 +24,11 @@ export const brandMarketingApi = api.injectEndpoints({
       invalidatesTags: (_result, _err, { id }) => [itemTag('BrandMarketing', id)],
     }),
     generateBrandMarketing: builder.mutation<Entity, { knowledgeId: number }>({
-      query: ({ knowledgeId }) => `/knowledges/${knowledgeId}/brand-marketing/generate`,
+      query: ({ knowledgeId }) => ({ url: `/knowledges/${knowledgeId}/brand-marketing/generate`, method: 'POST' }),
       invalidatesTags: (_result, _err, { knowledgeId }) => [listTag('BrandMarketing', knowledgeId)],
     }),
     deleteBrandMarketing: builder.mutation<void, { id: number; knowledgeId: number }>({
-      query: ({ id }) => `/brand-marketing/${id}/delete`,
+      query: ({ id }) => ({ url: `/brand-marketing/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, knowledgeId }) => [
         listTag('BrandMarketing', knowledgeId),
         itemTag('BrandMarketing', id),

@@ -25,15 +25,10 @@ class KnowledgeAnalysisRepository:
         )
 
         if existing:
-            existing.content = analysis.content
-            existing.updated_at = analysis.updated_at
-
-            self.db.commit()
-            self.db.refresh(existing)
             return existing
 
         self.db.add(analysis)
-        self.db.commit()
+        self.db.flush()
         self.db.refresh(analysis)
         return analysis
 

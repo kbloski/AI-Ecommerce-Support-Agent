@@ -5,7 +5,7 @@ Contains configuration pointing to the active projects the agent works on.
 ## Files
 
 ```text
-project/
+projects/
 ├── README.md
 └── PROJECTS.md
 ```
@@ -56,6 +56,4 @@ The file may contain one or multiple project paths.
 - `PROJECTS.md` should remain minimal and should contain only information required to locate active projects.
 - `PROJECTS.md` should not contain architecture, conventions, notes, plans, decisions, or other project knowledge.
 - Project-specific knowledge belongs in `../prompts/`, `../memory/`, `../plans/`, `../decisions/`, and other workspace directories — not in `PROJECTS.md`.
-
-Dodałem też regułę, żeby agent nie zakładał automatycznie, że **pierwsza ścieżka jest aktywnym celem**, gdy w pliku jest kilka projektów.
 ```
