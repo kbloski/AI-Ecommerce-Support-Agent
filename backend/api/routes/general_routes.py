@@ -1,14 +1,7 @@
-import json
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import AnyHttpUrl, BaseModel, Field
-
-# Handlers below parse raw LLM JSON and index into it directly; any of these
-# means the model returned data that doesn't match the expected shape, which
-# is a 502 (upstream/model contract failure), not a 500 (our bug) or a
-# silent 200 with an error body.
-LLM_RESPONSE_ERRORS = (json.JSONDecodeError, KeyError, TypeError, ValueError)
 from domain.enums.fact_status import FactStatus
 from domain.enums.review_status import ReviewStatus
 from domain.enums.offer_insight_type import OfferInsightType
@@ -136,7 +129,6 @@ from application.handlers.settings.save_ollama_settings_handler import save_olla
 from application.handlers.settings.list_ollama_models_handler import list_ollama_models_handler
 from application.handlers.pipeline.get_pipeline_path_handler import get_pipeline_path_handler
 from domain.enums.pipeline_entity_type import PipelineEntityType
-from application.services.llm_result_validation import LlmGenerationError
 
 
 class SaveOutputPromptRequest(BaseModel):
@@ -348,10 +340,7 @@ def register_general_routes(router: APIRouter):
 
     @router.post("/offers/{offer_id}/insights/generate")
     def generate_offer_insights_route(offer_id: int, payload: GenerateOfferInsightsRequest):
-        try:
-            return generate_offer_insights_handler(offer_id=offer_id, types=payload.types)
-        except LLM_RESPONSE_ERRORS as e:
-            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
+        return generate_offer_insights_handler(offer_id=offer_id, types=payload.types)
 
     @router.delete("/offers/{id}/delete")
     def delete_offer_route(id: int):
@@ -421,10 +410,7 @@ def register_general_routes(router: APIRouter):
     # POST in future
     @router.post("/offers/{id}/knowledges/generate")
     def knowledge_generate(id: int):
-        try:
-            return knowledge_generate_handler(offer_id=id)
-        except LLM_RESPONSE_ERRORS as e:
-            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
+        return knowledge_generate_handler(offer_id=id)
 
     #  POST in future
     @router.get("/offers/{offer_id}/knowledges")
@@ -482,10 +468,7 @@ def register_general_routes(router: APIRouter):
     #  POST in future
     @router.post("/knowledges/{knowledge_id}/target-audiences/generate")
     def generate_target_audience(knowledge_id: int):
-        try:
-            return generate_target_audience_handler( knowledge_id=knowledge_id)
-        except LLM_RESPONSE_ERRORS as e:
-            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
+        return generate_target_audience_handler( knowledge_id=knowledge_id)
 
     # #  GET in future
     @router.get("/knowledges/{knowledge_id}/target-audiences")
@@ -533,10 +516,7 @@ def register_general_routes(router: APIRouter):
     # POST in future
     @router.post("/knowledges/{knowledge_id}/analysis/{analyse_id}/answers/generate")
     def knowledge_analysis_answers_generate(knowledge_id: int, analyse_id: int):
-        try:
-            return knowledge_analysis_answers_generate_handler( knowledge_id=knowledge_id, analyse_id=analyse_id)
-        except LLM_RESPONSE_ERRORS as e:
-            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
+        return knowledge_analysis_answers_generate_handler( knowledge_id=knowledge_id, analyse_id=analyse_id)
 
     @router.delete("/analysis/{id}/delete")
     def delete_analysis_route(id: int):
@@ -578,10 +558,7 @@ def register_general_routes(router: APIRouter):
     # POST in future
     @router.post("/knowledges/{knowledge_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
     def analyse_checklist_generate(knowledge_id: int, analyse_id: int, checklist_id: int):
-        try:
-            return analyse_checklist_generate_handler( knowledge_id=knowledge_id, analyse_id=analyse_id, checklist_id=checklist_id)
-        except LLM_RESPONSE_ERRORS as e:
-            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
+        return analyse_checklist_generate_handler( knowledge_id=knowledge_id, analyse_id=analyse_id, checklist_id=checklist_id)
 
     @router.get("/analysis/{analysis_id}/checklists")
     def get_checklist_for_analysis( analysis_id: int):
@@ -602,10 +579,7 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     @router.post("/knowledges/{knowledge_id}/brand-marketing/generate")
     def knowledge_brand_marketing_generate( knowledge_id: int ):
-        try:
-            return generate_brand_marketing_handler( knowledge_id=knowledge_id )
-        except LLM_RESPONSE_ERRORS as e:
-            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
+        return generate_brand_marketing_handler( knowledge_id=knowledge_id )
 
     @router.get("/knowledges/{knowledge_id}/brand-marketing")
     def get_knowledge_brand_marketing( knowledge_id: int ):
@@ -637,8 +611,6 @@ def register_general_routes(router: APIRouter):
             return generate_marketing_strategy_handler( knowledge_id=knowledge_id, brand_markeging_id=brand_markeging_id )
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
-        except (json.JSONDecodeError, KeyError, TypeError) as e:
-            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
 
     @router.get("/brand-marketing/{brand_marketing_id}/marketing-strategy")
     def get_brand_marketing_marketing_strategies( brand_marketing_id: int ):
@@ -666,12 +638,9 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     @router.post("/marketing-strategy/{marketing_strategy_id}/offer-strategy/generate")
     def knowledge_offer_strategy_generate(  marketing_strategy_id: int ):
-        try:
-            return generate_offer_strategy_handler(
-                marketing_strategy_id=marketing_strategy_id
-            )
-        except LLM_RESPONSE_ERRORS as e:
-            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
+        return generate_offer_strategy_handler(
+            marketing_strategy_id=marketing_strategy_id
+        )
 
     @router.get("/marketing-strategy/{marketing_strategy_id}/offer-strategy")
     def get_marketing_strategy_offer_strategies( marketing_strategy_id: int ):
@@ -699,12 +668,9 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     @router.post("/offer-strategy/{offer_strategy_id}/message-strategy/generate")
     def knowledge_message_strategy_generate( offer_strategy_id: int ):
-        try:
-            return generate_message_strategy_handler(
-                offer_strategy_id=offer_strategy_id
-            )
-        except LLM_RESPONSE_ERRORS as e:
-            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
+        return generate_message_strategy_handler(
+            offer_strategy_id=offer_strategy_id
+        )
 
     @router.get("/offer-strategy/{offer_strategy_id}/message-strategy")
     def get_offer_strategy_message_strategies( offer_strategy_id: int ):
@@ -733,12 +699,9 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     @router.post("/message-strategy/{message_strategy_id}/ugc-creatives/generate")
     def knowledge_ugc_creatives_generate( message_strategy_id: int ):
-        try:
-            return generate_ugc_creatives_handler(
-                message_strategy_id=message_strategy_id
-            )
-        except LLM_RESPONSE_ERRORS as e:
-            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
+        return generate_ugc_creatives_handler(
+            message_strategy_id=message_strategy_id
+        )
 
     @router.get("/message-strategy/{message_strategy_id}/ugc-creatives")
     def get_message_strategy_ugc_creatives( message_strategy_id: int ):
@@ -763,12 +726,9 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     @router.post("/message-strategy/{message_strategy_id}/ad-strategy/generate")
     def knowledge_ad_strategy_generate( message_strategy_id: int ):
-        try:
-            return generate_ad_strategy_handler(
-                message_strategy_id=message_strategy_id
-            )
-        except LLM_RESPONSE_ERRORS as e:
-            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
+        return generate_ad_strategy_handler(
+            message_strategy_id=message_strategy_id
+        )
 
     @router.get("/message-strategy/{message_strategy_id}/ad-strategy")
     def get_message_strategy_ad_strategies( message_strategy_id: int ):
@@ -797,12 +757,9 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     @router.post("/ad-strategy/{ad_strategy_id}/creative-strategy/generate")
     def knowledge_creative_strategy_generate( ad_strategy_id: int ):
-        try:
-            return generate_creative_strategy_handler(
-                ad_strategy_id=ad_strategy_id
-            )
-        except LLM_RESPONSE_ERRORS as e:
-            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
+        return generate_creative_strategy_handler(
+            ad_strategy_id=ad_strategy_id
+        )
 
     @router.get("/ad-strategy/{ad_strategy_id}/creative-strategy")
     def get_ad_strategy_creative_strategies( ad_strategy_id: int ):
@@ -908,17 +865,14 @@ def register_general_routes(router: APIRouter):
         creative_angle_id: str | None = None,
         execution_style_id: str | None = None
     ):
-        try:
-            return generate_creative_execution_handler(
-                ad_execution_id=ad_execution_id,
-                duration_seconds=duration_seconds,
-                number_of_slides=number_of_slides,
-                ad_framework_id=ad_framework_id,
-                creative_angle_id=creative_angle_id,
-                execution_style_id=execution_style_id
-            )
-        except LLM_RESPONSE_ERRORS as e:
-            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
+        return generate_creative_execution_handler(
+            ad_execution_id=ad_execution_id,
+            duration_seconds=duration_seconds,
+            number_of_slides=number_of_slides,
+            ad_framework_id=ad_framework_id,
+            creative_angle_id=creative_angle_id,
+            execution_style_id=execution_style_id
+        )
 
     @router.get("/ad-execution/{ad_execution_id}/creative-execution")
     def get_ad_execution_creative_executions( ad_execution_id: int ):
@@ -946,12 +900,9 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     @router.post("/message-strategy/{message_strategy_id}/page-strategy/generate")
     def message_strategy_page_strategy_generate( message_strategy_id: int ):
-        try:
-            return generate_page_strategy_json_handler(
-                message_strategy_id=message_strategy_id
-            )
-        except LLM_RESPONSE_ERRORS as e:
-            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
+        return generate_page_strategy_json_handler(
+            message_strategy_id=message_strategy_id
+        )
 
     @router.get("/message-strategy/{message_strategy_id}/page-strategy")
     def get_message_strategy_page_strategies( message_strategy_id: int ):
@@ -1010,12 +961,9 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     @router.post("/page-requirements/{page_requirements_id}/page-blueprint/generate")
     def page_requirements_page_blueprint_generate( page_requirements_id: int ):
-        try:
-            return generate_page_blueprint_handler(
-                page_requirements_id=page_requirements_id
-            )
-        except LlmGenerationError as e:
-            raise HTTPException(status_code=502, detail=e.message)
+        return generate_page_blueprint_handler(
+            page_requirements_id=page_requirements_id
+        )
 
     @router.get("/page-requirements/{page_requirements_id}/page-blueprint")
     def get_page_requirements_page_blueprints( page_requirements_id: int ):
@@ -1043,12 +991,9 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     @router.post("/page-blueprint/{page_blueprint_id}/page-content-plan/generate")
     def page_blueprint_page_content_plan_generate( page_blueprint_id: int ):
-        try:
-            return generate_page_content_plan_handler(
-                page_blueprint_id=page_blueprint_id
-            )
-        except LLM_RESPONSE_ERRORS as e:
-            raise HTTPException(status_code=502, detail=f"LLM response error: {e}")
+        return generate_page_content_plan_handler(
+            page_blueprint_id=page_blueprint_id
+        )
 
     @router.get("/page-blueprint/{page_blueprint_id}/page-content-plan")
     def get_page_blueprint_page_content_plans( page_blueprint_id: int ):
@@ -1076,12 +1021,9 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     @router.post("/page-content-plan/{page_content_plan_id}/page-copy/generate")
     def page_content_plan_page_copy_generate( page_content_plan_id: int ):
-        try:
-            return generate_page_copy_handler(
-                page_content_plan_id=page_content_plan_id
-            )
-        except LlmGenerationError as e:
-            raise HTTPException(status_code=502, detail=e.message)
+        return generate_page_copy_handler(
+            page_content_plan_id=page_content_plan_id
+        )
 
     @router.get("/page-content-plan/{page_content_plan_id}/page-copy")
     def get_page_content_plan_page_copies( page_content_plan_id: int ):
