@@ -4,9 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { ChevronDown } from 'lucide-react'
-import { EntityViewer } from '@/components/EntityViewer'
+import { JsonPanelRegistration } from '@/components/JsonPanelRegistration'
 import { useGetOfferItemQuery, useUpdateOfferItemMutation } from '@/features/offers/offersApi'
 
 export default function OfferItemEditPage() {
@@ -40,15 +38,7 @@ export default function OfferItemEditPage() {
       <h1 className="text-2xl font-semibold">Edytuj element oferty</h1>
 
       {data && (
-        <Collapsible>
-          <CollapsibleTrigger className="group flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase hover:text-foreground">
-            <ChevronDown className="size-3.5 shrink-0 transition-transform group-data-[panel-open]:rotate-180" />
-            Pokaż surowy JSON
-          </CollapsibleTrigger>
-          <CollapsibleContent className="pt-2">
-            <EntityViewer data={data} />
-          </CollapsibleContent>
-        </Collapsible>
+        <JsonPanelRegistration data={data} title="JSON elementu oferty" />
       )}
 
       {isLoading && <p className="text-sm text-muted-foreground">Ładowanie…</p>}

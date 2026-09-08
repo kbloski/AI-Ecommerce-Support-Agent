@@ -1,7 +1,9 @@
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, CodeXml } from 'lucide-react'
 import { Link, NavLink, matchPath, useLocation, useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { DownloadPipelinePathButton } from '@/components/DownloadPipelinePathButton'
+import { Button } from '@/components/ui/button'
+import { useSidePanel } from '@/lib/sidePanel'
 
 const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
   cn(
@@ -20,6 +22,7 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
   )
   const { pathname } = useLocation()
   const navigate = useNavigate()
+  const { contextualPanel, openPanel } = useSidePanel()
   const showBackButton = pathname !== '/' && pathname !== '/offers'
   const sections = [
     { pattern: '/offers/:id/*', current: 'Oferta', entityType: 'offer', process: [['knowledges', 'Knowledges']], resources: [['insights', 'Insights'], ['items', 'Elementy oferty']] },
@@ -61,6 +64,19 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
             General
           </NavLink>
         </nav>
+        {contextualPanel && (
+          <section className="mt-6">
+            <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
+              Narzędzia
+            </h2>
+            <nav className="ml-2 space-y-1 border-l pl-2">
+              <Button type="button" variant="ghost" size="sm" className="w-full justify-start" onClick={() => openPanel(contextualPanel)}>
+                <CodeXml />
+                Zobacz JSON obiektu
+              </Button>
+            </nav>
+          </section>
+        )}
       </aside>
     )
   }
@@ -94,11 +110,6 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
           </p>
           <p className="mt-1 text-sm font-semibold text-foreground">{section.config.current}</p>
         </Link>
-        {'entityType' in section.config && (
-          <div className="mb-6">
-            <DownloadPipelinePathButton entityType={section.config.entityType} entityId={Number(section.match?.params.id)} />
-          </div>
-        )}
         {section.config.process.length > 0 && (
           <section>
             <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
@@ -134,6 +145,24 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
               {section.config.resources.map(([slug, label]) => (
                 <NavLink key={slug} to={`${detailPath}/${slug}`} className={navLinkClassName}>{label}</NavLink>
               ))}
+            </nav>
+          </section>
+        )}
+        {('entityType' in section.config || contextualPanel) && (
+          <section className={section.config.process.length > 0 || 'knowledge' in section.config || section.config.resources.length > 0 ? 'mt-6' : undefined}>
+            <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
+              Narzędzia
+            </h2>
+            <nav className="ml-2 space-y-1 border-l pl-2">
+              {'entityType' in section.config && (
+                <DownloadPipelinePathButton entityType={section.config.entityType} entityId={Number(section.match?.params.id)} />
+              )}
+              {contextualPanel && (
+                <Button type="button" variant="ghost" size="sm" className="w-full justify-start" onClick={() => openPanel(contextualPanel)}>
+                  <CodeXml />
+                  Zobacz JSON obiektu
+                </Button>
+              )}
             </nav>
           </section>
         )}

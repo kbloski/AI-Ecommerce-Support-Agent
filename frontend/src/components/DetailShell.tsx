@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react'
 import { EditableFields } from '@/components/EditableFields'
-import { ChevronDown } from 'lucide-react'
-import { EntityViewer } from '@/components/EntityViewer'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { JsonPanelRegistration } from '@/components/JsonPanelRegistration'
 import type { Entity } from '@/types'
 
 interface DetailShellProps {
@@ -52,15 +50,7 @@ export function DetailShell({
     <div className="w-full space-y-6 p-6 lg:p-10">
 
       {data && (
-        <Collapsible>
-          <CollapsibleTrigger className="group flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase hover:text-foreground">
-            <ChevronDown className="size-3.5 shrink-0 transition-transform group-data-[panel-open]:rotate-180" />
-            Surowy JSON elementu
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <EntityViewer data={data} />
-          </CollapsibleContent>
-        </Collapsible>
+        <JsonPanelRegistration data={data} title={`JSON: ${title}`} />
       )}
 
       <div className="space-y-6">

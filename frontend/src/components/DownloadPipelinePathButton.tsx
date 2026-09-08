@@ -1,6 +1,7 @@
 import { Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useGetPipelinePathMutation, type PipelinePathResponse } from '@/features/pipeline/pipelineApi'
+import { cn } from '@/lib/utils'
 
 function formatPipelinePathAsText(response: PipelinePathResponse): string {
   return response.path
@@ -22,7 +23,15 @@ function downloadTextFile(filename: string, content: string) {
   URL.revokeObjectURL(url)
 }
 
-export function DownloadPipelinePathButton({ entityType, entityId }: { entityType: string; entityId: number }) {
+export function DownloadPipelinePathButton({
+  entityType,
+  entityId,
+  className,
+}: {
+  entityType: string
+  entityId: number
+  className?: string
+}) {
   const [getPipelinePath, { isLoading }] = useGetPipelinePathMutation()
 
   const handleClick = async () => {
@@ -31,7 +40,14 @@ export function DownloadPipelinePathButton({ entityType, entityId }: { entityTyp
   }
 
   return (
-    <Button type="button" variant="outline" size="sm" onClick={handleClick} disabled={isLoading}>
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      className={cn('w-full justify-start', className)}
+      onClick={handleClick}
+      disabled={isLoading}
+    >
       <Download />
       {isLoading ? 'Pobieranie…' : 'Pobierz dane ścieżki (.txt)'}
     </Button>

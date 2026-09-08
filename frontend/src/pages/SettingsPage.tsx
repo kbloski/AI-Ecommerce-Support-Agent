@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
-import { ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { EntityViewer } from '@/components/EntityViewer'
+import { JsonPanelRegistration } from '@/components/JsonPanelRegistration'
 import {
   useGetOutputPromptQuery,
   useSaveOutputPromptMutation,
@@ -275,15 +273,7 @@ export default function SettingsPage() {
         {!isLoading && (
           <>
             {data && (
-              <Collapsible>
-                <CollapsibleTrigger className="group flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase hover:text-foreground">
-                  <ChevronDown className="size-3.5 shrink-0 transition-transform group-data-[panel-open]:rotate-180" />
-                  Pokaż surowy JSON
-                </CollapsibleTrigger>
-                <CollapsibleContent className="pt-2">
-                  <EntityViewer data={data} />
-                </CollapsibleContent>
-              </Collapsible>
+              <JsonPanelRegistration data={data} title="JSON ustawień output promptu" />
             )}
 
             <textarea

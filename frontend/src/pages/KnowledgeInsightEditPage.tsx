@@ -1,11 +1,9 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { EntityViewer } from '@/components/EntityViewer'
+import { JsonPanelRegistration } from '@/components/JsonPanelRegistration'
 import { useGetKnowledgeInsightQuery, useUpdateKnowledgeInsightMutation } from '@/features/knowledge/knowledgeApi'
 import { useListFactStatusesQuery } from '@/features/factStatus/factStatusApi'
 import { useListReviewStatusesQuery } from '@/features/reviewStatus/reviewStatusApi'
@@ -41,15 +39,7 @@ export default function KnowledgeInsightEditPage() {
       <h1 className="text-2xl font-semibold">Edytuj insight wiedzy</h1>
 
       {data && (
-        <Collapsible>
-          <CollapsibleTrigger className="group flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase hover:text-foreground">
-            <ChevronDown className="size-3.5 shrink-0 transition-transform group-data-[panel-open]:rotate-180" />
-            Pokaż surowy JSON
-          </CollapsibleTrigger>
-          <CollapsibleContent className="pt-2">
-            <EntityViewer data={data} />
-          </CollapsibleContent>
-        </Collapsible>
+        <JsonPanelRegistration data={data} title="JSON insightu wiedzy" />
       )}
 
       {isLoading && <p className="text-sm text-muted-foreground">Ładowanie…</p>}
