@@ -5,9 +5,9 @@ import { RelationList } from '@/components/EditableFields'
 import { Button } from '@/components/ui/button'
 import { SegmentedControl } from '@/components/SegmentedControl'
 import type { Entity } from '@/types'
-import { useGetKnowledgeQuery } from '@/features/knowledge/knowledgeApi'
-import { useCreateAnalysisMutation, useDeleteAnalysisMutation, useDeleteAnalysisQuestionMutation, useGenerateAnalysisAnswersMutation, useGetAnalysisQuery, useListAnalysisForKnowledgeQuery } from '@/features/analysis/analysisApi'
-import { useDeleteBrandMarketingMutation, useGenerateBrandMarketingMutation, useListBrandMarketingForKnowledgeQuery } from '@/features/brandMarketing/brandMarketingApi'
+import { useGetOfferProfileQuery } from '@/features/offerProfiles/offerProfileApi'
+import { useCreateAnalysisMutation, useDeleteAnalysisMutation, useDeleteAnalysisQuestionMutation, useGenerateAnalysisAnswersMutation, useGetAnalysisQuery, useListAnalysisForOfferProfileQuery } from '@/features/analysis/analysisApi'
+import { useDeleteBrandMarketingMutation, useGenerateBrandMarketingMutation, useListBrandMarketingForOfferProfileQuery } from '@/features/brandMarketing/brandMarketingApi'
 import { useCreateChecklistMutation, useDeleteChecklistItemMutation, useDeleteChecklistMutation, useGenerateChecklistMutation, useGetChecklistQuery, useListChecklistsForAnalysisQuery } from '@/features/checklists/checklistsApi'
 import { useGetBrandMarketingQuery } from '@/features/brandMarketing/brandMarketingApi'
 import { useDeleteMarketingStrategyMutation, useGenerateMarketingStrategyMutation, useListMarketingStrategyForBrandMarketingQuery } from '@/features/marketingStrategy/marketingStrategyApi'
@@ -45,41 +45,41 @@ function ResourcePage({ title, children }: { backTo: string; backLabel: string; 
   </div>
 }
 
-export function KnowledgeAnalysesPage() {
-  const knowledgeId = Number(useParams().knowledgeId)
-  const list = useListAnalysisForKnowledgeQuery(knowledgeId)
+export function OfferProfileAnalysesPage() {
+  const offerProfileId = Number(useParams().offerProfileId)
+  const list = useListAnalysisForOfferProfileQuery(offerProfileId)
   const [create, state] = useCreateAnalysisMutation()
   const [remove] = useDeleteAnalysisMutation()
-  return <ResourcePage backTo={`/knowledges/${knowledgeId}`} backLabel="Knowledge" title="Analizy">
-    <ResourceList title="Analizy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/knowledges/${knowledgeId}/analysis/${item.id}`} itemLabel={(item) => `Analiza #${item.id}`} onGenerate={() => create({ knowledgeId })} isGenerating={state.isLoading} generateLabel="Utwórz analizę" onDelete={(item) => remove({ id: item.id as number, knowledgeId })} />
+  return <ResourcePage backTo={`/offer-profiles/${offerProfileId}`} backLabel="OfferProfile" title="Analizy">
+    <ResourceList title="Analizy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/offer-profiles/${offerProfileId}/analysis/${item.id}`} itemLabel={(item) => `Analiza #${item.id}`} onGenerate={() => create({ offerProfileId })} isGenerating={state.isLoading} generateLabel="Utwórz analizę" onDelete={(item) => remove({ id: item.id as number, offerProfileId })} />
   </ResourcePage>
 }
 
-export function KnowledgeBrandMarketingPage() {
-  const knowledgeId = Number(useParams().knowledgeId)
-  const { data } = useGetKnowledgeQuery(knowledgeId)
-  const list = useListBrandMarketingForKnowledgeQuery(knowledgeId)
+export function OfferProfileBrandMarketingPage() {
+  const offerProfileId = Number(useParams().offerProfileId)
+  const { data } = useGetOfferProfileQuery(offerProfileId)
+  const list = useListBrandMarketingForOfferProfileQuery(offerProfileId)
   const [generate, state] = useGenerateBrandMarketingMutation()
   const [remove] = useDeleteBrandMarketingMutation()
-  return <ResourcePage backTo={`/knowledges/${knowledgeId}`} backLabel={(data?.offer_summary as string) ?? 'Knowledge'} title="Brand marketing">
-    <ResourceList title="Brand marketing" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/brand-marketing/${item.id}`} itemLabel={(item) => (item.brand_name as string) ?? `#${item.id}`} onGenerate={() => generate({ knowledgeId })} isGenerating={state.isLoading} generateLabel="Generuj brand marketing" onDelete={(item) => remove({ id: item.id as number, knowledgeId })} />
+  return <ResourcePage backTo={`/offer-profiles/${offerProfileId}`} backLabel={(data?.offer_summary as string) ?? 'OfferProfile'} title="Brand marketing">
+    <ResourceList title="Brand marketing" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/brand-marketing/${item.id}`} itemLabel={(item) => (item.brand_name as string) ?? `#${item.id}`} onGenerate={() => generate({ offerProfileId })} isGenerating={state.isLoading} generateLabel="Generuj brand marketing" onDelete={(item) => remove({ id: item.id as number, offerProfileId })} />
   </ResourcePage>
 }
 
 export function AnalysisChecklistsPage() {
-  const { knowledgeId, analysisId } = useParams(); const aid = Number(analysisId)
+  const { offerProfileId, analysisId } = useParams(); const aid = Number(analysisId)
   const list = useListChecklistsForAnalysisQuery(aid); const [create, state] = useCreateChecklistMutation(); const [remove] = useDeleteChecklistMutation()
-  return <ResourcePage backTo={`/knowledges/${knowledgeId}/analysis/${aid}`} backLabel={`Analiza #${aid}`} title="Checklisty">
-    <ResourceList title="Checklisty" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/knowledges/${knowledgeId}/analysis/${aid}/checklists/${item.id}`} itemLabel={(item) => (item.name as string) ?? `#${item.id}`} onGenerate={() => create({ knowledgeId: Number(knowledgeId), analysisId: aid })} isGenerating={state.isLoading} generateLabel="Utwórz checklistę" onDelete={(item) => remove({ id: item.id as number, analysisId: aid })} />
+  return <ResourcePage backTo={`/offer-profiles/${offerProfileId}/analysis/${aid}`} backLabel={`Analiza #${aid}`} title="Checklisty">
+    <ResourceList title="Checklisty" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/offer-profiles/${offerProfileId}/analysis/${aid}/checklists/${item.id}`} itemLabel={(item) => (item.name as string) ?? `#${item.id}`} onGenerate={() => create({ offerProfileId: Number(offerProfileId), analysisId: aid })} isGenerating={state.isLoading} generateLabel="Utwórz checklistę" onDelete={(item) => remove({ id: item.id as number, analysisId: aid })} />
   </ResourcePage>
 }
 
 export function AnalysisQuestionsPage() {
-  const { knowledgeId, analysisId } = useParams(); const aid = Number(analysisId)
+  const { offerProfileId, analysisId } = useParams(); const aid = Number(analysisId)
   const { data, isLoading, error } = useGetAnalysisQuery(aid); const [generate, state] = useGenerateAnalysisAnswersMutation(); const [remove] = useDeleteAnalysisQuestionMutation()
   const questions = (data?.analysis_questions as Entity[] | undefined) ?? []
-  return <ResourcePage backTo={`/knowledges/${knowledgeId}/analysis/${aid}`} backLabel={`Analiza #${aid}`} title="Pytania">
-    <Button size="sm" onClick={() => generate({ knowledgeId: Number(knowledgeId), analysisId: aid })} disabled={state.isLoading}>{state.isLoading ? 'Generowanie…' : 'Generuj odpowiedzi'}</Button>
+  return <ResourcePage backTo={`/offer-profiles/${offerProfileId}/analysis/${aid}`} backLabel={`Analiza #${aid}`} title="Pytania">
+    <Button size="sm" onClick={() => generate({ offerProfileId: Number(offerProfileId), analysisId: aid })} disabled={state.isLoading}>{state.isLoading ? 'Generowanie…' : 'Generuj odpowiedzi'}</Button>
     {isLoading && <p className="text-sm text-muted-foreground">Ładowanie…</p>}
     {Boolean(error) && <p className="text-sm text-destructive">Nie udało się pobrać pytań.</p>}
     {!isLoading && !error && questions.length === 0 && <p className="text-sm text-muted-foreground">Brak pytań — wygeneruj odpowiedzi.</p>}
@@ -88,10 +88,10 @@ export function AnalysisQuestionsPage() {
 }
 
 export function ChecklistItemsPage() {
-  const { knowledgeId, analysisId, checklistId } = useParams(); const cid = Number(checklistId)
+  const { offerProfileId, analysisId, checklistId } = useParams(); const cid = Number(checklistId)
   const { data, isLoading, error } = useGetChecklistQuery(cid); const [generate, state] = useGenerateChecklistMutation(); const [remove] = useDeleteChecklistItemMutation()
-  return <ResourcePage backTo={`/knowledges/${knowledgeId}/analysis/${analysisId}/checklists/${cid}`} backLabel={(data?.name as string) ?? `Checklista #${cid}`} title="Zadania">
-    <Button size="sm" onClick={() => generate({ knowledgeId: Number(knowledgeId), analysisId: Number(analysisId), checklistId: cid })} disabled={state.isLoading}>{state.isLoading ? 'Generowanie…' : 'Generuj zadania'}</Button>
+  return <ResourcePage backTo={`/offer-profiles/${offerProfileId}/analysis/${analysisId}/checklists/${cid}`} backLabel={(data?.name as string) ?? `Checklista #${cid}`} title="Zadania">
+    <Button size="sm" onClick={() => generate({ offerProfileId: Number(offerProfileId), analysisId: Number(analysisId), checklistId: cid })} disabled={state.isLoading}>{state.isLoading ? 'Generowanie…' : 'Generuj zadania'}</Button>
     <ResourceList
       title="Zadania"
       eyebrow={(data?.name as string) ?? `Checklista #${cid}`}

@@ -64,5 +64,5 @@ class Routes:
                 "status": "ok",
                 "running": True
             }
-        
+
         register_general_routes( self.router )

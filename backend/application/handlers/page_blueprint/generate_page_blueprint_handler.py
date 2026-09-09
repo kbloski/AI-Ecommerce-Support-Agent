@@ -25,7 +25,7 @@ def generate_page_blueprint_handler(page_requirements_id: int):
     page_requirements_service = container.page_requirements_service()
     page_strategy_service = container.page_strategy_service()
     message_strategy_service = container.message_strategy_service()
-    knowledge_service = container.knowledge_service()
+    offer_profile_service = container.offer_profile_service()
     brand_marketing_service = container.brand_marketing_service()
     marketing_strategy_service = container.marketing_strategy_service()
     offer_strategy_service = container.offer_strategy_service()
@@ -77,8 +77,8 @@ def generate_page_blueprint_handler(page_requirements_id: int):
     # Build context
     # -------------------------------------------------------------------------
 
-    knowledge_context = knowledge_service.build_llm_context(
-        knowledge_id=brand_strategy.knowledge_id
+    offer_profile_context = offer_profile_service.build_llm_context(
+        offer_profile_id=brand_strategy.offer_profile_id
     )
 
     brand_strategy_context = brand_marketing_service.build_llm_context(
@@ -118,7 +118,7 @@ def generate_page_blueprint_handler(page_requirements_id: int):
     system_prompt = get_system_prompt()
 
     user_prompt = get_data_prompt(
-        knowledge_context=knowledge_context,
+        offer_profile_context=offer_profile_context,
         brand_strategy_context=brand_strategy_context,
         marketing_strategy_context=marketing_strategy_context,
         offer_strategy_context=offer_strategy_context,
@@ -368,7 +368,7 @@ Evaluate optional sections using:
 - MESSAGE STRATEGY,
 - MARKETING STRATEGY,
 - BRAND STRATEGY,
-- KNOWLEDGE.
+- OFFER_PROFILE.
 
 Include an optional section only when it has a clear
 strategic role on this specific page.
@@ -714,7 +714,7 @@ Arrays must always be arrays.
 
 
 def get_data_prompt(
-    knowledge_context: str,
+    offer_profile_context: str,
     brand_strategy_context: str,
     marketing_strategy_context: str,
     offer_strategy_context: str,
@@ -724,8 +724,8 @@ def get_data_prompt(
     page_section_types_context: str,
 ) -> str:
     return f"""
-KNOWLEDGE:
-{knowledge_context}
+OFFER_PROFILE:
+{offer_profile_context}
 
 
 BRAND STRATEGY:

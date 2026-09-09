@@ -7,7 +7,7 @@ class PipelineEntityType(str, Enum):
     page) — see memory/ai-ec-agent/application-flow.md in the agent workspace."""
 
     OFFER = "offer"
-    KNOWLEDGE = "knowledge"
+    OFFER_PROFILE = "offer_profile"
     BRAND_MARKETING = "brand_marketing"
     MARKETING_STRATEGY = "marketing_strategy"
     OFFER_STRATEGY = "offer_strategy"

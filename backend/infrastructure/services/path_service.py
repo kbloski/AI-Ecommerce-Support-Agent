@@ -2,7 +2,7 @@ from pathlib import Path
 from infrastructure.logging.logger import Logger
 
 class PathService:
-    def __init__(self, 
+    def __init__(self,
             logger: Logger
         ):
 
@@ -28,6 +28,6 @@ class PathService:
         self.PAGE_SECTION_TYPES_FILE = self.PAGES_DIR / "page_section_types.json"
 
         # self.DATA_DIR = self.BASE_DIR / "data"
-        # self.RAW_ECOMMERCE_KNOWLEDGE = self.DATA_DIR / "raw" / "ecommerce_knowledge"
-        # self.ECOMMERCE_KNOWLEDGE = self.DATA_DIR / "knowledge" / "ecommerce"
+        # self.RAW_ECOMMERCE_OFFER_PROFILE = self.DATA_DIR / "raw" / "ecommerce_offer_profile"
+        # self.ECOMMERCE_OFFER_PROFILE = self.DATA_DIR / "offer_profile" / "ecommerce"
 

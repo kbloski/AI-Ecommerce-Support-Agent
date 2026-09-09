@@ -15,7 +15,7 @@ def generate_ugc_creatives_handler(
     container = Container()
 
 
-    knowledge_service = container.knowledge_service()
+    offer_profile_service = container.offer_profile_service()
 
     brand_marketing_service = (
         container.brand_marketing_service()
@@ -82,8 +82,8 @@ def generate_ugc_creatives_handler(
             LlmMessage(
                 role=LlmMessageRole.USER,
                 content=get_data_prompt(
-                    knowledge_context=knowledge_service.build_llm_context(
-                        knowledge_id=brand_strategy.knowledge_id
+                    offer_profile_context=offer_profile_service.build_llm_context(
+                        offer_profile_id=brand_strategy.offer_profile_id
                     ),
 
                     brand_strategy_context=brand_marketing_service.build_llm_context(
@@ -379,15 +379,15 @@ RULES:
 
 
 def get_data_prompt(
-    knowledge_context: str,
+    offer_profile_context: str,
     brand_strategy_context: str,
     marketing_strategy_context: str,
     offer_strategy_context: str,
     message_strategy_context: str
 ) -> str:
     return f"""
-KNOWLEDGE:
-{knowledge_context}
+OFFER_PROFILE:
+{offer_profile_context}
 
 
 BRAND STRATEGY:

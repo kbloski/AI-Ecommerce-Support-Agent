@@ -3,7 +3,7 @@ import json
 from di.container import Container
 from domain.enums.llm_message_role import LlmMessageRole
 from domain.models.llm.llm_message import LlmMessage
-from application.mappers.knowledge_mapper import KnowledgeMapper
+from application.mappers.offer_profile_mapper import OfferProfileMapper
 from domain.models.checklist.checklist_item import ChecklistItem
 from application.mappers.checklist_item_mapper import ChecklistItemMapper
 
@@ -48,7 +48,7 @@ Do not write:
 
 Generate real search examples based on the product information.
 
-Every task must be possible to complete without additional knowledge.
+Every task must be possible to complete without additional offer_profile.
 
 Do not create generic advice.
 
@@ -310,7 +310,7 @@ Return ONLY a JSON array following the format defined in the SYSTEM PROMPT.
 
 
 def analyse_checklist_generate_handler(
-    knowledge_id: int,
+    offer_profile_id: int,
     analyse_id: int,
     checklist_id: int
 ):
@@ -318,29 +318,29 @@ def analyse_checklist_generate_handler(
 
     logger = container.logger()
     ai_service = container.ai_service()
-    knowledge_service = container.knowledge_service()
+    offer_profile_service = container.offer_profile_service()
     checklist_items_repository = container.checklist_items_repository()
 
     logger.info(
         f"Checklist generation started. "
-        f"knowledge_id={knowledge_id}, analyse_id={analyse_id}, checklist_id={checklist_id}"
+        f"offer_profile_id={offer_profile_id}, analyse_id={analyse_id}, checklist_id={checklist_id}"
     )
 
     # ---------
     # Get product data
     # ---------
 
-    logger.info("Fetching product knowledge data")
+    logger.info("Fetching product offer_profile data")
 
 
 
-    logger.info("Assembling product knowledge")
+    logger.info("Assembling product offer_profile")
 
-    assembled_knowledge = knowledge_service.get_knowledge_details_by_id(knowledge_id=knowledge_id)
+    assembled_offer_profile = offer_profile_service.get_offer_profile_details_by_id(offer_profile_id=offer_profile_id)
 
 
     json_offer_data = json.dumps(
-        assembled_knowledge.to_dict(),
+        assembled_offer_profile.to_dict(),
         ensure_ascii=False,
         indent=2
     )

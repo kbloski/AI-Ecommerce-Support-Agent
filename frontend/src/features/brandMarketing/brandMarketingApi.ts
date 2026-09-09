@@ -4,11 +4,11 @@ import type { Entity } from '@/types'
 
 export const brandMarketingApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    listBrandMarketingForKnowledge: builder.query<Entity[], number>({
-      query: (knowledgeId) => `/knowledges/${knowledgeId}/brand-marketing`,
-      providesTags: (result, _err, knowledgeId) => [
+    listBrandMarketingForOfferProfile: builder.query<Entity[], number>({
+      query: (offerProfileId) => `/offer-profiles/${offerProfileId}/brand-marketing`,
+      providesTags: (result, _err, offerProfileId) => [
         ...(result ?? []).map((item) => itemTag('BrandMarketing', item.id)),
-        listTag('BrandMarketing', knowledgeId),
+        listTag('BrandMarketing', offerProfileId),
       ],
     }),
     getBrandMarketing: builder.query<Entity, number>({
@@ -23,14 +23,14 @@ export const brandMarketingApi = api.injectEndpoints({
       }),
       invalidatesTags: (_result, _err, { id }) => [itemTag('BrandMarketing', id)],
     }),
-    generateBrandMarketing: builder.mutation<Entity, { knowledgeId: number }>({
-      query: ({ knowledgeId }) => ({ url: `/knowledges/${knowledgeId}/brand-marketing/generate`, method: 'POST' }),
-      invalidatesTags: (_result, _err, { knowledgeId }) => [listTag('BrandMarketing', knowledgeId)],
+    generateBrandMarketing: builder.mutation<Entity, { offerProfileId: number }>({
+      query: ({ offerProfileId }) => ({ url: `/offer-profiles/${offerProfileId}/brand-marketing/generate`, method: 'POST' }),
+      invalidatesTags: (_result, _err, { offerProfileId }) => [listTag('BrandMarketing', offerProfileId)],
     }),
-    deleteBrandMarketing: builder.mutation<void, { id: number; knowledgeId: number }>({
+    deleteBrandMarketing: builder.mutation<void, { id: number; offerProfileId: number }>({
       query: ({ id }) => ({ url: `/brand-marketing/${id}/delete`, method: 'DELETE' }),
-      invalidatesTags: (_result, _err, { id, knowledgeId }) => [
-        listTag('BrandMarketing', knowledgeId),
+      invalidatesTags: (_result, _err, { id, offerProfileId }) => [
+        listTag('BrandMarketing', offerProfileId),
         itemTag('BrandMarketing', id),
       ],
     }),
@@ -38,7 +38,7 @@ export const brandMarketingApi = api.injectEndpoints({
 })
 
 export const {
-  useListBrandMarketingForKnowledgeQuery,
+  useListBrandMarketingForOfferProfileQuery,
   useGetBrandMarketingQuery,
   useGenerateBrandMarketingMutation,
   useDeleteBrandMarketingMutation,

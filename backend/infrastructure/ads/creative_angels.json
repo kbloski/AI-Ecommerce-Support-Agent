@@ -24,7 +24,7 @@
   {
     "id": "authority",
     "name": "Authority",
-    "description": "Messaging based on expert knowledge, research, or the experience of specialists.",
+    "description": "Messaging based on expert offer_profile, research, or the experience of specialists.",
     "purpose": "Building credibility for the product or brand.",
     "rules": [
       "Base the message on facts.",
@@ -35,7 +35,7 @@
   {
     "id": "education",
     "name": "Education",
-    "description": "Providing valuable knowledge first and then introducing the product naturally.",
+    "description": "Providing valuable offer_profile first and then introducing the product naturally.",
     "purpose": "Building trust through education.",
     "rules": [
       "Address the audience’s problem first.",

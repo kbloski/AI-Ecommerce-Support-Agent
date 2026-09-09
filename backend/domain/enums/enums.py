@@ -6,7 +6,6 @@ from domain.enums.review_status import ReviewStatus
 from domain.enums.decision_time import DecisionTime
 from domain.enums.gender_enum import Gender
 from domain.enums.intensity_level import IntensityLevel
-from domain.enums.knowledge_insight_type import KnowledgeInsightType
 from domain.enums.ollama_message_role import OllamaMessageRole
 from domain.enums.llm_message_role import LlmMessageRole
 from domain.enums.context_section_purpose import ContextSectionPurpose

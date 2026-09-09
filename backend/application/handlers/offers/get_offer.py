@@ -5,7 +5,7 @@ def get_offer_handler(id : int):
     container = Container()
     offer_assembler = container.offer_assembler()
     offers_repository = container.offers_repository()
-    
+
     offer = offers_repository.get_by_id(  id = id )
 
     if not offer:
@@ -16,5 +16,5 @@ def get_offer_handler(id : int):
     result = offer_assembler.assemble_dto( offer_dto )
 
     return result
-        
+
 

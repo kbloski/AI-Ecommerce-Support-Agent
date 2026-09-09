@@ -24,7 +24,7 @@ def generate_page_copy_handler(
     offer_strategy_service = container.offer_strategy_service()
     page_sections_service = container.page_sections_service()
 
-    knowledge_service = container.knowledge_service()
+    offer_profile_service = container.offer_profile_service()
     brand_marketing_service = container.brand_marketing_service()
     marketing_strategy_service = container.marketing_strategy_service()
 
@@ -94,8 +94,8 @@ def generate_page_copy_handler(
 
 
     data_prompt = get_data_prompt(
-        knowledge_context=knowledge_service.build_llm_context(
-            knowledge_id=brand_marketing.knowledge_id
+        offer_profile_context=offer_profile_service.build_llm_context(
+            offer_profile_id=brand_marketing.offer_profile_id
         ),
 
         brand_marketing_context=brand_marketing_service.build_llm_context(
@@ -151,8 +151,8 @@ def generate_page_copy_handler(
         ]
 
     )
-    
-    
+
+
 
     result = parse_llm_json(response.content)
     page_copy_data = require_dict(result.get("page_copy"), "page_copy", raw_response=response.content)
@@ -433,7 +433,7 @@ STRICT JSON RULES:
 
 
 def get_data_prompt(
-    knowledge_context: str,
+    offer_profile_context: str,
     brand_marketing_context: str,
     marketing_strategy_context: str,
     offer_strategy_context: str,
@@ -443,8 +443,8 @@ def get_data_prompt(
     page_content_plan_context: str
 ) -> str:
     return f"""
-KNOWLEDGE:
-{knowledge_context}
+OFFER_PROFILE:
+{offer_profile_context}
 
 
 BRAND MARKETING STRATEGY:

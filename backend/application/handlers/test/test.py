@@ -43,7 +43,7 @@ def test():
                 images=[image_b64]
             ),
         ]
-        
+
         try:
             response = ai_service.chat_vlm(vlm_messages)
             # Zapisujemy polską nazwę i angielski opis z modelu VLM

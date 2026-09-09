@@ -3,7 +3,7 @@ Backend (FastAPI). Wszystkie poniższe komendy uruchamiane z wnętrza `backend/`
 
 Python versja 3.14
 
-Tworzenie venv 
+Tworzenie venv
 python.exe -m venv venv
 D:\Python\3.14\python.exe -m venv venv
 
@@ -11,11 +11,11 @@ D:\Python\3.14\python.exe -m venv venv
 .\venv\Scripts\python.exe -m pip install -r requirements.txt
 (w venv)
 
-// Zapisywanie nowej konfiguracji pakietow 
+// Zapisywanie nowej konfiguracji pakietow
 .\venv\Scripts\python.exe -m pip freeze > requirements.txt (musi byc wywolane w venv)
 
 Aby skorzysta z venv w powershell
-.\venv\Scripts\Activate.ps1     
+.\venv\Scripts\Activate.ps1
 
 Aby skorzysta z venv w ubuntu terminal
 source .\venv\bin\activate
@@ -24,7 +24,7 @@ source .\venv\bin\activate
 
 
 Aby uruchomi aplikacje
-.\venv\Scripts\python.exe .\main.py      
+.\venv\Scripts\python.exe .\main.py
 
 
 

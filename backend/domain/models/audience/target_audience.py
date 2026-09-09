@@ -13,9 +13,9 @@ class TargetAudience(Base, JSONSerializable):
     id = Column(Integer, primary_key=True, autoincrement=True)
 
     # Relation
-    knowledge_id = Column(
+    offer_profile_id = Column(
         Integer,
-        ForeignKey(TableName.KNOWLEDGE + ".id", ondelete="CASCADE"),
+        ForeignKey(TableName.OFFER_PROFILES + ".id", ondelete="CASCADE"),
         nullable=True,
         index=True,
     )
@@ -71,8 +71,8 @@ class TargetAudience(Base, JSONSerializable):
 
     __table_args__ = (
         Index(
-            "ix_target_audience_knowledge_fact_status",
-            "knowledge_id",
+            "ix_target_audience_offer_profile_fact_status",
+            "offer_profile_id",
             "fact_status"
         ),
         Index(

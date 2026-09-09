@@ -282,8 +282,8 @@ Każda wartość musi być integer.
 """
 
 
-def knowledge_advertisement_generate_handler(
-    knowledge_id: int,
+def offer_profile_advertisement_generate_handler(
+    offer_profile_id: int,
     count: int
 ):
 
@@ -296,12 +296,12 @@ def knowledge_advertisement_generate_handler(
     container = Container()
 
 
-    knowledge_service = container.knowledge_service()
+    offer_profile_service = container.offer_profile_service()
 
 
     ai_service = container.ai_service()
 
-    product_json = knowledge_service.build_llm_context(knowledge_id=knowledge_id)
+    product_json = offer_profile_service.build_llm_context(offer_profile_id=offer_profile_id)
 
     user_prompt = USER_PROMPT_TEMPLATE.format(count=count,product_json=product_json)
 

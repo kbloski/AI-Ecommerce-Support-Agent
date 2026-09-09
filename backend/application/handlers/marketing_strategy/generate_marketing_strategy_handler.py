@@ -8,12 +8,12 @@ from domain.models.marketing_strategy.marketing_strategy import MarketingStrateg
 
 
 def generate_marketing_strategy_handler(
-    knowledge_id: int,
+    offer_profile_id: int,
     brand_markeging_id: int
 ):
     container = Container()
 
-    knowledge_service = container.knowledge_service()
+    offer_profile_service = container.offer_profile_service()
     brand_marketing_service = container.brand_marketing_service()
     brand_marketing_repository = container.brand_marketing_repository()
     ai_service = container.ai_service()
@@ -23,12 +23,12 @@ def generate_marketing_strategy_handler(
     brand_marketing = brand_marketing_repository.get_by_id(brand_markeging_id)
     if brand_marketing is None:
         raise ValueError(f"Brand marketing {brand_markeging_id} not found")
-    if brand_marketing.knowledge_id != knowledge_id:
+    if brand_marketing.offer_profile_id != offer_profile_id:
         raise ValueError(
-            f"Brand marketing {brand_markeging_id} does not belong to knowledge {knowledge_id}"
+            f"Brand marketing {brand_markeging_id} does not belong to offer_profile {offer_profile_id}"
         )
 
-    knowledge_context = knowledge_service.build_llm_context(knowledge_id=knowledge_id)
+    offer_profile_context = offer_profile_service.build_llm_context(offer_profile_id=offer_profile_id)
 
     brand_strategy_context = brand_marketing_service.build_llm_context(
         brand_marketing_id=brand_markeging_id
@@ -36,7 +36,7 @@ def generate_marketing_strategy_handler(
 
 
     user_prompt = get_data_prompt(
-        knowledge_context=knowledge_context,
+        offer_profile_context=offer_profile_context,
         brand_strategy_context=brand_strategy_context
     )
 
@@ -188,12 +188,12 @@ Return valid JSON only.
 """
 
 
-def get_data_prompt(knowledge_context: str, brand_strategy_context: str) -> str:
+def get_data_prompt(offer_profile_context: str, brand_strategy_context: str) -> str:
     return f"""
 
-KNOWLEDGE BASE:
+OFFER_PROFILE BASE:
 
-{knowledge_context}
+{offer_profile_context}
 
 BRAND STRATEGY:
 

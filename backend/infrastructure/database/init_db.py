@@ -5,6 +5,7 @@ from domain.models import models
 def init_db():
     _migrate_offers_to_offers_raw()
     _rename_offer_raw_details_column()
+    _migrate_offer_profile_to_offer_profiles()
     Base.metadata.create_all(bind=engine)
     _add_missing_favorite_columns()
     _add_missing_page_blueprint_columns()
@@ -13,7 +14,7 @@ def init_db():
 def _migrate_offers_to_offers_raw():
     """Migrate the retired Offer schema before SQLAlchemy creates offers_raw.
 
-    Offer records (and their Knowledge references) are preserved. Offer items,
+    Offer records (and their OfferProfile references) are preserved. Offer items,
     insights, and pricing are intentionally removed with this feature.
     """
     inspector = inspect(engine)
@@ -42,6 +43,31 @@ def _rename_offer_raw_details_column():
     if "details" in columns and "description" not in columns:
         with engine.begin() as conn:
             conn.execute(text('ALTER TABLE "offers_raw" RENAME COLUMN details TO description'))
+
+def _migrate_offer_profile_to_offer_profiles():
+    """Preserve the profile graph while renaming the aggregate and its keys."""
+    inspector = inspect(engine)
+    tables = set(inspector.get_table_names())
+    with engine.begin() as conn:
+        for retired_table in ("knowledge_insights", "offer_profile_insights"):
+            if retired_table in tables:
+                conn.execute(text(f'DROP TABLE "{retired_table}"'))
+
+        if "offer_profiles" not in tables:
+            for legacy_table in ("knowledge", "knowledges", "offer_profile"):
+                if legacy_table in tables:
+                    conn.execute(text(f'ALTER TABLE "{legacy_table}" RENAME TO "offer_profiles"'))
+                    break
+
+        if "knowledge_analysis" in tables and "offer_profile_analysis" not in tables:
+            conn.execute(text('ALTER TABLE "knowledge_analysis" RENAME TO "offer_profile_analysis"'))
+
+        for table in ("target_audiences", "brand_marketing", "offer_profile_analysis"):
+            if table not in tables and not (table == "offer_profile_analysis" and "knowledge_analysis" in tables):
+                continue
+            columns = {column["name"] for column in inspect(conn).get_columns(table)}
+            if "knowledge_id" in columns and "offer_profile_id" not in columns:
+                conn.execute(text(f'ALTER TABLE "{table}" RENAME COLUMN knowledge_id TO offer_profile_id'))
 
 def _add_missing_favorite_columns():
     """Additive migration: adds `is_favorite` to tables that already existed

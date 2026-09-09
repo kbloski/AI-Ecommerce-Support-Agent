@@ -66,7 +66,7 @@ export default function TargetAudienceEditPage() {
 
     const formData = new FormData(e.currentTarget)
 
-    const payload: UpdateTargetAudienceArgs = { id, knowledgeId: data.knowledge_id as number }
+    const payload: UpdateTargetAudienceArgs = { id, offerProfileId: data.offer_profile_id as number }
 
     if (factStatus) payload.fact_status = factStatus
     if (reviewStatus) payload.review_status = reviewStatus

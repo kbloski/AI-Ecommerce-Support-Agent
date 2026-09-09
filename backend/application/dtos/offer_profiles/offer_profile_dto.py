@@ -1,11 +1,9 @@
 from typing import Optional, List
-from .knowledge_insight_dto import KnowledgeInsightDto
 from ..audience.target_audience_dto import TargetAudienceDto
 from common.mixins.json_serializable import JSONSerializable
 
-class KnowledgeDto(JSONSerializable):
+class OfferProfileDto(JSONSerializable):
 
-    knowledge_insights: List[KnowledgeInsightDto] = []
     target_audiences: List[TargetAudienceDto] = []
 
     def __init__(
@@ -31,7 +29,6 @@ class KnowledgeDto(JSONSerializable):
             "offer_summary": self.offer_summary,
             "category": self.category,
             "value_proposition": self.value_proposition,
-            "knowledge_insights": [i.to_dict() for i in self.knowledge_insights],
             "target_audiences" : [t.to_dict() for t in self.target_audiences]
         }
 
@@ -39,6 +36,5 @@ class KnowledgeDto(JSONSerializable):
 
     def to_content_dict(self):
         data = self.to_dict(exclude=["id", "offer_id"])
-        data["knowledge_insights"] = [i.to_content_dict() for i in self.knowledge_insights]
         data["target_audiences"] = [t.to_content_dict() for t in self.target_audiences]
         return data

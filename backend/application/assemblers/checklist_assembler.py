@@ -23,5 +23,5 @@ class ChecklistAssembler:
         item.checklist_items = checklist_items_dtos
 
         return item
-    
+
 

@@ -6,8 +6,8 @@ import { useGetAnalysisQuery } from '@/features/analysis/analysisApi'
 import { useListChecklistsForAnalysisQuery } from '@/features/checklists/checklistsApi'
 
 export default function AnalysisDetailPage() {
-  const { knowledgeId: knowledgeIdParam, analysisId: analysisIdParam } = useParams()
-  const knowledgeId = Number(knowledgeIdParam)
+  const { offerProfileId: offerProfileIdParam, analysisId: analysisIdParam } = useParams()
+  const offerProfileId = Number(offerProfileIdParam)
   const analysisId = Number(analysisIdParam)
 
   const { data: analysis, isLoading, error } = useGetAnalysisQuery(analysisId)
@@ -16,8 +16,8 @@ export default function AnalysisDetailPage() {
   return (
     <DetailShell
       title={`Analiza #${analysisId}`}
-      backTo={`/knowledges/${knowledgeId}`}
-      backLabel="← Knowledge"
+      backTo={`/offer-profiles/${offerProfileId}`}
+      backLabel="← OfferProfile"
       data={analysis}
       isLoading={isLoading}
       error={error}
@@ -29,13 +29,13 @@ export default function AnalysisDetailPage() {
               id: 'checklists',
               label: 'Checklisty',
               count: checklists.data?.length ?? 0,
-              to: `/knowledges/${knowledgeId}/analysis/${analysisId}/checklists`,
+              to: `/offer-profiles/${offerProfileId}/analysis/${analysisId}/checklists`,
             },
             {
               id: 'resources',
               label: 'Zasoby',
               count: (analysis?.analysis_questions as Entity[] | undefined)?.length ?? 0,
-              to: `/knowledges/${knowledgeId}/analysis/${analysisId}/questions`,
+              to: `/offer-profiles/${offerProfileId}/analysis/${analysisId}/questions`,
             },
           ]}
         />

@@ -7,19 +7,12 @@ from pathlib import Path
 DB_PATH = Path(__file__).resolve().parent.parent / "app.db"
 
 TABLES = {
-    "knowledge_insights": (
-        "ix_knowledge_insights_content_status",
-        "ix_knowledge_insight_knowledge_type_status",
-        "ix_knowledge_insights_fact_status",
-        "CREATE INDEX ix_knowledge_insight_knowledge_type_fact_status "
-        "ON knowledge_insights (knowledge_id, type, fact_status)",
-    ),
     "target_audiences": (
         "ix_target_audiences_content_status",
-        "ix_target_audience_knowledge_status",
+        "ix_target_audience_offer_profile_status",
         "ix_target_audiences_fact_status",
-        "CREATE INDEX ix_target_audience_knowledge_fact_status "
-        "ON target_audiences (knowledge_id, fact_status)",
+        "CREATE INDEX ix_target_audience_offer_profile_fact_status "
+        "ON target_audiences (offer_profile_id, fact_status)",
     ),
 }
 

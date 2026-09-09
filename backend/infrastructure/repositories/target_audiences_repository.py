@@ -40,17 +40,17 @@ class TargetAudiencesRepository:
 
 
     # 🔍 GET BY ID
-    def find_for_knowledge(
+    def find_for_offer_profile(
         self,
-        knowledge_id: int = None,
+        offer_profile_id: int = None,
     ) -> list[TargetAudience]:
 
-        if knowledge_id is None:
+        if offer_profile_id is None:
             return []
 
         return (
             self.db.query(TargetAudience)
-            .filter(TargetAudience.knowledge_id == knowledge_id)
+            .filter(TargetAudience.offer_profile_id == offer_profile_id)
             .order_by(
                 case((TargetAudience.review_status == "pending", 0), else_=1),
                 TargetAudience.created_at.desc(),

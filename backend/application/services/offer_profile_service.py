@@ -5,14 +5,14 @@ from infrastructure.logging.logger import Logger
 from infrastructure.parsers.docx_parser import DocxParser
 from infrastructure.parsers.txt_parser import TxtParser
 from application.services.ai_service import AiService
-from application.dtos.knowledge.knowledge_dto import KnowledgeDto
-from infrastructure.repositories.knowledge_repository import KnowledgeRepository
-from application.mappers.knowledge_mapper import KnowledgeMapper
-from application.assemblers.knowledge_assembler import KnowledgeAssembler
+from application.dtos.offer_profiles.offer_profile_dto import OfferProfileDto
+from infrastructure.repositories.offer_profile_repository import OfferProfileRepository
+from application.mappers.offer_profile_mapper import OfferProfileMapper
+from application.assemblers.offer_profile_assembler import OfferProfileAssembler
 from application.services.llm_context_builder import build_llm_section
 from domain.enums.context_section_purpose import ContextSectionPurpose
 
-class KnowledgeService:
+class OfferProfileService:
 
     def __init__(
         self,
@@ -21,46 +21,46 @@ class KnowledgeService:
         txt_parser: TxtParser,
         ai_service: AiService,
         path_service: PathService,
-        knowledge_repository : KnowledgeRepository,
-        knowledge_assembler : KnowledgeAssembler
+        offer_profile_repository : OfferProfileRepository,
+        offer_profile_assembler : OfferProfileAssembler
     ):
         self.logger = logger
         self.docx_parser = docx_parser
         self.path_service = path_service
         self.txt_parser = txt_parser
         self.ai_service = ai_service
-        self.knowledge_repository = knowledge_repository
-        self.knowledge_assembler = knowledge_assembler
+        self.offer_profile_repository = offer_profile_repository
+        self.offer_profile_assembler = offer_profile_assembler
 
 
 
-    def get_knowledge_details_by_id(self, knowledge_id : int ) -> KnowledgeDto :
-        knowledge_db = self.knowledge_repository.get_by_id( id=knowledge_id)
-        knowledge_dto = KnowledgeMapper.to_dto(item=knowledge_db)
-        assembled_knowledge = self.knowledge_assembler.assemble_dto(item=knowledge_dto)
-        return assembled_knowledge
+    def get_offer_profile_details_by_id(self, offer_profile_id : int ) -> OfferProfileDto :
+        offer_profile_db = self.offer_profile_repository.get_by_id( id=offer_profile_id)
+        offer_profile_dto = OfferProfileMapper.to_dto(item=offer_profile_db)
+        assembled_offer_profile = self.offer_profile_assembler.assemble_dto(item=offer_profile_dto)
+        return assembled_offer_profile
 
 
 
-    def build_llm_context(self, knowledge_id: int) -> str:
-        assembled_knowledge = self.get_knowledge_details_by_id(knowledge_id=knowledge_id)
+    def build_llm_context(self, offer_profile_id: int) -> str:
+        assembled_offer_profile = self.get_offer_profile_details_by_id(offer_profile_id=offer_profile_id)
 
-        knowledge_json = json.dumps(
-            assembled_knowledge.to_content_dict(),
+        offer_profile_json = json.dumps(
+            assembled_offer_profile.to_content_dict(),
             ensure_ascii=False,
             indent=2,
             default=str
         )
 
-        return build_llm_section("knowledge", knowledge_json, purpose=ContextSectionPurpose.KNOWLEDGE.value)
+        return build_llm_section("offer_profile", offer_profile_json, purpose=ContextSectionPurpose.OFFER_PROFILE.value)
 
 
 
-    def build_knowledge_from_materials_raw(self):
-        self.logger.info("Build knowledge from materials raw start")
+    def build_offer_profile_from_materials_raw(self):
+        self.logger.info("Build offer_profile from materials raw start")
 
         # 🔹 folder RAW
-        raw_folder = self.path_service.RAW_ECOMMERCE_KNOWLEDGE
+        raw_folder = self.path_service.RAW_ECOMMERCE_OFFER_PROFILE
 
         # 🔹 zbieranie plików (AI-friendly)
         allowed_ext = {".docx", ".txt"}
@@ -90,9 +90,8 @@ class KnowledgeService:
 
 
         return {
-            "message": "Knowledge build completed",
+            "message": "OfferProfile build completed",
             "files_count": len(files),
             "parsed_count": len(parsed_documents),
             # "documents": parsed_documents
         }
-        

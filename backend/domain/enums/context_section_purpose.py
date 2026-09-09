@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class ContextSectionPurpose(str, Enum):
-    KNOWLEDGE = "Informacje opisujące ofertę, jej odbiorców oraz fakty, możliwości i ograniczenia produktu."
+    OFFER_PROFILE = "Informacje opisujące ofertę, jej odbiorców oraz fakty, możliwości i ograniczenia produktu."
     BRAND_MARKETING = "Informacje o tym, jak marka ma być pozycjonowana, postrzegana i komunikowana."
     MARKETING_STRATEGY = "Informacje o tym, do kogo kierować działania marketingowe, gdzie je prowadzić i jakie cele realizować."
     OFFER_STRATEGY = "Informacje o tym, jak przedstawiać ofertę, jej wartość, korzyści i powody zakupu."

@@ -11,7 +11,7 @@ def generate_page_strategy_json_handler(
 ):
     container = Container()
 
-    knowledge_service = container.knowledge_service()
+    offer_profile_service = container.offer_profile_service()
     message_strategy_service = container.message_strategy_service()
     brand_marketing_service = container.brand_marketing_service()
     marketing_strategy_service = container.marketing_strategy_service()
@@ -53,8 +53,8 @@ def generate_page_strategy_json_handler(
             LlmMessage(
                 role=LlmMessageRole.USER,
                 content=get_data_prompt(
-                    knowledge_context=knowledge_service.build_llm_context(
-                        knowledge_id=brand_strategy.knowledge_id
+                    offer_profile_context=offer_profile_service.build_llm_context(
+                        offer_profile_id=brand_strategy.offer_profile_id
                     ),
                     brand_strategy_context=brand_marketing_service.build_llm_context(
                         brand_marketing_id=marketing_strategy.brand_marketing_id
@@ -176,11 +176,11 @@ Use all provided context, but apply this hierarchy:
 4. BRAND STRATEGY
    Defines brand positioning and communication constraints.
 
-5. KNOWLEDGE
+5. OFFER_PROFILE
    Provides factual grounding.
 
 A lower-level strategy may specialize a broader strategy,
-but it must not contradict factual knowledge.
+but it must not contradict factual offer_profile.
 
 When several possible angles, benefits, or problems exist,
 do not combine all of them.
@@ -500,7 +500,7 @@ Prefer precise mechanism-based claims such as:
 - provides structure for reflection.
 
 Only use strong health, behavioral, financial,
-or performance claims when supported by the provided knowledge.
+or performance claims when supported by the provided offer_profile.
 
 
 11. CUSTOMER JOURNEY
@@ -615,15 +615,15 @@ OUTPUT RULES
 
 
 def get_data_prompt(
-    knowledge_context: str,
+    offer_profile_context: str,
     brand_strategy_context: str,
     marketing_strategy_context: str,
     offer_strategy_context: str,
     message_strategy_context: str
 ) -> str:
     return f"""
-KNOWLEDGE:
-{knowledge_context}
+OFFER_PROFILE:
+{offer_profile_context}
 
 
 BRAND STRATEGY:

@@ -3,11 +3,10 @@ from enum import Enum
 
 class TableName(str, Enum):
     OFFERS_RAW = "offers_raw"
-    KNOWLEDGE = "knowledge"
-    KNOWLEDGE_INSIGHTS = "knowledge_insights"
+    OFFER_PROFILES = "offer_profiles"
     TARGET_AUDIENCES = "target_audiences"
     ANALYSIS = "analysis"
-    KNOWLEDGE_ANALYSIS = "knowledge_analysis"
+    OFFER_PROFILE_ANALYSIS = "offer_profile_analysis"
     ANALYSIS_QUESTIONS= "analysis_questions"
     QUESTION_ANSWERS = "question_answers"
     CHECKLIST = "checklist"

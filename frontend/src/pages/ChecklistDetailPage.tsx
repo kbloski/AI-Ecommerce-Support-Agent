@@ -5,9 +5,9 @@ import { useGetChecklistQuery } from '@/features/checklists/checklistsApi'
 import type { Entity } from '@/types'
 
 export default function ChecklistDetailPage() {
-  const { knowledgeId: knowledgeIdParam, analysisId: analysisIdParam, checklistId: checklistIdParam } =
+  const { offerProfileId: offerProfileIdParam, analysisId: analysisIdParam, checklistId: checklistIdParam } =
     useParams()
-  const knowledgeId = Number(knowledgeIdParam)
+  const offerProfileId = Number(offerProfileIdParam)
   const analysisId = Number(analysisIdParam)
   const checklistId = Number(checklistIdParam)
 
@@ -16,7 +16,7 @@ export default function ChecklistDetailPage() {
   return (
     <DetailShell
       title={(data?.name as string) ?? `Checklista #${checklistId}`}
-      backTo={`/knowledges/${knowledgeId}/analysis/${analysisId}`}
+      backTo={`/offer-profiles/${offerProfileId}/analysis/${analysisId}`}
       backLabel="← Analiza"
       data={data}
       isLoading={isLoading}
@@ -29,7 +29,7 @@ export default function ChecklistDetailPage() {
               id: 'items',
               label: 'Zadania',
               count: (data?.checklist_items as Entity[] | undefined)?.length ?? 0,
-              to: `/knowledges/${knowledgeId}/analysis/${analysisId}/checklists/${checklistId}/items`,
+              to: `/offer-profiles/${offerProfileId}/analysis/${analysisId}/checklists/${checklistId}/items`,
             },
           ]}
         />

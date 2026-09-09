@@ -3,8 +3,7 @@ from typing import Dict, Type
 from infrastructure.database.db import Base
 from domain.enums.table_name import TableName
 from domain.models.offers.offer_raw import OfferRaw
-from domain.models.knowledge.knowledge import Knowledge
-from domain.models.knowledge.knowledge_insight import KnowledgeInsight
+from domain.models.offer_profiles.offer_profile import OfferProfile
 from domain.models.audience.target_audience import TargetAudience
 from domain.models.analysis.analysis import Analysis
 from domain.models.checklist.checklist import Checklist
@@ -27,8 +26,7 @@ from domain.models.page_copy.page_copy import PageCopy
 # page in the frontend (and can therefore be marked as favorite).
 FAVORITABLE_MODELS: Dict[str, Type[Base]] = {
     TableName.OFFERS_RAW.value: OfferRaw,
-    TableName.KNOWLEDGE.value: Knowledge,
-    TableName.KNOWLEDGE_INSIGHTS.value: KnowledgeInsight,
+    TableName.OFFER_PROFILE.value: OfferProfile,
     TableName.TARGET_AUDIENCES.value: TargetAudience,
     TableName.ANALYSIS.value: Analysis,
     TableName.CHECKLIST.value: Checklist,

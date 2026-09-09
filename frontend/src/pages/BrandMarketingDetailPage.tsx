@@ -11,8 +11,8 @@ export default function BrandMarketingDetailPage() {
   return (
     <DetailShell
       title={(brandMarketing?.brand_name as string) ?? 'Brand marketing'}
-      backTo={brandMarketing ? `/knowledges/${brandMarketing.knowledge_id}` : undefined}
-      backLabel="← Knowledge"
+      backTo={brandMarketing ? `/offer-profiles/${brandMarketing.offer_profile_id}` : undefined}
+      backLabel="← OfferProfile"
       data={brandMarketing}
       isLoading={isLoading}
       error={error}

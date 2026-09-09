@@ -2,7 +2,7 @@ import json
 from typing import Dict, Any
 
 from di.container import Container
-from application.mappers.knowledge_mapper import KnowledgeMapper
+from application.mappers.offer_profile_mapper import OfferProfileMapper
 from application.mappers.target_audience_mapper import TargetAudienceMapper
 
 from domain.models.llm.llm_message import LlmMessage
@@ -21,19 +21,19 @@ from infrastructure.ai.prompts.uniqueness import build_uniqueness_prompt
 
 
 def generate_target_audience_handler(
-    knowledge_id: int
+    offer_profile_id: int
 ) -> Dict[str, Any]:
     container = Container()
 
     target_audience_repo = container.target_audiences_repository()
     ai_service = container.ai_service()
-    knowledge_repo = container.knowledge_repository()
+    offer_profile_repo = container.offer_profile_repository()
 
-    target_audiences_db = target_audience_repo.find_for_knowledge(knowledge_id=knowledge_id)
+    target_audiences_db = target_audience_repo.find_for_offer_profile(offer_profile_id=offer_profile_id)
     target_audiences_db_dtos = [TargetAudienceMapper.to_dto(item=t) for t in target_audiences_db]
-    knowledge_db = knowledge_repo.get_by_id(id=knowledge_id)
-    knowledge_db_dto = KnowledgeMapper.to_dto(item=knowledge_db)
-    knowledge_context = knowledge_db_dto.to_content_dict()
+    offer_profile_db = offer_profile_repo.get_by_id(id=offer_profile_id)
+    offer_profile_db_dto = OfferProfileMapper.to_dto(item=offer_profile_db)
+    offer_profile_context = offer_profile_db_dto.to_content_dict()
 
     response = ai_service.chat_llm(
         messages=[
@@ -50,7 +50,7 @@ def generate_target_audience_handler(
             ),
             LlmMessage(
                 role=LlmMessageRole.USER,
-                content=get_target_audience_prompt(knowledge_context=knowledge_context)
+                content=get_target_audience_prompt(offer_profile_context=offer_profile_context)
             )
         ]
     )
@@ -63,7 +63,7 @@ def generate_target_audience_handler(
     for t in audiences_arr:
         new_target_audiences.append(
             TargetAudience(
-                knowledge_id=knowledge_id,
+                offer_profile_id=offer_profile_id,
                 fact_status=FactStatus.UNVERIFIED.value,
                 name=t["name"],
                 reason=t["reason"],
@@ -166,7 +166,7 @@ def get_target_audience_schema() -> str:
         }
     ]
 }, ensure_ascii=False, indent=2)
-    
+
 
 def _enum_values(enum_cls) -> str:
     return ", ".join(member.value for member in enum_cls)
@@ -218,13 +218,13 @@ Incorrect example:
 """
 
 
-def get_target_audience_prompt(knowledge_context: str) -> str:
+def get_target_audience_prompt(offer_profile_context: str) -> str:
     return f"""
 Analyze the product information.
 
 PRODUCT DATA:
 
-{knowledge_context}
+{offer_profile_context}
 
 
 Generate target audience segments.

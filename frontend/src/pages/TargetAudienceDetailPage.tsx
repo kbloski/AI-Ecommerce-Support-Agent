@@ -10,8 +10,8 @@ export default function TargetAudienceDetailPage() {
   return (
     <DetailShell
       title={(data?.name as string) ?? 'Grupa docelowa'}
-      backTo={data ? `/knowledges/${data.knowledge_id}` : undefined}
-      backLabel="← Knowledge"
+      backTo={data ? `/offer-profiles/${data.offer_profile_id}` : undefined}
+      backLabel="← OfferProfile"
       data={data}
       isLoading={isLoading}
       error={error}

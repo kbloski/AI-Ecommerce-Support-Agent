@@ -37,8 +37,8 @@ class BrandMarketingService:
         brand_marketing_dto = BrandMarketingMapper.to_dto(brand_marketing_db)
         return self.brand_marketing_assembler.assemble_dto(brand_marketing_dto)
 
-    def get_brand_marketings_by_knowledge(self, knowledge_id: int) -> List[BrandMarketingDto]:
-        items = self.brand_marketing_repository.get_by_knowledge_id(knowledge_id)
+    def get_brand_marketings_by_offer_profile(self, offer_profile_id: int) -> List[BrandMarketingDto]:
+        items = self.brand_marketing_repository.get_by_offer_profile_id(offer_profile_id)
         dtos = [BrandMarketingMapper.to_dto(item) for item in items]
         return [self.brand_marketing_assembler.assemble_dto(dto) for dto in dtos]
 

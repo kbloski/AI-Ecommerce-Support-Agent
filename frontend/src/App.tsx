@@ -3,11 +3,10 @@ import { AppShell } from '@/components/AppShell'
 import DashboardPage from '@/pages/DashboardPage'
 import OffersPage from '@/pages/OffersPage'
 import OfferDetailPage from '@/pages/OfferDetailPage'
-import KnowledgesPage from '@/pages/KnowledgesPage'
-import KnowledgeDetailPage from '@/pages/KnowledgeDetailPage'
+import OfferProfilesPage from '@/pages/OfferProfilesPage'
+import OfferProfileDetailPage from '@/pages/OfferProfileDetailPage'
 import TargetAudienceDetailPage from '@/pages/TargetAudienceDetailPage'
 import TargetAudienceEditPage from '@/pages/TargetAudienceEditPage'
-import KnowledgeInsightEditPage from '@/pages/KnowledgeInsightEditPage'
 import AnalysisDetailPage from '@/pages/AnalysisDetailPage'
 import ChecklistDetailPage from '@/pages/ChecklistDetailPage'
 import BrandMarketingDetailPage from '@/pages/BrandMarketingDetailPage'
@@ -25,11 +24,11 @@ import PageBlueprintDetailPage from '@/pages/PageBlueprintDetailPage'
 import PageContentPlanDetailPage from '@/pages/PageContentPlanDetailPage'
 import PageCopyDetailPage from '@/pages/PageCopyDetailPage'
 import SettingsPage from '@/pages/SettingsPage'
-import { KnowledgeInsightsPage, KnowledgeTargetAudiencesPage } from '@/pages/EntityRelationPages'
+import { OfferProfileTargetAudiencesPage } from '@/pages/EntityRelationPages'
 import {
   AdCreativeExecutionsPage, AdCreativeStrategiesPage, AnalysisChecklistsPage, AnalysisQuestionsPage,
-  BrandMarketingStrategiesPage, ChecklistItemsPage, KnowledgeAnalysesPage,
-  KnowledgeBrandMarketingPage, MarketingOfferStrategiesPage, MessageAdStrategiesPage,
+  BrandMarketingStrategiesPage, ChecklistItemsPage, OfferProfileAnalysesPage,
+  OfferProfileBrandMarketingPage, MarketingOfferStrategiesPage, MessageAdStrategiesPage,
   MessagePageStrategiesPage, MessageUgcCreativesPage, OfferMessageStrategiesPage,
   PageRequirementsPage, PageBlueprintsPage, PageContentPlansPage, PageCopiesPage, CreativeAdExecutionsPage,
 } from '@/pages/ResourcePages'
@@ -41,23 +40,21 @@ function App() {
         <Route path="/" element={<DashboardPage />} />
         <Route path="/offers" element={<OffersPage />} />
         <Route path="/offers/:offerId" element={<OfferDetailPage />} />
-        <Route path="/offers/:offerId/knowledges" element={<KnowledgesPage />} />
-        <Route path="/knowledges/:knowledgeId" element={<KnowledgeDetailPage />} />
-        <Route path="/knowledges/:knowledgeId/insights" element={<KnowledgeInsightsPage />} />
-        <Route path="/knowledges/:knowledgeId/target-audiences" element={<KnowledgeTargetAudiencesPage />} />
-        <Route path="/knowledges/:knowledgeId/analyses" element={<KnowledgeAnalysesPage />} />
-        <Route path="/knowledges/:knowledgeId/brand-marketing" element={<KnowledgeBrandMarketingPage />} />
+        <Route path="/offers/:offerId/offer-profiles" element={<OfferProfilesPage />} />
+        <Route path="/offer-profiles/:offerProfileId" element={<OfferProfileDetailPage />} />
+        <Route path="/offer-profiles/:offerProfileId/target-audiences" element={<OfferProfileTargetAudiencesPage />} />
+        <Route path="/offer-profiles/:offerProfileId/analyses" element={<OfferProfileAnalysesPage />} />
+        <Route path="/offer-profiles/:offerProfileId/brand-marketing" element={<OfferProfileBrandMarketingPage />} />
         <Route path="/target-audiences/:id" element={<TargetAudienceDetailPage />} />
         <Route path="/target-audiences/:id/edit" element={<TargetAudienceEditPage />} />
-        <Route path="/knowledge-insights/:id/edit" element={<KnowledgeInsightEditPage />} />
-        <Route path="/knowledges/:knowledgeId/analysis/:analysisId" element={<AnalysisDetailPage />} />
-        <Route path="/knowledges/:knowledgeId/analysis/:analysisId/checklists" element={<AnalysisChecklistsPage />} />
-        <Route path="/knowledges/:knowledgeId/analysis/:analysisId/questions" element={<AnalysisQuestionsPage />} />
+        <Route path="/offer-profiles/:offerProfileId/analysis/:analysisId" element={<AnalysisDetailPage />} />
+        <Route path="/offer-profiles/:offerProfileId/analysis/:analysisId/checklists" element={<AnalysisChecklistsPage />} />
+        <Route path="/offer-profiles/:offerProfileId/analysis/:analysisId/questions" element={<AnalysisQuestionsPage />} />
         <Route
-          path="/knowledges/:knowledgeId/analysis/:analysisId/checklists/:checklistId"
+          path="/offer-profiles/:offerProfileId/analysis/:analysisId/checklists/:checklistId"
           element={<ChecklistDetailPage />}
         />
-        <Route path="/knowledges/:knowledgeId/analysis/:analysisId/checklists/:checklistId/items" element={<ChecklistItemsPage />} />
+        <Route path="/offer-profiles/:offerProfileId/analysis/:analysisId/checklists/:checklistId/items" element={<ChecklistItemsPage />} />
         <Route path="/brand-marketing/:id" element={<BrandMarketingDetailPage />} />
         <Route path="/brand-marketing/:id/marketing-strategies" element={<BrandMarketingStrategiesPage />} />
         <Route path="/marketing-strategy/:id" element={<MarketingStrategyDetailPage />} />

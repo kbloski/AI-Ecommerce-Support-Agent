@@ -12,5 +12,5 @@ class OfferAssembler:
 
     def assemble_dto(self, item : OfferDto) -> OfferDto:
         return item
-    
+
 

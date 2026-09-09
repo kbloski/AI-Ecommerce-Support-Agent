@@ -1,7 +1,6 @@
 export const TAG_TYPES = [
   'Offer',
-  'Knowledge',
-  'KnowledgeInsight',
+  'OfferProfile',
   'TargetAudience',
   'Analysis',
   'Checklist',

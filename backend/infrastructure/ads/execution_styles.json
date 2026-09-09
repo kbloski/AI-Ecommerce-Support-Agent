@@ -77,7 +77,7 @@
       "Use only expertise, credentials, affiliations, research, and claims supported by the input data.",
       "The expert should provide specific and useful information rather than a generic endorsement.",
       "Keep explanations accessible and avoid unnecessary technical complexity.",
-      "Connect expert knowledge directly to the product's relevant mechanism, benefit, use case, or evidence.",
+      "Connect expert offer_profile directly to the product's relevant mechanism, benefit, use case, or evidence.",
       "Do not imply medical, scientific, professional, or institutional authority that has not been provided.",
       "The product should remain meaningfully connected to the expert's explanation.",
       "Avoid making the expert sound like a scripted brand spokesperson."

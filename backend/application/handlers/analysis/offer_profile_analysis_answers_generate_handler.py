@@ -5,14 +5,14 @@ from typing import Dict, Any, List
 
 from di.container import Container
 
-from application.mappers.knowledge_mapper import KnowledgeMapper
+from application.mappers.offer_profile_mapper import OfferProfileMapper
 from application.mappers.analysis_question_mapper import AnalysisQuestionMapper
 
 from domain.models.analysis.analysis_questions import AnalysisQuestion
 from domain.models.analysis.question_answer import QuestionAnswer
 from domain.models.llm.llm_message import LlmMessage
 from domain.enums.llm_message_role import LlmMessageRole
-from domain.analysis.knowledge_analysis_questions import KNOWLEDGE_ANALYSIS_QUESTIONS
+from domain.analysis.offer_profile_analysis_questions import OFFER_PROFILE_ANALYSIS_QUESTIONS
 
 BASE_SYSTEM_PROMPT = """
 You are an expert in e-commerce product analysis.
@@ -97,31 +97,31 @@ Rules:
 """
 
 
-def knowledge_analysis_answers_generate_handler(
-    knowledge_id: int,
+def offer_profile_analysis_answers_generate_handler(
+    offer_profile_id: int,
     analyse_id: int
 ) -> Dict[str, Any]:
 
     container = Container()
     logger = container.logger()
-    knowledge_service = container.knowledge_service()
+    offer_profile_service = container.offer_profile_service()
     ai_service = container.ai_service()
-    knowledge_analysis_repository = container.knowledge_analysis_repository()
+    offer_profile_analysis_repository = container.offer_profile_analysis_repository()
     analysis_repository = container.analysis_repository()
     analysis_questions_repository = container.analysis_questions_repository()
     question_answer_repository = container.question_answer_repository()
 
-    # Get analysis 
-    knowledge_analysis_db = knowledge_analysis_repository.find_relation(knowledge_id=knowledge_id,analysis_id=analyse_id)
-    analyse_db = analysis_repository.get_by_id(id=knowledge_analysis_db.analysis_id)
+    # Get analysis
+    offer_profile_analysis_db = offer_profile_analysis_repository.find_relation(offer_profile_id=offer_profile_id,analysis_id=analyse_id)
+    analyse_db = analysis_repository.get_by_id(id=offer_profile_analysis_db.analysis_id)
 
-    logger.info(f"Generating knowledge analysis for knowledge_id={knowledge_id}")
-    assembled_dto = knowledge_service.get_knowledge_details_by_id(knowledge_id=knowledge_id)
-    knowledge_json = assembled_dto.to_dict()
+    logger.info(f"Generating offer_profile analysis for offer_profile_id={offer_profile_id}")
+    assembled_dto = offer_profile_service.get_offer_profile_details_by_id(offer_profile_id=offer_profile_id)
+    offer_profile_json = assembled_dto.to_dict()
 
-    question_batches = chunk_list(items=KNOWLEDGE_ANALYSIS_QUESTIONS,size=10)
+    question_batches = chunk_list(items=OFFER_PROFILE_ANALYSIS_QUESTIONS,size=10)
 
-    logger.info(f"Split {len(KNOWLEDGE_ANALYSIS_QUESTIONS)} questions into {len(question_batches)} batches")
+    logger.info(f"Split {len(OFFER_PROFILE_ANALYSIS_QUESTIONS)} questions into {len(question_batches)} batches")
 
 
     final_analysis_questions_dicts = []
@@ -137,7 +137,7 @@ def knowledge_analysis_answers_generate_handler(
             LlmMessage(
                 role=LlmMessageRole.USER,
                 content=build_product_context_prompt(
-                    knowledge_json
+                    offer_profile_json
                 )
             ),
             LlmMessage(
@@ -157,9 +157,9 @@ def knowledge_analysis_answers_generate_handler(
         logger.info(f"Batch {batch_index}/{len(question_batches)} returned {len(batch_result)} answers")
         final_analysis_questions_dicts.extend( batch_result  )
 
-    logger.info(f"Knowledge analysis completed for knowledge_id={knowledge_id}, total_answers={len(final_analysis_questions_dicts)}")
-    
-    
+    logger.info(f"OfferProfile analysis completed for offer_profile_id={offer_profile_id}, total_answers={len(final_analysis_questions_dicts)}")
+
+
     # QuestionAnswer insert to db
     question_answers = [ QuestionAnswer(
         question=a["question"],

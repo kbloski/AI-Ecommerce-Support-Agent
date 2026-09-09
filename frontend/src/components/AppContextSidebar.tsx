@@ -25,10 +25,10 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
   const { contextualPanel, openPanel } = useSidePanel()
   const showBackButton = pathname !== '/' && pathname !== '/offers'
   const sections = [
-    { pattern: '/offers/:id/*', current: 'Oferta', entityType: 'offer', process: [['knowledges', 'Knowledges']], resources: [] },
-    { pattern: '/knowledges/:id/*', current: 'Knowledge', entityType: 'knowledge', process: [['brand-marketing', 'Brand marketing']], knowledge: [['analyses', 'Analizy']], resources: [['insights', 'Insights'], ['target-audiences', 'Grupy docelowe']] },
-    { pattern: '/knowledges/:knowledgeId/analysis/:id/*', current: 'Analiza', process: [['checklists', 'Checklisty']], resources: [['questions', 'Pytania']] },
-    { pattern: '/knowledges/:knowledgeId/analysis/:analysisId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },
+    { pattern: '/offers/:id/*', current: 'Oferta', entityType: 'offer', process: [['offer_profiles', 'OfferProfiles']], resources: [] },
+    { pattern: '/offer-profiles/:id/*', current: 'Offer profile', entityType: 'offer_profile', process: [['brand-marketing', 'Brand marketing']], offer_profile: [['analyses', 'Analizy']], resources: [['target-audiences', 'Grupy docelowe']] },
+    { pattern: '/offer-profiles/:offerProfileId/analysis/:id/*', current: 'Analiza', process: [['checklists', 'Checklisty']], resources: [['questions', 'Pytania']] },
+    { pattern: '/offer-profiles/:offerProfileId/analysis/:analysisId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },
     { pattern: '/brand-marketing/:id/*', current: 'Brand marketing', entityType: 'brand_marketing', process: [['marketing-strategies', 'Marketing strategy']], resources: [] },
     { pattern: '/marketing-strategy/:id/*', current: 'Marketing strategy', entityType: 'marketing_strategy', process: [['offer-strategies', 'Offer strategy']], resources: [] },
     { pattern: '/offer-strategy/:id/*', current: 'Offer strategy', entityType: 'offer_strategy', process: [['message-strategies', 'Message strategy']], resources: [] },
@@ -44,9 +44,8 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
     { pattern: '/ugc-creatives/:id/*', current: 'UGC creative', entityType: 'ugc_creative', process: [], resources: [] },
     { pattern: '/page-copy/:id/*', current: 'Page copy', entityType: 'page_copy', process: [], resources: [] },
     { pattern: '/target-audiences/:id/*', current: 'Grupa docelowa', process: [], resources: [] },
-    { pattern: '/knowledge-insights/:id/*', current: 'Insight knowledge', process: [], resources: [] },
   ] as const
-  // Prefer the most specific route, otherwise an analysis URL would match Knowledge first.
+  // Prefer the most specific route, otherwise an analysis URL would match OfferProfile first.
   const section = [...sections].sort((a, b) => b.pattern.length - a.pattern.length)
     .map((config) => ({ config, match: matchPath(config.pattern, pathname) }))
     .find(({ match }) => match)
@@ -81,10 +80,7 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
 
   if (section) {
     const detailPath = section.match?.pathnameBase ?? pathname
-    const hasEditOnlyView = ['/knowledge-insights/'].some(
-      (prefix) => pathname.startsWith(prefix),
-    )
-    const currentPath = hasEditOnlyView ? pathname : detailPath
+    const currentPath = detailPath
 
     return (
       <aside className={asideClassName}>
@@ -121,13 +117,13 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
           </section>
         )}
 
-        {'knowledge' in section.config && section.config.knowledge.length > 0 && (
+        {'offer_profile' in section.config && section.config.offer_profile.length > 0 && (
           <section className={section.config.process.length > 0 ? 'mt-6' : undefined}>
             <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
               Wiedza
             </h2>
             <nav className="ml-2 space-y-1 border-l pl-2">
-              {section.config.knowledge.map(([slug, label]) => (
+              {section.config.offer_profile.map(([slug, label]) => (
                 <NavLink key={slug} to={`${detailPath}/${slug}`} className={navLinkClassName}>{label}</NavLink>
               ))}
             </nav>
@@ -135,7 +131,7 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
         )}
 
         {section.config.resources.length > 0 && (
-          <section className={section.config.process.length > 0 || 'knowledge' in section.config ? 'mt-6' : undefined}>
+          <section className={section.config.process.length > 0 || 'offer_profile' in section.config ? 'mt-6' : undefined}>
             <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
               Zasoby
             </h2>
@@ -147,7 +143,7 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
           </section>
         )}
         {('entityType' in section.config || contextualPanel) && (
-          <section className={section.config.process.length > 0 || 'knowledge' in section.config || section.config.resources.length > 0 ? 'mt-6' : undefined}>
+          <section className={section.config.process.length > 0 || 'offer_profile' in section.config || section.config.resources.length > 0 ? 'mt-6' : undefined}>
             <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
               Narzędzia
             </h2>

@@ -4,7 +4,7 @@ import type { Entity } from '@/types'
 
 export interface UpdateTargetAudienceArgs {
   id: number
-  knowledgeId?: number
+  offerProfileId?: number
   fact_status?: string
   review_status?: string
   name?: string
@@ -32,48 +32,48 @@ export interface UpdateTargetAudienceArgs {
 
 export const targetAudiencesApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    listTargetAudiencesForKnowledge: builder.query<Entity[], number>({
-      query: (knowledgeId) => `/knowledges/${knowledgeId}/target-audiences`,
-      providesTags: (result, _err, knowledgeId) => [
+    listTargetAudiencesForOfferProfile: builder.query<Entity[], number>({
+      query: (offerProfileId) => `/offer-profiles/${offerProfileId}/target-audiences`,
+      providesTags: (result, _err, offerProfileId) => [
         ...(result ?? []).map((item) => itemTag('TargetAudience', item.id)),
-        listTag('TargetAudience', knowledgeId),
+        listTag('TargetAudience', offerProfileId),
       ],
     }),
     getTargetAudience: builder.query<Entity, number>({
       query: (id) => `/target-audiences/${id}`,
       providesTags: (_result, _err, id) => [itemTag('TargetAudience', id)],
     }),
-    generateTargetAudiences: builder.mutation<Entity[], { knowledgeId: number }>({
-      query: ({ knowledgeId }) => ({ url: `/knowledges/${knowledgeId}/target-audiences/generate`, method: 'POST' }),
-      invalidatesTags: (_result, _err, { knowledgeId }) => [
-        listTag('TargetAudience', knowledgeId),
-        itemTag('Knowledge', knowledgeId),
+    generateTargetAudiences: builder.mutation<Entity[], { offerProfileId: number }>({
+      query: ({ offerProfileId }) => ({ url: `/offer-profiles/${offerProfileId}/target-audiences/generate`, method: 'POST' }),
+      invalidatesTags: (_result, _err, { offerProfileId }) => [
+        listTag('TargetAudience', offerProfileId),
+        itemTag('OfferProfile', offerProfileId),
       ],
     }),
-    deleteTargetAudience: builder.mutation<void, { id: number; knowledgeId: number }>({
+    deleteTargetAudience: builder.mutation<void, { id: number; offerProfileId: number }>({
       query: ({ id }) => ({ url: `/target-audiences/${id}/delete`, method: 'DELETE' }),
-      invalidatesTags: (_result, _err, { id, knowledgeId }) => [
-        listTag('TargetAudience', knowledgeId),
+      invalidatesTags: (_result, _err, { id, offerProfileId }) => [
+        listTag('TargetAudience', offerProfileId),
         itemTag('TargetAudience', id),
-        itemTag('Knowledge', knowledgeId),
+        itemTag('OfferProfile', offerProfileId),
       ],
     }),
     updateTargetAudience: builder.mutation<Entity, UpdateTargetAudienceArgs>({
-      query: ({ id, knowledgeId: _knowledgeId, ...body }) => ({
+      query: ({ id, offerProfileId: _offerProfileId, ...body }) => ({
         url: `/target-audiences/${id}/update`,
         method: 'POST',
         body,
       }),
-      invalidatesTags: (_result, _err, { id, knowledgeId }) => [
+      invalidatesTags: (_result, _err, { id, offerProfileId }) => [
         itemTag('TargetAudience', id),
-        ...(knowledgeId === undefined ? [] : [itemTag('Knowledge', knowledgeId)]),
+        ...(offerProfileId === undefined ? [] : [itemTag('OfferProfile', offerProfileId)]),
       ],
     }),
   }),
 })
 
 export const {
-  useListTargetAudiencesForKnowledgeQuery,
+  useListTargetAudiencesForOfferProfileQuery,
   useGetTargetAudienceQuery,
   useGenerateTargetAudiencesMutation,
   useDeleteTargetAudienceMutation,

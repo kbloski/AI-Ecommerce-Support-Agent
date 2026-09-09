@@ -15,19 +15,19 @@ export const checklistsApi = api.injectEndpoints({
       query: (id) => `/checklists/${id}`,
       providesTags: (_result, _err, id) => [itemTag('Checklist', id)],
     }),
-    createChecklist: builder.mutation<Entity, { knowledgeId: number; analysisId: number }>({
-      query: ({ knowledgeId, analysisId }) => ({
-        url: `/knowledges/${knowledgeId}/analysis/${analysisId}/checklists/create`,
+    createChecklist: builder.mutation<Entity, { offerProfileId: number; analysisId: number }>({
+      query: ({ offerProfileId, analysisId }) => ({
+        url: `/offer-profiles/${offerProfileId}/analysis/${analysisId}/checklists/create`,
         method: 'POST',
       }),
       invalidatesTags: (_result, _err, { analysisId }) => [listTag('Checklist', analysisId)],
     }),
     generateChecklist: builder.mutation<
       Entity,
-      { knowledgeId: number; analysisId: number; checklistId: number }
+      { offerProfileId: number; analysisId: number; checklistId: number }
     >({
-      query: ({ knowledgeId, analysisId, checklistId }) => ({
-        url: `/knowledges/${knowledgeId}/analysis/${analysisId}/checklists/${checklistId}/generate`,
+      query: ({ offerProfileId, analysisId, checklistId }) => ({
+        url: `/offer-profiles/${offerProfileId}/analysis/${analysisId}/checklists/${checklistId}/generate`,
         method: 'POST',
       }),
       invalidatesTags: (_result, _err, { checklistId }) => [itemTag('Checklist', checklistId)],

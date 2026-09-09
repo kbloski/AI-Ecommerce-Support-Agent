@@ -3,7 +3,7 @@ from typing import Any, Dict
 from di.container import Container
 from application.mappers.brand_marketing_mapper import BrandMarketingMapper
 
-DENYLIST = {"id", "knowledge_id", "created_at", "updated_at"}
+DENYLIST = {"id", "offer_profile_id", "created_at", "updated_at"}
 
 
 def update_brand_marketing_handler(id: int, fields: Dict[str, Any]):

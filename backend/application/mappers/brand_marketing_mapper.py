@@ -8,7 +8,7 @@ class BrandMarketingMapper:
     def to_dto(item: BrandMarketing) -> BrandMarketingDto:
         return BrandMarketingDto(
             id=item.id,
-            knowledge_id=item.knowledge_id,
+            offer_profile_id=item.offer_profile_id,
             brand_name=item.brand_name,
             brand_positioning=item.brand_positioning,
             brand_category=item.brand_category,

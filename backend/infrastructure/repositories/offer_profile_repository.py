@@ -1,27 +1,27 @@
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from domain.models.knowledge.knowledge import Knowledge
+from domain.models.offer_profiles.offer_profile import OfferProfile
 from infrastructure.logging.logger import Logger
 from common.results.paginated_result import PaginatedResult
 
-class KnowledgeRepository:
+class OfferProfileRepository:
     def __init__(self, logger : Logger, db: Session):
         self.db = db
 
     # 🔍 GET BY ID
-    def get_by_id(self, id: int) -> Optional[Knowledge]:
-        return self.db.query(Knowledge).filter(Knowledge.id == id).first()
+    def get_by_id(self, id: int) -> Optional[OfferProfile]:
+        return self.db.query(OfferProfile).filter(OfferProfile.id == id).first()
 
     # 🔍 GET BY ID
-    def get_by_offer_id(self, offer_id: int) -> Optional[Knowledge]:
-        return self.db.query(Knowledge).filter(Knowledge.offer_id == offer_id).all()
+    def get_by_offer_id(self, offer_id: int) -> Optional[OfferProfile]:
+        return self.db.query(OfferProfile).filter(OfferProfile.offer_id == offer_id).all()
 
-    def update(self, item: Knowledge) -> Knowledge:
-        existing_item = self.db.query(Knowledge).filter(Knowledge.id == item.id).first()
+    def update(self, item: OfferProfile) -> OfferProfile:
+        existing_item = self.db.query(OfferProfile).filter(OfferProfile.id == item.id).first()
 
         if not existing_item:
-            raise ValueError(f"Knowledge with id {item.id} not found")
+            raise ValueError(f"OfferProfile with id {item.id} not found")
 
         for key, value in item.__dict__.items():
             if key != "_sa_instance_state":
@@ -34,7 +34,7 @@ class KnowledgeRepository:
 
     # ❌ DELETE
     def delete(self, id: int) -> bool:
-        item = self.db.query(Knowledge).filter(Knowledge.id == id).first()
+        item = self.db.query(OfferProfile).filter(OfferProfile.id == id).first()
 
         if not item:
             return False

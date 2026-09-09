@@ -7,5 +7,5 @@ def get_offers(page : int):
         page=page
     )
     return result
-        
+
 

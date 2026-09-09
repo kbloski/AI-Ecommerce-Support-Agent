@@ -13,7 +13,7 @@ def generate_page_content_plan_handler(
 
     container = Container()
 
-    knowledge_service = container.knowledge_service()
+    offer_profile_service = container.offer_profile_service()
     brand_marketing_service = container.brand_marketing_service()
     marketing_strategy_service = container.marketing_strategy_service()
     page_strategy_service = container.page_strategy_service()
@@ -71,8 +71,8 @@ def generate_page_content_plan_handler(
 
     data_prompt = get_data_prompt(
 
-        knowledge_context=knowledge_service.build_llm_context(
-            knowledge_id=brand_marketing.knowledge_id
+        offer_profile_context=offer_profile_service.build_llm_context(
+            offer_profile_id=brand_marketing.offer_profile_id
         ),
 
         brand_marketing_context=brand_marketing_service.build_llm_context(
@@ -237,7 +237,7 @@ When information conflicts:
 4. Follow Offer Strategy.
 5. Follow Marketing Strategy.
 6. Follow Brand Marketing.
-7. Use Knowledge Base as supporting context.
+7. Use OfferProfile Base as supporting context.
 
 
 FIELD DEFINITIONS
@@ -367,7 +367,7 @@ STRICT JSON RULES
 
 
 def get_data_prompt(
-    knowledge_context: str,
+    offer_profile_context: str,
     brand_marketing_context: str,
     marketing_strategy_context: str,
     offer_strategy_context: str,
@@ -376,8 +376,8 @@ def get_data_prompt(
     page_blueprint_context: str
 ) -> str:
     return f"""
-KNOWLEDGE:
-{knowledge_context}
+OFFER_PROFILE:
+{offer_profile_context}
 
 
 BRAND MARKETING:

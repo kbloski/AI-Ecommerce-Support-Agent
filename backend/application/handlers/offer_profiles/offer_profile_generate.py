@@ -3,49 +3,24 @@
 # ----------------------------
 import json
 
-from application.mappers.knowledge_mapper import KnowledgeMapper
-from application.mappers.knowledge_insight_mapper import KnowledgeInsightMapper
+from application.mappers.offer_profile_mapper import OfferProfileMapper
 from application.dtos.offers.offer_dto import OfferDto
 
 from di.container import Container
 from domain.models.llm.llm_message import LlmMessage
 from domain.enums.llm_message_role import LlmMessageRole
 
-from domain.models.knowledge.knowledge import Knowledge
-from domain.models.knowledge.knowledge_insight import KnowledgeInsight
+from domain.models.offer_profiles.offer_profile import OfferProfile
 
-from domain.enums.knowledge_insight_type import KnowledgeInsightType
-from domain.enums.fact_status import FactStatus
 
 from infrastructure.database.db import SessionLocal
 
 
 
-# =====================================================
-# INSIGHT TYPE MAPPING
-# =====================================================
-
-INSIGHT_MAPPING = {
-    "problem_solved": KnowledgeInsightType.PROBLEM_SOLVED,
-    "solution":KnowledgeInsightType.SOLUTION,
-    "transformation":KnowledgeInsightType.TRANSFORMATION,
-    "offer_components":KnowledgeInsightType.OFFER_COMPONENT,
-    "features":KnowledgeInsightType.FEATURE,
-    "functional_benefits":KnowledgeInsightType.FUNCTIONAL_BENEFIT,
-    "emotional_benefits":KnowledgeInsightType.EMOTIONAL_BENEFIT,
-    "differentiators":KnowledgeInsightType.DIFFERENTIATOR,
-    "strengths":KnowledgeInsightType.STRENGTH,
-    "limitations":KnowledgeInsightType.LIMITATION,
-    "additional_insights":KnowledgeInsightType.ADDITIONAL_INSIGHT,
-}
-
-
-
-# =====================================================
-# MAIN HANDLER
+# =====================================================`r`n# MAIN HANDLER
 # =====================================================
 
-def knowledge_generate_handler(offer_id: int):
+def offer_profile_generate_handler(offer_id: int):
 
     container = Container()
 
@@ -57,10 +32,10 @@ def knowledge_generate_handler(offer_id: int):
     # LOAD OFFER
     # ----------------------------
     offer_context = offer_service.build_llm_context(offer_id)
-    
+
 
     # ----------------------------
-    # GENERATE KNOWLEDGE
+    # GENERATE OFFER_PROFILE
     # ----------------------------
 
     chat = [
@@ -74,7 +49,7 @@ def knowledge_generate_handler(offer_id: int):
         ),
         LlmMessage(
             role=LlmMessageRole.USER,
-            content=get_knowledge_prompt()
+            content=get_offer_profile_prompt()
         ),
     ]
 
@@ -88,46 +63,16 @@ def knowledge_generate_handler(offer_id: int):
     with SessionLocal() as session:
         with session.begin():
 
-            knowledge = Knowledge(
+            offer_profile = OfferProfile(
                 offer_id=offer_id,
                 offer_summary=json_data.get("offer_summary", ""),
                 category=json_data.get("category", ""),
                 value_proposition=json_data.get("value_proposition", ""),
             )
 
-            session.add(knowledge)
+            session.add(offer_profile)
             session.flush()
-
-            insight_items = []
-
-            for field, insight_type in INSIGHT_MAPPING.items():
-
-                items = json_data.get(field, [])
-
-                if not isinstance(items, list):
-                    items = [items]
-
-                for item in items:
-
-                    if not item:
-                        continue
-
-                    insight = KnowledgeInsight(
-                        knowledge_id=knowledge.id,
-                        type=insight_type,
-                        value=str(item),
-                        fact_status=FactStatus.UNVERIFIED.value,
-                    )
-
-                    insight_items.append(insight)
-
-            session.add_all(insight_items)
-            session.flush()
-
-            for insight in insight_items:
-                session.refresh(insight)
-
-            session.refresh(knowledge)
+            session.refresh(offer_profile)
 
             saved_insights = list(insight_items)
 
@@ -136,15 +81,9 @@ def knowledge_generate_handler(offer_id: int):
     # PREPARE DTO RESULT
     # ----------------------------
 
-    result = KnowledgeMapper.to_dto(
-        knowledge
+    result = OfferProfileMapper.to_dto(
+        offer_profile
     )
-
-    result.knowledge_insights = [
-        KnowledgeInsightMapper.to_dto(item)
-        for item in saved_insights
-    ]
-
     return result
 
 
@@ -159,7 +98,7 @@ You are a senior product strategist AI specialized in product analysis,
 market research, customer psychology, and marketing strategy.
 
 Your role is to deeply understand offers and transform raw offer
-information into structured business knowledge.
+information into structured business offer_profile.
 
 Think like:
 - a product manager,
@@ -181,23 +120,23 @@ Do not use markdown.
 
 
 # =====================================================
-# KNOWLEDGE PROMPT
+# OFFER_PROFILE PROMPT
 # =====================================================
 def get_data_prompt( offer_context : str) -> str:
     return f"""
 OFFER DATA:
-    
+
 {offer_context}
 """
 
 # =====================================================
-# KNOWLEDGE PROMPT
+# OFFER_PROFILE PROMPT
 # =====================================================
-def get_knowledge_prompt() -> str:
+def get_offer_profile_prompt() -> str:
     return """
 Analyze the offer information and create a deep understanding of this offer.
 
-Your goal is to build a structured knowledge base that explains:
+Your goal is to build a structured offer_profile base that explains:
 what this offer is, why it exists, what value it provides, and what makes it different.
 
 Analyze the offer from the perspective of a senior product strategist.

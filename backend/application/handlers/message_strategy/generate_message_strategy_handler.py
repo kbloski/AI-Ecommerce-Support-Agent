@@ -13,7 +13,7 @@ def generate_message_strategy_handler(
 
     container = Container()
 
-    knowledge_service = container.knowledge_service()
+    offer_profile_service = container.offer_profile_service()
     brand_marketing_service = container.brand_marketing_service()
     marketing_strategy_service = container.marketing_strategy_service()
     offer_strategy_service = container.offer_strategy_service()
@@ -35,8 +35,8 @@ def generate_message_strategy_handler(
         id=marketing_strategy.brand_marketing_id
     )
 
-    knowledge_context = knowledge_service.build_llm_context(
-        knowledge_id=brand_strategy.knowledge_id
+    offer_profile_context = offer_profile_service.build_llm_context(
+        offer_profile_id=brand_strategy.offer_profile_id
     )
 
     brand_strategy_context = brand_marketing_service.build_llm_context(
@@ -62,7 +62,7 @@ def generate_message_strategy_handler(
             LlmMessage(
                 role=LlmMessageRole.USER,
                 content=get_data_prompt(
-                    knowledge_context=knowledge_context,
+                    offer_profile_context=offer_profile_context,
                     brand_strategy_context=brand_strategy_context,
                     marketing_strategy_context=marketing_strategy_context,
                     offer_strategy_context=offer_strategy_context
@@ -303,15 +303,15 @@ STRICT JSON RULES:
 
 
 def get_data_prompt(
-    knowledge_context: str,
+    offer_profile_context: str,
     brand_strategy_context: str,
     marketing_strategy_context: str,
     offer_strategy_context: str
 ) -> str:
     return f"""
-KNOWLEDGE BASE:
+OFFER_PROFILE BASE:
 
-{knowledge_context}
+{offer_profile_context}
 
 
 

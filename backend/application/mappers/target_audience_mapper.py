@@ -8,7 +8,7 @@ class TargetAudienceMapper:
     def to_dto(item: TargetAudience) -> TargetAudienceDto:
         return TargetAudienceDto(
             id=item.id,
-            knowledge_id=item.knowledge_id,
+            offer_profile_id=item.offer_profile_id,
             fact_status=item.fact_status,
             review_status=item.review_status,
 

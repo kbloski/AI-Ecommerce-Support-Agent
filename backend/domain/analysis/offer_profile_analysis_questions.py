@@ -1,5 +1,5 @@
 
-KNOWLEDGE_ANALYSIS_QUESTIONS = [
+OFFER_PROFILE_ANALYSIS_QUESTIONS = [
     "Jaki konkretny problem rozwiązuje produkt? Opisz problem klienta, jego skalę, częstotliwość występowania oraz poziom uciążliwości w skali 1-10.",
     "Jak istotny jest problem dla klienta? Oceń, czy jest to drobna niedogodność, realna frustracja czy pilna potrzeba wymagająca rozwiązania.",
     "Jakie emocje wywołuje ten problem u klienta i jakie są główne motywacje zakupu produktu?",

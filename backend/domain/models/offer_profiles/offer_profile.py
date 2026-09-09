@@ -6,8 +6,8 @@ from common.mixins.json_serializable import JSONSerializable
 from domain.enums.table_name import TableName
 
 
-class Knowledge(Base, JSONSerializable):
-    __tablename__ = TableName.KNOWLEDGE.value
+class OfferProfile(Base, JSONSerializable):
+    __tablename__ = TableName.OFFER_PROFILES.value
 
     # Primary key
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -19,7 +19,7 @@ class Knowledge(Base, JSONSerializable):
         nullable=False,
     )
 
-    # AI-generated knowledge
+    # AI-generated offer_profile
     offer_summary = Column(Text, nullable=True)
     category = Column(Text, nullable=True)
 

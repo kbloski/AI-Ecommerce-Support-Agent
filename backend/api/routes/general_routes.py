@@ -15,15 +15,12 @@ from application.handlers.offers.get_offers import get_offers
 from application.handlers.offers.create_offer import create_offer
 from application.handlers.offers.get_offer import get_offer_handler
 from application.handlers.offers.delete_offer import delete_offer_handler
-from application.handlers.knowledges.knowledge_generate import knowledge_generate_handler
-from application.handlers.knowledges.get_knowledge_handler import get_knowledge_handler
-from application.handlers.knowledges.get_knowledges_handler import get_knowledges_handler
-from application.handlers.knowledges.delete_knowledge_handler import delete_knowledge_handler
-from application.handlers.knowledges.delete_knowledge_insight_handler import delete_knowledge_insight_handler
-from application.handlers.knowledges.get_knowledge_insight_handler import get_knowledge_insight_handler
-from application.handlers.knowledges.update_knowledge_insight_handler import update_knowledge_insight_handler
+from application.handlers.offer_profiles.offer_profile_generate import offer_profile_generate_handler
+from application.handlers.offer_profiles.get_offer_profile_handler import get_offer_profile_handler
+from application.handlers.offer_profiles.get_offer_profiles_handler import get_offer_profiles_handler
+from application.handlers.offer_profiles.delete_offer_profile_handler import delete_offer_profile_handler
 from application.handlers.offers.update_offer_handler import update_offer_handler
-from application.handlers.knowledges.update_knowledge_handler import update_knowledge_handler
+from application.handlers.offer_profiles.update_offer_profile_handler import update_offer_profile_handler
 from application.handlers.brand_marketing.update_brand_marketing_handler import update_brand_marketing_handler
 from application.handlers.marketing_strategy.update_marketing_strategy_handler import update_marketing_strategy_handler
 from application.handlers.offer_strategy.update_offer_strategy_handler import update_offer_strategy_handler
@@ -40,11 +37,11 @@ from application.handlers.target_audience.get_target_audience_handler import get
 from application.handlers.target_audience.get_target_audience_preview_handler import get_target_audience_preview_handler
 from application.handlers.target_audience.delete_target_audience_handler import delete_target_audience_handler
 from application.handlers.target_audience.update_target_audience_handler import update_target_audience_handler
-# from application.handlers.offers.suggest_knowledge_data_handler import suggest_knowledge_data_handler
-from application.handlers.analysis.knowledge_analysis_answers_generate_handler import knowledge_analysis_answers_generate_handler
-from application.handlers.analysis.create_analysis_for_knowledge_handler import create_analysis_for_knowledge_handler
+# from application.handlers.offers.suggest_offer_profile_data_handler import suggest_offer_profile_data_handler
+from application.handlers.analysis.offer_profile_analysis_answers_generate_handler import offer_profile_analysis_answers_generate_handler
+from application.handlers.analysis.create_analysis_for_offer_profile_handler import create_analysis_for_offer_profile_handler
 from application.handlers.analysis.get_analysis_by_id_hanlder import get_analysis_by_id_handler
-from application.handlers.analysis.get_analysis_for_knowledge_hanlder import get_analysis_for_knowledge_handler
+from application.handlers.analysis.get_analysis_for_offer_profile_hanlder import get_analysis_for_offer_profile_handler
 from application.handlers.analysis.analyse_checklist_generate_handler import analyse_checklist_generate_handler
 from application.handlers.analysis.delete_analysis_handler import delete_analysis_handler
 from application.handlers.analysis.delete_analysis_question_handler import delete_analysis_question_handler
@@ -53,10 +50,10 @@ from application.handlers.checklist.get_analysis_checklists_handler import get_a
 from application.handlers.checklist.get_checklist_by_id_handler import get_checklist_by_id_handler
 from application.handlers.checklist.delete_checklist_item_handler import delete_checklist_item_handler
 from application.handlers.checklist.delete_checklist_handler import delete_checklist_handler
-from application.handlers.advertisement.knowledge_advertisement_generate_handler import knowledge_advertisement_generate_handler
+from application.handlers.advertisement.offer_profile_advertisement_generate_handler import offer_profile_advertisement_generate_handler
 from application.handlers.brand_marketing.generate_brand_marketing_handler import generate_brand_marketing_handler
 from application.handlers.brand_marketing.get_brand_marketing_handler import get_brand_marketing_handler
-from application.handlers.brand_marketing.get_knowledge_brand_marketings_handler import get_knowledge_brand_marketings_handler
+from application.handlers.brand_marketing.get_offer_profile_brand_marketings_handler import get_offer_profile_brand_marketings_handler
 from application.handlers.brand_marketing.delete_brand_marketing_handler import delete_brand_marketing_handler
 from application.handlers.marketing_strategy.generate_marketing_strategy_handler import generate_marketing_strategy_handler
 from application.handlers.marketing_strategy.get_marketing_strategy_handler import get_marketing_strategy_handler
@@ -157,11 +154,6 @@ class UpdatePageRequirementsRequest(BaseModel):
     section_requirements: List[PageSectionRequirementInput]
 
 
-class UpdateKnowledgeInsightRequest(BaseModel):
-    fact_status: Optional[FactStatus] = None
-    review_status: Optional[ReviewStatus] = None
-
-
 class UpdateTargetAudienceRequest(BaseModel):
     fact_status: Optional[FactStatus] = None
     review_status: Optional[ReviewStatus] = None
@@ -195,29 +187,29 @@ def register_general_routes(router: APIRouter):
     # Legacy GET endpoints for routes moved to POST/DELETE above.
     # Kept only to return a clear 410 instead of silently mutating data via GET.
     # -----------------------------
-    @router.get("/offers/{id}/knowledges/generate")
+    @router.get("/offers/{id}/offer-profiles/generate")
     def _legacy_get_0(id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offers/{id}/knowledges/generate")
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offers/{id}/offer-profiles/generate")
 
-    @router.get("/knowledges/{knowledge_id}/target-audiences/generate")
-    def _legacy_get_1(knowledge_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /knowledges/{knowledge_id}/target-audiences/generate")
+    @router.get("/offer-profiles/{offer_profile_id}/target-audiences/generate")
+    def _legacy_get_1(offer_profile_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/target-audiences/generate")
 
-    @router.get("/knowledges/{knowledge_id}/analysis/{analyse_id}/answers/generate")
-    def _legacy_get_2(knowledge_id: str, analyse_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /knowledges/{knowledge_id}/analysis/{analyse_id}/answers/generate")
+    @router.get("/offer-profiles/{offer_profile_id}/analysis/{analyse_id}/answers/generate")
+    def _legacy_get_2(offer_profile_id: str, analyse_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/analysis/{analyse_id}/answers/generate")
 
-    @router.get("/knowledges/{knowledge_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
-    def _legacy_get_3(knowledge_id: str, analyse_id: str, checklist_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /knowledges/{knowledge_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
+    @router.get("/offer-profiles/{offer_profile_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
+    def _legacy_get_3(offer_profile_id: str, analyse_id: str, checklist_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
 
-    @router.get("/knowledges/{knowledge_id}/brand-marketing/generate")
-    def _legacy_get_4(knowledge_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /knowledges/{knowledge_id}/brand-marketing/generate")
+    @router.get("/offer-profiles/{offer_profile_id}/brand-marketing/generate")
+    def _legacy_get_4(offer_profile_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/brand-marketing/generate")
 
-    @router.get("/knowledges/{knowledge_id}/brand-marketing/{brand_markeging_id}/marketing-strategy/generate")
-    def _legacy_get_5(knowledge_id: str, brand_markeging_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /knowledges/{knowledge_id}/brand-marketing/{brand_markeging_id}/marketing-strategy/generate")
+    @router.get("/offer-profiles/{offer_profile_id}/brand-marketing/{brand_markeging_id}/marketing-strategy/generate")
+    def _legacy_get_5(offer_profile_id: str, brand_markeging_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/brand-marketing/{brand_markeging_id}/marketing-strategy/generate")
 
     @router.get("/marketing-strategy/{marketing_strategy_id}/offer-strategy/generate")
     def _legacy_get_6(marketing_strategy_id: str):
@@ -255,13 +247,13 @@ def register_general_routes(router: APIRouter):
     def _legacy_get_14(page_content_plan_id: str):
         raise HTTPException(status_code=410, detail="This endpoint now requires POST /page-content-plan/{page_content_plan_id}/page-copy/generate")
 
-    @router.get("/knowledges/{knowledge_id}/analysis/create")
-    def _legacy_get_15(knowledge_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /knowledges/{knowledge_id}/analysis/create")
+    @router.get("/offer-profiles/{offer_profile_id}/analysis/create")
+    def _legacy_get_15(offer_profile_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/analysis/create")
 
-    @router.get("/knowledges/{knowledge_id}/analysis/{analysis_id}/checklists/create")
-    def _legacy_get_16(knowledge_id: str, analysis_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /knowledges/{knowledge_id}/analysis/{analysis_id}/checklists/create")
+    @router.get("/offer-profiles/{offer_profile_id}/analysis/{analysis_id}/checklists/create")
+    def _legacy_get_16(offer_profile_id: str, analysis_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/analysis/{analysis_id}/checklists/create")
 
     @router.get("/page-strategy/{page_strategy_id}/page-requirements/create")
     def _legacy_get_17(page_strategy_id: str):
@@ -319,76 +311,54 @@ def register_general_routes(router: APIRouter):
 
 
     # -----------------------------
-    # Knowledges
+    # OfferProfiles
     # -----------------------------
 
     # POST in future
-    @router.post("/offers/{id}/knowledges/generate")
-    def knowledge_generate(id: int):
-        return knowledge_generate_handler(offer_id=id)
+    @router.post("/offers/{id}/offer-profiles/generate")
+    def offer_profile_generate(id: int):
+        return offer_profile_generate_handler(offer_id=id)
 
     #  POST in future
-    @router.get("/offers/{offer_id}/knowledges")
-    def get_knowledges(offer_id: int):
-        return get_knowledges_handler(offer_id=offer_id)
+    @router.get("/offers/{offer_id}/offer-profiles")
+    def get_offer_profiles(offer_id: int):
+        return get_offer_profiles_handler(offer_id=offer_id)
 
 
     #  POST in future
-    @router.get("/knowledges/{knowledge_id}")
-    def get_knowledge( knowledge_id : int):
-        return get_knowledge_handler( knowledge_id=knowledge_id)
+    @router.get("/offer-profiles/{offer_profile_id}")
+    def get_offer_profile( offer_profile_id : int):
+        return get_offer_profile_handler( offer_profile_id=offer_profile_id)
 
-    @router.post("/knowledges/{id}/update")
-    def update_knowledge_route(id: int, payload: UpdateFieldsRequest):
-        return update_knowledge_handler(id=id, fields=payload.fields)
+    @router.post("/offer-profiles/{id}/update")
+    def update_offer_profile_route(id: int, payload: UpdateFieldsRequest):
+        return update_offer_profile_handler(id=id, fields=payload.fields)
 
-    # @router.get("/knowledges/{knowledge_id}/suggestions")
-    # def suggest_knowledge_data(knowledge_id: int):
-    #     return suggest_knowledge_data_handler(knowledge_id=knowledge_id)
+    # @router.get("/offer-profiles/{offer_profile_id}/suggestions")
+    # def suggest_offer_profile_data(offer_profile_id: int):
+    #     return suggest_offer_profile_data_handler(offer_profile_id=offer_profile_id)
 
-    @router.delete("/knowledges/{id}/delete")
-    def delete_knowledge_route(id: int):
-        return delete_knowledge_handler(id=id)
+    @router.delete("/offer-profiles/{id}/delete")
+    def delete_offer_profile_route(id: int):
+        return delete_offer_profile_handler(id=id)
 
-    @router.get("/knowledges/{id}/delete")
-    def delete_knowledge_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /knowledges/{id}/delete")
-
-    @router.delete("/knowledge-insights/{id}/delete")
-    def delete_knowledge_insight_route(id: int):
-        return delete_knowledge_insight_handler(id=id)
-
-    @router.get("/knowledge-insights/{id}/delete")
-    def delete_knowledge_insight_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /knowledge-insights/{id}/delete")
-
-    @router.get("/knowledge-insights/{id}")
-    def get_knowledge_insight_route(id: int):
-        return get_knowledge_insight_handler(id=id)
-
-    @router.post("/knowledge-insights/{id}/update")
-    def update_knowledge_insight_route(id: int, payload: UpdateKnowledgeInsightRequest):
-        return update_knowledge_insight_handler(
-            id=id,
-            fact_status=payload.fact_status,
-            review_status=payload.review_status,
-        )
-
-
+    @router.get("/offer-profiles/{id}/delete")
+    def delete_offer_profile_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /offer-profiles/{id}/delete")
 
     # -----------------------------
     # Target audience
     # -----------------------------
 
     #  POST in future
-    @router.post("/knowledges/{knowledge_id}/target-audiences/generate")
-    def generate_target_audience(knowledge_id: int):
-        return generate_target_audience_handler( knowledge_id=knowledge_id)
+    @router.post("/offer-profiles/{offer_profile_id}/target-audiences/generate")
+    def generate_target_audience(offer_profile_id: int):
+        return generate_target_audience_handler( offer_profile_id=offer_profile_id)
 
     # #  GET in future
-    @router.get("/knowledges/{knowledge_id}/target-audiences")
-    def get_target_audience( knowledge_id: int):
-        return get_target_audience_handler( knowledge_id=knowledge_id)
+    @router.get("/offer-profiles/{offer_profile_id}/target-audiences")
+    def get_target_audience( offer_profile_id: int):
+        return get_target_audience_handler( offer_profile_id=offer_profile_id)
 
     # #  GET in future
     @router.get("/target-audiences/{target_audience_id}")
@@ -420,18 +390,18 @@ def register_general_routes(router: APIRouter):
     def get_anlysis_by_id(analyse_id: int):
         return get_analysis_by_id_handler( analyse_id=analyse_id)
 
-    @router.post("/knowledges/{knowledge_id}/analysis/create")
-    def create_analysis_for_knowledge(knowledge_id: int):
-        return create_analysis_for_knowledge_handler(knowledge_id=knowledge_id)
+    @router.post("/offer-profiles/{offer_profile_id}/analysis/create")
+    def create_analysis_for_offer_profile(offer_profile_id: int):
+        return create_analysis_for_offer_profile_handler(offer_profile_id=offer_profile_id)
 
-    @router.get("/knowledges/{knowledge_id}/analysis")
-    def get_analysis_for_knowledge(knowledge_id: int):
-        return get_analysis_for_knowledge_handler(knowledge_id=knowledge_id)
+    @router.get("/offer-profiles/{offer_profile_id}/analysis")
+    def get_analysis_for_offer_profile(offer_profile_id: int):
+        return get_analysis_for_offer_profile_handler(offer_profile_id=offer_profile_id)
 
     # POST in future
-    @router.post("/knowledges/{knowledge_id}/analysis/{analyse_id}/answers/generate")
-    def knowledge_analysis_answers_generate(knowledge_id: int, analyse_id: int):
-        return knowledge_analysis_answers_generate_handler( knowledge_id=knowledge_id, analyse_id=analyse_id)
+    @router.post("/offer-profiles/{offer_profile_id}/analysis/{analyse_id}/answers/generate")
+    def offer_profile_analysis_answers_generate(offer_profile_id: int, analyse_id: int):
+        return offer_profile_analysis_answers_generate_handler( offer_profile_id=offer_profile_id, analyse_id=analyse_id)
 
     @router.delete("/analysis/{id}/delete")
     def delete_analysis_route(id: int):
@@ -466,14 +436,14 @@ def register_general_routes(router: APIRouter):
     def delete_checklist_route_legacy_get(id: int):
         raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /checklists/{id}/delete")
 
-    @router.post("/knowledges/{knowledge_id}/analysis/{analysis_id}/checklists/create")
-    def create_analyse_checklist(knowledge_id: int, analysis_id: int):
+    @router.post("/offer-profiles/{offer_profile_id}/analysis/{analysis_id}/checklists/create")
+    def create_analyse_checklist(offer_profile_id: int, analysis_id: int):
         return create_checklist_for_analysis_handler( analysis_id=analysis_id)
 
     # POST in future
-    @router.post("/knowledges/{knowledge_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
-    def analyse_checklist_generate(knowledge_id: int, analyse_id: int, checklist_id: int):
-        return analyse_checklist_generate_handler( knowledge_id=knowledge_id, analyse_id=analyse_id, checklist_id=checklist_id)
+    @router.post("/offer-profiles/{offer_profile_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
+    def analyse_checklist_generate(offer_profile_id: int, analyse_id: int, checklist_id: int):
+        return analyse_checklist_generate_handler( offer_profile_id=offer_profile_id, analyse_id=analyse_id, checklist_id=checklist_id)
 
     @router.get("/analysis/{analysis_id}/checklists")
     def get_checklist_for_analysis( analysis_id: int):
@@ -492,13 +462,13 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     # Brand marketing
     # -----------------------------
-    @router.post("/knowledges/{knowledge_id}/brand-marketing/generate")
-    def knowledge_brand_marketing_generate( knowledge_id: int ):
-        return generate_brand_marketing_handler( knowledge_id=knowledge_id )
+    @router.post("/offer-profiles/{offer_profile_id}/brand-marketing/generate")
+    def offer_profile_brand_marketing_generate( offer_profile_id: int ):
+        return generate_brand_marketing_handler( offer_profile_id=offer_profile_id )
 
-    @router.get("/knowledges/{knowledge_id}/brand-marketing")
-    def get_knowledge_brand_marketing( knowledge_id: int ):
-        return get_knowledge_brand_marketings_handler( knowledge_id=knowledge_id )
+    @router.get("/offer-profiles/{offer_profile_id}/brand-marketing")
+    def get_offer_profile_brand_marketing( offer_profile_id: int ):
+        return get_offer_profile_brand_marketings_handler( offer_profile_id=offer_profile_id )
 
     @router.get("/brand-marketing/{id}")
     def get_brand_marketing( id: int ):
@@ -520,10 +490,10 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     # Marketing strategy
     # -----------------------------
-    @router.post("/knowledges/{knowledge_id}/brand-marketing/{brand_markeging_id}/marketing-strategy/generate")
-    def knowledge_marketing_strategy_generate( knowledge_id: int, brand_markeging_id: int ):
+    @router.post("/offer-profiles/{offer_profile_id}/brand-marketing/{brand_markeging_id}/marketing-strategy/generate")
+    def offer_profile_marketing_strategy_generate( offer_profile_id: int, brand_markeging_id: int ):
         try:
-            return generate_marketing_strategy_handler( knowledge_id=knowledge_id, brand_markeging_id=brand_markeging_id )
+            return generate_marketing_strategy_handler( offer_profile_id=offer_profile_id, brand_markeging_id=brand_markeging_id )
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
 
@@ -552,7 +522,7 @@ def register_general_routes(router: APIRouter):
     # Offer strategy
     # -----------------------------
     @router.post("/marketing-strategy/{marketing_strategy_id}/offer-strategy/generate")
-    def knowledge_offer_strategy_generate(  marketing_strategy_id: int ):
+    def offer_profile_offer_strategy_generate(  marketing_strategy_id: int ):
         return generate_offer_strategy_handler(
             marketing_strategy_id=marketing_strategy_id
         )
@@ -582,7 +552,7 @@ def register_general_routes(router: APIRouter):
     # Message strategy
     # -----------------------------
     @router.post("/offer-strategy/{offer_strategy_id}/message-strategy/generate")
-    def knowledge_message_strategy_generate( offer_strategy_id: int ):
+    def offer_profile_message_strategy_generate( offer_strategy_id: int ):
         return generate_message_strategy_handler(
             offer_strategy_id=offer_strategy_id
         )
@@ -613,7 +583,7 @@ def register_general_routes(router: APIRouter):
     # UGC creatives
     # -----------------------------
     @router.post("/message-strategy/{message_strategy_id}/ugc-creatives/generate")
-    def knowledge_ugc_creatives_generate( message_strategy_id: int ):
+    def offer_profile_ugc_creatives_generate( message_strategy_id: int ):
         return generate_ugc_creatives_handler(
             message_strategy_id=message_strategy_id
         )
@@ -633,14 +603,14 @@ def register_general_routes(router: APIRouter):
     @router.get("/ugc-creatives/{id}/delete")
     def delete_ugc_creative_route_legacy_get(id: int):
         raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /ugc-creatives/{id}/delete")
-    
-    
-    
+
+
+
     # -----------------------------
     # Ad strategy
     # -----------------------------
     @router.post("/message-strategy/{message_strategy_id}/ad-strategy/generate")
-    def knowledge_ad_strategy_generate( message_strategy_id: int ):
+    def offer_profile_ad_strategy_generate( message_strategy_id: int ):
         return generate_ad_strategy_handler(
             message_strategy_id=message_strategy_id
         )
@@ -671,7 +641,7 @@ def register_general_routes(router: APIRouter):
     # Creative strategy
     # -----------------------------
     @router.post("/ad-strategy/{ad_strategy_id}/creative-strategy/generate")
-    def knowledge_creative_strategy_generate( ad_strategy_id: int ):
+    def offer_profile_creative_strategy_generate( ad_strategy_id: int ):
         return generate_creative_strategy_handler(
             ad_strategy_id=ad_strategy_id
         )
@@ -998,8 +968,8 @@ def register_general_routes(router: APIRouter):
 
 
     # -----------------------------
-    # Knowledges advertisement
+    # OfferProfiles advertisement
     # -----------------------------
-    # @router.get("/knowledges/{knowledge_id}/advertisements/generate")
-    # def knowledge_advertisement_generate( knowledge_id : int, count: int = 3 ):
-    #     return knowledge_advertisement_generate_handler( knowledge_id=knowledge_id, count=count )
+    # @router.get("/offer-profiles/{offer_profile_id}/advertisements/generate")
+    # def offer_profile_advertisement_generate( offer_profile_id : int, count: int = 3 ):
+    #     return offer_profile_advertisement_generate_handler( offer_profile_id=offer_profile_id, count=count )

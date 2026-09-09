@@ -4,7 +4,7 @@ from di.container import Container
 from domain.enums.pipeline_entity_type import PipelineEntityType
 
 from application.handlers.offers.get_offer import get_offer_handler
-from application.handlers.knowledges.get_knowledge_handler import get_knowledge_handler
+from application.handlers.offer_profiles.get_offer_profile_handler import get_offer_profile_handler
 from application.handlers.brand_marketing.get_brand_marketing_handler import get_brand_marketing_handler
 from application.handlers.marketing_strategy.get_marketing_strategy_handler import get_marketing_strategy_handler
 from application.handlers.offer_strategy.get_offer_strategy_handler import get_offer_strategy_handler
@@ -34,17 +34,17 @@ STAGE_CONFIG: Dict[PipelineEntityType, Dict[str, Any]] = {
         "parent_field": None,
         "parent_stage": None,
     },
-    PipelineEntityType.KNOWLEDGE: {
-        "get_handler": get_knowledge_handler,
-        "context_service": "knowledge_service",
+    PipelineEntityType.OFFER_PROFILE: {
+        "get_handler": get_offer_profile_handler,
+        "context_service": "offer_profile_service",
         "parent_field": "offer_id",
         "parent_stage": PipelineEntityType.OFFER,
     },
     PipelineEntityType.BRAND_MARKETING: {
         "get_handler": get_brand_marketing_handler,
         "context_service": "brand_marketing_service",
-        "parent_field": "knowledge_id",
-        "parent_stage": PipelineEntityType.KNOWLEDGE,
+        "parent_field": "offer_profile_id",
+        "parent_stage": PipelineEntityType.OFFER_PROFILE,
     },
     PipelineEntityType.MARKETING_STRATEGY: {
         "get_handler": get_marketing_strategy_handler,
