@@ -67,7 +67,16 @@ Wzorzec identyczny na każdej stronie detali (`DetailShell` + `ResourceList`, np
 
 Cała warstwa API frontendu to RTK Query (`src/store/api.ts`, jeden wspólny `createApi`), moduły w `features/*/*.ts` (26 modułów, po jednym na encję) dodają endpointy przez `api.injectEndpoints`. Brak silnie typowanych DTO — wszystko traktowane jako `Entity = {id: number, [key: string]: unknown}` (`src/types.ts`).
 
-## Endpointy generujące (kolejność w łańcuchu)
+> ⚠️ **Ta tabela jest częściowo nieaktualna (stan na 2026-09-03).** Weryfikacja 2026-09-09 (patrz `known-issues.md`) potwierdziła, że `OfferInsight`/`OfferInsightType`/`Knowledge` zostały **usunięte z kodu** (retirement udokumentowany w `infrastructure/database/init_db.py`) i zastąpione encją `OfferProfile` (generowaną z `Offer` przez `POST /offers/{id}/offer-profiles/generate`, wraz z jej dziećmi `OfferProfileElement` w jednym wywołaniu — patrz `offer_profile_generate.py`). Poniższa tabela wymaga pełnej weryfikacji od nowa (nie zrobiono tego przy okazji, żeby nie rozszerzać niepowiązanego zadania) — nie ufać jej bezkrytycznie, zwłaszcza wierszom `OfferInsight`/`Knowledge`.
+
+## Nowe/potwierdzone endpointy generujące (dodane/zweryfikowane 2026-09-09)
+
+| Etap | Endpoint | AI? | Uwagi |
+|---|---|---|---|
+| OfferProfile (+ jej `OfferProfileElement`) | `POST /offers/{id}/offer-profiles/generate` | tak | Generuje `OfferProfile` i od razu komplet `OfferProfileElement` (typy z `OfferProfileElementType`) w jednym wywołaniu LLM — patrz `offer_profile_generate.py`. |
+| OfferProfileElement (dogenerowanie wybranych typów) | `POST /offer-profiles/{offer_profile_id}/elements/generate` (body: `{"element_types": [...]}`, min. 1) | tak | Dodane 2026-09-09 na życzenie użytkownika — generuje **dodatkowe** elementy tylko dla wybranych typów (nie dotyka istniejących/innych typów), bez modyfikowania samego `OfferProfile`. Handler: `application/handlers/offer_profiles/generate_offer_profile_elements_handler.py`. Definicje typów (do promptu) trzymane w `OFFER_PROFILE_ELEMENT_TYPE_DEFINITIONS` w tym samym pliku — jedyne miejsce w kodzie z opisami znaczenia poszczególnych `OfferProfileElementType`. Frontend: przycisk „Generuj elementy” na `/offer-profiles/{id}/elements` otwiera drawer z `MultiToggle` (pierwsze użycie tego dotąd nieużywanego komponentu) do wyboru typów. |
+
+## Endpointy generujące (kolejność w łańcuchu, ⚠️ nieaktualne — patrz ostrzeżenie wyżej)
 
 | Etap | Endpoint | AI? |
 |---|---|---|

@@ -21,6 +21,7 @@ from application.handlers.offer_profiles.get_offer_profiles_handler import get_o
 from application.handlers.offer_profiles.delete_offer_profile_handler import delete_offer_profile_handler
 from application.handlers.offer_profiles.list_offer_profile_elements_handler import list_offer_profile_elements_handler
 from application.handlers.offer_profiles.create_offer_profile_element_handler import create_offer_profile_element_handler
+from application.handlers.offer_profiles.generate_offer_profile_elements_handler import generate_offer_profile_elements_handler
 from application.handlers.offer_profiles.update_offer_profile_element_handler import update_offer_profile_element_handler
 from application.handlers.offer_profiles.delete_offer_profile_element_handler import delete_offer_profile_element_handler
 from application.handlers.offer_profiles.list_offer_profile_element_types_handler import list_offer_profile_element_types_handler
@@ -192,6 +193,10 @@ class CreateOfferProfileElementRequest(BaseModel):
     type: OfferProfileElementType
     name: str = Field(min_length=1, max_length=255)
     description: Optional[str] = None
+
+
+class GenerateOfferProfileElementsRequest(BaseModel):
+    element_types: List[OfferProfileElementType] = Field(min_length=1)
 
 
 def register_general_routes(router: APIRouter):
@@ -366,6 +371,16 @@ def register_general_routes(router: APIRouter):
     @router.get("/offer-profile-elements/types")
     def get_offer_profile_element_types():
         return list_offer_profile_element_types_handler()
+
+    @router.post("/offer-profiles/{offer_profile_id}/elements/generate")
+    def generate_offer_profile_elements_route(
+        offer_profile_id: int,
+        payload: GenerateOfferProfileElementsRequest,
+    ):
+        return generate_offer_profile_elements_handler(
+            offer_profile_id=offer_profile_id,
+            element_types=payload.element_types,
+        )
 
     @router.post("/offer-profiles/{offer_profile_id}/elements")
     def create_offer_profile_element(

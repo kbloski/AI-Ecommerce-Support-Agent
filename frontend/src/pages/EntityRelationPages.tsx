@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useParams } from 'react-router-dom'
 import { EntityList } from '@/components/EntityList'
 import { ResourceList } from '@/components/ResourceList'
+import { MultiToggle } from '@/components/MultiToggle'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -10,6 +11,7 @@ import { EditTargetAudienceForm } from '@/features/targetAudiences/TargetAudienc
 import {
   useCreateOfferProfileElementMutation,
   useDeleteOfferProfileElementMutation,
+  useGenerateOfferProfileElementsMutation,
   useGetOfferProfileQuery,
   useListOfferProfileElementsQuery,
   useListOfferProfileElementTypesQuery,
@@ -74,14 +76,75 @@ export function OfferProfileElementsPage() {
         })}
         onDelete={(element) => remove({ id: element.id as number, offerProfileId })}
         actions={
-          <Button className="h-10 rounded-none px-4" onClick={() => openPanel({
-            title: 'Dodaj element oferty',
-            content: <OfferProfileElementForm offerProfileId={offerProfileId} onSaved={closePanel} />,
-          })}>
-            Dodaj element
-          </Button>
+          <>
+            <Button
+              variant="outline"
+              className="h-10 rounded-none px-4"
+              onClick={() => openPanel({
+                title: 'Generuj elementy oferty',
+                content: <GenerateOfferProfileElementsForm offerProfileId={offerProfileId} onGenerated={closePanel} />,
+              })}
+            >
+              Generuj elementy
+            </Button>
+            <Button className="h-10 rounded-none px-4" onClick={() => openPanel({
+              title: 'Dodaj element oferty',
+              content: <OfferProfileElementForm offerProfileId={offerProfileId} onSaved={closePanel} />,
+            })}>
+              Dodaj element
+            </Button>
+          </>
         }
       />
+    </div>
+  )
+}
+
+function GenerateOfferProfileElementsForm({
+  offerProfileId,
+  onGenerated,
+}: {
+  offerProfileId: number
+  onGenerated: () => void
+}) {
+  const { data: types = [], isLoading: areTypesLoading } = useListOfferProfileElementTypesQuery()
+  const [generate, generateState] = useGenerateOfferProfileElementsMutation()
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
+  const [error, setError] = useState<string | null>(null)
+
+  const submit = async () => {
+    setError(null)
+    try {
+      await generate({ offerProfileId, element_types: selectedTypes }).unwrap()
+      onGenerated()
+    } catch {
+      setError('Nie udało się wygenerować elementów oferty.')
+    }
+  }
+
+  return (
+    <div className="space-y-5">
+      <div className="space-y-2">
+        <span className="text-sm font-medium">Typy elementów do wygenerowania</span>
+        {areTypesLoading ? (
+          <p className="text-sm text-muted-foreground">Ładowanie typów…</p>
+        ) : (
+          <MultiToggle
+            ariaLabel="Typy elementów do wygenerowania"
+            values={selectedTypes}
+            onValueChange={setSelectedTypes}
+            options={types.map((type) => ({ value: type, label: type.replaceAll('_', ' ') }))}
+            disabled={generateState.isLoading}
+          />
+        )}
+      </div>
+      {error && <p className="text-sm text-destructive">{error}</p>}
+      <Button
+        onClick={() => void submit()}
+        disabled={selectedTypes.length === 0 || generateState.isLoading}
+      >
+        {generateState.isLoading ? 'Generowanie…' : 'Generuj'}
+      </Button>
     </div>
   )
 }

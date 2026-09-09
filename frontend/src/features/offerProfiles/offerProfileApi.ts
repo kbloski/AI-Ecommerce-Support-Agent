@@ -62,6 +62,19 @@ export const offerProfileApi = api.injectEndpoints({
         listTag('OfferProfileElement', offerProfileId),
       ],
     }),
+    generateOfferProfileElements: builder.mutation<Entity[], {
+      offerProfileId: number
+      element_types: string[]
+    }>({
+      query: ({ offerProfileId, element_types }) => ({
+        url: `/offer-profiles/${offerProfileId}/elements/generate`,
+        method: 'POST',
+        body: { element_types },
+      }),
+      invalidatesTags: (_result, _err, { offerProfileId }) => [
+        listTag('OfferProfileElement', offerProfileId),
+      ],
+    }),
     updateOfferProfile: builder.mutation<Entity, { id: number; fields: Record<string, unknown> }>({
       query: ({ id, fields }) => ({
         url: `/offer-profiles/${id}/update`,
@@ -92,6 +105,7 @@ export const {
   useCreateOfferProfileElementMutation,
   useUpdateOfferProfileElementMutation,
   useDeleteOfferProfileElementMutation,
+  useGenerateOfferProfileElementsMutation,
   useGenerateOfferProfileMutation,
   useDeleteOfferProfileMutation,
   useUpdateOfferProfileMutation,

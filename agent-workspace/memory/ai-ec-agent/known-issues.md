@@ -29,6 +29,10 @@ Odkryte podczas pierwszej analizy 2026-09-03 (commit `b942f16`). To obserwacje, 
 - **Gwiazdka „ulubione” na listach frontendu (usunięta 2026-09-09)** była zaimplementowana wyłącznie w `localStorage` (per przeglądarka, klucz `aiec:favorites:${pathname}`) i **nie miała nic wspólnego** z realną kolumną `is_favorite` opisaną niżej.
 - **Backend ma martwą infrastrukturę pod „ulubione” (`is_favorite`)**: każda encja z `domain/models/favorites_registry.py` (m.in. `Offer`, `OfferProfile`, `TargetAudience` i wszystkie etapy strategii/stron) ma w bazie kolumnę `is_favorite` (dodawaną addytywną migracją w `init_db.py`), ale **żaden route w `general_routes.py` jej nie czyta/nie zapisuje celowo** — da się ją ustawić tylko przez generyczny `POST .../update` (bo handlery robią `setattr` dla dowolnego klucza z `fields`), nic w UI tego nie robi. Jeśli temat "ulubione" wróci, dowiązać do tej kolumny zamiast localStorage.
 
+## Ważne: `application-flow.md` jest częściowo nieaktualny (odkryte 2026-09-09)
+
+`OfferInsight`/`OfferInsightType`/`Knowledge` (opisane w `application-flow.md` jako część łańcucha) **zostały usunięte z kodu** — potwierdzone `git grep` (zero wyników poza skompilowanymi `.pyc`) i jawnym komentarzem w `infrastructure/database/init_db.py`: *"Offer items, insights, and pricing are intentionally removed with this feature"* (dropuje tabele `offer_items`, `offer_insights`, `knowledge_insights`, `offer_profile_insights`, zmienia nazwę `offers` → `offers_raw`). Ich rolę przejęła encja `OfferProfile` (generowana bezpośrednio z `Offer` przez `POST /offers/{id}/offer-profiles/generate`, razem z jej dziećmi `OfferProfileElement` w jednym wywołaniu LLM). `application-flow.md` nie został jeszcze w pełni zweryfikowany po tej zmianie — traktować tabelę „Endpointy generujące" tam jako punkt startowy do weryfikacji, nie jako pewnik.
+
 ## Do zweryfikowania w przyszłości
 
 - Który system migracji (Alembic vs ręczne ALTER TABLE) jest faktycznie używany w praktyce/produkcji — zapytać użytkownika, jeśli temat wypłynie przy pracy nad schematem danych.
