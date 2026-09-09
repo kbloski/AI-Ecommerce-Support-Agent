@@ -1,0 +1,15 @@
+Najbardziej użyteczny zestaw na MVP to:
+
+offer_summary — krótki opis oferty
+category — kategoria
+value_proposition — główna propozycja wartości
+target_audiences — grupy odbiorców
+problems_solved — jakie problemy rozwiązuje
+key_benefits — najważniejsze korzyści
+key_features — najważniejsze cechy/funkcje
+pricing — cena / model cenowy
+use_cases — typowe zastosowania
+differentiators — co odróżnia ofertę od konkurencji
+claims — najważniejsze twierdzenia
+evidence — dowody wspierające claimy
+limitations — ograniczenia / czego oferta nie obejmuje

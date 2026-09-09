@@ -12,6 +12,7 @@ from domain.models.offers.offer_raw import OfferRaw
 
 # OfferProfile
 from domain.models.offer_profiles.offer_profile import OfferProfile
+from domain.models.offer_profiles.offer_profile_element import OfferProfileElement
 
 # Target Audience
 from domain.models.audience.target_audience import TargetAudience

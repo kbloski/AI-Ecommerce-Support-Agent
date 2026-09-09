@@ -4,6 +4,7 @@ from enum import Enum
 class TableName(str, Enum):
     OFFERS_RAW = "offers_raw"
     OFFER_PROFILES = "offer_profiles"
+    OFFER_PROFILE_ELEMENTS = "offer_profile_elements"
     TARGET_AUDIENCES = "target_audiences"
     ANALYSIS = "analysis"
     OFFER_PROFILE_ANALYSIS = "offer_profile_analysis"

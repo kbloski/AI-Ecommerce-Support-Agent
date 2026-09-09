@@ -19,6 +19,11 @@ from application.handlers.offer_profiles.offer_profile_generate import offer_pro
 from application.handlers.offer_profiles.get_offer_profile_handler import get_offer_profile_handler
 from application.handlers.offer_profiles.get_offer_profiles_handler import get_offer_profiles_handler
 from application.handlers.offer_profiles.delete_offer_profile_handler import delete_offer_profile_handler
+from application.handlers.offer_profiles.list_offer_profile_elements_handler import list_offer_profile_elements_handler
+from application.handlers.offer_profiles.create_offer_profile_element_handler import create_offer_profile_element_handler
+from application.handlers.offer_profiles.list_offer_profile_element_types_handler import list_offer_profile_element_types_handler
+from application.handlers.offer_profiles.create_offer_profile_element_handler import create_offer_profile_element_handler
+from application.handlers.offer_profiles.list_offer_profile_element_types_handler import list_offer_profile_element_types_handler
 from application.handlers.offers.update_offer_handler import update_offer_handler
 from application.handlers.offer_profiles.update_offer_profile_handler import update_offer_profile_handler
 from application.handlers.brand_marketing.update_brand_marketing_handler import update_brand_marketing_handler
@@ -117,6 +122,8 @@ from application.handlers.settings.save_ollama_settings_handler import save_olla
 from application.handlers.settings.list_ollama_models_handler import list_ollama_models_handler
 from application.handlers.pipeline.get_pipeline_path_handler import get_pipeline_path_handler
 from domain.enums.pipeline_entity_type import PipelineEntityType
+from domain.enums.offer_profile_element_type import OfferProfileElementType
+from domain.enums.offer_profile_element_type import OfferProfileElementType
 
 
 class SaveOutputPromptRequest(BaseModel):
@@ -179,6 +186,12 @@ class UpdateTargetAudienceRequest(BaseModel):
     message_angles: Optional[List[Any]] = None
     marketing_channels: Optional[List[Any]] = None
 
+
+
+class CreateOfferProfileElementRequest(BaseModel):
+    type: OfferProfileElementType
+    name: str = Field(min_length=1, max_length=255)
+    description: Optional[str] = None
 
 
 def register_general_routes(router: APIRouter):
@@ -345,6 +358,29 @@ def register_general_routes(router: APIRouter):
     @router.get("/offer-profiles/{id}/delete")
     def delete_offer_profile_route_legacy_get(id: int):
         raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /offer-profiles/{id}/delete")
+
+    @router.get("/offer-profiles/{offer_profile_id}/elements")
+    def get_offer_profile_elements(offer_profile_id: int):
+        return list_offer_profile_elements_handler(offer_profile_id=offer_profile_id)
+
+    @router.get("/offer-profile-elements/types")
+    def get_offer_profile_element_types():
+        return list_offer_profile_element_types_handler()
+
+    @router.post("/offer-profiles/{offer_profile_id}/elements")
+    def create_offer_profile_element(
+        offer_profile_id: int,
+        payload: CreateOfferProfileElementRequest,
+    ):
+        try:
+            return create_offer_profile_element_handler(
+                offer_profile_id=offer_profile_id,
+                element_type=payload.type,
+                name=payload.name.strip(),
+                description=payload.description.strip() if payload.description else None,
+            )
+        except LookupError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
 
     # -----------------------------
     # Target audience

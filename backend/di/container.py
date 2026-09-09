@@ -23,6 +23,7 @@ from core.settings import Settings
 from infrastructure.database.db import SessionLocal
 from application.assemblers.offer_assembler import OfferAssembler
 from infrastructure.repositories.offer_profile_repository import OfferProfileRepository
+from infrastructure.repositories.offer_profile_elements_repository import OfferProfileElementsRepository
 from application.assemblers.offer_profile_assembler import OfferProfileAssembler
 from infrastructure.repositories.target_audiences_repository import TargetAudiencesRepository
 from application.assemblers.target_audience_assembler import TargetAudienceAssembler
@@ -120,6 +121,12 @@ class Container(containers.DeclarativeContainer):
 
     offer_profile_repository = providers.Singleton(
         OfferProfileRepository,
+        logger=logger,
+        db=db
+    )
+
+    offer_profile_elements_repository = providers.Singleton(
+        OfferProfileElementsRepository,
         logger=logger,
         db=db
     )
