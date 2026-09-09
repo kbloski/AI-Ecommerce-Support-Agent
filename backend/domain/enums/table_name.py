@@ -2,11 +2,9 @@ from enum import Enum
 
 
 class TableName(str, Enum):
-    OFFERS = "offers"
-    OFFER_ITEMS = "offer_items"
+    OFFERS_RAW = "offers_raw"
     KNOWLEDGE = "knowledge"
     KNOWLEDGE_INSIGHTS = "knowledge_insights"
-    OFFER_INSIGHTS = "offer_insights"
     TARGET_AUDIENCES = "target_audiences"
     ANALYSIS = "analysis"
     KNOWLEDGE_ANALYSIS = "knowledge_analysis"

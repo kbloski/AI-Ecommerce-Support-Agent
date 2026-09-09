@@ -7,13 +7,6 @@ from pathlib import Path
 DB_PATH = Path(__file__).resolve().parent.parent / "app.db"
 
 TABLES = {
-    "offer_insights": (
-        "ix_offer_insights_content_status",
-        "ix_offer_insight_offer_type_status",
-        "ix_offer_insights_fact_status",
-        "CREATE INDEX ix_offer_insight_offer_type_fact_status "
-        "ON offer_insights (offer_id, type, fact_status)",
-    ),
     "knowledge_insights": (
         "ix_knowledge_insights_content_status",
         "ix_knowledge_insight_knowledge_type_status",

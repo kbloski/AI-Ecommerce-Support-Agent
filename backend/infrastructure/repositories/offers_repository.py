@@ -1,7 +1,7 @@
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from domain.models.offers.offer import Offer
+from domain.models.offers.offer_raw import OfferRaw
 from infrastructure.logging.logger import Logger
 from common.results.paginated_result import PaginatedResult
 
@@ -10,24 +10,24 @@ class OffersRepository:
         self.db = db
 
     # ➕ CREATE
-    def create(self, offer : Offer) -> Offer:
+    def create(self, offer: OfferRaw) -> OfferRaw:
         self.db.add(offer)
         self.db.commit()
         self.db.refresh(offer)
         return offer
 
     # 🔍 GET BY ID
-    def get_by_id(self, id: int) -> Optional[Offer]:
-        return self.db.query(Offer).filter(Offer.id == id).first()
+    def get_by_id(self, id: int) -> Optional[OfferRaw]:
+        return self.db.query(OfferRaw).filter(OfferRaw.id == id).first()
 
-    def search(self, page: int = 1, page_size: int = 20) -> PaginatedResult[Offer]:
+    def search(self, page: int = 1, page_size: int = 20) -> PaginatedResult[OfferRaw]:
             page = max(1, page)
             page_size = max(1, page_size)
 
-            total_items = self.db.query(func.count(Offer.id)).scalar()
+            total_items = self.db.query(func.count(OfferRaw.id)).scalar()
 
             items = (
-                self.db.query(Offer)
+                self.db.query(OfferRaw)
                 .offset((page - 1) * page_size)
                 .limit(page_size)
                 .all()
@@ -40,8 +40,8 @@ class OffersRepository:
                 total_items=total_items,
             )
 
-    def update(self, item: Offer) -> Offer:
-        existing_offer = self.db.query(Offer).filter(Offer.id == item.id).first()
+    def update(self, item: OfferRaw) -> OfferRaw:
+        existing_offer = self.db.query(OfferRaw).filter(OfferRaw.id == item.id).first()
 
         if not existing_offer:
             raise ValueError(f"Offer with id {item.id} not found")
@@ -56,13 +56,13 @@ class OffersRepository:
         return existing_offer
 
     def delete_all(self) -> int:
-        deleted = self.db.query(Offer).delete()
+        deleted = self.db.query(OfferRaw).delete()
         self.db.commit()
         return deleted
 
     # ❌ DELETE
     def delete(self, id: int) -> bool:
-        offer = self.db.query(Offer).filter(Offer.id == id).first()
+        offer = self.db.query(OfferRaw).filter(OfferRaw.id == id).first()
 
         if not offer:
             return False

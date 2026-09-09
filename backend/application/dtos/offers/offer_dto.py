@@ -1,28 +1,16 @@
-from decimal import Decimal
-from typing import List
-
-from .offer_item_dto import OfferItemDto
-from .offer_insight_dto import OfferInsightDto
 from common.mixins.json_serializable import JSONSerializable
 
 
 class OfferDto(JSONSerializable):
-    offer_items: List[OfferItemDto] = []
-    offer_insights: List[OfferInsightDto] = []
-
     def __init__(
         self,
         id: int,
         name: str,
-        buying_price: Decimal,
-        selling_price: Decimal | None,
-        details: str,
+        description: str | None,
     ):
         self.id = id
         self.name = name
-        self.buying_price = buying_price
-        self.selling_price = selling_price
-        self.details = details
+        self.description = description
 
     def to_dict(self, exclude=None):
         exclude = set(exclude or [])
@@ -30,17 +18,11 @@ class OfferDto(JSONSerializable):
         data = {
             "id": self.id,
             "name": self.name,
-            "buying_price": float(self.buying_price),
-            "selling_price": float(self.selling_price) if self.selling_price is not None else None,
-            "details": self.details,
-            "offer_items": [item.to_dict() for item in self.offer_items],
-            "offer_insights": [item.to_dict() for item in self.offer_insights],
+            "description": self.description,
         }
 
         return {k: v for k, v in data.items() if k not in exclude}
 
     def to_content_dict(self):
         data = self.to_dict(exclude=["id"])
-        data["offer_items"] = [item.to_content_dict() for item in self.offer_items]
-        data["offer_insights"] = [item.to_content_dict() for item in self.offer_insights]
         return data

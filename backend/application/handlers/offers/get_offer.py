@@ -1,6 +1,5 @@
 from di.container import Container
 from application.mappers.offer_mapper import OfferMapper
-from application.mappers.offer_item_mapper import OfferItemMapper
 
 def get_offer_handler(id : int):
     container = Container()

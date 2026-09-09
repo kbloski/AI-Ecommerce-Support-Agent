@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 DB_PATH = Path(__file__).resolve().parent.parent / "app.db"
-TABLES = ("offer_insights", "knowledge_insights", "target_audiences")
+TABLES = ("knowledge_insights", "target_audiences")
 
 
 def main() -> None:

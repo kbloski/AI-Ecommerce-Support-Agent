@@ -2,9 +2,7 @@ from typing import Dict, Type
 
 from infrastructure.database.db import Base
 from domain.enums.table_name import TableName
-from domain.models.offers.offer import Offer
-from domain.models.offers.offer_item import OfferItem
-from domain.models.offers.offer_insight import OfferInsight
+from domain.models.offers.offer_raw import OfferRaw
 from domain.models.knowledge.knowledge import Knowledge
 from domain.models.knowledge.knowledge_insight import KnowledgeInsight
 from domain.models.audience.target_audience import TargetAudience
@@ -28,9 +26,7 @@ from domain.models.page_copy.page_copy import PageCopy
 # Table name -> model, for the entities that have their own list + detail
 # page in the frontend (and can therefore be marked as favorite).
 FAVORITABLE_MODELS: Dict[str, Type[Base]] = {
-    TableName.OFFERS.value: Offer,
-    TableName.OFFER_ITEMS.value: OfferItem,
-    TableName.OFFER_INSIGHTS.value: OfferInsight,
+    TableName.OFFERS_RAW.value: OfferRaw,
     TableName.KNOWLEDGE.value: Knowledge,
     TableName.KNOWLEDGE_INSIGHTS.value: KnowledgeInsight,
     TableName.TARGET_AUDIENCES.value: TargetAudience,

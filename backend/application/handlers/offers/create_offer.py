@@ -1,22 +1,18 @@
 from di.container import Container
-from domain.models.offers.offer import Offer
+from domain.models.offers.offer_raw import OfferRaw
 from application.mappers.offer_mapper import OfferMapper
 
 
 def create_offer(
     name: str,
-    buying_price: float,
-    selling_price: float | None = None,
-    details: str | None = None,
+    description: str | None = None,
 ):
     container = Container()
     offers_repository = container.offers_repository()
 
-    offer = Offer(
+    offer = OfferRaw(
         name=name,
-        buying_price=buying_price,
-        selling_price=selling_price,
-        details=details,
+        description=description,
     )
 
     created_offer = offers_repository.create(offer)

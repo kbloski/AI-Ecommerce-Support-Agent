@@ -1,8 +1,6 @@
 const LABEL_OVERRIDES: Record<string, string> = {
   id: 'ID',
   cta: 'CTA',
-  offer_items: 'Elementy oferty',
-  offer_insights: 'Insights',
   knowledge_insights: 'Insights',
   fact_status: 'Status faktyczny',
   review_status: 'Weryfikacja statusu',

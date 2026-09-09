@@ -4,7 +4,6 @@ from fastapi import APIRouter, HTTPException
 from pydantic import AnyHttpUrl, BaseModel, Field
 from domain.enums.fact_status import FactStatus
 from domain.enums.review_status import ReviewStatus
-from domain.enums.offer_insight_type import OfferInsightType
 
 from application.handlers.ads.list_ad_frameworks_handler import list_ad_frameworks_handler
 from application.handlers.ads.list_creative_angels_handler import list_creative_angels_handler
@@ -16,18 +15,11 @@ from application.handlers.offers.get_offers import get_offers
 from application.handlers.offers.create_offer import create_offer
 from application.handlers.offers.get_offer import get_offer_handler
 from application.handlers.offers.delete_offer import delete_offer_handler
-from application.handlers.offers.delete_offer_item import delete_offer_item_handler
-from application.handlers.offers.get_offer_item_handler import get_offer_item_handler
-from application.handlers.offers.update_offer_item_handler import update_offer_item_handler
-from application.handlers.offers.create_offer_item_handler import create_offer_item_handler
 from application.handlers.knowledges.knowledge_generate import knowledge_generate_handler
 from application.handlers.knowledges.get_knowledge_handler import get_knowledge_handler
 from application.handlers.knowledges.get_knowledges_handler import get_knowledges_handler
 from application.handlers.knowledges.delete_knowledge_handler import delete_knowledge_handler
-from application.handlers.offers.delete_offer_insight_handler import delete_offer_insight_handler
 from application.handlers.knowledges.delete_knowledge_insight_handler import delete_knowledge_insight_handler
-from application.handlers.offers.get_offer_insight_handler import get_offer_insight_handler
-from application.handlers.offers.update_offer_insight_handler import update_offer_insight_handler
 from application.handlers.knowledges.get_knowledge_insight_handler import get_knowledge_insight_handler
 from application.handlers.knowledges.update_knowledge_insight_handler import update_knowledge_insight_handler
 from application.handlers.offers.update_offer_handler import update_offer_handler
@@ -48,7 +40,6 @@ from application.handlers.target_audience.get_target_audience_handler import get
 from application.handlers.target_audience.get_target_audience_preview_handler import get_target_audience_preview_handler
 from application.handlers.target_audience.delete_target_audience_handler import delete_target_audience_handler
 from application.handlers.target_audience.update_target_audience_handler import update_target_audience_handler
-from application.handlers.offers.generate_offer_insights_handler import generate_offer_insights_handler
 # from application.handlers.offers.suggest_knowledge_data_handler import suggest_knowledge_data_handler
 from application.handlers.analysis.knowledge_analysis_answers_generate_handler import knowledge_analysis_answers_generate_handler
 from application.handlers.analysis.create_analysis_for_knowledge_handler import create_analysis_for_knowledge_handler
@@ -164,21 +155,6 @@ class PageSectionRequirementInput(BaseModel):
 
 class UpdatePageRequirementsRequest(BaseModel):
     section_requirements: List[PageSectionRequirementInput]
-
-
-class CreateOfferItemRequest(BaseModel):
-    name: str
-    quantity: int = 1
-    details: Optional[str] = None
-
-
-class UpdateOfferInsightRequest(BaseModel):
-    fact_status: Optional[FactStatus] = None
-    review_status: Optional[ReviewStatus] = None
-
-
-class GenerateOfferInsightsRequest(BaseModel):
-    types: List[OfferInsightType]
 
 
 class UpdateKnowledgeInsightRequest(BaseModel):
@@ -318,15 +294,11 @@ def register_general_routes(router: APIRouter):
     @router.post("/offers/create")
     def create_offer_route(
         name: str,
-        buying_price: float,
-        selling_price: float | None = None,
-        details: str | None = None,
+        description: str | None = None,
     ):
         return create_offer(
             name=name,
-            buying_price=buying_price,
-            selling_price=selling_price,
-            details=details,
+            description=description,
         )
 
     @router.get("/offers/{id}")
@@ -337,11 +309,6 @@ def register_general_routes(router: APIRouter):
     def update_offer_route(id: int, payload: UpdateFieldsRequest):
         return update_offer_handler(id=id, fields=payload.fields)
 
-
-    @router.post("/offers/{offer_id}/insights/generate")
-    def generate_offer_insights_route(offer_id: int, payload: GenerateOfferInsightsRequest):
-        return generate_offer_insights_handler(offer_id=offer_id, types=payload.types)
-
     @router.delete("/offers/{id}/delete")
     def delete_offer_route(id: int):
         return delete_offer_handler(id=id)
@@ -349,58 +316,6 @@ def register_general_routes(router: APIRouter):
     @router.get("/offers/{id}/delete")
     def delete_offer_route_legacy_get(id: int):
         raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /offers/{id}/delete")
-
-    @router.delete("/offer-insights/{id}/delete")
-    def delete_offer_insight_route(id: int):
-        return delete_offer_insight_handler(id=id)
-
-    @router.get("/offer-insights/{id}/delete")
-    def delete_offer_insight_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /offer-insights/{id}/delete")
-
-    @router.get("/offer-insights/{id}")
-    def get_offer_insight_route(id: int):
-        return get_offer_insight_handler(id=id)
-
-    @router.post("/offer-insights/{id}/update")
-    def update_offer_insight_route(id: int, payload: UpdateOfferInsightRequest):
-        return update_offer_insight_handler(
-            id=id,
-            fact_status=payload.fact_status,
-            review_status=payload.review_status,
-        )
-
-
-
-    # -----------------------------
-    # Offer items
-    # -----------------------------
-
-    @router.post("/offers/{offer_id}/items")
-    def create_offer_item_route(offer_id: int, payload: CreateOfferItemRequest):
-        return create_offer_item_handler(
-            offer_id=offer_id,
-            name=payload.name,
-            quantity=payload.quantity,
-            details=payload.details,
-        )
-
-    @router.delete("/offer-items/{id}/delete")
-    def delete_offer_item_route(id: int):
-        return delete_offer_item_handler(id=id)
-
-    @router.get("/offer-items/{id}/delete")
-    def delete_offer_item_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /offer-items/{id}/delete")
-
-    @router.get("/offer-items/{id}")
-    def get_offer_item_route(id: int):
-        return get_offer_item_handler(id=id)
-
-    @router.post("/offer-items/{id}/update")
-    def update_offer_item_route(id: int, payload: UpdateFieldsRequest):
-        return update_offer_item_handler(id=id, fields=payload.fields)
-
 
 
     # -----------------------------

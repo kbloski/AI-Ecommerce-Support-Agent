@@ -11,16 +11,7 @@ interface OffersResponse {
 
 interface CreateOfferArgs {
   name: string
-  buying_price: number
-  selling_price?: number
-  details?: string
-}
-
-interface CreateOfferItemArgs {
-  offerId: number
-  name: string
-  quantity: number
-  details?: string
+  description?: string
 }
 
 export const offersApi = api.injectEndpoints({
@@ -55,63 +46,6 @@ export const offersApi = api.injectEndpoints({
       query: (id) => ({ url: `/offers/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, id) => [listTag('Offer', 'root'), itemTag('Offer', id)],
     }),
-    deleteOfferItem: builder.mutation<void, { id: number; offerId: number }>({
-      query: ({ id }) => ({ url: `/offer-items/${id}/delete`, method: 'DELETE' }),
-      invalidatesTags: (_result, _err, { offerId }) => [itemTag('Offer', offerId)],
-    }),
-    createOfferItem: builder.mutation<Entity, CreateOfferItemArgs>({
-      query: ({ offerId, ...body }) => ({
-        url: `/offers/${offerId}/items`,
-        method: 'POST',
-        body,
-      }),
-      invalidatesTags: (_result, _err, { offerId }) => [itemTag('Offer', offerId)],
-    }),
-    getOfferItem: builder.query<Entity, number>({
-      query: (id) => `/offer-items/${id}`,
-      providesTags: (_result, _err, id) => [itemTag('OfferItem', id)],
-    }),
-    updateOfferItem: builder.mutation<
-      Entity,
-      { id: number; offerId: number; fields: Record<string, unknown> }
-    >({
-      query: ({ id, fields }) => ({
-        url: `/offer-items/${id}/update`,
-        method: 'POST',
-        body: { fields },
-      }),
-      invalidatesTags: (_result, _err, { id, offerId }) => [
-        itemTag('Offer', offerId),
-        itemTag('OfferItem', id),
-      ],
-    }),
-    deleteOfferInsight: builder.mutation<void, { id: number; offerId: number }>({
-      query: ({ id }) => ({ url: `/offer-insights/${id}/delete`, method: 'DELETE' }),
-      invalidatesTags: (_result, _err, { offerId }) => [itemTag('Offer', offerId)],
-    }),
-    getOfferInsight: builder.query<Entity, number>({
-      query: (id) => `/offer-insights/${id}`,
-      providesTags: (_result, _err, id) => [itemTag('OfferInsight', id)],
-    }),
-    updateOfferInsight: builder.mutation<Entity, { id: number; offerId: number; fact_status?: string; review_status?: string }>({
-      query: ({ id, offerId: _offerId, ...body }) => ({
-        url: `/offer-insights/${id}/update`,
-        method: 'POST',
-        body,
-      }),
-      invalidatesTags: (_result, _err, { id, offerId }) => [
-        itemTag('Offer', offerId),
-        itemTag('OfferInsight', id),
-      ],
-    }),
-    generateOfferInsights: builder.mutation<Entity, { id: number; types: string[] }>({
-      query: ({ id, types }) => ({
-        url: `/offers/${id}/insights/generate`,
-        method: 'POST',
-        body: { types },
-      }),
-      invalidatesTags: (_result, _err, { id }) => [itemTag('Offer', id)],
-    }),
   }),
 })
 
@@ -120,13 +54,5 @@ export const {
   useGetOfferQuery,
   useCreateOfferMutation,
   useDeleteOfferMutation,
-  useDeleteOfferItemMutation,
-  useCreateOfferItemMutation,
-  useDeleteOfferInsightMutation,
-  useGenerateOfferInsightsMutation,
-  useGetOfferInsightQuery,
-  useUpdateOfferInsightMutation,
   useUpdateOfferMutation,
-  useGetOfferItemQuery,
-  useUpdateOfferItemMutation,
 } = offersApi

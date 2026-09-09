@@ -25,7 +25,7 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
   const { contextualPanel, openPanel } = useSidePanel()
   const showBackButton = pathname !== '/' && pathname !== '/offers'
   const sections = [
-    { pattern: '/offers/:id/*', current: 'Oferta', entityType: 'offer', process: [['knowledges', 'Knowledges']], resources: [['insights', 'Insights'], ['items', 'Elementy oferty']] },
+    { pattern: '/offers/:id/*', current: 'Oferta', entityType: 'offer', process: [['knowledges', 'Knowledges']], resources: [] },
     { pattern: '/knowledges/:id/*', current: 'Knowledge', entityType: 'knowledge', process: [['brand-marketing', 'Brand marketing']], knowledge: [['analyses', 'Analizy']], resources: [['insights', 'Insights'], ['target-audiences', 'Grupy docelowe']] },
     { pattern: '/knowledges/:knowledgeId/analysis/:id/*', current: 'Analiza', process: [['checklists', 'Checklisty']], resources: [['questions', 'Pytania']] },
     { pattern: '/knowledges/:knowledgeId/analysis/:analysisId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },
@@ -44,8 +44,6 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
     { pattern: '/ugc-creatives/:id/*', current: 'UGC creative', entityType: 'ugc_creative', process: [], resources: [] },
     { pattern: '/page-copy/:id/*', current: 'Page copy', entityType: 'page_copy', process: [], resources: [] },
     { pattern: '/target-audiences/:id/*', current: 'Grupa docelowa', process: [], resources: [] },
-    { pattern: '/offer-insights/:id/*', current: 'Insight oferty', process: [], resources: [] },
-    { pattern: '/offer-items/:id/*', current: 'Element oferty', process: [], resources: [] },
     { pattern: '/knowledge-insights/:id/*', current: 'Insight knowledge', process: [], resources: [] },
   ] as const
   // Prefer the most specific route, otherwise an analysis URL would match Knowledge first.
@@ -83,7 +81,7 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
 
   if (section) {
     const detailPath = section.match?.pathnameBase ?? pathname
-    const hasEditOnlyView = ['/offer-insights/', '/offer-items/', '/knowledge-insights/'].some(
+    const hasEditOnlyView = ['/knowledge-insights/'].some(
       (prefix) => pathname.startsWith(prefix),
     )
     const currentPath = hasEditOnlyView ? pathname : detailPath

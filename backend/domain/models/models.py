@@ -8,9 +8,7 @@ from domain.models.llm.llm_message import LlmMessage
 # Database models 
 # --------------------
 
-from domain.models.offers.offer import Offer
-from domain.models.offers.offer_item import OfferItem
-from domain.models.offers.offer_insight import OfferInsight
+from domain.models.offers.offer_raw import OfferRaw
 
 # Knowledge
 from domain.models.knowledge.knowledge import Knowledge

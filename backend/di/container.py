@@ -7,7 +7,6 @@ from application.services.offer_service import OfferService
 from infrastructure.logging.logger import Logger
 from infrastructure.parsers.docx_parser import DocxParser
 from infrastructure.repositories.offers_repository import OffersRepository
-from infrastructure.repositories.offer_items_repository import OfferItemsRepository
 from infrastructure.services.path_service import PathService
 from infrastructure.repositories.ad_frameworks_repository import AdFrameworksRepository
 from infrastructure.repositories.creative_angels_repository import CreativeAnglesRepository
@@ -26,7 +25,6 @@ from application.assemblers.offer_assembler import OfferAssembler
 from infrastructure.repositories.knowledge_repository import KnowledgeRepository
 from infrastructure.repositories.knowledge_insights_repository import KnowledgeInsightsRepository
 from application.assemblers.knowledge_assembler import KnowledgeAssembler
-from infrastructure.repositories.offer_insights_repository import OfferInsightsRepository
 from infrastructure.repositories.target_audiences_repository import TargetAudiencesRepository
 from application.assemblers.target_audience_assembler import TargetAudienceAssembler
 from infrastructure.repositories.analysis_repository import AnalysisRepository
@@ -121,12 +119,6 @@ class Container(containers.DeclarativeContainer):
         db=db
     )
 
-    offer_items_repository =  providers.Singleton(
-        OfferItemsRepository,
-        logger=logger,
-        db=db
-    )
-
     knowledge_repository = providers.Singleton(
         KnowledgeRepository,
         logger=logger,
@@ -135,12 +127,6 @@ class Container(containers.DeclarativeContainer):
 
     knowledge_insights_repository = providers.Singleton(
         KnowledgeInsightsRepository,
-        logger=logger,
-        db=db
-    )
-
-    offer_insights_repository = providers.Singleton(
-        OfferInsightsRepository,
         logger=logger,
         db=db
     )
@@ -292,8 +278,6 @@ class Container(containers.DeclarativeContainer):
         OfferAssembler,
         logger=logger,
         offers_repository=offers_repository,
-        offer_items_repository=offer_items_repository,
-        offer_insights_repository=offer_insights_repository
     )
 
     knowledge_assembler = providers.Singleton(

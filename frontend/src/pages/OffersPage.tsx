@@ -10,9 +10,7 @@ import {
 
 const createOfferSchema = z.object({
   name: z.string().min(1, 'Nazwa jest wymagana'),
-  buying_price: z.coerce.number().positive('Cena zakupu musi być dodatnia'),
-  selling_price: z.coerce.number().positive().optional().or(z.literal('').transform(() => undefined)),
-  details: z.string().optional(),
+  description: z.string().optional(),
 })
 
 export default function OffersPage() {
@@ -30,9 +28,7 @@ export default function OffersPage() {
     const formData = new FormData(form)
     const parsed = createOfferSchema.safeParse({
       name: formData.get('name'),
-      buying_price: formData.get('buying_price'),
-      selling_price: formData.get('selling_price'),
-      details: formData.get('details'),
+      description: formData.get('description'),
     })
 
     if (!parsed.success) {
@@ -66,9 +62,7 @@ export default function OffersPage() {
           <form onSubmit={handleSubmit} className="w-full space-y-2 p-4">
             <h2 className="text-lg font-semibold">Nowa oferta</h2>
             <input name="name" placeholder="Nazwa" className="w-full rounded-none border px-3 py-2 text-sm" />
-            <input name="buying_price" type="number" step="0.01" placeholder="Cena zakupu" className="w-full rounded-none border px-3 py-2 text-sm" />
-            <input name="selling_price" type="number" step="0.01" placeholder="Cena sprzedaży (opcjonalnie)" className="w-full rounded-none border px-3 py-2 text-sm" />
-            <textarea name="details" placeholder="Szczegóły (opcjonalnie)" className="w-full rounded-none border px-3 py-2 text-sm" />
+            <textarea name="description" placeholder="Opis (opcjonalnie)" className="w-full rounded-none border px-3 py-2 text-sm" />
             {formError && <p className="text-sm text-destructive">{formError}</p>}
             <Button type="submit" disabled={isCreating} className="rounded-none">
               {isCreating ? 'Tworzenie…' : 'Utwórz ofertę'}

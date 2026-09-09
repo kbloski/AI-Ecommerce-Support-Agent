@@ -7,8 +7,6 @@ import KnowledgesPage from '@/pages/KnowledgesPage'
 import KnowledgeDetailPage from '@/pages/KnowledgeDetailPage'
 import TargetAudienceDetailPage from '@/pages/TargetAudienceDetailPage'
 import TargetAudienceEditPage from '@/pages/TargetAudienceEditPage'
-import OfferInsightEditPage from '@/pages/OfferInsightEditPage'
-import OfferItemEditPage from '@/pages/OfferItemEditPage'
 import KnowledgeInsightEditPage from '@/pages/KnowledgeInsightEditPage'
 import AnalysisDetailPage from '@/pages/AnalysisDetailPage'
 import ChecklistDetailPage from '@/pages/ChecklistDetailPage'
@@ -27,7 +25,7 @@ import PageBlueprintDetailPage from '@/pages/PageBlueprintDetailPage'
 import PageContentPlanDetailPage from '@/pages/PageContentPlanDetailPage'
 import PageCopyDetailPage from '@/pages/PageCopyDetailPage'
 import SettingsPage from '@/pages/SettingsPage'
-import { KnowledgeInsightsPage, KnowledgeTargetAudiencesPage, OfferInsightsPage, OfferItemsPage } from '@/pages/EntityRelationPages'
+import { KnowledgeInsightsPage, KnowledgeTargetAudiencesPage } from '@/pages/EntityRelationPages'
 import {
   AdCreativeExecutionsPage, AdCreativeStrategiesPage, AnalysisChecklistsPage, AnalysisQuestionsPage,
   BrandMarketingStrategiesPage, ChecklistItemsPage, KnowledgeAnalysesPage,
@@ -44,8 +42,6 @@ function App() {
         <Route path="/offers" element={<OffersPage />} />
         <Route path="/offers/:offerId" element={<OfferDetailPage />} />
         <Route path="/offers/:offerId/knowledges" element={<KnowledgesPage />} />
-        <Route path="/offers/:offerId/insights" element={<OfferInsightsPage />} />
-        <Route path="/offers/:offerId/items" element={<OfferItemsPage />} />
         <Route path="/knowledges/:knowledgeId" element={<KnowledgeDetailPage />} />
         <Route path="/knowledges/:knowledgeId/insights" element={<KnowledgeInsightsPage />} />
         <Route path="/knowledges/:knowledgeId/target-audiences" element={<KnowledgeTargetAudiencesPage />} />
@@ -53,8 +49,6 @@ function App() {
         <Route path="/knowledges/:knowledgeId/brand-marketing" element={<KnowledgeBrandMarketingPage />} />
         <Route path="/target-audiences/:id" element={<TargetAudienceDetailPage />} />
         <Route path="/target-audiences/:id/edit" element={<TargetAudienceEditPage />} />
-        <Route path="/offer-insights/:id/edit" element={<OfferInsightEditPage />} />
-        <Route path="/offer-items/:id/edit" element={<OfferItemEditPage />} />
         <Route path="/knowledge-insights/:id/edit" element={<KnowledgeInsightEditPage />} />
         <Route path="/knowledges/:knowledgeId/analysis/:analysisId" element={<AnalysisDetailPage />} />
         <Route path="/knowledges/:knowledgeId/analysis/:analysisId/checklists" element={<AnalysisChecklistsPage />} />
