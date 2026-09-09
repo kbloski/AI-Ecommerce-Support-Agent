@@ -29,9 +29,6 @@ export default function OfferProfileDetailPage() {
       itemActions={{
         target_audiences: (item) => deleteTargetAudience({ id: item.id as number, offerProfileId }),
       }}
-      itemLinks={{
-        target_audiences: (item) => `/target-audiences/${item.id}`,
-      }}
       itemStatusActions={{
         target_audiences: (item, factStatus) =>
           updateTargetAudience({

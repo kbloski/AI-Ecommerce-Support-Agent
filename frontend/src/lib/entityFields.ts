@@ -2,7 +2,7 @@ const LABEL_OVERRIDES: Record<string, string> = {
   id: 'ID',
   cta: 'CTA',
   fact_status: 'Status faktyczny',
-  review_status: 'Weryfikacja statusu',
+  is_reviewed: 'Sprawdzone',
   target_audiences: 'Grupy docelowe',
   question: 'Pytanie',
   answer: 'Odpowiedź',

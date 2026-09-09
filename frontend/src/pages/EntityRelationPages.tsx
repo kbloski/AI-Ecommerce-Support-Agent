@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { Search } from 'lucide-react'
 import { useParams } from 'react-router-dom'
 import { EntityList } from '@/components/EntityList'
 import { ResourceList } from '@/components/ResourceList'
@@ -16,8 +17,9 @@ import {
   useListOfferProfileElementsQuery,
   useListOfferProfileElementTypesQuery,
   useUpdateOfferProfileElementMutation,
+  type OfferProfileElementSort,
 } from '@/features/offerProfiles/offerProfileApi'
-import { useDeleteTargetAudienceMutation, useGenerateTargetAudiencesMutation } from '@/features/targetAudiences/targetAudiencesApi'
+import { useDeleteTargetAudienceMutation, useGenerateTargetAudiencesMutation, useUpdateTargetAudienceMutation } from '@/features/targetAudiences/targetAudiencesApi'
 import type { Entity } from '@/types'
 
 export function OfferProfileTargetAudiencesPage() {
@@ -25,6 +27,7 @@ export function OfferProfileTargetAudiencesPage() {
   const { data, isLoading, error } = useGetOfferProfileQuery(offerProfileId)
   const [generate, generateState] = useGenerateTargetAudiencesMutation()
   const [remove] = useDeleteTargetAudienceMutation()
+  const [updateTargetAudience] = useUpdateTargetAudienceMutation()
   const { openPanel, closePanel } = useSidePanel()
   const items = (data?.target_audiences as Entity[] | undefined) ?? []
 
@@ -35,7 +38,6 @@ export function OfferProfileTargetAudiencesPage() {
         items={items}
         isLoading={isLoading}
         error={error}
-        linkTo={(item) => `/target-audiences/${item.id}`}
         itemLabel={(item) => (item.name as string) ?? `#${item.id}`}
         onGenerate={() => generate({ offerProfileId })}
         isGenerating={generateState.isLoading}
@@ -45,6 +47,20 @@ export function OfferProfileTargetAudiencesPage() {
           content: <EditTargetAudienceForm id={item.id as number} data={item} onSaved={closePanel} />,
         })}
         onDelete={(item) => remove({ id: item.id as number, offerProfileId })}
+        itemActions={(item) => (
+          <Button
+            variant={item.is_reviewed ? 'ghost' : 'default'}
+            size="sm"
+            className="h-7 px-2.5 text-xs"
+            onClick={() => updateTargetAudience({
+              id: item.id as number,
+              offerProfileId,
+              is_reviewed: item.is_reviewed !== true,
+            })}
+          >
+            {item.is_reviewed ? 'Oznacz jako niesprawdzone' : 'Zatwierdź'}
+          </Button>
+        )}
       />
     </div>
   )
@@ -52,29 +68,138 @@ export function OfferProfileTargetAudiencesPage() {
 
 export function OfferProfileElementsPage() {
   const offerProfileId = Number(useParams().offerProfileId)
-  const { data: elements = [], isLoading, error } = useListOfferProfileElementsQuery(offerProfileId)
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useState('')
+  const [elementType, setElementType] = useState('')
+  const [isReviewedFilter, setIsReviewedFilter] = useState('')
+  const [sort, setSort] = useState<OfferProfileElementSort>('created_at_desc')
+  const { data: elementTypes = [] } = useListOfferProfileElementTypesQuery()
+  const { data: result, isLoading, error } = useListOfferProfileElementsQuery({
+    offerProfileId,
+    page,
+    pageSize: 6,
+    search,
+    elementType,
+    isReviewed: isReviewedFilter === '' ? undefined : isReviewedFilter === 'true',
+    sort,
+  })
+  const elements = result?.items ?? []
   const [remove] = useDeleteOfferProfileElementMutation()
+  const [updateElement] = useUpdateOfferProfileElementMutation()
   const { openPanel, closePanel } = useSidePanel()
+
+  const updateSearch = (value: string) => {
+    setSearch(value)
+    setPage(1)
+  }
+
+  const updateElementType = (value: string) => {
+    setElementType(value)
+    setPage(1)
+  }
+
+  const updateSort = (value: OfferProfileElementSort) => {
+    setSort(value)
+    setPage(1)
+  }
+
+  const updateIsReviewedFilter = (value: string) => {
+    setIsReviewedFilter(value)
+    setPage(1)
+  }
 
   return (
     <div className="w-full p-6 lg:p-10">
       <EntityList
         title="Elementy oferty"
         items={elements}
+        totalItems={result?.total_items}
         isLoading={isLoading}
         error={error}
         itemLabel={(element) => (element.name as string) ?? `#${element.id}`}
-        itemDescription={(element) => [
-          String(element.type ?? '').replaceAll('_', ' '),
-          element.description ? String(element.description) : null,
-        ].filter(Boolean).join(' — ')}
+        itemDescription={(element) => element.description ? String(element.description) : ''}
+        itemMeta={(element) => `Identyfikator ${String(element.id)}`}
         emptyTitle="Brak elementów oferty"
         emptyDescription="Dodaj pierwszy element, aby rozpocząć pracę."
+        contentBeforeList={<>
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="relative min-w-64 flex-1 max-w-md">
+              <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={search}
+                onChange={(event) => updateSearch(event.target.value)}
+                className="pl-9"
+                placeholder="Szukaj w elementach oferty..."
+              />
+            </label>
+            <select
+              aria-label="Filtruj według typu"
+              value={elementType}
+              onChange={(event) => updateElementType(event.target.value)}
+              className="sr-only"
+            >
+              <option value="">Wszystkie typy</option>
+              {elementTypes.map((type) => (
+                <option key={type} value={type}>{type.replaceAll('_', ' ')}</option>
+              ))}
+            </select>
+            <select
+              aria-label="Sortowanie elementów oferty"
+              value={sort}
+              onChange={(event) => updateSort(event.target.value as OfferProfileElementSort)}
+              className="h-9 rounded-lg border border-input bg-transparent px-2.5 text-sm"
+            >
+              <option value="created_at_desc">Najnowsze</option>
+              <option value="created_at_asc">Najstarsze</option>
+              <option value="name_asc">Nazwa: A–Z</option>
+              <option value="name_desc">Nazwa: Z–A</option>
+            </select>
+            <select
+              aria-label="Filtruj według sprawdzenia"
+              value={isReviewedFilter}
+              onChange={(event) => updateIsReviewedFilter(event.target.value)}
+              className="h-9 rounded-lg border border-input bg-transparent px-2.5 text-sm"
+            >
+              <option value="">Wszystkie</option>
+              <option value="true">Sprawdzone</option>
+              <option value="false">Nie sprawdzone</option>
+            </select>
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+            <button type="button" onClick={() => updateElementType('')} className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${!elementType ? 'bg-[#111111] text-white shadow-sm' : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}>Wszystkie typy</button>
+            {elementTypes.map((type) => <button key={type} type="button" onClick={() => updateElementType(type)} className={`inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${elementType === type ? 'border-[#111111] bg-[#111111] text-white shadow-sm' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}>{formatElementType(type)}</button>)}
+          </div>
+        </>}
+        footer={result && result.total_pages > 1 ? (
+          <div className="flex items-center justify-between gap-3 border-t pt-4">
+            <span className="text-sm text-muted-foreground">
+              Strona {result.page} z {result.total_pages}
+            </span>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" disabled={result.page <= 1} onClick={() => setPage(result.page - 1)}>
+                Poprzednia
+              </Button>
+              <Button variant="outline" size="sm" disabled={result.page >= result.total_pages} onClick={() => setPage(result.page + 1)}>
+                Następna
+              </Button>
+            </div>
+          </div>
+        ) : undefined}
         onEdit={(element) => openPanel({
           title: 'Edytuj element oferty',
           content: <OfferProfileElementForm offerProfileId={offerProfileId} element={element} onSaved={closePanel} />,
         })}
         onDelete={(element) => remove({ id: element.id as number, offerProfileId })}
+        itemActions={(element) => (
+          <Button
+            variant={element.is_reviewed ? 'ghost' : 'default'}
+            size="sm"
+            className="h-7 px-2.5 text-xs"
+            onClick={() => updateElement({ id: element.id as number, offerProfileId, fields: { is_reviewed: element.is_reviewed !== true } })}
+          >
+            {element.is_reviewed ? 'Oznacz jako niesprawdzone' : 'Zatwierdź'}
+          </Button>
+        )}
         actions={
           <>
             <Button
@@ -98,6 +223,10 @@ export function OfferProfileElementsPage() {
       />
     </div>
   )
+}
+
+function formatElementType(type: string) {
+  return type.replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase())
 }
 
 function GenerateOfferProfileElementsForm({
@@ -176,6 +305,7 @@ function OfferProfileElementForm({
   const [create, createState] = useCreateOfferProfileElementMutation()
   const [update, updateState] = useUpdateOfferProfileElementMutation()
   const [error, setError] = useState<string | null>(null)
+  const [isReviewed, setIsReviewed] = useState(Boolean(element?.is_reviewed))
   const isEditing = Boolean(element)
   const isSubmitting = isEditing ? updateState.isLoading : createState.isLoading
 
@@ -188,6 +318,7 @@ function OfferProfileElementForm({
       type: String(form.get('type') ?? ''),
       name: String(form.get('name') ?? ''),
       description: String(form.get('description') ?? ''),
+      is_reviewed: isReviewed,
     }
 
     try {
@@ -215,6 +346,15 @@ function OfferProfileElementForm({
         <option value="">{areTypesLoading ? 'Ładowanie typów…' : 'Wybierz typ'}</option>
         {types.map((type) => <option key={type} value={type}>{type.replaceAll('_', ' ')}</option>)}
       </select>
+    </label>
+    <label className="flex items-center gap-2 text-sm font-medium">
+      <Input
+        type="checkbox"
+        checked={isReviewed}
+        onChange={(event) => setIsReviewed(event.target.checked)}
+        className="size-4"
+      />
+      Element został sprawdzony
     </label>
     <label className="block space-y-2">
       <span className="text-sm font-medium">Nazwa</span>

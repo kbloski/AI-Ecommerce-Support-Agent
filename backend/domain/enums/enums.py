@@ -2,7 +2,6 @@ from domain.enums.analysis_assessment_status import AnalysisAssessmentStatus
 from domain.enums.audience_gender import AudienceGender
 from domain.enums.awareness_level import AwarenessLevel
 from domain.enums.fact_status import FactStatus
-from domain.enums.review_status import ReviewStatus
 from domain.enums.decision_time import DecisionTime
 from domain.enums.gender_enum import Gender
 from domain.enums.intensity_level import IntensityLevel

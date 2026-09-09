@@ -11,7 +11,6 @@ import { RelationCards } from '@/components/RelationCards'
 import { SegmentedControl } from '@/components/SegmentedControl'
 import { isPrimitive, isRelationArray, label } from '@/lib/entityFields'
 import { useListFactStatusesQuery } from '@/features/factStatus/factStatusApi'
-import { useListReviewStatusesQuery } from '@/features/reviewStatus/reviewStatusApi'
 
 const SKIP_KEYS = new Set(['id', 'created_at', 'updated_at'])
 
@@ -30,17 +29,13 @@ function ObjectArray({
   onDelete,
   onEditLink,
   onStatusChange,
-  onReviewStatusChange,
   statuses,
-  reviewStatuses,
 }: {
   items: Record<string, unknown>[]
   onDelete?: (item: Record<string, unknown>) => void
   onEditLink?: (item: Record<string, unknown>) => string
   onStatusChange?: (item: Record<string, unknown>, status: string) => void | Promise<unknown>
-  onReviewStatusChange?: (item: Record<string, unknown>, status: string) => void | Promise<unknown>
   statuses?: { value: string; label: string }[]
-  reviewStatuses?: { value: string; label: string }[]
 }) {
   return (
     <div className="space-y-2">
@@ -94,13 +89,6 @@ function ObjectArray({
                         onValueChange={(status) => onStatusChange(item, status)}
                         ariaLabel={`Status faktyczny elementu ${String(item.id)}`}
                       />
-                    ) : key === 'review_status' && onReviewStatusChange ? (
-                      <SegmentedControl
-                        value={typeof value === 'string' ? value : undefined}
-                        options={reviewStatuses}
-                        onValueChange={(status) => onReviewStatusChange(item, status)}
-                        ariaLabel={`Weryfikacja statusu elementu ${String(item.id)}`}
-                      />
                     ) : value === null || value === undefined || value === '' ? (
                       <span className="text-muted-foreground italic">—</span>
                     ) : isPrimitive(value) ? (
@@ -127,9 +115,7 @@ export function RelationList({
   onDelete,
   onEditLink,
   onStatusChange,
-  onReviewStatusChange,
   statuses,
-  reviewStatuses,
   addition,
   showHeading = true,
 }: {
@@ -138,9 +124,7 @@ export function RelationList({
   onDelete?: (item: Record<string, unknown>) => void
   onEditLink?: (item: Record<string, unknown>) => string
   onStatusChange?: (item: Record<string, unknown>, status: string) => void | Promise<unknown>
-  onReviewStatusChange?: (item: Record<string, unknown>, status: string) => void | Promise<unknown>
   statuses?: { value: string; label: string }[]
-  reviewStatuses?: { value: string; label: string }[]
   addition?: ReactNode
   showHeading?: boolean
 }) {
@@ -155,9 +139,7 @@ export function RelationList({
           onDelete={onDelete}
           onEditLink={onEditLink}
           onStatusChange={onStatusChange}
-          onReviewStatusChange={onReviewStatusChange}
           statuses={statuses}
-          reviewStatuses={reviewStatuses}
         />
       )}
     </>
@@ -207,7 +189,6 @@ export function EditableFields({
   relationLinks,
 }: EditableFieldsProps) {
   const { data: statuses } = useListFactStatusesQuery()
-  const { data: reviewStatuses } = useListReviewStatusesQuery()
 
   const isRelationField = (key: string) =>
     isRelationArray(data[key]) ||
@@ -289,9 +270,7 @@ export function EditableFields({
             const statusLabel =
               key === 'fact_status'
                 ? statuses?.find((status) => status.value === value)?.label
-                : key === 'review_status'
-                  ? reviewStatuses?.find((status) => status.value === value)?.label
-                  : undefined
+                : undefined
 
             return (
               <div key={key} className="grid gap-1">
@@ -329,7 +308,7 @@ export function EditableFields({
         {editableKeys.map((key) => (
           <div key={key} className="space-y-1">
             <Label htmlFor={key}>{label(key)}</Label>
-            {key === 'fact_status' || key === 'review_status' ? (
+            {key === 'fact_status' ? (
               <Select
                 value={values[key]}
                 onValueChange={(value) => {
@@ -340,7 +319,7 @@ export function EditableFields({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {(key === 'fact_status' ? statuses : reviewStatuses)?.map((status) => (
+                  {statuses?.map((status) => (
                     <SelectItem key={status.value} value={status.value}>
                       {status.label}
                     </SelectItem>

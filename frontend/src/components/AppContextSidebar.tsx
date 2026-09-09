@@ -61,7 +61,6 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
     { pattern: '/creative-execution/:id/*', current: 'Creative execution', entityType: 'creative_execution', process: [], resources: [] },
     { pattern: '/ugc-creatives/:id/*', current: 'UGC creative', entityType: 'ugc_creative', process: [], resources: [] },
     { pattern: '/page-copy/:id/*', current: 'Page copy', entityType: 'page_copy', process: [], resources: [] },
-    { pattern: '/target-audiences/:id/*', current: 'Grupa docelowa', process: [], resources: [] },
   ] as const
   // Prefer the most specific route, otherwise an analysis URL would match OfferProfile first.
   const section = [...sections].sort((a, b) => b.pattern.length - a.pattern.length)
@@ -75,7 +74,10 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
   const isChecklistSection = section?.config.current === 'Checklista'
   const isCurrentStage = (stage: string) => section?.config.current === stage && Number.isInteger(currentEntityId)
   const targetAudiences = useListTargetAudiencesForOfferProfileQuery(offerProfileId, { skip: skipOfferProfileResources })
-  const offerProfileElements = useListOfferProfileElementsQuery(offerProfileId, { skip: skipOfferProfileResources })
+  const offerProfileElements = useListOfferProfileElementsQuery(
+    { offerProfileId },
+    { skip: skipOfferProfileResources },
+  )
   const brandMarketing = useListBrandMarketingForOfferProfileQuery(offerProfileId, { skip: skipOfferProfileResources })
   const analyses = useListAnalysisForOfferProfileQuery(offerProfileId, { skip: skipOfferProfileResources })
   const analysis = useGetAnalysisQuery(currentEntityId, { skip: !isAnalysisSection || !Number.isInteger(currentEntityId) })
@@ -98,7 +100,7 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
   const resourceCounts: Record<string, number | undefined> = {
     'offer-profiles': offerProfiles.data?.length,
     'target-audiences': targetAudiences.data?.length,
-    elements: offerProfileElements.data?.length,
+    elements: offerProfileElements.data?.total_items,
     'brand-marketing': brandMarketing.data?.length,
     analyses: analyses.data?.length,
     checklists: checklists.data?.length,

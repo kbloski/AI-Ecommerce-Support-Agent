@@ -1,16 +1,14 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import AnyHttpUrl, BaseModel, Field
 from domain.enums.fact_status import FactStatus
-from domain.enums.review_status import ReviewStatus
 
 from application.handlers.ads.list_ad_frameworks_handler import list_ad_frameworks_handler
 from application.handlers.ads.list_creative_angels_handler import list_creative_angels_handler
 from application.handlers.ads.list_execution_styles_handler import list_execution_styles_handler
 from application.handlers.ads.list_platforms_handler import list_platforms_handler
 from application.handlers.ads.list_fact_statuses_handler import list_fact_statuses_handler
-from application.handlers.ads.list_review_statuses_handler import list_review_statuses_handler
 from application.handlers.offers.get_offers import get_offers
 from application.handlers.offers.create_offer import create_offer
 from application.handlers.offers.get_offer import get_offer_handler
@@ -164,7 +162,7 @@ class UpdatePageRequirementsRequest(BaseModel):
 
 class UpdateTargetAudienceRequest(BaseModel):
     fact_status: Optional[FactStatus] = None
-    review_status: Optional[ReviewStatus] = None
+    is_reviewed: Optional[bool] = None
     name: Optional[str] = None
     reason: Optional[str] = None
     score: Optional[float] = None
@@ -193,6 +191,7 @@ class CreateOfferProfileElementRequest(BaseModel):
     type: OfferProfileElementType
     name: str = Field(min_length=1, max_length=255)
     description: Optional[str] = None
+    is_reviewed: bool = False
 
 
 class GenerateOfferProfileElementsRequest(BaseModel):
@@ -366,8 +365,24 @@ def register_general_routes(router: APIRouter):
         raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /offer-profiles/{id}/delete")
 
     @router.get("/offer-profiles/{offer_profile_id}/elements")
-    def get_offer_profile_elements(offer_profile_id: int):
-        return list_offer_profile_elements_handler(offer_profile_id=offer_profile_id)
+    def get_offer_profile_elements(
+        offer_profile_id: int,
+        page: int = Query(default=1, ge=1),
+        page_size: int = Query(default=20, ge=1, le=100),
+        search: str | None = None,
+        element_type: OfferProfileElementType | None = None,
+        is_reviewed: bool | None = None,
+        sort: Literal["created_at_desc", "created_at_asc", "name_asc", "name_desc"] = "created_at_desc",
+    ):
+        return list_offer_profile_elements_handler(
+            offer_profile_id=offer_profile_id,
+            page=page,
+            page_size=page_size,
+            search=search,
+            element_type=element_type,
+            is_reviewed=is_reviewed,
+            sort=sort,
+        )
 
     @router.get("/offer-profile-elements/types")
     def get_offer_profile_element_types():
@@ -395,6 +410,7 @@ def register_general_routes(router: APIRouter):
                 element_type=payload.type,
                 name=payload.name.strip(),
                 description=payload.description.strip() if payload.description else None,
+                is_reviewed=payload.is_reviewed,
             )
         except LookupError as error:
             raise HTTPException(status_code=404, detail=str(error)) from error
@@ -405,6 +421,8 @@ def register_general_routes(router: APIRouter):
             return update_offer_profile_element_handler(id=id, fields=payload.fields)
         except LookupError as error:
             raise HTTPException(status_code=404, detail=str(error)) from error
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
 
     @router.delete("/offer-profile-elements/{id}/delete")
     def delete_offer_profile_element_route(id: int):
@@ -793,10 +811,6 @@ def register_general_routes(router: APIRouter):
     @router.get("/fact-statuses")
     def fact_statuses_list():
         return list_fact_statuses_handler()
-
-    @router.get("/review-statuses")
-    def review_statuses_list():
-        return list_review_statuses_handler()
 
     @router.get("/page-sections")
     def page_sections_list():

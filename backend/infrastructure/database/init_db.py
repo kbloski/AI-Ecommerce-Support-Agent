@@ -8,6 +8,7 @@ def init_db():
     _migrate_offer_profile_to_offer_profiles()
     Base.metadata.create_all(bind=engine)
     _add_missing_favorite_columns()
+    _add_missing_is_reviewed_columns()
     _add_missing_page_blueprint_columns()
     _rename_page_section_requirement_column()
 
@@ -86,6 +87,33 @@ def _add_missing_favorite_columns():
                 conn.execute(
                     text(f'ALTER TABLE "{table.name}" ADD COLUMN is_favorite BOOLEAN NOT NULL DEFAULT 0')
                 )
+
+def _add_missing_is_reviewed_columns():
+    """Add the boolean review marker and preserve values from the retired status field."""
+    inspector = inspect(engine)
+    existing_tables = set(inspector.get_table_names())
+
+    for table in ("offer_profile_elements", "target_audiences"):
+        if table not in existing_tables:
+            continue
+
+        columns = {column["name"] for column in inspector.get_columns(table)}
+        if "is_reviewed" not in columns:
+            with engine.begin() as conn:
+                conn.execute(
+                    text(
+                        f"ALTER TABLE {table} "
+                        "ADD COLUMN is_reviewed BOOLEAN NOT NULL DEFAULT 0"
+                    )
+                )
+                if "review_status" in columns:
+                    conn.execute(
+                        text(
+                            f"UPDATE {table} "
+                            "SET is_reviewed = CASE "
+                        "WHEN review_status = 'pending' THEN 0 ELSE 1 END"
+                        )
+                    )
 
 def _add_missing_page_blueprint_columns():
     """Additive migration: adds `page_requirements_id` to `page_blueprint`

@@ -9,6 +9,7 @@ def create_offer_profile_element_handler(
     element_type: OfferProfileElementType,
     name: str,
     description: str | None,
+    is_reviewed: bool = False,
 ) -> dict:
     container = Container()
     if container.offer_profile_repository().get_by_id(offer_profile_id) is None:
@@ -19,6 +20,7 @@ def create_offer_profile_element_handler(
         type=element_type,
         name=name,
         description=description or None,
+        is_reviewed=is_reviewed,
     )
     created = container.offer_profile_elements_repository().create(element)
     return OfferProfileElementMapper.to_dto(created).to_dict()

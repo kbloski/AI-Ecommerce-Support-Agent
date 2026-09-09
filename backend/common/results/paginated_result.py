@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
-from typing import Generic, List, TypeVar
+from collections.abc import Callable
+from typing import Any, Generic, List, TypeVar
 
 T = TypeVar("T")
 
@@ -19,3 +20,13 @@ class PaginatedResult(Generic[T]):
             self.total_pages = (
                 self.total_items + self.page_size - 1
             ) // self.page_size
+
+    def to_dict(self, serialize_item: Callable[[T], Any] | None = None) -> dict:
+        serializer = serialize_item or (lambda item: item)
+        return {
+            "items": [serializer(item) for item in self.items],
+            "page": self.page,
+            "page_size": self.page_size,
+            "total_items": self.total_items,
+            "total_pages": self.total_pages,
+        }

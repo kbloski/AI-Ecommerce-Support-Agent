@@ -6,7 +6,7 @@ export interface UpdateTargetAudienceArgs {
   id: number
   offerProfileId?: number
   fact_status?: string
-  review_status?: string
+  is_reviewed?: boolean
   name?: string
   reason?: string
   score?: number
@@ -39,10 +39,6 @@ export const targetAudiencesApi = api.injectEndpoints({
         listTag('TargetAudience', offerProfileId),
       ],
     }),
-    getTargetAudience: builder.query<Entity, number>({
-      query: (id) => `/target-audiences/${id}`,
-      providesTags: (_result, _err, id) => [itemTag('TargetAudience', id)],
-    }),
     generateTargetAudiences: builder.mutation<Entity[], { offerProfileId: number }>({
       query: ({ offerProfileId }) => ({ url: `/offer-profiles/${offerProfileId}/target-audiences/generate`, method: 'POST' }),
       invalidatesTags: (_result, _err, { offerProfileId }) => [
@@ -74,7 +70,6 @@ export const targetAudiencesApi = api.injectEndpoints({
 
 export const {
   useListTargetAudiencesForOfferProfileQuery,
-  useGetTargetAudienceQuery,
   useGenerateTargetAudiencesMutation,
   useDeleteTargetAudienceMutation,
   useUpdateTargetAudienceMutation,

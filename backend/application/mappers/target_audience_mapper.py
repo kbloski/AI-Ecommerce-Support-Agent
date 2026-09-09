@@ -10,7 +10,7 @@ class TargetAudienceMapper:
             id=item.id,
             offer_profile_id=item.offer_profile_id,
             fact_status=item.fact_status,
-            review_status=item.review_status,
+            is_reviewed=item.is_reviewed,
 
             name=item.name,
             reason=item.reason,

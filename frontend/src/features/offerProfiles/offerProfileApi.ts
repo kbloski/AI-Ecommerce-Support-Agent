@@ -2,6 +2,16 @@ import { api } from '@/store/api'
 import { listTag, itemTag } from '@/lib/tags'
 import type { Entity } from '@/types'
 
+export interface PaginatedResult<T> {
+  items: T[]
+  page: number
+  page_size: number
+  total_items: number
+  total_pages: number
+}
+
+export type OfferProfileElementSort = 'created_at_desc' | 'created_at_asc' | 'name_asc' | 'name_desc'
+
 export const offerProfileApi = api.injectEndpoints({
   endpoints: (builder) => ({
     listOfferProfileForOffer: builder.query<Entity[], number>({
@@ -15,10 +25,28 @@ export const offerProfileApi = api.injectEndpoints({
       query: (id) => `/offer-profiles/${id}`,
       providesTags: (_result, _err, id) => [itemTag('OfferProfile', id)],
     }),
-    listOfferProfileElements: builder.query<Entity[], number>({
-      query: (offerProfileId) => `/offer-profiles/${offerProfileId}/elements`,
-      providesTags: (result, _err, offerProfileId) => [
-        ...(result ?? []).map((item) => itemTag('OfferProfileElement', item.id)),
+    listOfferProfileElements: builder.query<PaginatedResult<Entity>, {
+      offerProfileId: number
+      page?: number
+      pageSize?: number
+      search?: string
+      elementType?: string
+      isReviewed?: boolean
+      sort?: OfferProfileElementSort
+    }>({
+      query: ({ offerProfileId, page = 1, pageSize = 20, search, elementType, isReviewed, sort = 'created_at_desc' }) => ({
+        url: `/offer-profiles/${offerProfileId}/elements`,
+        params: {
+          page,
+          page_size: pageSize,
+          search: search || undefined,
+          element_type: elementType || undefined,
+          is_reviewed: isReviewed,
+          sort,
+        },
+      }),
+      providesTags: (result, _err, { offerProfileId }) => [
+        ...(result?.items ?? []).map((item) => itemTag('OfferProfileElement', item.id)),
         listTag('OfferProfileElement', offerProfileId),
       ],
     }),
@@ -30,6 +58,7 @@ export const offerProfileApi = api.injectEndpoints({
       type: string
       name: string
       description?: string
+      is_reviewed: boolean
     }>({
       query: ({ offerProfileId, ...body }) => ({
         url: `/offer-profiles/${offerProfileId}/elements`,

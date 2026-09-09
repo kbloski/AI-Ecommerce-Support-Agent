@@ -10,7 +10,7 @@ class TargetAudienceDto(JSONSerializable):
         id: int,
         offer_profile_id: int | None,
         fact_status: str,
-        review_status: str,
+        is_reviewed: bool,
         name: str,
         reason: str | None,
         score: float | None,
@@ -36,7 +36,7 @@ class TargetAudienceDto(JSONSerializable):
         self.id = id
         self.offer_profile_id = offer_profile_id
         self.fact_status = fact_status
-        self.review_status = review_status
+        self.is_reviewed = is_reviewed
 
         self.name = name
         self.reason = reason
@@ -74,7 +74,7 @@ class TargetAudienceDto(JSONSerializable):
             "id": self.id,
             "offer_profile_id": self.offer_profile_id,
             "fact_status": self.fact_status,
-            "review_status": self.review_status,
+            "is_reviewed": self.is_reviewed,
 
             "name": self.name,
             "reason": self.reason,
@@ -112,5 +112,5 @@ class TargetAudienceDto(JSONSerializable):
         }
 
     def to_content_dict(self):
-        data = self.to_dict(exclude=["id", "offer_profile_id"])
+        data = self.to_dict(exclude=["id", "offer_profile_id", "is_reviewed"])
         return data

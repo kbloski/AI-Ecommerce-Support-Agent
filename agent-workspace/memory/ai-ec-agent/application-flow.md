@@ -45,7 +45,7 @@ Wzorzec identyczny dla ~20 etapów (przykład: `application/handlers/knowledges/
 
 1. **Router** (`api/routes/general_routes.py`) — cienki, deleguje do handlera. Uwaga: generowanie i CRUD idą przez `GET` (oznaczone komentarzem `# POST in future`), usuwanie też przez `GET .../delete`.
 2. **Handler** (`application/handlers/<encja>/*_handler.py`) — jeden plik = jeden use-case. Tworzy własną instancję `Container()` (DI), pobiera `*_service`.
-3. **build_llm_context()** (`application/services/*_service.py`) — serializuje bieżącą encję + wszystkich przodków w łańcuchu do bloków `<tag>...</tag>` (przez `JSONSerializable.to_content_dict()`, który usuwa `id`/`*_id`, żeby nie zaśmiecać promptu).
+3. **build_llm_context()** (`application/services/*_service.py`) — serializuje bieżącą encję + wszystkich przodków w łańcuchu do bloków `<tag>...</tag>` (przez `JSONSerializable.to_content_dict()`, który usuwa `id`/`*_id`, żeby nie zaśmiecać promptu). Wyjątek: `OfferProfileService` przed serializacją pomija nieprzejrzane (`is_reviewed=False`) `TargetAudience` i `OfferProfileElement`, aby nie trafiały do kontekstu LLM.
 4. **ai_service.chat_llm()** (`application/services/ai_service.py:25-48`) → `ollama_service` → Ollama, z dołączonym globalnym promptem `infrastructure/ai/rules/output.rules.md` jako dodatkowa wiadomość systemowa.
 5. Parsowanie odpowiedzi jako JSON (`json.loads`) — **przeważnie bez try/except**, więc zły JSON z modelu = surowy HTTP 500.
 6. Zapis nowej encji + powiązanych rekordów przez repository (`infrastructure/repositories/*_repository.py`), commit sesji SQLAlchemy.

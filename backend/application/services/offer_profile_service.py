@@ -45,6 +45,19 @@ class OfferProfileService:
     def build_llm_context(self, offer_profile_id: int) -> str:
         assembled_offer_profile = self.get_offer_profile_details_by_id(offer_profile_id=offer_profile_id)
 
+        # Nieprzejrzane dane pozostają dostępne w API, ale nie mogą wpływać na
+        # generowanie kolejnych elementów przez LLM.
+        assembled_offer_profile.target_audiences = [
+            target_audience
+            for target_audience in assembled_offer_profile.target_audiences
+            if target_audience.is_reviewed
+        ]
+        assembled_offer_profile.offer_profile_elements = [
+            offer_profile_element
+            for offer_profile_element in assembled_offer_profile.offer_profile_elements
+            if offer_profile_element.is_reviewed
+        ]
+
         offer_profile_json = json.dumps(
             assembled_offer_profile.to_content_dict(),
             ensure_ascii=False,

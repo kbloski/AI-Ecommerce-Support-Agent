@@ -22,7 +22,7 @@ class TargetAudience(Base, JSONSerializable):
 
     # Status
     fact_status = Column(String(20), nullable=False, index=True)
-    review_status = Column(String(20), nullable=False, default="pending", server_default="pending", index=True)
+    is_reviewed = Column(Boolean, nullable=False, default=False, server_default="0", index=True)
 
     # Basic information
     name = Column(String(255), nullable=False)

@@ -9,7 +9,6 @@ import {
   type UpdateTargetAudienceArgs,
 } from '@/features/targetAudiences/targetAudiencesApi'
 import { useListFactStatusesQuery } from '@/features/factStatus/factStatusApi'
-import { useListReviewStatusesQuery } from '@/features/reviewStatus/reviewStatusApi'
 import type { Entity } from '@/types'
 
 const LIST_FIELDS = [
@@ -55,11 +54,10 @@ export function EditTargetAudienceForm({
   onSaved: () => void
 }) {
   const { data: statuses } = useListFactStatusesQuery()
-  const { data: reviewStatuses } = useListReviewStatusesQuery()
   const [updateTargetAudience, updateState] = useUpdateTargetAudienceMutation()
 
   const [factStatus, setFactStatus] = useState<string | undefined>(undefined)
-  const [reviewStatus, setReviewStatus] = useState<string | undefined>(undefined)
+  const [isReviewed, setIsReviewed] = useState(Boolean(data.is_reviewed))
   const [formError, setFormError] = useState<string | null>(null)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -71,7 +69,7 @@ export function EditTargetAudienceForm({
     const payload: UpdateTargetAudienceArgs = { id, offerProfileId: data.offer_profile_id as number }
 
     if (factStatus) payload.fact_status = factStatus
-    if (reviewStatus) payload.review_status = reviewStatus
+    payload.is_reviewed = isReviewed
 
     for (const field of TEXT_FIELDS) {
       const raw = formData.get(field)
@@ -131,26 +129,15 @@ export function EditTargetAudienceForm({
         </Select>
       </div>
 
-      <div className="space-y-1">
-        <Label htmlFor="review_status">Status weryfikacji</Label>
-        <Select
-          value={reviewStatus ?? (data.review_status as string)}
-          onValueChange={(value) => {
-            if (value !== null) setReviewStatus(value)
-          }}
-        >
-          <SelectTrigger id="review_status">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {reviewStatuses?.map((status) => (
-              <SelectItem key={status.value} value={status.value}>
-                {status.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <Label className="flex items-center gap-2">
+        <Input
+          type="checkbox"
+          checked={isReviewed}
+          onChange={(event) => setIsReviewed(event.target.checked)}
+          className="size-4"
+        />
+        Grupa docelowa została sprawdzona
+      </Label>
 
       {TEXT_FIELDS.map((field) => (
         <div key={field} className="space-y-1">

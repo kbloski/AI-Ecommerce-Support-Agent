@@ -11,6 +11,7 @@ class OfferProfileElementMapper:
             type=item.type.value,
             name=item.name,
             description=item.description,
+            is_reviewed=item.is_reviewed,
             created_at=item.created_at,
             updated_at=item.updated_at,
         )

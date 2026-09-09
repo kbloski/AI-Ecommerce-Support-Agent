@@ -1,4 +1,4 @@
-from sqlalchemy import case, func
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from typing import List, Optional
@@ -52,7 +52,7 @@ class TargetAudiencesRepository:
             self.db.query(TargetAudience)
             .filter(TargetAudience.offer_profile_id == offer_profile_id)
             .order_by(
-                case((TargetAudience.review_status == "pending", 0), else_=1),
+                TargetAudience.is_reviewed.asc(),
                 TargetAudience.created_at.desc(),
                 TargetAudience.id.desc(),
             )

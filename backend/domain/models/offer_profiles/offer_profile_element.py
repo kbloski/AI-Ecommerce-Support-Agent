@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Enum as SqlEnum, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Column, DateTime, Enum as SqlEnum, ForeignKey, Integer, String, Text
 from sqlalchemy.sql import func
 
 from common.mixins.json_serializable import JSONSerializable
@@ -28,5 +28,6 @@ class OfferProfileElement(Base, JSONSerializable):
     )
     name = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
+    is_reviewed = Column(Boolean, nullable=False, default=False, server_default="0", index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
