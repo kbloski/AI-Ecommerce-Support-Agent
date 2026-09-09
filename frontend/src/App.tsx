@@ -41,6 +41,7 @@ function App() {
         <Route path="/offers" element={<OffersPage />} />
         <Route path="/offers/:offerId" element={<OfferDetailPage />} />
         <Route path="/offers/:offerId/offer-profiles" element={<OfferProfilesPage />} />
+        <Route path="/offers/:offerId/offer_profiles" element={<OfferProfilesPage />} />
         <Route path="/offer-profiles/:offerProfileId" element={<OfferProfileDetailPage />} />
         <Route path="/offer-profiles/:offerProfileId/target-audiences" element={<OfferProfileTargetAudiencesPage />} />
         <Route path="/offer-profiles/:offerProfileId/analyses" element={<OfferProfileAnalysesPage />} />

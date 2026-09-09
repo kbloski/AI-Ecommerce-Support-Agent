@@ -25,7 +25,7 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
   const { contextualPanel, openPanel } = useSidePanel()
   const showBackButton = pathname !== '/' && pathname !== '/offers'
   const sections = [
-    { pattern: '/offers/:id/*', current: 'Oferta', entityType: 'offer', process: [['offer_profiles', 'OfferProfiles']], resources: [] },
+    { pattern: '/offers/:id/*', current: 'Oferta', entityType: 'offer', process: [['offer-profiles', 'Profile oferty']], resources: [] },
     { pattern: '/offer-profiles/:id/*', current: 'Offer profile', entityType: 'offer_profile', process: [['brand-marketing', 'Brand marketing']], offer_profile: [['analyses', 'Analizy']], resources: [['target-audiences', 'Grupy docelowe']] },
     { pattern: '/offer-profiles/:offerProfileId/analysis/:id/*', current: 'Analiza', process: [['checklists', 'Checklisty']], resources: [['questions', 'Pytania']] },
     { pattern: '/offer-profiles/:offerProfileId/analysis/:analysisId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },

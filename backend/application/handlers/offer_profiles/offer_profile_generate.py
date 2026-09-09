@@ -74,9 +74,6 @@ def offer_profile_generate_handler(offer_id: int):
             session.flush()
             session.refresh(offer_profile)
 
-            saved_insights = list(insight_items)
-
-
     # ----------------------------
     # PREPARE DTO RESULT
     # ----------------------------
@@ -194,20 +191,22 @@ Use this structure as a foundation, but extend it when necessary:
 {
     "offer_summary": "",
     "category": "",
-    "problem_solved": [],
-    "solution": [],
-    "transformation": [],
-    "offer_components": [],
-    "features": [],
-    "functional_benefits": [],
-    "emotional_benefits": [],
     "value_proposition": "",
-    "differentiators": [],
-    "strengths": [],
-    "limitations": [],
-    "additional_insights": []
 }
 """
+    # "problem_solved": [],
+#     "solution": [],
+#     "transformation": [],
+#     "offer_components": [],
+#     "features": [],
+#     "functional_benefits": [],
+#     "emotional_benefits": [],
+#     "differentiators": [],
+#     "strengths": [],
+#     "limitations": [],
+#     "additional_insights": []
+# }
+# """
 
 
 
