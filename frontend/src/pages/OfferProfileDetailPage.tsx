@@ -32,9 +32,6 @@ export default function OfferProfileDetailPage() {
       itemLinks={{
         target_audiences: (item) => `/target-audiences/${item.id}`,
       }}
-      relationLinks={{
-        target_audiences: `/offer-profiles/${offerProfileId}/target-audiences`,
-      }}
       itemStatusActions={{
         target_audiences: (item, factStatus) =>
           updateTargetAudience({

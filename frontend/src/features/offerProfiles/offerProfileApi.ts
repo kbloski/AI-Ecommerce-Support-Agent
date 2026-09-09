@@ -65,11 +65,12 @@ export const offerProfileApi = api.injectEndpoints({
     generateOfferProfileElements: builder.mutation<Entity[], {
       offerProfileId: number
       element_types: string[]
+      examples_per_type: number
     }>({
-      query: ({ offerProfileId, element_types }) => ({
+      query: ({ offerProfileId, element_types, examples_per_type }) => ({
         url: `/offer-profiles/${offerProfileId}/elements/generate`,
         method: 'POST',
-        body: { element_types },
+        body: { element_types, examples_per_type },
       }),
       invalidatesTags: (_result, _err, { offerProfileId }) => [
         listTag('OfferProfileElement', offerProfileId),

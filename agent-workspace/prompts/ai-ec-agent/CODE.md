@@ -12,7 +12,7 @@ Aplikacja generuje łańcuch treści marketingowych (oferta → wiedza o produkc
 ## Struktura repo
 
 ```
-e:\Projects\_\ai-ec-agent\
+E:\Projects\ai-ec-agent\
 ├── backend/     — FastAPI (Python)
 └── frontend/    — React + Vite + TypeScript
 ```

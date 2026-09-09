@@ -4,6 +4,24 @@ import { cn } from '@/lib/utils'
 import { DownloadPipelinePathButton } from '@/components/DownloadPipelinePathButton'
 import { Button } from '@/components/ui/button'
 import { useSidePanel } from '@/lib/sidePanel'
+import { useListOfferProfileElementsQuery, useListOfferProfileForOfferQuery } from '@/features/offerProfiles/offerProfileApi'
+import { useListTargetAudiencesForOfferProfileQuery } from '@/features/targetAudiences/targetAudiencesApi'
+import { useGetAnalysisQuery, useListAnalysisForOfferProfileQuery } from '@/features/analysis/analysisApi'
+import { useListBrandMarketingForOfferProfileQuery } from '@/features/brandMarketing/brandMarketingApi'
+import { useGetChecklistQuery, useListChecklistsForAnalysisQuery } from '@/features/checklists/checklistsApi'
+import { useListMarketingStrategyForBrandMarketingQuery } from '@/features/marketingStrategy/marketingStrategyApi'
+import { useListOfferStrategyForMarketingStrategyQuery } from '@/features/offerStrategy/offerStrategyApi'
+import { useListMessageStrategyForOfferStrategyQuery } from '@/features/messageStrategy/messageStrategyApi'
+import { useListAdStrategyForMessageStrategyQuery } from '@/features/adStrategy/adStrategyApi'
+import { useListUgcCreativesForMessageStrategyQuery } from '@/features/ugcCreatives/ugcCreativesApi'
+import { useListPageStrategyForMessageStrategyQuery } from '@/features/pageStrategy/pageStrategyApi'
+import { useListCreativeStrategyForAdStrategyQuery } from '@/features/creativeStrategy/creativeStrategyApi'
+import { useListAdExecutionForCreativeStrategyQuery } from '@/features/adExecution/adExecutionApi'
+import { useListCreativeExecutionForAdExecutionQuery } from '@/features/creativeExecution/creativeExecutionApi'
+import { useListPageRequirementsForPageStrategyQuery } from '@/features/pageRequirements/pageRequirementsApi'
+import { useListPageBlueprintForPageRequirementsQuery } from '@/features/pageBlueprint/pageBlueprintApi'
+import { useListPageContentPlanForPageBlueprintQuery } from '@/features/pageContentPlan/pageContentPlanApi'
+import { useListPageCopyForPageContentPlanQuery } from '@/features/pageCopy/pageCopyApi'
 
 const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
   cn(
@@ -49,6 +67,68 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
   const section = [...sections].sort((a, b) => b.pattern.length - a.pattern.length)
     .map((config) => ({ config, match: matchPath(config.pattern, pathname) }))
     .find(({ match }) => match)
+  const isOfferProfileSection = section?.config.current === 'Offer profile'
+  const offerProfileId = Number(section?.match?.params.id)
+  const skipOfferProfileResources = !isOfferProfileSection || !Number.isInteger(offerProfileId)
+  const currentEntityId = Number(section?.match?.params.id)
+  const isAnalysisSection = section?.config.current === 'Analiza'
+  const isChecklistSection = section?.config.current === 'Checklista'
+  const isCurrentStage = (stage: string) => section?.config.current === stage && Number.isInteger(currentEntityId)
+  const targetAudiences = useListTargetAudiencesForOfferProfileQuery(offerProfileId, { skip: skipOfferProfileResources })
+  const offerProfileElements = useListOfferProfileElementsQuery(offerProfileId, { skip: skipOfferProfileResources })
+  const brandMarketing = useListBrandMarketingForOfferProfileQuery(offerProfileId, { skip: skipOfferProfileResources })
+  const analyses = useListAnalysisForOfferProfileQuery(offerProfileId, { skip: skipOfferProfileResources })
+  const analysis = useGetAnalysisQuery(currentEntityId, { skip: !isAnalysisSection || !Number.isInteger(currentEntityId) })
+  const checklist = useGetChecklistQuery(currentEntityId, { skip: !isChecklistSection || !Number.isInteger(currentEntityId) })
+  const offerProfiles = useListOfferProfileForOfferQuery(currentEntityId, { skip: !isCurrentStage('Oferta') })
+  const checklists = useListChecklistsForAnalysisQuery(currentEntityId, { skip: !isCurrentStage('Analiza') })
+  const marketingStrategies = useListMarketingStrategyForBrandMarketingQuery(currentEntityId, { skip: !isCurrentStage('Brand marketing') })
+  const offerStrategies = useListOfferStrategyForMarketingStrategyQuery(currentEntityId, { skip: !isCurrentStage('Marketing strategy') })
+  const messageStrategies = useListMessageStrategyForOfferStrategyQuery(currentEntityId, { skip: !isCurrentStage('Offer strategy') })
+  const adStrategies = useListAdStrategyForMessageStrategyQuery(currentEntityId, { skip: !isCurrentStage('Message strategy') })
+  const ugcCreatives = useListUgcCreativesForMessageStrategyQuery(currentEntityId, { skip: !isCurrentStage('Message strategy') })
+  const pageStrategies = useListPageStrategyForMessageStrategyQuery(currentEntityId, { skip: !isCurrentStage('Message strategy') })
+  const creativeStrategies = useListCreativeStrategyForAdStrategyQuery(currentEntityId, { skip: !isCurrentStage('Ad strategy') })
+  const adExecutions = useListAdExecutionForCreativeStrategyQuery(currentEntityId, { skip: !isCurrentStage('Creative strategy') })
+  const creativeExecutions = useListCreativeExecutionForAdExecutionQuery(currentEntityId, { skip: !isCurrentStage('Ad execution') })
+  const pageRequirements = useListPageRequirementsForPageStrategyQuery(currentEntityId, { skip: !isCurrentStage('Page strategy') })
+  const pageBlueprints = useListPageBlueprintForPageRequirementsQuery(currentEntityId, { skip: !isCurrentStage('Page requirements') })
+  const pageContentPlans = useListPageContentPlanForPageBlueprintQuery(currentEntityId, { skip: !isCurrentStage('Page blueprint') })
+  const pageCopies = useListPageCopyForPageContentPlanQuery(currentEntityId, { skip: !isCurrentStage('Content plan') })
+  const resourceCounts: Record<string, number | undefined> = {
+    'offer-profiles': offerProfiles.data?.length,
+    'target-audiences': targetAudiences.data?.length,
+    elements: offerProfileElements.data?.length,
+    'brand-marketing': brandMarketing.data?.length,
+    analyses: analyses.data?.length,
+    checklists: checklists.data?.length,
+    questions: (analysis.data?.analysis_questions as unknown[] | undefined)?.length,
+    items: (checklist.data?.checklist_items as unknown[] | undefined)?.length,
+    'marketing-strategies': marketingStrategies.data?.length,
+    'offer-strategies': offerStrategies.data?.length,
+    'message-strategies': messageStrategies.data?.length,
+    'ad-strategies': adStrategies.data?.length,
+    'ugc-creatives': ugcCreatives.data?.length,
+    'page-strategies': pageStrategies.data?.length,
+    'creative-strategies': creativeStrategies.data?.length,
+    'ad-executions': adExecutions.data?.length,
+    'creative-executions': creativeExecutions.data?.length,
+    'page-requirements': pageRequirements.data?.length,
+    'page-blueprints': pageBlueprints.data?.length,
+    'content-plans': pageContentPlans.data?.length,
+    'page-copies': pageCopies.data?.length,
+  }
+
+  const navigationLink = (slug: string, label: string, to: string) => (
+    <NavLink key={slug} to={to} className={navLinkClassName}>
+      <span>{label}</span>
+      {resourceCounts[slug] !== undefined && (
+        <span className="ml-auto rounded-full bg-muted px-1.5 py-0.5 font-mono text-[0.65rem] leading-none text-muted-foreground">
+          {resourceCounts[slug]}
+        </span>
+      )}
+    </NavLink>
+  )
 
   if (pathname.startsWith('/settings')) {
     return (
@@ -111,7 +191,7 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
             </h2>
             <nav className="ml-2 space-y-1 border-l pl-2">
               {section.config.process.map(([slug, label]) => (
-                <NavLink key={slug} to={`${detailPath}/${slug}`} className={navLinkClassName}>{label}</NavLink>
+                navigationLink(slug, label, `${detailPath}/${slug}`)
               ))}
             </nav>
           </section>
@@ -124,7 +204,7 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
             </h2>
             <nav className="ml-2 space-y-1 border-l pl-2">
               {section.config.offer_profile.map(([slug, label]) => (
-                <NavLink key={slug} to={`${detailPath}/${slug}`} className={navLinkClassName}>{label}</NavLink>
+                navigationLink(slug, label, `${detailPath}/${slug}`)
               ))}
             </nav>
           </section>
@@ -137,7 +217,7 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
             </h2>
             <nav className="ml-2 space-y-1 border-l pl-2">
               {section.config.resources.map(([slug, label]) => (
-                <NavLink key={slug} to={`${detailPath}/${slug}`} className={navLinkClassName}>{label}</NavLink>
+                navigationLink(slug, label, `${detailPath}/${slug}`)
               ))}
             </nav>
           </section>

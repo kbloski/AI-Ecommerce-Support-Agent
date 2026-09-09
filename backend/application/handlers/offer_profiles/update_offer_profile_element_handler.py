@@ -1,6 +1,7 @@
 from typing import Any, Dict
 
 from di.container import Container
+from application.mappers.offer_profile_element_mapper import OfferProfileElementMapper
 
 DENYLIST = {"id", "offer_profile_id", "created_at", "updated_at"}
 
@@ -18,4 +19,4 @@ def update_offer_profile_element_handler(id: int, fields: Dict[str, Any]) -> dic
             setattr(item, key, value)
 
     updated = offer_profile_elements_repository.update(item)
-    return updated.to_dict()
+    return OfferProfileElementMapper.to_dto(updated).to_dict()

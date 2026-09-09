@@ -110,12 +110,17 @@ function GenerateOfferProfileElementsForm({
   const { data: types = [], isLoading: areTypesLoading } = useListOfferProfileElementTypesQuery()
   const [generate, generateState] = useGenerateOfferProfileElementsMutation()
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
+  const [examplesPerType, setExamplesPerType] = useState(3)
   const [error, setError] = useState<string | null>(null)
 
   const submit = async () => {
     setError(null)
     try {
-      await generate({ offerProfileId, element_types: selectedTypes }).unwrap()
+      await generate({
+        offerProfileId,
+        element_types: selectedTypes,
+        examples_per_type: examplesPerType,
+      }).unwrap()
       onGenerated()
     } catch {
       setError('Nie udało się wygenerować elementów oferty.')
@@ -138,6 +143,15 @@ function GenerateOfferProfileElementsForm({
           />
         )}
       </div>
+      <label className="block space-y-2">
+        <span className="text-sm font-medium">Liczba przykładów na typ</span>
+        <Input
+          type="number"
+          value={examplesPerType}
+          onChange={(event) => setExamplesPerType(Number(event.target.value))}
+          disabled={generateState.isLoading}
+        />
+      </label>
       {error && <p className="text-sm text-destructive">{error}</p>}
       <Button
         onClick={() => void submit()}

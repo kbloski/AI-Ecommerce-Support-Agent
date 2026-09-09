@@ -4,7 +4,7 @@ Status: INITIALIZED
 
 Last full analysis: 2026-09-03 12:00
 
-Project root: `e:\Projects\_\ai-ec-agent` (lokalizacja wskazana przez `project/PROJECTS.md`: "Główny katalog projektu znajduje się dwa poziomy wyżej (../../)")
+Project root: `E:\Projects\ai-ec-agent` (lokalizacja wskazana przez `projects/PROJECTS.md`: katalog dwa poziomy wyżej, `../../`)
 
 ## Verified Areas
 

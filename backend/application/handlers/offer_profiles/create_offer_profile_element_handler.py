@@ -1,4 +1,5 @@
 from di.container import Container
+from application.mappers.offer_profile_element_mapper import OfferProfileElementMapper
 from domain.enums.offer_profile_element_type import OfferProfileElementType
 from domain.models.offer_profiles.offer_profile_element import OfferProfileElement
 
@@ -19,4 +20,5 @@ def create_offer_profile_element_handler(
         name=name,
         description=description or None,
     )
-    return container.offer_profile_elements_repository().create(element).to_dict()
+    created = container.offer_profile_elements_repository().create(element)
+    return OfferProfileElementMapper.to_dto(created).to_dict()

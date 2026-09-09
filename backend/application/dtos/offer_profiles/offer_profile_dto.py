@@ -1,11 +1,12 @@
-from typing import Any, Optional, List
+from typing import Optional, List
 from ..audience.target_audience_dto import TargetAudienceDto
+from .offer_profile_element_dto import OfferProfileElementDto
 from common.mixins.json_serializable import JSONSerializable
 
 class OfferProfileDto(JSONSerializable):
 
     target_audiences: List[TargetAudienceDto] = []
-    offer_profile_elements: List[Any] = []
+    offer_profile_elements: List[OfferProfileElementDto] = []
 
     def __init__(
         self,
@@ -21,7 +22,7 @@ class OfferProfileDto(JSONSerializable):
         self.category = category
         self.value_proposition = value_proposition
 
-    def _sorted_offer_profile_elements(self) -> List[Any]:
+    def _sorted_offer_profile_elements(self) -> List[OfferProfileElementDto]:
         """Group elements by type (grouping = stable sort by type, then name)."""
         return sorted(
             self.offer_profile_elements,

@@ -9,6 +9,7 @@ from domain.enums.llm_message_role import LlmMessageRole
 from domain.enums.offer_profile_element_type import OfferProfileElementType
 
 from application.services.llm_context_builder import build_llm_section
+from application.mappers.offer_profile_element_mapper import OfferProfileElementMapper
 
 
 # =====================================================
@@ -18,6 +19,7 @@ from application.services.llm_context_builder import build_llm_section
 def generate_offer_profile_elements_handler(
     offer_profile_id: int,
     element_types: list[OfferProfileElementType],
+    examples_per_type: int = 3,
 ) -> list[dict]:
 
     container = Container()
@@ -41,14 +43,15 @@ def generate_offer_profile_elements_handler(
     chat = [
         LlmMessage(
             role=LlmMessageRole.SYSTEM,
-            content=get_system_prompt()
+            content=get_system_prompt(),
         ),
         LlmMessage(
             role=LlmMessageRole.USER,
             content=get_offer_elements_generation_prompt(
                 offer_profile_context=offer_profile_context,
                 element_types=element_types,
-            )
+                examples_per_type=examples_per_type,
+            ),
         ),
     ]
 
@@ -95,9 +98,11 @@ def generate_offer_profile_elements_handler(
 
     # Group by type (stable sort by type, then name) — matches how
     # OfferProfileElementsRepository.find_for_offer_profile orders results.
-    created_elements.sort(key=lambda element: (str(element.type), element.name))
+    created_elements.sort(
+        key=lambda element: (str(element.type), element.name)
+    )
 
-    return [element.to_dict() for element in created_elements]
+    return [OfferProfileElementMapper.to_dto(element).to_dict() for element in created_elements]
 
 
 # =====================================================
@@ -124,11 +129,14 @@ Do not use markdown.
 def get_offer_elements_generation_prompt(
     offer_profile_context: str,
     element_types: list[OfferProfileElementType],
+    examples_per_type: int,
 ) -> str:
 
     element_types_context = build_offer_element_types_context(
         element_types=element_types
     )
+
+    expected_total = len(element_types) * examples_per_type
 
     return f"""
 Analyze the offer profile and generate structured offer elements
@@ -156,10 +164,18 @@ For EACH selected element type:
 
 1. Understand the semantic meaning of the type using its definition.
 2. Analyze the offer specifically from the perspective of that type.
-3. Identify all meaningful elements that are directly supported by
+3. Identify meaningful elements that are directly supported by
    the offer or can reasonably be derived from it.
-4. Generate zero or more elements for that type.
+4. Generate exactly {examples_per_type} distinct elements for that type.
 5. Continue independently with the next selected type.
+
+
+GENERATION COUNT:
+
+- Generate exactly {examples_per_type} elements for EACH selected element type.
+- There are {len(element_types)} selected element types.
+- The final "offer_elements" array should contain exactly {expected_total} elements.
+- Each selected type should appear exactly {examples_per_type} times.
 
 
 IMPORTANT TYPE RULES:
@@ -181,11 +197,8 @@ CONTENT RULES:
 - Stay specific to the analyzed offer.
 - Avoid generic business statements.
 - Prefer concrete insights over broad statements.
-- Generate as many meaningful elements as are justified by the offer.
-- Do not generate artificial elements merely to increase the count.
-- Different element types may contain different numbers of results.
-- A selected type may return zero elements when there is not enough
-  meaningful information.
+- Generate exactly {examples_per_type} elements for every selected type.
+- Use reasonable inferences from the offer when needed, but do not invent facts.
 - Multiple elements may have the same type.
 - Avoid semantic duplicates.
 - Do not repeat the same insight using slightly different wording.
@@ -242,17 +255,34 @@ Do not include explanations outside the JSON.
 # OFFER ELEMENT TYPES CONTEXT
 # =====================================================
 
-OFFER_PROFILE_ELEMENT_TYPE_DEFINITIONS: dict[OfferProfileElementType, str] = {
-    OfferProfileElementType.BENEFIT: "What the customer gains from the offer.",
-    OfferProfileElementType.FEATURE: "What the offer has or does.",
-    OfferProfileElementType.PROBLEM_SOLVED: "The problem that exists before the solution is applied.",
-    OfferProfileElementType.USE_CASE: "A concrete usage scenario for the offer.",
-    OfferProfileElementType.DIFFERENTIATOR: "A meaningful distinction from alternatives.",
-    OfferProfileElementType.LIMITATION: "A meaningful restriction, boundary, or trade-off of the offer.",
+OFFER_PROFILE_ELEMENT_TYPE_DEFINITIONS: dict[
+    OfferProfileElementType,
+    str,
+] = {
+    OfferProfileElementType.BENEFIT:
+        "What the customer gains from the offer.",
+
+    OfferProfileElementType.FEATURE:
+        "What the offer has or does.",
+
+    OfferProfileElementType.PROBLEM_SOLVED:
+        "The problem that exists before the solution is applied.",
+
+    OfferProfileElementType.USE_CASE:
+        "A concrete usage scenario for the offer.",
+
+    OfferProfileElementType.DIFFERENTIATOR:
+        "A meaningful distinction from alternatives.",
+
+    OfferProfileElementType.LIMITATION:
+        "A meaningful restriction, boundary, or trade-off of the offer.",
 }
 
 
-def build_offer_element_types_context(element_types: list[OfferProfileElementType]) -> str:
+def build_offer_element_types_context(
+    element_types: list[OfferProfileElementType],
+) -> str:
+
     definitions = [
         {
             "type": element_type.value,
@@ -263,5 +293,9 @@ def build_offer_element_types_context(element_types: list[OfferProfileElementTyp
 
     return build_llm_section(
         tag="offer_element_types",
-        content=json.dumps(definitions, ensure_ascii=False, indent=2),
+        content=json.dumps(
+            definitions,
+            ensure_ascii=False,
+            indent=2,
+        ),
     )

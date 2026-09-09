@@ -197,6 +197,7 @@ class CreateOfferProfileElementRequest(BaseModel):
 
 class GenerateOfferProfileElementsRequest(BaseModel):
     element_types: List[OfferProfileElementType] = Field(min_length=1)
+    examples_per_type: int = 3
 
 
 def register_general_routes(router: APIRouter):
@@ -380,6 +381,7 @@ def register_general_routes(router: APIRouter):
         return generate_offer_profile_elements_handler(
             offer_profile_id=offer_profile_id,
             element_types=payload.element_types,
+            examples_per_type=payload.examples_per_type,
         )
 
     @router.post("/offer-profiles/{offer_profile_id}/elements")

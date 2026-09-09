@@ -1,4 +1,5 @@
 from application.dtos.offer_profiles.offer_profile_dto import OfferProfileDto
+from application.mappers.offer_profile_element_mapper import OfferProfileElementMapper
 from application.mappers.target_audience_mapper import TargetAudienceMapper
 from infrastructure.logging.logger import Logger
 from infrastructure.repositories.offer_profile_repository import OfferProfileRepository
@@ -25,8 +26,12 @@ class OfferProfileAssembler:
             for t in target_audiences
         ]
 
-        item.offer_profile_elements = self.offer_profile_elements_repository.find_for_offer_profile(
+        offer_profile_elements = self.offer_profile_elements_repository.find_for_offer_profile(
             offer_profile_id=item.id
         )
+        item.offer_profile_elements = [
+            OfferProfileElementMapper.to_dto(element)
+            for element in offer_profile_elements
+        ]
 
         return item
