@@ -14,3 +14,7 @@ class OfferProfileElementType(StrEnum):
     USE_CASE = "use_case"
     DIFFERENTIATOR = "differentiator"
     LIMITATION = "limitation"
+
+
+def get_offer_profile_element_type_values() -> list[str]:
+    return [element_type.value for element_type in OfferProfileElementType]

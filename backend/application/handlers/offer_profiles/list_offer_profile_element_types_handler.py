@@ -1,5 +1,5 @@
-from domain.enums.offer_profile_element_type import OfferProfileElementType
+from domain.enums.offer_profile_element_type import get_offer_profile_element_type_values
 
 
 def list_offer_profile_element_types_handler() -> list[str]:
-    return [element_type.value for element_type in OfferProfileElementType]
+    return get_offer_profile_element_type_values()
