@@ -30,12 +30,14 @@ export function OfferProfileTargetAudiencesPage() {
   const [updateTargetAudience] = useUpdateTargetAudienceMutation()
   const { openPanel, closePanel } = useSidePanel()
   const items = (data?.target_audiences as Entity[] | undefined) ?? []
+  const unreviewedItems = items.filter((item) => item.is_reviewed !== true).length
 
   return (
     <div className="w-full p-6 lg:p-10">
       <ResourceList
         title="Grupy docelowe"
         items={items}
+        attentionItems={unreviewedItems}
         isLoading={isLoading}
         error={error}
         itemLabel={(item) => (item.name as string) ?? `#${item.id}`}
@@ -83,6 +85,11 @@ export function OfferProfileElementsPage() {
     isReviewed: isReviewedFilter === '' ? undefined : isReviewedFilter === 'true',
     sort,
   })
+  const { data: unreviewedElementsResult } = useListOfferProfileElementsQuery({
+    offerProfileId,
+    pageSize: 1,
+    isReviewed: false,
+  })
   const elements = result?.items ?? []
   const [remove] = useDeleteOfferProfileElementMutation()
   const [updateElement] = useUpdateOfferProfileElementMutation()
@@ -114,6 +121,7 @@ export function OfferProfileElementsPage() {
         title="Elementy oferty"
         items={elements}
         totalItems={result?.total_items}
+        attentionItems={unreviewedElementsResult?.total_items}
         isLoading={isLoading}
         error={error}
         itemLabel={(element) => (element.name as string) ?? `#${element.id}`}

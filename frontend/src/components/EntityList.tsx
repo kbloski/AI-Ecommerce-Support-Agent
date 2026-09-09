@@ -2,6 +2,7 @@ import { useMemo, type ReactNode } from 'react'
 import { ArrowUpRight, Eye, Pencil, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { EntityViewer } from '@/components/EntityViewer'
 import { useSidePanel } from '@/lib/sidePanel'
 import type { Entity } from '@/types'
@@ -16,6 +17,7 @@ interface EntityListProps {
   contentBeforeList?: ReactNode
   footer?: ReactNode
   totalItems?: number
+  attentionItems?: number
   linkTo?: (item: Entity) => string
   itemLabel?: (item: Entity) => string
   itemMeta?: (item: Entity) => ReactNode
@@ -37,11 +39,10 @@ function defaultItemBadges(item: Entity): ReactNode {
   if (typeof item.is_reviewed === 'boolean') badges.push(item.is_reviewed ? 'Sprawdzony' : 'Wymaga sprawdzenia')
   if (badges.length === 0) return null
 
-  return badges.map((badge) => (
-    <span key={badge} className="inline-flex items-center rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] font-medium text-slate-600">
-      {badge.replaceAll('_', ' ')}
-    </span>
-  ))
+  return badges.map((badge) => {
+    const variant = badge === 'Sprawdzony' ? 'success' : badge === 'Wymaga sprawdzenia' ? 'danger' : 'default'
+    return <Badge key={badge} variant={variant}>{badge.replaceAll('_', ' ')}</Badge>
+  })
 }
 
 /** Shared monochrome card list used across entity and resource pages. */
@@ -55,6 +56,7 @@ export function EntityList({
   contentBeforeList,
   footer,
   totalItems,
+  attentionItems,
   linkTo,
   itemLabel = (item) => (item.name as string) ?? `#${item.id}`,
   itemMeta = (item) => `Identyfikator ${String(item.id)}`,
@@ -77,7 +79,8 @@ export function EntityList({
           {eyebrow && <p className="mb-1 text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">{eyebrow}</p>}
           <div className="flex items-baseline gap-3">
             <h1 className="text-2xl font-bold tracking-tight text-slate-950">{title}</h1>
-            <span className="font-mono text-xs text-slate-400">{totalItems ?? entries.length}</span>
+            {attentionItems !== undefined && attentionItems > 0 && <Badge variant="danger" className="font-mono" title={`Wymaga sprawdzenia: ${attentionItems}`}><strong>!</strong>{attentionItems}</Badge>}
+            <Badge variant="default" className="border-0 bg-transparent font-mono text-slate-400">{totalItems ?? entries.length}</Badge>
           </div>
         </div>
         {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}

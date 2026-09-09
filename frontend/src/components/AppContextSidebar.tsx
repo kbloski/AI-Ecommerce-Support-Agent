@@ -3,6 +3,7 @@ import { Link, NavLink, matchPath, useLocation, useNavigate } from 'react-router
 import { cn } from '@/lib/utils'
 import { DownloadPipelinePathButton } from '@/components/DownloadPipelinePathButton'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { useSidePanel } from '@/lib/sidePanel'
 import { useListOfferProfileElementsQuery, useListOfferProfileForOfferQuery } from '@/features/offerProfiles/offerProfileApi'
 import { useListTargetAudiencesForOfferProfileQuery } from '@/features/targetAudiences/targetAudiencesApi'
@@ -78,6 +79,10 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
     { offerProfileId },
     { skip: skipOfferProfileResources },
   )
+  const unreviewedOfferProfileElements = useListOfferProfileElementsQuery(
+    { offerProfileId, pageSize: 1, isReviewed: false },
+    { skip: skipOfferProfileResources },
+  )
   const brandMarketing = useListBrandMarketingForOfferProfileQuery(offerProfileId, { skip: skipOfferProfileResources })
   const analyses = useListAnalysisForOfferProfileQuery(offerProfileId, { skip: skipOfferProfileResources })
   const analysis = useGetAnalysisQuery(currentEntityId, { skip: !isAnalysisSection || !Number.isInteger(currentEntityId) })
@@ -120,15 +125,20 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
     'content-plans': pageContentPlans.data?.length,
     'page-copies': pageCopies.data?.length,
   }
+  const attentionCounts: Record<string, number | undefined> = {
+    'target-audiences': targetAudiences.data?.filter((item) => item.is_reviewed !== true).length,
+    elements: unreviewedOfferProfileElements.data?.total_items,
+  }
 
   const navigationLink = (slug: string, label: string, to: string) => (
     <NavLink key={slug} to={to} className={navLinkClassName}>
       <span>{label}</span>
-      {resourceCounts[slug] !== undefined && (
-        <span className="ml-auto rounded-full bg-muted px-1.5 py-0.5 font-mono text-[0.65rem] leading-none text-muted-foreground">
-          {resourceCounts[slug]}
-        </span>
-      )}
+      <span className="ml-auto flex items-center gap-1.5">
+        {attentionCounts[slug] !== undefined && attentionCounts[slug] > 0 && (
+          <Badge variant="danger" className="font-mono" title={`Wymaga sprawdzenia: ${attentionCounts[slug]}`}><strong>!</strong>{attentionCounts[slug]}</Badge>
+        )}
+        {resourceCounts[slug] !== undefined && <Badge variant="default" className="border-0 bg-transparent font-mono text-slate-500">{resourceCounts[slug]}</Badge>}
+      </span>
     </NavLink>
   )
 

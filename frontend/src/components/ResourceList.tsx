@@ -7,6 +7,7 @@ import type { Entity } from '@/types'
 interface ResourceListProps {
   title: string
   items: Entity[] | undefined
+  attentionItems?: number
   isLoading: boolean
   error?: unknown
   linkTo?: (item: Entity) => string
@@ -28,6 +29,7 @@ interface ResourceListProps {
 export function ResourceList({
   title,
   items,
+  attentionItems,
   isLoading,
   error,
   linkTo,
@@ -49,6 +51,7 @@ export function ResourceList({
       title={title}
       eyebrow={eyebrow}
       items={items}
+      attentionItems={attentionItems}
       isLoading={isLoading}
       error={error}
       linkTo={linkTo}
