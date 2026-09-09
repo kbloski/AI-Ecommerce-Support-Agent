@@ -93,6 +93,10 @@ def generate_offer_profile_elements_handler(
             offer_profile_elements_repository.create(element)
         )
 
+    # Group by type (stable sort by type, then name) — matches how
+    # OfferProfileElementsRepository.find_for_offer_profile orders results.
+    created_elements.sort(key=lambda element: (str(element.type), element.name))
+
     return [element.to_dict() for element in created_elements]
 
 

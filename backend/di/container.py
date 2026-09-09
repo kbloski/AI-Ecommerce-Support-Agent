@@ -284,7 +284,8 @@ class Container(containers.DeclarativeContainer):
         OfferProfileAssembler,
         logger=logger,
         offer_profile_repository=offer_profile_repository,
-        target_audiences_repository=target_audiences_repository
+        target_audiences_repository=target_audiences_repository,
+        offer_profile_elements_repository=offer_profile_elements_repository
     )
 
     target_audience_assembler =  providers.Singleton(
