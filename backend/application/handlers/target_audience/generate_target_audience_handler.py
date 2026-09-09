@@ -33,7 +33,6 @@ def generate_target_audience_handler(
     
     response = ai_service.chat_llm(
         messages=[
-
             LlmMessage(
                 role=LlmMessageRole.SYSTEM,
                 content=get_system_prompt()
