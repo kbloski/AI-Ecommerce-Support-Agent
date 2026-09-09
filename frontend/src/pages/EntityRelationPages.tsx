@@ -7,7 +7,14 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useSidePanel } from '@/lib/sidePanel'
 import { EditTargetAudienceForm } from '@/features/targetAudiences/TargetAudienceForm'
-import { useCreateOfferProfileElementMutation, useGetOfferProfileQuery, useListOfferProfileElementsQuery, useListOfferProfileElementTypesQuery } from '@/features/offerProfiles/offerProfileApi'
+import {
+  useCreateOfferProfileElementMutation,
+  useDeleteOfferProfileElementMutation,
+  useGetOfferProfileQuery,
+  useListOfferProfileElementsQuery,
+  useListOfferProfileElementTypesQuery,
+  useUpdateOfferProfileElementMutation,
+} from '@/features/offerProfiles/offerProfileApi'
 import { useDeleteTargetAudienceMutation, useGenerateTargetAudiencesMutation } from '@/features/targetAudiences/targetAudiencesApi'
 import type { Entity } from '@/types'
 
@@ -44,6 +51,7 @@ export function OfferProfileTargetAudiencesPage() {
 export function OfferProfileElementsPage() {
   const offerProfileId = Number(useParams().offerProfileId)
   const { data: elements = [], isLoading, error } = useListOfferProfileElementsQuery(offerProfileId)
+  const [remove] = useDeleteOfferProfileElementMutation()
   const { openPanel, closePanel } = useSidePanel()
 
   return (
@@ -60,10 +68,15 @@ export function OfferProfileElementsPage() {
         ].filter(Boolean).join(' — ')}
         emptyTitle="Brak elementów oferty"
         emptyDescription="Dodaj pierwszy element, aby rozpocząć pracę."
+        onEdit={(element) => openPanel({
+          title: 'Edytuj element oferty',
+          content: <OfferProfileElementForm offerProfileId={offerProfileId} element={element} onSaved={closePanel} />,
+        })}
+        onDelete={(element) => remove({ id: element.id as number, offerProfileId })}
         actions={
           <Button className="h-10 rounded-none px-4" onClick={() => openPanel({
             title: 'Dodaj element oferty',
-            content: <OfferProfileElementForm offerProfileId={offerProfileId} onCreated={closePanel} />,
+            content: <OfferProfileElementForm offerProfileId={offerProfileId} onSaved={closePanel} />,
           })}>
             Dodaj element
           </Button>
@@ -73,33 +86,70 @@ export function OfferProfileElementsPage() {
   )
 }
 
-function OfferProfileElementForm({ offerProfileId, onCreated }: { offerProfileId: number; onCreated: () => void }) {
+function OfferProfileElementForm({
+  offerProfileId,
+  element,
+  onSaved,
+}: {
+  offerProfileId: number
+  element?: Entity
+  onSaved: () => void
+}) {
   const { data: types = [], isLoading: areTypesLoading } = useListOfferProfileElementTypesQuery()
   const [create, createState] = useCreateOfferProfileElementMutation()
+  const [update, updateState] = useUpdateOfferProfileElementMutation()
   const [error, setError] = useState<string | null>(null)
+  const isEditing = Boolean(element)
+  const isSubmitting = isEditing ? updateState.isLoading : createState.isLoading
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const form = new FormData(event.currentTarget)
     setError(null)
+
+    const fields = {
+      type: String(form.get('type') ?? ''),
+      name: String(form.get('name') ?? ''),
+      description: String(form.get('description') ?? ''),
+    }
+
     try {
-      await create({
-        offerProfileId,
-        type: String(form.get('type') ?? ''),
-        name: String(form.get('name') ?? ''),
-        description: String(form.get('description') ?? ''),
-      }).unwrap()
-      onCreated()
+      if (element) {
+        await update({ id: element.id as number, offerProfileId, fields }).unwrap()
+      } else {
+        await create({ offerProfileId, ...fields }).unwrap()
+      }
+      onSaved()
     } catch {
-      setError('Nie udało się dodać elementu oferty.')
+      setError(isEditing ? 'Nie udało się zapisać elementu oferty.' : 'Nie udało się dodać elementu oferty.')
     }
   }
 
   return <form className="space-y-5" onSubmit={(event) => void submit(event)}>
-    <label className="block space-y-2"><span className="text-sm font-medium">Typ</span><select name="type" required disabled={areTypesLoading || types.length === 0} className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm"><option value="">{areTypesLoading ? 'Ładowanie typów…' : 'Wybierz typ'}</option>{types.map((type) => <option key={type} value={type}>{type.replaceAll('_', ' ')}</option>)}</select></label>
-    <label className="block space-y-2"><span className="text-sm font-medium">Nazwa</span><Input name="name" required maxLength={255} placeholder="Np. Darmowa dostawa" /></label>
-    <label className="block space-y-2"><span className="text-sm font-medium">Opis</span><Textarea name="description" placeholder="Opcjonalny opis elementu" /></label>
+    <label className="block space-y-2">
+      <span className="text-sm font-medium">Typ</span>
+      <select
+        name="type"
+        required
+        defaultValue={element?.type as string | undefined}
+        disabled={areTypesLoading || types.length === 0}
+        className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm"
+      >
+        <option value="">{areTypesLoading ? 'Ładowanie typów…' : 'Wybierz typ'}</option>
+        {types.map((type) => <option key={type} value={type}>{type.replaceAll('_', ' ')}</option>)}
+      </select>
+    </label>
+    <label className="block space-y-2">
+      <span className="text-sm font-medium">Nazwa</span>
+      <Input name="name" required maxLength={255} defaultValue={element?.name as string | undefined} placeholder="Np. Darmowa dostawa" />
+    </label>
+    <label className="block space-y-2">
+      <span className="text-sm font-medium">Opis</span>
+      <Textarea name="description" defaultValue={element?.description as string | undefined} placeholder="Opcjonalny opis elementu" />
+    </label>
     {error && <p className="text-sm text-destructive">{error}</p>}
-    <Button type="submit" disabled={createState.isLoading || areTypesLoading || types.length === 0}>{createState.isLoading ? 'Dodawanie…' : 'Dodaj element'}</Button>
+    <Button type="submit" disabled={isSubmitting || areTypesLoading || types.length === 0}>
+      {isSubmitting ? (isEditing ? 'Zapisywanie…' : 'Dodawanie…') : (isEditing ? 'Zapisz' : 'Dodaj element')}
+    </Button>
   </form>
 }

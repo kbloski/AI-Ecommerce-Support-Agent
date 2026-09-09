@@ -21,6 +21,8 @@ from application.handlers.offer_profiles.get_offer_profiles_handler import get_o
 from application.handlers.offer_profiles.delete_offer_profile_handler import delete_offer_profile_handler
 from application.handlers.offer_profiles.list_offer_profile_elements_handler import list_offer_profile_elements_handler
 from application.handlers.offer_profiles.create_offer_profile_element_handler import create_offer_profile_element_handler
+from application.handlers.offer_profiles.update_offer_profile_element_handler import update_offer_profile_element_handler
+from application.handlers.offer_profiles.delete_offer_profile_element_handler import delete_offer_profile_element_handler
 from application.handlers.offer_profiles.list_offer_profile_element_types_handler import list_offer_profile_element_types_handler
 from application.handlers.offers.update_offer_handler import update_offer_handler
 from application.handlers.offer_profiles.update_offer_profile_handler import update_offer_profile_handler
@@ -379,6 +381,17 @@ def register_general_routes(router: APIRouter):
             )
         except LookupError as error:
             raise HTTPException(status_code=404, detail=str(error)) from error
+
+    @router.post("/offer-profile-elements/{id}/update")
+    def update_offer_profile_element_route(id: int, payload: UpdateFieldsRequest):
+        try:
+            return update_offer_profile_element_handler(id=id, fields=payload.fields)
+        except LookupError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+
+    @router.delete("/offer-profile-elements/{id}/delete")
+    def delete_offer_profile_element_route(id: int):
+        return delete_offer_profile_element_handler(id=id)
 
     # -----------------------------
     # Target audience

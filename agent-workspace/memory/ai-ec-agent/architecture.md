@@ -68,7 +68,9 @@ Struktura (`src/`):
 
 Do prostego, jednorazowego wywołania edycji z listy służy hook `lib/useEditEntityPanel.tsx` (`editEntity(title, item, onSave)`), używany m.in. w `ResourcePages.tsx`/`EntityRelationPages.tsx` dla list encji bez własnej strony formularza.
 
-**Listy** — `EntityList`/`ResourceList` (`components/EntityList.tsx`, `components/ResourceList.tsx`) to jedyny, ujednolicony wzorzec listy w całej aplikacji: lp, nazwa, `ID {id}`, akcje ikonowe „otwórz” (`linkTo`), „Edytuj” (`onEdit`, ołówek), „Usuń” (`onDelete`, kosz). Wszystkie strony list (offers, offer-profiles, target-audiences, elementy oferty, wszystkie strony pośrednie łańcucha w `ResourcePages.tsx`) korzystają z tego komponentu — nie tworzyć bespoke markup dla nowych list. Wyjątek: `OfferProfileElementsPage` nie ma `onEdit`/`onDelete`, bo backend nie udostępnia endpointów update/delete dla `OfferProfileElement` (tylko list+create, patrz `known-issues.md`).
+**Listy** — `EntityList`/`ResourceList` (`components/EntityList.tsx`, `components/ResourceList.tsx`) to jedyny, ujednolicony wzorzec listy w całej aplikacji: lp, nazwa, `ID {id}`, akcje ikonowe „otwórz” (`linkTo`), „Edytuj” (`onEdit`, ołówek), „Usuń” (`onDelete`, kosz). Wszystkie strony list (offers, offer-profiles, target-audiences, elementy oferty, wszystkie strony pośrednie łańcucha w `ResourcePages.tsx`) korzystają z tego komponentu — nie tworzyć bespoke markup dla nowych list. Gwiazdka „ulubione” (localStorage) została usunięta z `EntityList` 2026-09-09 — patrz `known-issues.md` w sprawie martwej kolumny `is_favorite` w backendzie, gdyby temat wrócił.
+
+`OfferProfileElement` (jedyna encja bez własnej strony szczegółów w łańcuchu) ma pełny CRUD dodany 2026-09-09: `POST /offer-profile-elements/{id}/update`, `DELETE /offer-profile-elements/{id}/delete` (wcześniej było tylko list+create) — handlery w `application/handlers/offer_profiles/{update,delete}_offer_profile_element_handler.py`, `OfferProfileElementForm` w `pages/EntityRelationPages.tsx` obsługuje teraz i create, i edit (przez prop `element?`).
 
 Cały stan serwerowy żyje w cache RTK Query; stan UI lokalny to zwykły `useState` w komponentach stron.
 

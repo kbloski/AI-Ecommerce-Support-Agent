@@ -26,7 +26,8 @@ Odkryte podczas pierwszej analizy 2026-09-03 (commit `b942f16`). To obserwacje, 
 - **`DashboardPage`** to pusty placeholder — brak realnego widoku startowego.
 - **Brak testów automatycznych** — brak frameworka testowego (vitest/jest), brak skryptu `test` w `package.json`.
 - Formularz pól (`EditableFields.tsx`) dla wartości nieprymitywnych wymaga ręcznego wpisania poprawnego JSON-a w textarea — brak walidacji struktury.
-- **`OfferProfileElement` nie ma endpointów update/delete w backendzie** (tylko `GET .../elements` i `POST .../elements`, patrz `api/routes/general_routes.py`) — lista elementów oferty (`OfferProfileElementsPage`) celowo nie ma akcji „Edytuj”/„Usuń" (2026-09-09), mimo że wygląda jak inne ujednolicone listy encji. Dodać po stronie backendu, jeśli funkcjonalność będzie potrzebna.
+- **Gwiazdka „ulubione” na listach frontendu (usunięta 2026-09-09)** była zaimplementowana wyłącznie w `localStorage` (per przeglądarka, klucz `aiec:favorites:${pathname}`) i **nie miała nic wspólnego** z realną kolumną `is_favorite` opisaną niżej.
+- **Backend ma martwą infrastrukturę pod „ulubione” (`is_favorite`)**: każda encja z `domain/models/favorites_registry.py` (m.in. `Offer`, `OfferProfile`, `TargetAudience` i wszystkie etapy strategii/stron) ma w bazie kolumnę `is_favorite` (dodawaną addytywną migracją w `init_db.py`), ale **żaden route w `general_routes.py` jej nie czyta/nie zapisuje celowo** — da się ją ustawić tylko przez generyczny `POST .../update` (bo handlery robią `setattr` dla dowolnego klucza z `fields`), nic w UI tego nie robi. Jeśli temat "ulubione" wróci, dowiązać do tej kolumny zamiast localStorage.
 
 ## Do zweryfikowania w przyszłości
 

@@ -40,6 +40,28 @@ export const offerProfileApi = api.injectEndpoints({
         listTag('OfferProfileElement', offerProfileId),
       ],
     }),
+    updateOfferProfileElement: builder.mutation<Entity, {
+      id: number
+      offerProfileId: number
+      fields: Record<string, unknown>
+    }>({
+      query: ({ id, fields }) => ({
+        url: `/offer-profile-elements/${id}/update`,
+        method: 'POST',
+        body: { fields },
+      }),
+      invalidatesTags: (_result, _err, { id, offerProfileId }) => [
+        itemTag('OfferProfileElement', id),
+        listTag('OfferProfileElement', offerProfileId),
+      ],
+    }),
+    deleteOfferProfileElement: builder.mutation<void, { id: number; offerProfileId: number }>({
+      query: ({ id }) => ({ url: `/offer-profile-elements/${id}/delete`, method: 'DELETE' }),
+      invalidatesTags: (_result, _err, { id, offerProfileId }) => [
+        itemTag('OfferProfileElement', id),
+        listTag('OfferProfileElement', offerProfileId),
+      ],
+    }),
     updateOfferProfile: builder.mutation<Entity, { id: number; fields: Record<string, unknown> }>({
       query: ({ id, fields }) => ({
         url: `/offer-profiles/${id}/update`,
@@ -68,6 +90,8 @@ export const {
   useListOfferProfileElementsQuery,
   useListOfferProfileElementTypesQuery,
   useCreateOfferProfileElementMutation,
+  useUpdateOfferProfileElementMutation,
+  useDeleteOfferProfileElementMutation,
   useGenerateOfferProfileMutation,
   useDeleteOfferProfileMutation,
   useUpdateOfferProfileMutation,
