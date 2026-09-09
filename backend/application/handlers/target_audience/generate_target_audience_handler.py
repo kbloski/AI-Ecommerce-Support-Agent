@@ -26,15 +26,11 @@ def generate_target_audience_handler(
     container = Container()
 
     target_audience_repo = container.target_audiences_repository()
+    
     ai_service = container.ai_service()
-    offer_profile_repo = container.offer_profile_repository()
-
-    target_audiences_db = target_audience_repo.find_for_offer_profile(offer_profile_id=offer_profile_id)
-    target_audiences_db_dtos = [TargetAudienceMapper.to_dto(item=t) for t in target_audiences_db]
-    offer_profile_db = offer_profile_repo.get_by_id(id=offer_profile_id)
-    offer_profile_db_dto = OfferProfileMapper.to_dto(item=offer_profile_db)
-    offer_profile_context = offer_profile_db_dto.to_content_dict()
-
+    offer_profile_service = container.offer_profile_service()
+    offer_profile_context = offer_profile_service.build_llm_context(offer_profile_id=offer_profile_id)
+    
     response = ai_service.chat_llm(
         messages=[
 
@@ -44,17 +40,10 @@ def generate_target_audience_handler(
             ),
             LlmMessage(
                 role=LlmMessageRole.USER,
-                content=build_uniqueness_prompt(
-                    existing_data= json.dumps( [t.to_content_dict() for t in target_audiences_db_dtos])
-                )
-            ),
-            LlmMessage(
-                role=LlmMessageRole.USER,
                 content=get_target_audience_prompt(offer_profile_context=offer_profile_context)
             )
         ]
     )
-
 
     response_json = json.loads(response.content )
     audiences_arr = response_json["audiences"]
