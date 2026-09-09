@@ -18,6 +18,7 @@ interface ResourceListProps {
   onGenerate?: () => void
   isGenerating?: boolean
   generateLabel?: string
+  onEdit?: (item: Entity) => void
   onDelete?: (item: Entity) => void
 }
 
@@ -36,6 +37,7 @@ export function ResourceList({
   onGenerate,
   isGenerating,
   generateLabel = 'Generuj',
+  onEdit,
   onDelete,
 }: ResourceListProps) {
   return (
@@ -50,6 +52,7 @@ export function ResourceList({
       itemMeta={itemMeta}
       itemDescription={itemDescription}
       itemDetails={itemDetails}
+      onEdit={onEdit}
       onDelete={onDelete}
       emptyDescription="Wygeneruj lub dodaj pierwszy element, aby rozpocząć pracę."
       actions={onGenerate ? (

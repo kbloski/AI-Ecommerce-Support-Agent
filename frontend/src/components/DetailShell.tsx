@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
+import { Button } from '@/components/ui/button'
 import { EditableFields } from '@/components/EditableFields'
 import { JsonPanelRegistration } from '@/components/JsonPanelRegistration'
+import { useSidePanel } from '@/lib/sidePanel'
 import type { Entity } from '@/types'
 
 interface DetailShellProps {
@@ -13,6 +15,7 @@ interface DetailShellProps {
   children?: ReactNode
   actions?: ReactNode
   overview?: ReactNode
+  fields?: ReactNode
   exclude?: string[]
   itemActions?: Record<string, (item: Record<string, unknown>) => void>
   itemLinks?: Record<string, (item: Record<string, unknown>) => string>
@@ -22,7 +25,7 @@ interface DetailShellProps {
   >
   itemAdditions?: Record<string, ReactNode>
   relationLinks?: Record<string, string>
-  /** When provided, the fields panel becomes an editable form that saves via this handler; otherwise fields render disabled/read-only. */
+  /** When provided, an "Edytuj" action opens a side panel with an editable form that saves via this handler; the fields on the page itself always render read-only. */
   editable?: {
     onSave: (fields: Record<string, unknown>) => Promise<unknown>
     isSaving?: boolean
@@ -37,6 +40,7 @@ export function DetailShell({
   error,
   actions,
   overview,
+  fields,
   exclude,
   itemActions,
   itemLinks,
@@ -46,6 +50,29 @@ export function DetailShell({
   editable,
   children,
 }: DetailShellProps) {
+  const { openPanel, closePanel } = useSidePanel()
+
+  const openEditPanel = () => {
+    if (!editable || !data) return
+
+    openPanel({
+      title: `Edytuj: ${title}`,
+      content: (
+        <EditableFields
+          key={String(data.id)}
+          data={data}
+          exclude={exclude}
+          isSaving={editable.isSaving}
+          onSave={async (fields) => {
+            const result = await editable.onSave(fields)
+            closePanel()
+            return result
+          }}
+        />
+      ),
+    })
+  }
+
   return (
     <div className="w-full space-y-6 p-6 lg:p-10">
 
@@ -57,12 +84,17 @@ export function DetailShell({
 
         {title && <h1 className="text-2xl font-semibold">{title}</h1>}
 
-        {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
+        {(actions || (editable && data)) && (
+          <div className="flex flex-wrap gap-2">
+            {actions}
+            {editable && data && <Button onClick={openEditPanel}>Edytuj</Button>}
+          </div>
+        )}
 
         {isLoading && <p className="text-sm text-muted-foreground">Ładowanie…</p>}
         {Boolean(error) && <p className="text-sm text-destructive">Nie udało się pobrać danych.</p>}
 
-        {data && (
+        {data && (fields ?? (
           <div>
             <EditableFields
               key={String(data.id)}
@@ -73,11 +105,9 @@ export function DetailShell({
               itemStatusActions={itemStatusActions}
               itemAdditions={itemAdditions}
               relationLinks={relationLinks}
-              isSaving={editable?.isSaving}
-              onSave={editable ? (fields) => editable.onSave(fields) : undefined}
             />
           </div>
-        )}
+        ))}
 
         {data && overview}
         {data && children}

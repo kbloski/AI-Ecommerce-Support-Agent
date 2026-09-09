@@ -30,7 +30,7 @@ export default function OfferProfileDetailPage() {
         target_audiences: (item) => deleteTargetAudience({ id: item.id as number, offerProfileId }),
       }}
       itemLinks={{
-        target_audiences: (item) => `/target-audiences/${item.id}/edit`,
+        target_audiences: (item) => `/target-audiences/${item.id}`,
       }}
       relationLinks={{
         target_audiences: `/offer-profiles/${offerProfileId}/target-audiences`,

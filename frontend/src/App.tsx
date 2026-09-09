@@ -6,7 +6,6 @@ import OfferDetailPage from '@/pages/OfferDetailPage'
 import OfferProfilesPage from '@/pages/OfferProfilesPage'
 import OfferProfileDetailPage from '@/pages/OfferProfileDetailPage'
 import TargetAudienceDetailPage from '@/pages/TargetAudienceDetailPage'
-import TargetAudienceEditPage from '@/pages/TargetAudienceEditPage'
 import AnalysisDetailPage from '@/pages/AnalysisDetailPage'
 import ChecklistDetailPage from '@/pages/ChecklistDetailPage'
 import BrandMarketingDetailPage from '@/pages/BrandMarketingDetailPage'
@@ -48,7 +47,6 @@ function App() {
         <Route path="/offer-profiles/:offerProfileId/analyses" element={<OfferProfileAnalysesPage />} />
         <Route path="/offer-profiles/:offerProfileId/brand-marketing" element={<OfferProfileBrandMarketingPage />} />
         <Route path="/target-audiences/:id" element={<TargetAudienceDetailPage />} />
-        <Route path="/target-audiences/:id/edit" element={<TargetAudienceEditPage />} />
         <Route path="/offer-profiles/:offerProfileId/analysis/:analysisId" element={<AnalysisDetailPage />} />
         <Route path="/offer-profiles/:offerProfileId/analysis/:analysisId/checklists" element={<AnalysisChecklistsPage />} />
         <Route path="/offer-profiles/:offerProfileId/analysis/:analysisId/questions" element={<AnalysisQuestionsPage />} />

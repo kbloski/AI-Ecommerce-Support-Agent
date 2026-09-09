@@ -26,6 +26,7 @@ Odkryte podczas pierwszej analizy 2026-09-03 (commit `b942f16`). To obserwacje, 
 - **`DashboardPage`** to pusty placeholder — brak realnego widoku startowego.
 - **Brak testów automatycznych** — brak frameworka testowego (vitest/jest), brak skryptu `test` w `package.json`.
 - Formularz pól (`EditableFields.tsx`) dla wartości nieprymitywnych wymaga ręcznego wpisania poprawnego JSON-a w textarea — brak walidacji struktury.
+- **`OfferProfileElement` nie ma endpointów update/delete w backendzie** (tylko `GET .../elements` i `POST .../elements`, patrz `api/routes/general_routes.py`) — lista elementów oferty (`OfferProfileElementsPage`) celowo nie ma akcji „Edytuj”/„Usuń" (2026-09-09), mimo że wygląda jak inne ujednolicone listy encji. Dodać po stronie backendu, jeśli funkcjonalność będzie potrzebna.
 
 ## Do zweryfikowania w przyszłości
 

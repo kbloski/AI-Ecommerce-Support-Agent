@@ -60,9 +60,15 @@ Struktura (`src/`):
 - `lib/` — `entityFields.ts` (etykiety pól, heurystyka wykrywania relacji), `tags.ts` (tagi cache RTK Query), `apiError.ts` (martwy kod — patrz known-issues), `utils.ts`.
 - `types.ts` — jeden generyczny typ `Entity = {id: number, [key: string]: unknown}` — brak silnie typowanych DTO.
 
-### Wzorzec strony
+### Wzorzec strony (zaktualizowane 2026-09-09)
 
-`DetailShell` + `ResourceList`: (1) edytowalne pola bieżącej encji (generyczny, data-driven formularz `EditableFields.tsx`, iteruje po kluczach obiektu), (2) listy dzieci następnego etapu z przyciskiem „Generuj” (mutacja RTK Query), (3) nawigacja do szczegółów nowego obiektu po sukcesie.
+`DetailShell` + `ResourceList`: (1) pola bieżącej encji renderowane **tylko do odczytu** (generyczny `EditableFields.tsx` bez `onSave` renderuje `dl`/paragrafy, nie disabled inputy), (2) listy dzieci następnego etapu z przyciskiem „Generuj” (mutacja RTK Query), (3) nawigacja do szczegółów nowego obiektu po sukcesie.
+
+**Edycja = drawer po prawej (`SidePanel`/`useSidePanel`), nigdy inline na stronie.** `DetailShell` przyjmuje prop `editable: {onSave, isSaving}` — gdy podany, renderuje przycisk „Edytuj” otwierający panel z `EditableFields` (onSave zamyka panel po sukcesie). To jedno miejsce obsługuje ~13 stron „DetailPage” automatycznie. Encje z niestandardowym formularzem (Offer, TargetAudience, PageRequirements) mają własny komponent formularza w `features/<encja>/*Form.tsx`, używany identycznie w drawerze (wzorzec: `EditOfferForm`, `EditTargetAudienceForm`, `EditSectionRequirementsForm`). Osobne strony `/*/edit` (jak dawny `TargetAudienceEditPage`) zostały wyeliminowane na rzecz drawera.
+
+Do prostego, jednorazowego wywołania edycji z listy służy hook `lib/useEditEntityPanel.tsx` (`editEntity(title, item, onSave)`), używany m.in. w `ResourcePages.tsx`/`EntityRelationPages.tsx` dla list encji bez własnej strony formularza.
+
+**Listy** — `EntityList`/`ResourceList` (`components/EntityList.tsx`, `components/ResourceList.tsx`) to jedyny, ujednolicony wzorzec listy w całej aplikacji: lp, nazwa, `ID {id}`, akcje ikonowe „otwórz” (`linkTo`), „Edytuj” (`onEdit`, ołówek), „Usuń” (`onDelete`, kosz). Wszystkie strony list (offers, offer-profiles, target-audiences, elementy oferty, wszystkie strony pośrednie łańcucha w `ResourcePages.tsx`) korzystają z tego komponentu — nie tworzyć bespoke markup dla nowych list. Wyjątek: `OfferProfileElementsPage` nie ma `onEdit`/`onDelete`, bo backend nie udostępnia endpointów update/delete dla `OfferProfileElement` (tylko list+create, patrz `known-issues.md`).
 
 Cały stan serwerowy żyje w cache RTK Query; stan UI lokalny to zwykły `useState` w komponentach stron.
 

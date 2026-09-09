@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import { ArrowUpRight, Star, Trash2 } from 'lucide-react'
-import { Link, useLocation } from 'react-router-dom'
+import { useMemo, type ReactNode } from 'react'
+import { ArrowUpRight, Pencil, Trash2 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import type { Entity } from '@/types'
 
@@ -17,10 +17,10 @@ interface EntityListProps {
   itemMeta?: (item: Entity) => ReactNode
   itemDescription?: (item: Entity) => ReactNode
   itemDetails?: (item: Entity) => ReactNode
+  onEdit?: (item: Entity) => void
   onDelete?: (item: Entity) => void
   emptyTitle?: string
   emptyDescription?: string
-  enableFavorites?: boolean
 }
 
 /** Full-width, flat entity list with a count and an optional header action area. */
@@ -37,51 +37,12 @@ export function EntityList({
   itemMeta = (item) => `ID ${String(item.id)}`,
   itemDescription,
   itemDetails,
+  onEdit,
   onDelete,
   emptyTitle = 'Brak elementów',
   emptyDescription = 'Dodaj pierwszy element, aby rozpocząć pracę.',
-  enableFavorites = true,
 }: EntityListProps) {
   const entries = useMemo(() => items ?? [], [items])
-  const { pathname } = useLocation()
-  const storageKey = `aiec:favorites:${pathname}`
-  const [favorites, setFavorites] = useState<Set<string>>(new Set())
-
-  useEffect(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem(storageKey) ?? '[]') as unknown
-      setFavorites(new Set(Array.isArray(stored) ? stored.map(String) : []))
-    } catch {
-      setFavorites(new Set())
-    }
-  }, [storageKey])
-
-  const sortedEntries = useMemo(
-    () => entries
-      .map((item, originalIndex) => ({ item, originalIndex }))
-      .sort((a, b) => {
-        const aFavorite = favorites.has(String(a.item.id)) ? 1 : 0
-        const bFavorite = favorites.has(String(b.item.id)) ? 1 : 0
-        return bFavorite - aFavorite || a.originalIndex - b.originalIndex
-      })
-      .map(({ item }) => item),
-    [entries, favorites],
-  )
-
-  const toggleFavorite = (item: Entity) => {
-    const id = String(item.id)
-    setFavorites((current) => {
-      const next = new Set(current)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      try {
-        localStorage.setItem(storageKey, JSON.stringify([...next]))
-      } catch {
-        // Keep the in-memory selection when storage is unavailable.
-      }
-      return next
-    })
-  }
 
   return (
     <section className="w-full space-y-8">
@@ -117,7 +78,7 @@ export function EntityList({
 
       {entries.length > 0 && (
         <div className="space-y-2">
-          {sortedEntries.map((item, index) => (
+          {entries.map((item, index) => (
             <article
               key={item.id}
               className="group grid grid-cols-[3.5rem_minmax(0,1fr)_auto] items-center gap-4 bg-muted/25 px-4 py-5 transition-colors hover:bg-muted/55"
@@ -157,21 +118,20 @@ export function EntityList({
                 <span className="mt-1 block font-mono text-xs text-muted-foreground">{itemMeta(item)}</span>
               </div>}
               <div className="flex items-center gap-1">
-                {enableFavorites && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label={favorites.has(String(item.id)) ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
-                    aria-pressed={favorites.has(String(item.id))}
-                    onClick={() => toggleFavorite(item)}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    <Star className={favorites.has(String(item.id)) ? 'fill-current text-foreground' : undefined} />
-                  </Button>
-                )}
                 {linkTo && (
                   <Button nativeButton={false} render={<Link to={linkTo(item)} aria-label={`Otwórz ${title}`} />} variant="ghost" size="icon" className="rounded-none">
                     <ArrowUpRight />
+                  </Button>
+                )}
+                {onEdit && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-none text-muted-foreground hover:text-foreground"
+                    aria-label={`Edytuj ${title}`}
+                    onClick={() => onEdit(item)}
+                  >
+                    <Pencil />
                   </Button>
                 )}
                 {onDelete && (

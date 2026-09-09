@@ -1,30 +1,44 @@
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { useState, type FormEvent } from 'react'
 import { useParams } from 'react-router-dom'
-import { RelationList } from '@/components/EditableFields'
+import { EntityList } from '@/components/EntityList'
+import { ResourceList } from '@/components/ResourceList'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useSidePanel } from '@/lib/sidePanel'
-import { useListFactStatusesQuery } from '@/features/factStatus/factStatusApi'
-import { useListReviewStatusesQuery } from '@/features/reviewStatus/reviewStatusApi'
+import { EditTargetAudienceForm } from '@/features/targetAudiences/TargetAudienceForm'
 import { useCreateOfferProfileElementMutation, useGetOfferProfileQuery, useListOfferProfileElementsQuery, useListOfferProfileElementTypesQuery } from '@/features/offerProfiles/offerProfileApi'
-import { useDeleteTargetAudienceMutation, useGenerateTargetAudiencesMutation, useUpdateTargetAudienceMutation } from '@/features/targetAudiences/targetAudiencesApi'
+import { useDeleteTargetAudienceMutation, useGenerateTargetAudiencesMutation } from '@/features/targetAudiences/targetAudiencesApi'
 import type { Entity } from '@/types'
-
-function CollectionPage({ title, children }: { title: string; children: ReactNode }) {
-  return <div className="w-full space-y-6 p-6 lg:p-10"><h1 className="text-2xl font-semibold">{title}</h1>{children}</div>
-}
 
 export function OfferProfileTargetAudiencesPage() {
   const offerProfileId = Number(useParams().offerProfileId)
   const { data, isLoading, error } = useGetOfferProfileQuery(offerProfileId)
-  const { data: statuses } = useListFactStatusesQuery()
-  const { data: reviewStatuses } = useListReviewStatusesQuery()
   const [generate, generateState] = useGenerateTargetAudiencesMutation()
   const [remove] = useDeleteTargetAudienceMutation()
-  const [update] = useUpdateTargetAudienceMutation()
+  const { openPanel, closePanel } = useSidePanel()
   const items = (data?.target_audiences as Entity[] | undefined) ?? []
-  return <CollectionPage title="Grupy docelowe"><Button size="sm" onClick={() => generate({ offerProfileId })} disabled={generateState.isLoading}>{generateState.isLoading ? 'Generowanie…' : 'Generuj grupy docelowe'}</Button><RelationList fieldKey="target_audiences" items={items} onEditLink={(item) => `/target-audiences/${item.id}/edit`} onDelete={(item) => remove({ id: item.id as number, offerProfileId })} onStatusChange={(item, fact_status) => update({ id: item.id as number, offerProfileId, fact_status }).unwrap()} onReviewStatusChange={(item, review_status) => update({ id: item.id as number, offerProfileId, review_status }).unwrap()} statuses={statuses} reviewStatuses={reviewStatuses} showHeading={false} />{isLoading && <p>Ładowanie…</p>}{error && <p>Nie udało się pobrać danych.</p>}</CollectionPage>
+
+  return (
+    <div className="w-full p-6 lg:p-10">
+      <ResourceList
+        title="Grupy docelowe"
+        items={items}
+        isLoading={isLoading}
+        error={error}
+        linkTo={(item) => `/target-audiences/${item.id}`}
+        itemLabel={(item) => (item.name as string) ?? `#${item.id}`}
+        onGenerate={() => generate({ offerProfileId })}
+        isGenerating={generateState.isLoading}
+        generateLabel="Generuj grupy docelowe"
+        onEdit={(item) => openPanel({
+          title: 'Edytuj grupę docelową',
+          content: <EditTargetAudienceForm id={item.id as number} data={item} onSaved={closePanel} />,
+        })}
+        onDelete={(item) => remove({ id: item.id as number, offerProfileId })}
+      />
+    </div>
+  )
 }
 
 export function OfferProfileElementsPage() {
@@ -32,22 +46,31 @@ export function OfferProfileElementsPage() {
   const { data: elements = [], isLoading, error } = useListOfferProfileElementsQuery(offerProfileId)
   const { openPanel, closePanel } = useSidePanel()
 
-  return <CollectionPage title="Elementy oferty">
-    <Button size="sm" onClick={() => openPanel({
-      title: 'Dodaj element oferty',
-      content: <OfferProfileElementForm offerProfileId={offerProfileId} onCreated={closePanel} />,
-    })}>Dodaj element</Button>
-    {isLoading && <p>Ładowanie…</p>}
-    {error && <p>Nie udało się pobrać elementów oferty.</p>}
-    {!isLoading && !error && elements.length === 0 && <p>Brak elementów oferty.</p>}
-    <div className="grid gap-4 md:grid-cols-2">
-      {elements.map((element) => <article key={String(element.id)} className="rounded-lg border bg-card p-5 shadow-sm">
-        <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">{String(element.type).replaceAll('_', ' ')}</p>
-        <h2 className="text-lg font-semibold">{String(element.name)}</h2>
-        {element.description ? <p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">{String(element.description)}</p> : null}
-      </article>)}
+  return (
+    <div className="w-full p-6 lg:p-10">
+      <EntityList
+        title="Elementy oferty"
+        items={elements}
+        isLoading={isLoading}
+        error={error}
+        itemLabel={(element) => (element.name as string) ?? `#${element.id}`}
+        itemDescription={(element) => [
+          String(element.type ?? '').replaceAll('_', ' '),
+          element.description ? String(element.description) : null,
+        ].filter(Boolean).join(' — ')}
+        emptyTitle="Brak elementów oferty"
+        emptyDescription="Dodaj pierwszy element, aby rozpocząć pracę."
+        actions={
+          <Button className="h-10 rounded-none px-4" onClick={() => openPanel({
+            title: 'Dodaj element oferty',
+            content: <OfferProfileElementForm offerProfileId={offerProfileId} onCreated={closePanel} />,
+          })}>
+            Dodaj element
+          </Button>
+        }
+      />
     </div>
-  </CollectionPage>
+  )
 }
 
 function OfferProfileElementForm({ offerProfileId, onCreated }: { offerProfileId: number; onCreated: () => void }) {

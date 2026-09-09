@@ -194,7 +194,7 @@ interface EditableFieldsProps {
   relationLinks?: Record<string, string>
 }
 
-/** Generic form for any DTO's fields — same inputs whether or not saving is wired up; falls back to disabled inputs when `onSave` isn't provided. Relation arrays (child entities with their own `id`) stay read-only, rendered via RelationList. */
+/** Generic view of any DTO's fields: a plain read-only label/value display when `onSave` is omitted, or an editable form when it's provided. Relation arrays (child entities with their own `id`) stay read-only, rendered via RelationList. */
 export function EditableFields({
   data,
   onSave,
@@ -266,6 +266,61 @@ export function EditableFields({
     await onSave(fields)
   }
 
+  const relationCards = relationKeys.length > 0 && relationLinks && (
+    <RelationCards
+      cards={relationKeys.flatMap((key) => {
+        const to = relationLinks[key]
+        return to ? [{
+          id: key,
+          label: label(key),
+          count: (data[key] as Record<string, unknown>[]).length,
+          to,
+        }] : []
+      })}
+    />
+  )
+
+  if (!onSave) {
+    return (
+      <div className="space-y-4">
+        <dl className="space-y-3">
+          {editableKeys.map((key) => {
+            const value = data[key]
+            const statusLabel =
+              key === 'fact_status'
+                ? statuses?.find((status) => status.value === value)?.label
+                : key === 'review_status'
+                  ? reviewStatuses?.find((status) => status.value === value)?.label
+                  : undefined
+
+            return (
+              <div key={key} className="grid gap-1">
+                <dt className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  {label(key)}
+                </dt>
+                <dd className="text-sm whitespace-pre-wrap">
+                  {value === null || value === undefined || value === '' ? (
+                    <span className="text-muted-foreground italic">—</span>
+                  ) : statusLabel ? (
+                    statusLabel
+                  ) : isPrimitive(value) ? (
+                    String(value)
+                  ) : (
+                    <pre className="overflow-x-auto rounded-md border bg-muted/50 p-2 text-xs">
+                      {JSON.stringify(value, null, 2)}
+                    </pre>
+                  )}
+                </dd>
+              </div>
+            )
+          })}
+        </dl>
+
+        {relationCards}
+      </div>
+    )
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && <p className="text-sm text-destructive">{error}</p>}
@@ -280,7 +335,6 @@ export function EditableFields({
                 onValueChange={(value) => {
                   if (value !== null) setField(key, value)
                 }}
-                disabled={!onSave}
               >
                 <SelectTrigger id={key}>
                   <SelectValue />
@@ -299,7 +353,6 @@ export function EditableFields({
                 type="number"
                 value={values[key]}
                 onChange={(e) => setField(key, e.target.value)}
-                disabled={!onSave}
               />
             ) : (
               <Textarea
@@ -307,34 +360,19 @@ export function EditableFields({
                 value={values[key]}
                 onChange={(e) => setField(key, e.target.value)}
                 rows={typeof data[key] === 'string' && (data[key] as string).length > 80 ? 4 : 2}
-                disabled={!onSave}
               />
             )}
           </div>
         ))}
       </div>
 
-      {onSave && (
-        <div className="flex gap-2">
-          <Button type="submit" disabled={isSaving}>
-            {isSaving ? 'Zapisywanie…' : 'Zapisz'}
-          </Button>
-        </div>
-      )}
+      <div className="flex gap-2">
+        <Button type="submit" disabled={isSaving}>
+          {isSaving ? 'Zapisywanie…' : 'Zapisz'}
+        </Button>
+      </div>
 
-      {relationKeys.length > 0 && relationLinks && (
-        <RelationCards
-          cards={relationKeys.flatMap((key) => {
-            const to = relationLinks[key]
-            return to ? [{
-              id: key,
-              label: label(key),
-              count: (data[key] as Record<string, unknown>[]).length,
-              to,
-            }] : []
-          })}
-        />
-      )}
+      {relationCards}
     </form>
   )
 }

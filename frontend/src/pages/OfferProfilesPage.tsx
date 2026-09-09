@@ -6,13 +6,17 @@ import {
   useDeleteOfferProfileMutation,
   useGenerateOfferProfileMutation,
   useListOfferProfileForOfferQuery,
+  useUpdateOfferProfileMutation,
 } from '@/features/offerProfiles/offerProfileApi'
+import { useEditEntityPanel } from '@/lib/useEditEntityPanel'
 
 export default function OfferProfilesPage() {
   const offerId = Number(useParams().offerId)
   const offer_profileList = useListOfferProfileForOfferQuery(offerId)
   const [generateOfferProfile, { isLoading: isGenerating }] = useGenerateOfferProfileMutation()
   const [deleteOfferProfile] = useDeleteOfferProfileMutation()
+  const [updateOfferProfile] = useUpdateOfferProfileMutation()
+  const editEntity = useEditEntityPanel()
 
   return (
     <div className="w-full p-6 lg:p-10">
@@ -26,6 +30,7 @@ export default function OfferProfilesPage() {
         itemLabel={(item) => (item.offer_summary as string) ?? `OfferProfile #${item.id}`}
         emptyTitle="Brak bazy wiedzy"
         emptyDescription="Wygeneruj pierwszy element, aby rozpocząć pracę."
+        onEdit={(item) => editEntity('OfferProfile', item, (fields) => updateOfferProfile({ id: item.id as number, fields }).unwrap())}
         onDelete={(item) => deleteOfferProfile({ id: item.id as number, offerId })}
         actions={
           <Button
