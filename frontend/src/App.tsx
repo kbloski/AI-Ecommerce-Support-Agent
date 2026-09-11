@@ -24,11 +24,11 @@ import PageCopyDetailPage from '@/pages/PageCopyDetailPage'
 import SettingsPage from '@/pages/SettingsPage'
 import { OfferProfileElementsPage, OfferProfileTargetAudiencesPage } from '@/pages/EntityRelationPages'
 import {
-  AdCreativeExecutionsPage, AdCreativeStrategiesPage, AnalysisChecklistsPage, AnalysisQuestionsPage,
+  AdCreativeExecutionsPage, AdCreativeStrategiesPage, AnalysisQuestionsPage,
   BrandMarketingStrategiesPage, ChecklistItemsPage, OfferProfileAnalysesPage,
   OfferProfileBrandMarketingPage, MarketingOfferStrategiesPage, MessageAdStrategiesPage,
   MessagePageStrategiesPage, MessageUgcCreativesPage, OfferMessageStrategiesPage,
-  PageRequirementsPage, PageBlueprintsPage, PageContentPlansPage, PageCopiesPage, CreativeAdExecutionsPage,
+  PageRequirementsPage, PageBlueprintsPage, PageContentPlansPage, PageCopiesPage, CreativeAdExecutionsPage, OfferProfileChecklistsPage,
 } from '@/pages/ResourcePages'
 
 function App() {
@@ -44,15 +44,15 @@ function App() {
         <Route path="/offer-profiles/:offerProfileId/target-audiences" element={<OfferProfileTargetAudiencesPage />} />
         <Route path="/offer-profiles/:offerProfileId/elements" element={<OfferProfileElementsPage />} />
         <Route path="/offer-profiles/:offerProfileId/analyses" element={<OfferProfileAnalysesPage />} />
+        <Route path="/offer-profiles/:offerProfileId/checklists" element={<OfferProfileChecklistsPage />} />
         <Route path="/offer-profiles/:offerProfileId/brand-marketing" element={<OfferProfileBrandMarketingPage />} />
         <Route path="/offer-profiles/:offerProfileId/analysis/:analysisId" element={<AnalysisDetailPage />} />
-        <Route path="/offer-profiles/:offerProfileId/analysis/:analysisId/checklists" element={<AnalysisChecklistsPage />} />
         <Route path="/offer-profiles/:offerProfileId/analysis/:analysisId/questions" element={<AnalysisQuestionsPage />} />
         <Route
-          path="/offer-profiles/:offerProfileId/analysis/:analysisId/checklists/:checklistId"
+          path="/offer-profiles/:offerProfileId/checklists/:checklistId"
           element={<ChecklistDetailPage />}
         />
-        <Route path="/offer-profiles/:offerProfileId/analysis/:analysisId/checklists/:checklistId/items" element={<ChecklistItemsPage />} />
+        <Route path="/offer-profiles/:offerProfileId/checklists/:checklistId/items" element={<ChecklistItemsPage />} />
         <Route path="/brand-marketing/:id" element={<BrandMarketingDetailPage />} />
         <Route path="/brand-marketing/:id/marketing-strategies" element={<BrandMarketingStrategiesPage />} />
         <Route path="/marketing-strategy/:id" element={<MarketingStrategyDetailPage />} />

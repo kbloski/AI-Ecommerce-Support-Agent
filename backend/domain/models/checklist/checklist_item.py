@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -21,6 +21,7 @@ class ChecklistItem(Base, JSONSerializable):
     title = Column(Text, nullable=False)
     description= Column(Text, nullable=True)
     note = Column(Text, nullable=True)
+    is_reviewed = Column(Boolean, nullable=False, default=False, server_default="0", index=True)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(

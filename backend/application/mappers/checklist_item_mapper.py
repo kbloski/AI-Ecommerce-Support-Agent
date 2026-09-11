@@ -10,6 +10,7 @@ class ChecklistItemMapper:
             checklist_id= item.checklist_id,
             title=item.title,
             description=item.description,
-            note=item.note
+            note=item.note,
+            is_reviewed=item.is_reviewed,
         )
 

@@ -1,4 +1,5 @@
 import json
+import re
 
 from di.container import Container
 from domain.enums.llm_message_role import LlmMessageRole
@@ -35,7 +36,7 @@ Important requirements:
 
 For every task that requires searching, keyword research, ads research, marketplace research, or social media research:
 
-- provide a minimum of 10-15 concrete search phrases,
+- provide 3-5 concrete search phrases,
 - provide realistic keywords based on the analyzed product,
 - provide hashtags when applicable,
 - provide copy-paste ready search queries,
@@ -99,16 +100,18 @@ Search phrases should reflect real queries used by people in Poland, not only di
 """
 
 
-def prepare_user_prompt(json_offer_data: str) -> str:
+def prepare_user_prompt(offer_profile_context: str) -> str:
     return f"""
 Based on the product data, prepare a product research checklist.
 
 Product data:
 
-{json_offer_data}
+{offer_profile_context}
 
 
 Generate a list of tasks that the user should perform to validate the potential of this product.
+
+Create no more than 12 tasks in total. Prioritize the most useful checks.
 
 
 Important:
@@ -311,7 +314,6 @@ Return ONLY a JSON array following the format defined in the SYSTEM PROMPT.
 
 def analyse_checklist_generate_handler(
     offer_profile_id: int,
-    analyse_id: int,
     checklist_id: int
 ):
     container = Container()
@@ -319,11 +321,18 @@ def analyse_checklist_generate_handler(
     logger = container.logger()
     ai_service = container.ai_service()
     offer_profile_service = container.offer_profile_service()
+    checklist_repository = container.checklist_repository()
     checklist_items_repository = container.checklist_items_repository()
+
+    checklist = checklist_repository.get_by_id(checklist_id)
+    if checklist is None:
+        raise LookupError(f"Checklist with id {checklist_id} not found")
+    if checklist.offer_profile_id != offer_profile_id:
+        raise ValueError("Checklist does not belong to the requested OfferProfile")
 
     logger.info(
         f"Checklist generation started. "
-        f"offer_profile_id={offer_profile_id}, analyse_id={analyse_id}, checklist_id={checklist_id}"
+        f"offer_profile_id={offer_profile_id}, checklist_id={checklist_id}"
     )
 
     # ---------
@@ -334,19 +343,14 @@ def analyse_checklist_generate_handler(
 
 
 
-    logger.info("Assembling product offer_profile")
+    logger.info("Building product offer_profile LLM context")
 
-    assembled_offer_profile = offer_profile_service.get_offer_profile_details_by_id(offer_profile_id=offer_profile_id)
-
-
-    json_offer_data = json.dumps(
-        assembled_offer_profile.to_dict(),
-        ensure_ascii=False,
-        indent=2
+    offer_profile_context = offer_profile_service.build_llm_context(
+        offer_profile_id=offer_profile_id
     )
 
     logger.info(
-        f"Product data prepared. Size={len(json_offer_data)} chars"
+        f"Product data prepared. Size={len(offer_profile_context)} chars"
     )
 
 
@@ -357,7 +361,7 @@ def analyse_checklist_generate_handler(
     logger.info("Preparing user prompt")
 
     user_prompt = prepare_user_prompt(
-        json_offer_data=json_offer_data
+        offer_profile_context=offer_profile_context
     )
 
     logger.info(
@@ -393,9 +397,7 @@ def analyse_checklist_generate_handler(
 
     logger.info("Parsing LLM response")
 
-    response_object = json.loads(
-        response.content
-    )
+    response_object = parse_checklist_response(response.content)
 
     logger.info(
         f"Generated checklist items count={len(response_object)}"
@@ -413,8 +415,8 @@ def analyse_checklist_generate_handler(
         checklist_items.append(
             ChecklistItem(
                 checklist_id=checklist_id,
-                title=item["title"],
-                description=item["description"],
+                title=str(item.get("title", "Zadanie do weryfikacji")),
+                description=str(item.get("description", "")),
                 note=item.get("note", "")
             )
         )
@@ -442,3 +444,20 @@ def analyse_checklist_generate_handler(
     logger.info("Checklist generation finished")
 
     return items_dtos
+
+
+def parse_checklist_response(content: str) -> list[dict]:
+    """Accept JSON returned directly or wrapped in a Markdown code fence."""
+    normalized = content.strip()
+    fenced = re.fullmatch(r"```(?:json)?\s*(.*?)\s*```", normalized, flags=re.DOTALL | re.IGNORECASE)
+    if fenced:
+        normalized = fenced.group(1).strip()
+    if not normalized.startswith("["):
+        start, end = normalized.find("["), normalized.rfind("]")
+        if start >= 0 and end > start:
+            normalized = normalized[start:end + 1]
+
+    parsed = json.loads(normalized)
+    if not isinstance(parsed, list) or not all(isinstance(item, dict) for item in parsed):
+        raise ValueError("Model response must be a JSON array of checklist items")
+    return parsed

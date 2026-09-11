@@ -49,11 +49,14 @@ from application.handlers.analysis.get_analysis_for_offer_profile_hanlder import
 from application.handlers.analysis.analyse_checklist_generate_handler import analyse_checklist_generate_handler
 from application.handlers.analysis.delete_analysis_handler import delete_analysis_handler
 from application.handlers.analysis.delete_analysis_question_handler import delete_analysis_question_handler
-from application.handlers.checklist.create_checklist_for_analysis_handler import create_checklist_for_analysis_handler
-from application.handlers.checklist.get_analysis_checklists_handler import get_analyse_checklists_handler
+from application.handlers.analysis.update_analysis_question_handler import update_analysis_question_handler
+from application.handlers.analysis.list_analysis_questions_handler import list_analysis_questions_handler
+from application.handlers.checklist.create_checklist_for_offer_profile_handler import create_checklist_for_offer_profile_handler
+from application.handlers.checklist.get_offer_profile_checklists_handler import get_offer_profile_checklists_handler
 from application.handlers.checklist.get_checklist_by_id_handler import get_checklist_by_id_handler
 from application.handlers.checklist.delete_checklist_item_handler import delete_checklist_item_handler
 from application.handlers.checklist.delete_checklist_handler import delete_checklist_handler
+from application.handlers.checklist.update_checklist_item_handler import update_checklist_item_handler
 from application.handlers.advertisement.offer_profile_advertisement_generate_handler import offer_profile_advertisement_generate_handler
 from application.handlers.brand_marketing.generate_brand_marketing_handler import generate_brand_marketing_handler
 from application.handlers.brand_marketing.get_brand_marketing_handler import get_brand_marketing_handler
@@ -219,7 +222,7 @@ def register_general_routes(router: APIRouter):
 
     @router.get("/offer-profiles/{offer_profile_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
     def _legacy_get_3(offer_profile_id: str, analyse_id: str, checklist_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/checklists/{checklist_id}/generate")
 
     @router.get("/offer-profiles/{offer_profile_id}/brand-marketing/generate")
     def _legacy_get_4(offer_profile_id: str):
@@ -271,7 +274,7 @@ def register_general_routes(router: APIRouter):
 
     @router.get("/offer-profiles/{offer_profile_id}/analysis/{analysis_id}/checklists/create")
     def _legacy_get_16(offer_profile_id: str, analysis_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/analysis/{analysis_id}/checklists/create")
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/checklists/create")
 
     @router.get("/page-strategy/{page_strategy_id}/page-requirements/create")
     def _legacy_get_17(page_strategy_id: str):
@@ -439,8 +442,20 @@ def register_general_routes(router: APIRouter):
 
     # #  GET in future
     @router.get("/offer-profiles/{offer_profile_id}/target-audiences")
-    def get_target_audience( offer_profile_id: int):
-        return get_target_audience_handler( offer_profile_id=offer_profile_id)
+    def get_target_audience(
+        offer_profile_id: int,
+        page: int = Query(default=1, ge=1),
+        page_size: int = Query(default=20, ge=1, le=100),
+        is_reviewed: bool | None = None,
+        sort: Literal["unreviewed_first", "reviewed_first"] = "unreviewed_first",
+    ):
+        return get_target_audience_handler(
+            offer_profile_id=offer_profile_id,
+            page=page,
+            page_size=page_size,
+            is_reviewed=is_reviewed,
+            sort=sort,
+        )
 
     # #  GET in future
     @router.get("/target-audiences/{target_audience_id}")
@@ -497,6 +512,20 @@ def register_general_routes(router: APIRouter):
     def delete_analysis_question_route(id: int):
         return delete_analysis_question_handler(id=id)
 
+    @router.post("/analysis-questions/{id}/update")
+    def update_analysis_question_route(id: int, payload: UpdateFieldsRequest):
+        return update_analysis_question_handler(id=id, fields=payload.fields)
+
+    @router.get("/analysis/{analysis_id}/questions")
+    def list_analysis_questions(
+        analysis_id: int,
+        page: int = Query(default=1, ge=1),
+        page_size: int = Query(default=20, ge=1, le=100),
+        is_reviewed: bool | None = None,
+        sort: Literal["unreviewed_first", "reviewed_first"] = "unreviewed_first",
+    ):
+        return list_analysis_questions_handler(analysis_id, page, page_size, is_reviewed, sort)
+
     @router.get("/analysis-questions/{id}/delete")
     def delete_analysis_question_route_legacy_get(id: int):
         raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /analysis-questions/{id}/delete")
@@ -518,22 +547,26 @@ def register_general_routes(router: APIRouter):
     def delete_checklist_route_legacy_get(id: int):
         raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /checklists/{id}/delete")
 
-    @router.post("/offer-profiles/{offer_profile_id}/analysis/{analysis_id}/checklists/create")
-    def create_analyse_checklist(offer_profile_id: int, analysis_id: int):
-        return create_checklist_for_analysis_handler( analysis_id=analysis_id)
+    @router.post("/offer-profiles/{offer_profile_id}/checklists/create")
+    def create_offer_profile_checklist(offer_profile_id: int):
+        return create_checklist_for_offer_profile_handler(offer_profile_id=offer_profile_id)
 
     # POST in future
-    @router.post("/offer-profiles/{offer_profile_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
-    def analyse_checklist_generate(offer_profile_id: int, analyse_id: int, checklist_id: int):
-        return analyse_checklist_generate_handler( offer_profile_id=offer_profile_id, analyse_id=analyse_id, checklist_id=checklist_id)
+    @router.post("/offer-profiles/{offer_profile_id}/checklists/{checklist_id}/generate")
+    def offer_profile_checklist_generate(offer_profile_id: int, checklist_id: int):
+        return analyse_checklist_generate_handler(offer_profile_id=offer_profile_id, checklist_id=checklist_id)
 
-    @router.get("/analysis/{analysis_id}/checklists")
-    def get_checklist_for_analysis( analysis_id: int):
-        return get_analyse_checklists_handler( analyse_id=analysis_id)
+    @router.get("/offer-profiles/{offer_profile_id}/checklists")
+    def get_offer_profile_checklists(offer_profile_id: int):
+        return get_offer_profile_checklists_handler(offer_profile_id=offer_profile_id)
 
     @router.delete("/checklist-items/{id}/delete")
     def delete_checklist_item_route(id: int):
         return delete_checklist_item_handler(id=id)
+
+    @router.post("/checklist-items/{id}/update")
+    def update_checklist_item_route(id: int, payload: UpdateFieldsRequest):
+        return update_checklist_item_handler(id=id, fields=payload.fields)
 
     @router.get("/checklist-items/{id}/delete")
     def delete_checklist_item_route_legacy_get(id: int):

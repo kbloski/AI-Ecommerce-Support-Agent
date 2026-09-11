@@ -34,7 +34,6 @@ from infrastructure.repositories.analysis_questions_repository import AnalysisQu
 from infrastructure.repositories.question_answer_repository import QuestionAnswerRepository
 from infrastructure.repositories.checklist_repository import ChecklistRepository
 from infrastructure.repositories.checklist_items_repository import ChecklistItemsRepository
-from infrastructure.repositories.analysis_checklist_repository import AnalysisChecklistRepository
 from application.assemblers.checklist_assembler import ChecklistAssembler
 from infrastructure.repositories.brand_marketing_repository import BrandMarketingRepository
 from application.assemblers.brand_marketing_assembler import BrandMarketingAssembler
@@ -169,12 +168,6 @@ class Container(containers.DeclarativeContainer):
 
     offer_profile_analysis_repository = providers.Singleton(
         OfferProfileAnalysisRepository,
-        logger=logger,
-        db=db
-    )
-
-    analysis_checklist_repository = providers.Singleton(
-        AnalysisChecklistRepository,
         logger=logger,
         db=db
     )

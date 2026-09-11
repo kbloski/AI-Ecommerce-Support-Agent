@@ -11,7 +11,8 @@ class AnalysisQuestionDto(JSONSerializable):
         question: str,
         answer: Optional[str],
         score: Optional[int],
-        confidence: Optional[float]
+        confidence: Optional[float],
+        is_reviewed: bool,
     ):
         self.id = id
         self.analysis_id = analysis_id
@@ -20,6 +21,7 @@ class AnalysisQuestionDto(JSONSerializable):
         self.answer = answer
         self.score = score
         self.confidence = confidence
+        self.is_reviewed = is_reviewed
 
     def to_dict(self, exclude=None):
         exclude = set(exclude or [])
@@ -31,7 +33,8 @@ class AnalysisQuestionDto(JSONSerializable):
             "question": self.question,
             "answer": self.answer,
             "score": self.score,
-            "confidence": self.confidence
+            "confidence": self.confidence,
+            "is_reviewed": self.is_reviewed,
         }
 
         return {

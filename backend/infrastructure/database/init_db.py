@@ -6,11 +6,12 @@ def init_db():
     _migrate_offers_to_offers_raw()
     _rename_offer_raw_details_column()
     _migrate_offer_profile_to_offer_profiles()
-    Base.metadata.create_all(bind=engine)
+    _migrate_checklists_to_offer_profiles()
     _add_missing_favorite_columns()
     _add_missing_is_reviewed_columns()
     _add_missing_page_blueprint_columns()
     _rename_page_section_requirement_column()
+    Base.metadata.create_all(bind=engine)
 
 def _migrate_offers_to_offers_raw():
     """Migrate the retired Offer schema before SQLAlchemy creates offers_raw.
@@ -93,7 +94,7 @@ def _add_missing_is_reviewed_columns():
     inspector = inspect(engine)
     existing_tables = set(inspector.get_table_names())
 
-    for table in ("offer_profile_elements", "target_audiences"):
+    for table in ("offer_profile_elements", "target_audiences", "checklist_item", "analysis_questions"):
         if table not in existing_tables:
             continue
 
@@ -150,3 +151,30 @@ def _rename_page_section_requirement_column():
                     'RENAME COLUMN page_section_type TO page_section_type_id'
                 )
             )
+
+def _migrate_checklists_to_offer_profiles():
+    """Replace the retired analysis_checklist link with checklist.offer_profile_id."""
+    inspector = inspect(engine)
+    tables = set(inspector.get_table_names())
+    if "checklist" not in tables:
+        return
+
+    columns = {column["name"] for column in inspector.get_columns("checklist")}
+    with engine.begin() as conn:
+        if "offer_profile_id" not in columns:
+            conn.execute(text('ALTER TABLE "checklist" ADD COLUMN offer_profile_id INTEGER'))
+
+        if {"analysis_checklist", "offer_profile_analysis"}.issubset(tables):
+            conn.execute(text("""
+                UPDATE checklist
+                SET offer_profile_id = (
+                    SELECT offer_profile_analysis.offer_profile_id
+                    FROM analysis_checklist
+                    JOIN offer_profile_analysis
+                      ON offer_profile_analysis.analysis_id = analysis_checklist.analysis_id
+                    WHERE analysis_checklist.checklist_id = checklist.id
+                    LIMIT 1
+                )
+                WHERE offer_profile_id IS NULL
+            """))
+            conn.execute(text('DROP TABLE "analysis_checklist"'))

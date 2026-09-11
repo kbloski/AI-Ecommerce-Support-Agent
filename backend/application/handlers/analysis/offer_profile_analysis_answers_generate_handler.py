@@ -1,6 +1,7 @@
 
 
 import json
+import re
 from typing import Dict, Any, List
 
 from di.container import Container
@@ -42,17 +43,13 @@ def chunk_list(
 
 
 def build_product_context_prompt(
-    product_data: Dict[str, Any]
+    offer_profile_context: str
 ) -> str:
 
     return f"""
 PRODUCT DATA:
 
-{json.dumps(
-    product_data,
-    ensure_ascii=False,
-    indent=2
-)}
+{offer_profile_context}
 
 Analyze the product based on the data provided above.
 Do not draw conclusions based on information that is not present in the data.
@@ -97,6 +94,24 @@ Rules:
 """
 
 
+def parse_answers_response(content: str) -> list[dict[str, Any]]:
+    """Accept a JSON array even when a model wraps it in a Markdown code fence."""
+    normalized = content.strip()
+    fenced = re.fullmatch(r"```(?:json)?\s*(.*?)\s*```", normalized, flags=re.DOTALL | re.IGNORECASE)
+    if fenced:
+        normalized = fenced.group(1).strip()
+
+    if not normalized.startswith("["):
+        start, end = normalized.find("["), normalized.rfind("]")
+        if start >= 0 and end > start:
+            normalized = normalized[start:end + 1]
+
+    parsed = json.loads(normalized)
+    if not isinstance(parsed, list) or not all(isinstance(item, dict) for item in parsed):
+        raise ValueError("Model response must be a JSON array of answer objects")
+    return parsed
+
+
 def offer_profile_analysis_answers_generate_handler(
     offer_profile_id: int,
     analyse_id: int
@@ -116,8 +131,9 @@ def offer_profile_analysis_answers_generate_handler(
     analyse_db = analysis_repository.get_by_id(id=offer_profile_analysis_db.analysis_id)
 
     logger.info(f"Generating offer_profile analysis for offer_profile_id={offer_profile_id}")
-    assembled_dto = offer_profile_service.get_offer_profile_details_by_id(offer_profile_id=offer_profile_id)
-    offer_profile_json = assembled_dto.to_dict()
+    offer_profile_context = offer_profile_service.build_llm_context(
+        offer_profile_id=offer_profile_id
+    )
 
     question_batches = chunk_list(items=OFFER_PROFILE_ANALYSIS_QUESTIONS,size=10)
 
@@ -137,7 +153,7 @@ def offer_profile_analysis_answers_generate_handler(
             LlmMessage(
                 role=LlmMessageRole.USER,
                 content=build_product_context_prompt(
-                    offer_profile_json
+                    offer_profile_context
                 )
             ),
             LlmMessage(
@@ -150,7 +166,7 @@ def offer_profile_analysis_answers_generate_handler(
 
 
         response = ai_service.chat_llm( messages=messages )
-        batch_result = json.loads( response.content )
+        batch_result = parse_answers_response(response.content)
 
 
 
@@ -162,10 +178,10 @@ def offer_profile_analysis_answers_generate_handler(
 
     # QuestionAnswer insert to db
     question_answers = [ QuestionAnswer(
-        question=a["question"],
-        answer=a["answer"],
-        score=a["score"],
-        confidence=a["confidence"]
+        question=str(a.get("question", "")),
+        answer=str(a.get("answer", "Brak odpowiedzi")),
+        score=a.get("score"),
+        confidence=a.get("confidence")
     ) for a in final_analysis_questions_dicts]
 
     question_answers_db = question_answer_repository.create_many(items=question_answers)

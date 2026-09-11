@@ -27,7 +27,6 @@ from domain.models.analysis.analysis_questions import AnalysisQuestion
 from domain.models.analysis.question_answer import QuestionAnswer
 
 from domain.models.analysis.offer_profile_analysis import OfferProfileAnalysis
-from domain.models.analysis.analysis_checklist import AnalysisChecklist
 
 # Brand marketing
 from domain.models.brand_marketing.brand_marketing import BrandMarketing

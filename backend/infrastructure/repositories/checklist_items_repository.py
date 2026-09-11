@@ -50,6 +50,11 @@ class ChecklistItemsRepository:
     def get_by_id(self, id: int) -> Optional[ChecklistItem]:
         return self.db.query(ChecklistItem).filter(ChecklistItem.id == id).first()
 
+    def update(self, item: ChecklistItem) -> ChecklistItem:
+        self.db.commit()
+        self.db.refresh(item)
+        return item
+
     # ❌ DELETE
     def delete(self, id: int) -> bool:
         checklist_item = self.db.query(ChecklistItem).filter(ChecklistItem.id == id).first()

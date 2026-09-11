@@ -9,7 +9,7 @@ import { useListOfferProfileElementsQuery, useListOfferProfileForOfferQuery } fr
 import { useListTargetAudiencesForOfferProfileQuery } from '@/features/targetAudiences/targetAudiencesApi'
 import { useGetAnalysisQuery, useListAnalysisForOfferProfileQuery } from '@/features/analysis/analysisApi'
 import { useListBrandMarketingForOfferProfileQuery } from '@/features/brandMarketing/brandMarketingApi'
-import { useGetChecklistQuery, useListChecklistsForAnalysisQuery } from '@/features/checklists/checklistsApi'
+import { useGetChecklistQuery, useListChecklistsForOfferProfileQuery } from '@/features/checklists/checklistsApi'
 import { useListMarketingStrategyForBrandMarketingQuery } from '@/features/marketingStrategy/marketingStrategyApi'
 import { useListOfferStrategyForMarketingStrategyQuery } from '@/features/offerStrategy/offerStrategyApi'
 import { useListMessageStrategyForOfferStrategyQuery } from '@/features/messageStrategy/messageStrategyApi'
@@ -45,9 +45,9 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
   const showBackButton = pathname !== '/' && pathname !== '/offers'
   const sections = [
     { pattern: '/offers/:id/*', current: 'Oferta', entityType: 'offer', process: [['offer-profiles', 'Profile oferty']], resources: [] },
-    { pattern: '/offer-profiles/:id/*', current: 'Offer profile', entityType: 'offer_profile', process: [['brand-marketing', 'Brand marketing']], offer_profile: [['analyses', 'Analizy']], resources: [['target-audiences', 'Grupy docelowe'], ['elements', 'Elementy oferty']] },
-    { pattern: '/offer-profiles/:offerProfileId/analysis/:id/*', current: 'Analiza', process: [['checklists', 'Checklisty']], resources: [['questions', 'Pytania']] },
-    { pattern: '/offer-profiles/:offerProfileId/analysis/:analysisId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },
+    { pattern: '/offer-profiles/:id/*', current: 'Offer profile', entityType: 'offer_profile', process: [['brand-marketing', 'Brand marketing']], offer_profile: [['analyses', 'Analizy produktu'], ['checklists', 'Checklisty']], resources: [['target-audiences', 'Grupy docelowe'], ['elements', 'Elementy oferty']] },
+    { pattern: '/offer-profiles/:offerProfileId/analysis/:id/*', current: 'Analiza', process: [], resources: [['questions', 'Pytania']] },
+    { pattern: '/offer-profiles/:offerProfileId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },
     { pattern: '/brand-marketing/:id/*', current: 'Brand marketing', entityType: 'brand_marketing', process: [['marketing-strategies', 'Marketing strategy']], resources: [] },
     { pattern: '/marketing-strategy/:id/*', current: 'Marketing strategy', entityType: 'marketing_strategy', process: [['offer-strategies', 'Offer strategy']], resources: [] },
     { pattern: '/offer-strategy/:id/*', current: 'Offer strategy', entityType: 'offer_strategy', process: [['message-strategies', 'Message strategy']], resources: [] },
@@ -74,7 +74,14 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
   const isAnalysisSection = section?.config.current === 'Analiza'
   const isChecklistSection = section?.config.current === 'Checklista'
   const isCurrentStage = (stage: string) => section?.config.current === stage && Number.isInteger(currentEntityId)
-  const targetAudiences = useListTargetAudiencesForOfferProfileQuery(offerProfileId, { skip: skipOfferProfileResources })
+  const targetAudiences = useListTargetAudiencesForOfferProfileQuery(
+    { offerProfileId, pageSize: 1 },
+    { skip: skipOfferProfileResources },
+  )
+  const unreviewedTargetAudiences = useListTargetAudiencesForOfferProfileQuery(
+    { offerProfileId, pageSize: 1, isReviewed: false },
+    { skip: skipOfferProfileResources },
+  )
   const offerProfileElements = useListOfferProfileElementsQuery(
     { offerProfileId },
     { skip: skipOfferProfileResources },
@@ -88,7 +95,7 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
   const analysis = useGetAnalysisQuery(currentEntityId, { skip: !isAnalysisSection || !Number.isInteger(currentEntityId) })
   const checklist = useGetChecklistQuery(currentEntityId, { skip: !isChecklistSection || !Number.isInteger(currentEntityId) })
   const offerProfiles = useListOfferProfileForOfferQuery(currentEntityId, { skip: !isCurrentStage('Oferta') })
-  const checklists = useListChecklistsForAnalysisQuery(currentEntityId, { skip: !isCurrentStage('Analiza') })
+  const checklists = useListChecklistsForOfferProfileQuery(offerProfileId, { skip: skipOfferProfileResources })
   const marketingStrategies = useListMarketingStrategyForBrandMarketingQuery(currentEntityId, { skip: !isCurrentStage('Brand marketing') })
   const offerStrategies = useListOfferStrategyForMarketingStrategyQuery(currentEntityId, { skip: !isCurrentStage('Marketing strategy') })
   const messageStrategies = useListMessageStrategyForOfferStrategyQuery(currentEntityId, { skip: !isCurrentStage('Offer strategy') })
@@ -104,7 +111,7 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
   const pageCopies = useListPageCopyForPageContentPlanQuery(currentEntityId, { skip: !isCurrentStage('Content plan') })
   const resourceCounts: Record<string, number | undefined> = {
     'offer-profiles': offerProfiles.data?.length,
-    'target-audiences': targetAudiences.data?.length,
+    'target-audiences': targetAudiences.data?.total_items,
     elements: offerProfileElements.data?.total_items,
     'brand-marketing': brandMarketing.data?.length,
     analyses: analyses.data?.length,
@@ -126,8 +133,12 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
     'page-copies': pageCopies.data?.length,
   }
   const attentionCounts: Record<string, number | undefined> = {
-    'target-audiences': targetAudiences.data?.filter((item) => item.is_reviewed !== true).length,
+    'target-audiences': unreviewedTargetAudiences.data?.total_items,
     elements: unreviewedOfferProfileElements.data?.total_items,
+    questions: (analysis.data?.analysis_questions as Array<{ is_reviewed?: unknown }> | undefined)
+      ?.filter((item) => item.is_reviewed !== true).length,
+    items: (checklist.data?.checklist_items as Array<{ is_reviewed?: unknown }> | undefined)
+      ?.filter((item) => item.is_reviewed !== true).length,
   }
 
   const navigationLink = (slug: string, label: string, to: string) => (
@@ -209,26 +220,25 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
           </section>
         )}
 
-        {'offer_profile' in section.config && section.config.offer_profile.length > 0 && (
-          <section className={section.config.process.length > 0 ? 'mt-6' : undefined}>
-            <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
-              Wiedza
-            </h2>
-            <nav className="ml-2 space-y-1 border-l pl-2">
-              {section.config.offer_profile.map(([slug, label]) => (
-                navigationLink(slug, label, `${detailPath}/${slug}`)
-              ))}
-            </nav>
-          </section>
-        )}
-
         {section.config.resources.length > 0 && (
-          <section className={section.config.process.length > 0 || 'offer_profile' in section.config ? 'mt-6' : undefined}>
+          <section className={section.config.process.length > 0 ? 'mt-6' : undefined}>
             <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
               Zasoby
             </h2>
             <nav className="ml-2 space-y-1 border-l pl-2">
               {section.config.resources.map(([slug, label]) => (
+                navigationLink(slug, label, `${detailPath}/${slug}`)
+              ))}
+            </nav>
+          </section>
+        )}
+        {'offer_profile' in section.config && section.config.offer_profile.length > 0 && (
+          <section className={section.config.process.length > 0 || section.config.resources.length > 0 ? 'mt-6' : undefined}>
+            <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
+              Audyt
+            </h2>
+            <nav className="ml-2 space-y-1 border-l pl-2">
+              {section.config.offer_profile.map(([slug, label]) => (
                 navigationLink(slug, label, `${detailPath}/${slug}`)
               ))}
             </nav>

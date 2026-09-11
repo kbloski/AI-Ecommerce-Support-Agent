@@ -3,6 +3,7 @@ import { Search } from 'lucide-react'
 import { useParams } from 'react-router-dom'
 import { EntityList } from '@/components/EntityList'
 import { ResourceList } from '@/components/ResourceList'
+import { ListFilters, ReviewStatusFilter, ReviewStatusSortSelect, type ReviewStatusFilterValue, type ReviewStatusSort } from '@/components/ListFilters'
 import { MultiToggle } from '@/components/MultiToggle'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,37 +14,75 @@ import {
   useCreateOfferProfileElementMutation,
   useDeleteOfferProfileElementMutation,
   useGenerateOfferProfileElementsMutation,
-  useGetOfferProfileQuery,
   useListOfferProfileElementsQuery,
   useListOfferProfileElementTypesQuery,
   useUpdateOfferProfileElementMutation,
   type OfferProfileElementSort,
 } from '@/features/offerProfiles/offerProfileApi'
-import { useDeleteTargetAudienceMutation, useGenerateTargetAudiencesMutation, useUpdateTargetAudienceMutation } from '@/features/targetAudiences/targetAudiencesApi'
+import { useDeleteTargetAudienceMutation, useGenerateTargetAudiencesMutation, useListTargetAudiencesForOfferProfileQuery, useUpdateTargetAudienceMutation } from '@/features/targetAudiences/targetAudiencesApi'
 import type { Entity } from '@/types'
 
 export function OfferProfileTargetAudiencesPage() {
   const offerProfileId = Number(useParams().offerProfileId)
-  const { data, isLoading, error } = useGetOfferProfileQuery(offerProfileId)
+  const [page, setPage] = useState(1)
+  const [isReviewedFilter, setIsReviewedFilter] = useState<ReviewStatusFilterValue>('')
+  const [reviewStatusSort, setReviewStatusSort] = useState<ReviewStatusSort>('unreviewed_first')
+  const { data: result, isLoading, error } = useListTargetAudiencesForOfferProfileQuery({
+    offerProfileId,
+    page,
+    pageSize: 6,
+    isReviewed: isReviewedFilter === '' ? undefined : isReviewedFilter === 'true',
+    sort: reviewStatusSort,
+  })
+  const { data: unreviewedResult } = useListTargetAudiencesForOfferProfileQuery({
+    offerProfileId,
+    pageSize: 1,
+    isReviewed: false,
+  })
   const [generate, generateState] = useGenerateTargetAudiencesMutation()
   const [remove] = useDeleteTargetAudienceMutation()
   const [updateTargetAudience] = useUpdateTargetAudienceMutation()
   const { openPanel, closePanel } = useSidePanel()
-  const items = (data?.target_audiences as Entity[] | undefined) ?? []
-  const unreviewedItems = items.filter((item) => item.is_reviewed !== true).length
+  const items = result?.items ?? []
+
+  const updateIsReviewedFilter = (value: ReviewStatusFilterValue) => {
+    setIsReviewedFilter(value)
+    setPage(1)
+  }
+
+  const updateReviewStatusSort = (value: ReviewStatusSort) => {
+    setReviewStatusSort(value)
+    setPage(1)
+  }
 
   return (
     <div className="w-full p-6 lg:p-10">
       <ResourceList
         title="Grupy docelowe"
         items={items}
-        attentionItems={unreviewedItems}
+        totalItems={result?.total_items}
+        attentionItems={unreviewedResult?.total_items}
         isLoading={isLoading}
         error={error}
         itemLabel={(item) => (item.name as string) ?? `#${item.id}`}
         onGenerate={() => generate({ offerProfileId })}
         isGenerating={generateState.isLoading}
         generateLabel="Generuj grupy docelowe"
+        contentBeforeList={
+          <ListFilters>
+            <ReviewStatusFilter value={isReviewedFilter} onChange={updateIsReviewedFilter} />
+            <ReviewStatusSortSelect value={reviewStatusSort} onChange={updateReviewStatusSort} />
+          </ListFilters>
+        }
+        footer={result && result.total_pages > 1 ? (
+          <div className="flex items-center justify-between gap-3 border-t pt-4">
+            <span className="text-sm text-muted-foreground">Strona {result.page} z {result.total_pages}</span>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" disabled={result.page <= 1} onClick={() => setPage(result.page - 1)}>Poprzednia</Button>
+              <Button variant="outline" size="sm" disabled={result.page >= result.total_pages} onClick={() => setPage(result.page + 1)}>Następna</Button>
+            </div>
+          </div>
+        ) : undefined}
         onEdit={(item) => openPanel({
           title: 'Edytuj grupę docelową',
           content: <EditTargetAudienceForm id={item.id as number} data={item} onSaved={closePanel} />,
@@ -73,7 +112,7 @@ export function OfferProfileElementsPage() {
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [elementType, setElementType] = useState('')
-  const [isReviewedFilter, setIsReviewedFilter] = useState('')
+  const [isReviewedFilter, setIsReviewedFilter] = useState<ReviewStatusFilterValue>('')
   const [sort, setSort] = useState<OfferProfileElementSort>('created_at_desc')
   const { data: elementTypes = [] } = useListOfferProfileElementTypesQuery()
   const { data: result, isLoading, error } = useListOfferProfileElementsQuery({
@@ -110,7 +149,7 @@ export function OfferProfileElementsPage() {
     setPage(1)
   }
 
-  const updateIsReviewedFilter = (value: string) => {
+  const updateIsReviewedFilter = (value: ReviewStatusFilterValue) => {
     setIsReviewedFilter(value)
     setPage(1)
   }
@@ -130,7 +169,7 @@ export function OfferProfileElementsPage() {
         emptyTitle="Brak elementów oferty"
         emptyDescription="Dodaj pierwszy element, aby rozpocząć pracę."
         contentBeforeList={<>
-          <div className="flex flex-wrap items-center gap-3">
+          <ListFilters>
             <label className="relative min-w-64 flex-1 max-w-md">
               <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -162,17 +201,12 @@ export function OfferProfileElementsPage() {
               <option value="name_asc">Nazwa: A–Z</option>
               <option value="name_desc">Nazwa: Z–A</option>
             </select>
-            <select
-              aria-label="Filtruj według sprawdzenia"
+            <ReviewStatusFilter
               value={isReviewedFilter}
-              onChange={(event) => updateIsReviewedFilter(event.target.value)}
-              className="h-9 rounded-lg border border-input bg-transparent px-2.5 text-sm"
-            >
-              <option value="">Wszystkie</option>
-              <option value="true">Sprawdzone</option>
-              <option value="false">Nie sprawdzone</option>
-            </select>
-          </div>
+              onChange={updateIsReviewedFilter}
+              ariaLabel="Filtruj według sprawdzenia elementów oferty"
+            />
+          </ListFilters>
           <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
             <button type="button" onClick={() => updateElementType('')} className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${!elementType ? 'bg-[#111111] text-white shadow-sm' : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}>Wszystkie typy</button>
             {elementTypes.map((type) => <button key={type} type="button" onClick={() => updateElementType(type)} className={`inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${elementType === type ? 'border-[#111111] bg-[#111111] text-white shadow-sm' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}>{formatElementType(type)}</button>)}

@@ -14,5 +14,6 @@ class AnalysisQuestionMapper:
             question=question_answer.question,
             answer=question_answer.answer,
             score=question_answer.score,
-            confidence=question_answer.confidence
+            confidence=question_answer.confidence,
+            is_reviewed=analysis_question.is_reviewed,
         )

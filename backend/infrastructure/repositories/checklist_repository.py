@@ -27,6 +27,19 @@ class ChecklistRepository:
             .all()
         )
 
+    def find_for_offer_profile(self, offer_profile_id: int) -> List[Checklist]:
+        return (
+            self.db.query(Checklist)
+            .filter(Checklist.offer_profile_id == offer_profile_id)
+            .order_by(Checklist.created_at.desc(), Checklist.id.desc())
+            .all()
+        )
+
+    def update(self, item: Checklist) -> Checklist:
+        self.db.commit()
+        self.db.refresh(item)
+        return item
+
     # ❌ DELETE
     def delete(self, id: int) -> bool:
         item = self.db.query(Checklist).filter(Checklist.id == id).first()

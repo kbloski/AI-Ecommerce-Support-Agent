@@ -2,6 +2,16 @@ import { api } from '@/store/api'
 import { listTag, itemTag } from '@/lib/tags'
 import type { Entity } from '@/types'
 
+export interface PaginatedTargetAudiencesResult {
+  items: Entity[]
+  page: number
+  page_size: number
+  total_items: number
+  total_pages: number
+}
+
+export type TargetAudienceSort = 'unreviewed_first' | 'reviewed_first'
+
 export interface UpdateTargetAudienceArgs {
   id: number
   offerProfileId?: number
@@ -32,10 +42,19 @@ export interface UpdateTargetAudienceArgs {
 
 export const targetAudiencesApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    listTargetAudiencesForOfferProfile: builder.query<Entity[], number>({
-      query: (offerProfileId) => `/offer-profiles/${offerProfileId}/target-audiences`,
-      providesTags: (result, _err, offerProfileId) => [
-        ...(result ?? []).map((item) => itemTag('TargetAudience', item.id)),
+    listTargetAudiencesForOfferProfile: builder.query<PaginatedTargetAudiencesResult, {
+      offerProfileId: number
+      page?: number
+      pageSize?: number
+      isReviewed?: boolean
+      sort?: TargetAudienceSort
+    }>({
+      query: ({ offerProfileId, page = 1, pageSize = 20, isReviewed, sort = 'unreviewed_first' }) => ({
+        url: `/offer-profiles/${offerProfileId}/target-audiences`,
+        params: { page, page_size: pageSize, is_reviewed: isReviewed, sort },
+      }),
+      providesTags: (result, _err, { offerProfileId }) => [
+        ...(result?.items ?? []).map((item) => itemTag('TargetAudience', item.id)),
         listTag('TargetAudience', offerProfileId),
       ],
     }),
@@ -62,6 +81,7 @@ export const targetAudiencesApi = api.injectEndpoints({
       }),
       invalidatesTags: (_result, _err, { id, offerProfileId }) => [
         itemTag('TargetAudience', id),
+        ...(offerProfileId === undefined ? [] : [listTag('TargetAudience', offerProfileId)]),
         ...(offerProfileId === undefined ? [] : [itemTag('OfferProfile', offerProfileId)]),
       ],
     }),

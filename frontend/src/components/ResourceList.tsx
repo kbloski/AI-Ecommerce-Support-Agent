@@ -7,7 +7,10 @@ import type { Entity } from '@/types'
 interface ResourceListProps {
   title: string
   items: Entity[] | undefined
+  totalItems?: number
   attentionItems?: number
+  contentBeforeList?: ReactNode
+  footer?: ReactNode
   isLoading: boolean
   error?: unknown
   linkTo?: (item: Entity) => string
@@ -29,7 +32,10 @@ interface ResourceListProps {
 export function ResourceList({
   title,
   items,
+  totalItems,
   attentionItems,
+  contentBeforeList,
+  footer,
   isLoading,
   error,
   linkTo,
@@ -51,7 +57,10 @@ export function ResourceList({
       title={title}
       eyebrow={eyebrow}
       items={items}
+      totalItems={totalItems}
       attentionItems={attentionItems}
+      contentBeforeList={contentBeforeList}
+      footer={footer}
       isLoading={isLoading}
       error={error}
       linkTo={linkTo}

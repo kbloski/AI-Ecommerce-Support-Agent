@@ -8,9 +8,11 @@ class ChecklistDto(JSONSerializable):
     def __init__(
         self,
         id: int,
-        name: str
+        offer_profile_id: int,
+        name: str,
     ):
         self.id = id
+        self.offer_profile_id = offer_profile_id
         self.name = name
 
     def to_dict(self, exclude=None):
@@ -18,6 +20,7 @@ class ChecklistDto(JSONSerializable):
 
         data = {
             "id": self.id,
+            "offer_profile_id": self.offer_profile_id,
             "name" : self.name,
             "checklist_items" : self.checklist_items
         }

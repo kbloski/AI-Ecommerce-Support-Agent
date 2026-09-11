@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, DateTime, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, DateTime, ForeignKey
 from sqlalchemy.sql import func
 
 from common.mixins.json_serializable import JSONSerializable
@@ -26,6 +26,8 @@ class AnalysisQuestion(Base, JSONSerializable):
         ForeignKey(f"{TableName.QUESTION_ANSWERS.value}.id", ondelete="CASCADE"),
         nullable=False
     )
+
+    is_reviewed = Column(Boolean, nullable=False, default=False, server_default="0", index=True)
 
     created_at = Column(
         DateTime(timezone=True),
