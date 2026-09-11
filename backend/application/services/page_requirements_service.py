@@ -76,6 +76,7 @@ class PageRequirementsService:
                 "position": requirement.position,
             }
             for requirement in assembled_page_requirements.page_section_requirements
+            if requirement.requirement_type != "excluded"
         ]
 
         page_requirements_json = json.dumps(

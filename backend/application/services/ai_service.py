@@ -22,7 +22,14 @@ class AiService:
             self.logger.error(f"Nie udało się wczytać promptu {path}: {e}")
             return ""
 
-    def chat_llm(self, messages: list[LlmMessage]) -> LlmMessage:
+    def chat_llm(
+        self,
+        messages: list[LlmMessage],
+        *,
+        json_response: bool = False,
+        think: bool | None = None,
+        num_predict: int | None = None,
+    ) -> LlmMessage:
         self.output_rules_prompt = self._load_prompt(self.path_service.OUTPUT_RULES_PROMPT)
 
         payload_messages = list(messages)
@@ -40,7 +47,12 @@ class AiService:
             for message in payload_messages
         ]
 
-        response = self.ollama_service.chat_llm(ollama_messages)
+        response = self.ollama_service.chat_llm(
+            ollama_messages,
+            json_response=json_response,
+            think=think,
+            num_predict=num_predict,
+        )
 
         return LlmMessage(
             role=LlmMessageRole(response.role.value),

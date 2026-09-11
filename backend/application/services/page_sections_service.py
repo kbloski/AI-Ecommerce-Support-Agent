@@ -32,6 +32,9 @@ class PageSectionsService:
 
         sections = []
         for item in section_requirements:
+            if item.requirement_type == "excluded":
+                continue
+
             section = self.page_sections_repository.get_by_id(item.page_section_type_id)
 
             if section is None:

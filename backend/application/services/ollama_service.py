@@ -27,19 +27,32 @@ class OllamaService:
 
         self.client = Client(host=host, timeout=self.timeout)
 
-    def chat_llm(self, messages: list[LlmOllamaMessage]) -> LlmOllamaMessage:
+    def chat_llm(
+        self,
+        messages: list[LlmOllamaMessage],
+        *,
+        json_response: bool = False,
+        think: bool | None = None,
+        num_predict: int | None = None,
+    ) -> LlmOllamaMessage:
         """Obsługuje standardowe modele tekstowe (LLM)"""
         try:
             # ✅ Naprawione: Konwertujemy obiekty domenowe na słowniki akceptowane przez Ollamę
             payload_messages = [msg.to_dict() for msg in messages]
 
+            options = {
+                "num_ctx": self.num_ctx,
+                "temperature": self.temperature,
+            }
+            if num_predict is not None:
+                options["num_predict"] = num_predict
+
             response = self.client.chat(
                 model=self.llm_model,
                 messages=payload_messages,
-                options={
-                    "num_ctx": self.num_ctx,
-                    "temperature": self.temperature,
-                },
+                think=think,
+                format="json" if json_response else None,
+                options=options,
             )
 
             return LlmOllamaMessage(
