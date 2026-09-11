@@ -20,6 +20,7 @@ class AdStrategy(Base, JSONSerializable):
         nullable=False
     )
 
+    name = Column(String, nullable=True)
     objective = Column(JSON, nullable=True)
     customer_stage = Column(String, nullable=True)
 

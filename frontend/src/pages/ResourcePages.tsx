@@ -7,6 +7,7 @@ import { SegmentedControl } from '@/components/SegmentedControl'
 import type { Entity } from '@/types'
 import { useGetOfferProfileQuery } from '@/features/offerProfiles/offerProfileApi'
 import { useEditEntityPanel } from '@/lib/useEditEntityPanel'
+import { useSidePanel } from '@/lib/sidePanel'
 import { useCreateAnalysisMutation, useDeleteAnalysisMutation, useDeleteAnalysisQuestionMutation, useGenerateAnalysisAnswersMutation, useListAnalysisForOfferProfileQuery, useListAnalysisQuestionsQuery, useUpdateAnalysisQuestionMutation } from '@/features/analysis/analysisApi'
 import { useDeleteBrandMarketingMutation, useGenerateBrandMarketingMutation, useListBrandMarketingForOfferProfileQuery, useUpdateBrandMarketingMutation } from '@/features/brandMarketing/brandMarketingApi'
 import { useCreateChecklistMutation, useDeleteChecklistItemMutation, useDeleteChecklistMutation, useGenerateChecklistMutation, useGetChecklistQuery, useListChecklistsForOfferProfileQuery, useUpdateChecklistItemMutation } from '@/features/checklists/checklistsApi'
@@ -18,7 +19,7 @@ import { useGetOfferStrategyQuery } from '@/features/offerStrategy/offerStrategy
 import { useDeleteMessageStrategyMutation, useGenerateMessageStrategyMutation, useListMessageStrategyForOfferStrategyQuery, useUpdateMessageStrategyMutation } from '@/features/messageStrategy/messageStrategyApi'
 import { useGetMessageStrategyQuery } from '@/features/messageStrategy/messageStrategyApi'
 import { useDeleteAdStrategyMutation, useGenerateAdStrategyMutation, useListAdStrategyForMessageStrategyQuery, useUpdateAdStrategyMutation } from '@/features/adStrategy/adStrategyApi'
-import { useDeleteUgcCreativeMutation, useGenerateUgcCreativesMutation, useListUgcCreativesForMessageStrategyQuery } from '@/features/ugcCreatives/ugcCreativesApi'
+import { useDeleteUgcCreativeMutation, useGenerateUgcCreativesMutation, useListUgcCreativesForMessageStrategyQuery, useUpdateUgcCreativeMutation } from '@/features/ugcCreatives/ugcCreativesApi'
 import { useDeletePageStrategyMutation, useGeneratePageStrategyMutation, useListPageStrategyForMessageStrategyQuery, useUpdatePageStrategyMutation } from '@/features/pageStrategy/pageStrategyApi'
 import { useGetAdStrategyQuery } from '@/features/adStrategy/adStrategyApi'
 import { useDeleteCreativeStrategyMutation, useGenerateCreativeStrategyMutation, useListCreativeStrategyForAdStrategyQuery, useUpdateCreativeStrategyMutation } from '@/features/creativeStrategy/creativeStrategyApi'
@@ -30,10 +31,11 @@ import { useGetPageBlueprintQuery } from '@/features/pageBlueprint/pageBlueprint
 import { useDeletePageContentPlanMutation, useGeneratePageContentPlanMutation, useListPageContentPlanForPageBlueprintQuery, useUpdatePageContentPlanMutation } from '@/features/pageContentPlan/pageContentPlanApi'
 import { useGetPageContentPlanQuery } from '@/features/pageContentPlan/pageContentPlanApi'
 import { useDeletePageCopyMutation, useGeneratePageCopyMutation, useListPageCopyForPageContentPlanQuery, useUpdatePageCopyMutation } from '@/features/pageCopy/pageCopyApi'
-import { useCreateAdExecutionMutation, useDeleteAdExecutionMutation, useListAdExecutionForCreativeStrategyQuery, useUpdateAdExecutionMutation } from '@/features/adExecution/adExecutionApi'
+import { useCreateAdSetupMutation, useDeleteAdSetupMutation, useListAdSetupForCreativeStrategyQuery, useListCreativeTypesQuery, useUpdateAdSetupMutation } from '@/features/adSetup/adSetupApi'
 import { useGetCreativeStrategyQuery } from '@/features/creativeStrategy/creativeStrategyApi'
-import { useGetAdExecutionQuery } from '@/features/adExecution/adExecutionApi'
-import { useDeleteCreativeExecutionMutation, useGenerateCreativeExecutionMutation, useListCreativeExecutionForAdExecutionQuery, useUpdateCreativeExecutionMutation } from '@/features/creativeExecution/creativeExecutionApi'
+import { useGetAdSetupQuery } from '@/features/adSetup/adSetupApi'
+import { useCreateCreativeExecutionSetupMutation, useDeleteCreativeExecutionSetupMutation, useGetCreativeExecutionSetupQuery, useListCreativeExecutionSetupsForAdSetupQuery } from '@/features/creativeExecutionSetup/creativeExecutionSetupApi'
+import { useDeleteGenerateAdMutation, useGenerateAdMutation, useListGenerateAdsForSetupQuery, useUpdateGenerateAdMutation } from '@/features/generateAd/generateAdApi'
 import { useListExecutionStylesQuery, type ExecutionStyle } from '@/features/executionStyles/executionStylesApi'
 import { useListAdFrameworksQuery, type AdFramework } from '@/features/adFrameworks/adFrameworksApi'
 import { useListCreativeAnglesQuery, type CreativeAngle } from '@/features/creativeAngels/creativeAnglesApi'
@@ -170,56 +172,149 @@ export function BrandMarketingStrategiesPage() { const id=Number(useParams().id)
 export function MarketingOfferStrategiesPage() { const id=Number(useParams().id); const {data}=useGetMarketingStrategyQuery(id); const list=useListOfferStrategyForMarketingStrategyQuery(id); const [generate,state]=useGenerateOfferStrategyMutation(); const [remove]=useDeleteOfferStrategyMutation(); const [update]=useUpdateOfferStrategyMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/marketing-strategy/${id}`} backLabel="Marketing strategy" title="Offer strategy"><ResourceList title="Offer strategy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/offer-strategy/${x.id}`} itemLabel={(x)=>(x.offer_name as string)??`#${x.id}`} onGenerate={()=>data&&generate(data)} isGenerating={state.isLoading} generateLabel="Generuj offer strategy" onEdit={(x)=>editEntity('Offer strategy',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,marketingStrategyId:id})}/></ResourcePage> }
 export function OfferMessageStrategiesPage() { const id=Number(useParams().id); const {data}=useGetOfferStrategyQuery(id); const list=useListMessageStrategyForOfferStrategyQuery(id); const [generate,state]=useGenerateMessageStrategyMutation(); const [remove]=useDeleteMessageStrategyMutation(); const [update]=useUpdateMessageStrategyMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/offer-strategy/${id}`} backLabel={(data?.offer_name as string)??'Offer strategy'} title="Message strategy"><ResourceList title="Message strategy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/message-strategy/${x.id}`} itemLabel={(x)=>(x.core_message as string)??`#${x.id}`} onGenerate={()=>data&&generate(data)} isGenerating={state.isLoading} generateLabel="Generuj message strategy" onEdit={(x)=>editEntity('Message strategy',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,offerStrategyId:id})}/></ResourcePage> }
 
-export function MessageAdStrategiesPage() { const id=Number(useParams().id); const {data}=useGetMessageStrategyQuery(id); const list=useListAdStrategyForMessageStrategyQuery(id); const [generate,state]=useGenerateAdStrategyMutation(); const [remove]=useDeleteAdStrategyMutation(); const [update]=useUpdateAdStrategyMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/message-strategy/${id}`} backLabel="Message strategy" title="Ad strategy"><ResourceList title="Ad strategy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/ad-strategy/${x.id}`} itemLabel={(x)=>`#${x.id}`} onGenerate={()=>data&&generate(data)} isGenerating={state.isLoading} generateLabel="Generuj ad strategy" onEdit={(x)=>editEntity('Ad strategy',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,messageStrategyId:id})}/></ResourcePage> }
-export function MessageUgcCreativesPage() { const id=Number(useParams().id); const {data}=useGetMessageStrategyQuery(id); const list=useListUgcCreativesForMessageStrategyQuery(id); const [generate,state]=useGenerateUgcCreativesMutation(); const [remove]=useDeleteUgcCreativeMutation(); return <ResourcePage backTo={`/message-strategy/${id}`} backLabel="Message strategy" title="UGC creatives"><ResourceList title="UGC creatives" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/ugc-creatives/${x.id}`} itemLabel={(x)=>(x.name as string)??`#${x.id}`} onGenerate={()=>data&&generate(data)} isGenerating={state.isLoading} generateLabel="Generuj UGC creatives" onDelete={(x)=>remove({id:x.id as number,messageStrategyId:id})}/></ResourcePage> }
+export function MessageAdStrategiesPage() { const id=Number(useParams().id); const {data}=useGetMessageStrategyQuery(id); const list=useListAdStrategyForMessageStrategyQuery(id); const [generate,state]=useGenerateAdStrategyMutation(); const [remove]=useDeleteAdStrategyMutation(); const [update]=useUpdateAdStrategyMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/message-strategy/${id}`} backLabel="Message strategy" title="Ad strategy"><ResourceList title="Ad strategy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/ad-strategy/${x.id}`} itemLabel={(x)=>(x.name as string)??`#${x.id}`} onGenerate={()=>data&&generate(data)} isGenerating={state.isLoading} generateLabel="Generuj ad strategy" onEdit={(x)=>editEntity('Ad strategy',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,messageStrategyId:id})}/></ResourcePage> }
+export function MessageUgcCreativesPage() {
+  const id = Number(useParams().id)
+  const { data } = useGetMessageStrategyQuery(id)
+  const list = useListUgcCreativesForMessageStrategyQuery(id)
+  const [generate, state] = useGenerateUgcCreativesMutation()
+  const [remove] = useDeleteUgcCreativeMutation()
+  const [update] = useUpdateUgcCreativeMutation()
+  const [isReviewedFilter, setIsReviewedFilter] = useState<ReviewStatusFilterValue>('')
+  const [reviewStatusSort, setReviewStatusSort] = useState<ReviewStatusSort>('unreviewed_first')
+  const creatives = reviewableItems(list.data ?? [], isReviewedFilter, reviewStatusSort)
+
+  return <ResourcePage backTo={`/message-strategy/${id}`} backLabel="Message strategy" title="UGC creatives">
+    <ResourceList
+      title="UGC creatives"
+      items={creatives}
+      totalItems={creatives.length}
+      attentionItems={unreviewedCount(list.data ?? [])}
+      isLoading={list.isLoading}
+      error={list.error}
+      linkTo={(item) => `/ugc-creatives/${item.id}`}
+      itemLabel={(item) => (item.name as string) ?? `#${item.id}`}
+      onGenerate={() => data && generate(data)}
+      isGenerating={state.isLoading}
+      generateLabel="Generuj UGC creatives"
+      contentBeforeList={<ReviewFilters value={isReviewedFilter} sort={reviewStatusSort} onValueChange={setIsReviewedFilter} onSortChange={setReviewStatusSort} />}
+      onDelete={(item) => remove({ id: item.id as number, messageStrategyId: id })}
+      itemActions={(item) => <ReviewButton item={item} onToggle={() => update({ id: item.id as number, messageStrategyId: id, fields: { is_reviewed: item.is_reviewed !== true } })} />}
+    />
+  </ResourcePage>
+}
 export function MessagePageStrategiesPage() { const id=Number(useParams().id); const {data}=useGetMessageStrategyQuery(id); const list=useListPageStrategyForMessageStrategyQuery(id); const [generate,state]=useGeneratePageStrategyMutation(); const [remove]=useDeletePageStrategyMutation(); const [update]=useUpdatePageStrategyMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/message-strategy/${id}`} backLabel="Message strategy" title="Page strategy"><ResourceList title="Page strategy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/page-strategy/${x.id}`} itemLabel={(x)=>(x.goal as string)??`#${x.id}`} onGenerate={()=>data&&generate(data)} isGenerating={state.isLoading} generateLabel="Generuj page strategy" onEdit={(x)=>editEntity('Page strategy',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,messageStrategyId:id})}/></ResourcePage> }
-export function AdCreativeStrategiesPage() { const id=Number(useParams().id); const {data}=useGetAdStrategyQuery(id); const list=useListCreativeStrategyForAdStrategyQuery(id); const [generate,state]=useGenerateCreativeStrategyMutation(); const [remove]=useDeleteCreativeStrategyMutation(); const [update]=useUpdateCreativeStrategyMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/ad-strategy/${id}`} backLabel="Ad strategy" title="Creative strategy"><ResourceList title="Creative strategy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/creative-strategy/${x.id}`} itemLabel={(x)=>`#${x.id} ${(x.name as string)??''}`.trim()} onGenerate={()=>data&&generate(data)} isGenerating={state.isLoading} generateLabel="Generuj creative strategy" onEdit={(x)=>editEntity('Creative strategy',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,adStrategyId:id})}/></ResourcePage> }
+export function AdCreativeStrategiesPage() { const id=Number(useParams().id); const {data}=useGetAdStrategyQuery(id); const list=useListCreativeStrategyForAdStrategyQuery(id); const [generate,state]=useGenerateCreativeStrategyMutation(); const [remove]=useDeleteCreativeStrategyMutation(); const [update]=useUpdateCreativeStrategyMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/ad-strategy/${id}`} backLabel="Ad strategy" title="Creative strategy"><ResourceList title="Creative strategy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/creative-strategy/${x.id}`} itemLabel={(x)=>(x.name as string)??'Bez nazwy'} onGenerate={()=>data&&generate(data)} isGenerating={state.isLoading} generateLabel="Generuj creative strategy" onEdit={(x)=>editEntity('Creative strategy',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,adStrategyId:id})}/></ResourcePage> }
 export function PageRequirementsPage() { const id=Number(useParams().id); const list=useListPageRequirementsForPageStrategyQuery(id); const [create,state]=useCreatePageRequirementsMutation(); const [remove]=useDeletePageRequirementsMutation(); useGetPageStrategyQuery(id); return <ResourcePage backTo={`/page-strategy/${id}`} backLabel="Page strategy" title="Page requirements"><ResourceList title="Page requirements" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/page-requirements/${x.id}`} itemLabel={(x)=>`#${x.id}`} onGenerate={()=>create(id)} isGenerating={state.isLoading} generateLabel="Dodaj wymagania" onDelete={(x)=>remove({id:x.id as number,pageStrategyId:id})}/></ResourcePage> }
 export function PageBlueprintsPage() { const id=Number(useParams().id); const list=useListPageBlueprintForPageRequirementsQuery(id); const [generate,state]=useGeneratePageBlueprintMutation(); const [remove]=useDeletePageBlueprintMutation(); useGetPageRequirementsQuery(id); const [update]=useUpdatePageBlueprintMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/page-requirements/${id}`} backLabel="Page requirements" title="Page blueprint"><ResourceList title="Page blueprint" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/page-blueprint/${x.id}`} itemLabel={(x)=>(x.page_type as string)??`#${x.id}`} onGenerate={()=>generate(id)} isGenerating={state.isLoading} generateLabel="Generuj page blueprint" onEdit={(x)=>editEntity('Page blueprint',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,pageRequirementsId:id})}/></ResourcePage> }
 export function PageContentPlansPage() { const id=Number(useParams().id); const list=useListPageContentPlanForPageBlueprintQuery(id); const [generate,state]=useGeneratePageContentPlanMutation(); const [remove]=useDeletePageContentPlanMutation(); useGetPageBlueprintQuery(id); const [update]=useUpdatePageContentPlanMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/page-blueprint/${id}`} backLabel="Page blueprint" title="Page content plan"><ResourceList title="Page content plan" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/page-content-plan/${x.id}`} itemLabel={(x)=>`#${x.id}`} onGenerate={()=>generate(id)} isGenerating={state.isLoading} generateLabel="Generuj content plan" onEdit={(x)=>editEntity('Page content plan',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,pageBlueprintId:id})}/></ResourcePage> }
 export function PageCopiesPage() { const id=Number(useParams().id); const list=useListPageCopyForPageContentPlanQuery(id); const [generate,state]=useGeneratePageCopyMutation(); const [remove]=useDeletePageCopyMutation(); useGetPageContentPlanQuery(id); const [update]=useUpdatePageCopyMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/page-content-plan/${id}`} backLabel="Page content plan" title="Page copy"><ResourceList title="Page copy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/page-copy/${x.id}`} itemLabel={(x)=>`#${x.id}`} onGenerate={()=>generate(id)} isGenerating={state.isLoading} generateLabel="Generuj page copy" onEdit={(x)=>editEntity('Page copy',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,pageContentPlanId:id})}/></ResourcePage> }
 
-export function CreativeAdExecutionsPage() {
+export function CreativeAdSetupsPage() {
   const id = Number(useParams().id); const { data } = useGetCreativeStrategyQuery(id)
-  const list = useListAdExecutionForCreativeStrategyQuery(id); const [create, state] = useCreateAdExecutionMutation(); const [remove] = useDeleteAdExecutionMutation(); const [update] = useUpdateAdExecutionMutation(); const editEntity = useEditEntityPanel(); const platforms = useListPlatformsQuery()
-  const submit = (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); const form = new FormData(event.currentTarget); void create({ creativeStrategyId: id, name: String(form.get('name') || '') || undefined, creative_type: String(form.get('creative_type') || 'video'), platform: String(form.get('platform') || 'tiktok'), format: String(form.get('format') || 'Vertical 9:16') }) }
-  return <ResourcePage backTo={`/creative-strategy/${id}`} backLabel={(data?.name as string) ?? 'Creative strategy'} title="Ad execution">
-    <form onSubmit={submit} className="flex flex-wrap items-end gap-2">
-      <label className="text-xs">Nazwa<input name="name" className="block w-40 rounded-md border px-2 py-1 text-sm" /></label>
-      <label className="text-xs">Typ kreacji<select name="creative_type" defaultValue="video" className="block w-32 rounded-md border px-2 py-1 text-sm"><option value="video">video</option><option value="image">image</option><option value="carousel">carousel</option></select></label>
-      <label className="text-xs">Platforma<select name="platform" defaultValue="tiktok" className="block w-40 rounded-md border px-2 py-1 text-sm">{platforms.data?.map((x: Platform) => <option key={x.id} value={x.id}>{x.name}</option>)}</select></label>
-      <label className="text-xs">Format<input name="format" defaultValue="Vertical 9:16" className="block w-48 rounded-md border px-2 py-1 text-sm" /></label>
-      <Button type="submit" size="sm" disabled={state.isLoading}>{state.isLoading ? 'Tworzenie…' : 'Utwórz ad execution'}</Button>
-    </form>
-    <ResourceList title="Ad execution" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x) => `/ad-execution/${x.id}`} itemLabel={(x) => `#${x.id} ${(x.name as string) ?? ''}`.trim()} onEdit={(x) => editEntity('Ad execution', x, (fields) => update({ id: x.id as number, fields }).unwrap())} onDelete={(x) => remove({ id: x.id as number, creativeStrategyId: id })} />
+  const list = useListAdSetupForCreativeStrategyQuery(id); const [remove] = useDeleteAdSetupMutation(); const [update] = useUpdateAdSetupMutation(); const editEntity = useEditEntityPanel(); const { openPanel, closePanel } = useSidePanel()
+  return <ResourcePage backTo={`/creative-strategy/${id}`} backLabel={(data?.name as string) ?? 'Creative strategy'} title="Ad Setup">
+    <ResourceList title="Ad Setup" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x) => `/ad-setup/${x.id}`} itemLabel={(x) => (x.name as string) ?? 'Bez nazwy'} onGenerate={() => openPanel({ title: 'Dodaj Ad Setup', content: <AdSetupForm creativeStrategyId={id} onSaved={closePanel} /> })} generateLabel="Dodaj Ad Setup" onEdit={(x) => editEntity('Ad Setup', x, (fields) => update({ id: x.id as number, fields }).unwrap())} onDelete={(x) => remove({ id: x.id as number, creativeStrategyId: id })} />
   </ResourcePage>
 }
 
-export function AdCreativeExecutionsPage() {
-  const id = Number(useParams().id); const { data } = useGetAdExecutionQuery(id); const isGeneratable = ['video', 'image', 'carousel'].includes(String(data?.creative_type))
-  const list = useListCreativeExecutionForAdExecutionQuery(id, { skip: !isGeneratable }); const [generate, state] = useGenerateCreativeExecutionMutation(); const [remove] = useDeleteCreativeExecutionMutation(); const [update] = useUpdateCreativeExecutionMutation(); const editEntity = useEditEntityPanel(); const frameworks = useListAdFrameworksQuery(); const angles = useListCreativeAnglesQuery(); const styles = useListExecutionStylesQuery()
-  const [frameworkId, setFrameworkId] = useState(''); const [angleId, setAngleId] = useState(''); const [styleId, setStyleId] = useState('')
-  const submit = (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); const form = new FormData(event.currentTarget); const duration = form.get('duration_seconds'); const slides = form.get('number_of_slides'); void generate({ adExecutionId: id, ...(duration ? { duration_seconds: Number(duration) } : {}), ...(slides ? { number_of_slides: Number(slides) } : {}), ...(frameworkId ? { ad_framework_id: frameworkId } : {}), ...(angleId ? { creative_angle_id: angleId } : {}), ...(styleId ? { execution_style_id: styleId } : {}) }) }
-  return <ResourcePage backTo={`/ad-execution/${id}`} backLabel={(data?.name as string) ?? 'Ad execution'} title="Creative execution">
-    {isGeneratable && <form onSubmit={submit} className="space-y-3">
-      <div className="flex flex-wrap items-end gap-2">
-        <label className="text-xs">Czas trwania (s)<input name="duration_seconds" type="number" defaultValue={15} disabled={data?.creative_type !== 'video'} className="block w-28 rounded-md border px-2 py-1 text-sm disabled:opacity-50" /></label>
-        <label className="text-xs">Liczba slajdów<input name="number_of_slides" type="number" defaultValue={5} disabled={data?.creative_type !== 'carousel'} className="block w-28 rounded-md border px-2 py-1 text-sm disabled:opacity-50" /></label>
-      </div>
-      <div className="space-y-1">
-        <p className="text-xs text-muted-foreground">Framework</p>
-        <SegmentedControl ariaLabel="Ad framework" value={frameworkId || undefined} options={frameworks.data?.map((x: AdFramework) => ({ value: x.id, label: x.name }))} onValueChange={setFrameworkId} />
-      </div>
-      <div className="space-y-1">
-        <p className="text-xs text-muted-foreground">Creative angle</p>
-        <SegmentedControl ariaLabel="Creative angle" value={angleId || undefined} options={angles.data?.map((x: CreativeAngle) => ({ value: x.id, label: x.name }))} onValueChange={setAngleId} />
-      </div>
-      <div className="space-y-1">
-        <p className="text-xs text-muted-foreground">Execution style</p>
-        <SegmentedControl ariaLabel="Execution style" value={styleId || undefined} options={styles.data?.map((x: ExecutionStyle) => ({ value: x.id, label: x.name }))} onValueChange={setStyleId} />
-      </div>
-      <Button type="submit" size="sm" disabled={state.isLoading}>{state.isLoading ? 'Generowanie…' : 'Generuj creative execution'}</Button>
-    </form>}
-    <ResourceList title="Creative execution" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x) => `/creative-execution/${x.id}`} itemLabel={(x) => `#${x.id}`} onEdit={(x) => editEntity('Creative execution', x, (fields) => update({ id: x.id as number, fields }).unwrap())} onDelete={(x) => remove({ id: x.id as number, adExecutionId: id })} />
+export function AdSetupCreativeExecutionSetupsPage() {
+  const id = Number(useParams().id); const { data } = useGetAdSetupQuery(id)
+  const list = useListCreativeExecutionSetupsForAdSetupQuery(id); const [remove] = useDeleteCreativeExecutionSetupMutation(); const { openPanel, closePanel } = useSidePanel()
+  return <ResourcePage backTo={`/ad-setup/${id}`} backLabel={(data?.name as string) ?? 'Ad Setup'} title="Creative Execution Setup">
+    <ResourceList title="Creative Execution Setup" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/creative-execution-setup/${item.id}`} itemLabel={(item) => (item.name as string) ?? 'Bez nazwy'} onGenerate={() => data && openPanel({ title: 'Dodaj Creative Execution Setup', content: <CreativeExecutionSetupForm adSetup={data} onSaved={closePanel} /> })} generateLabel="Dodaj konfigurację" onDelete={(item) => remove({ id: item.id as number, adSetupId: id })} />
   </ResourcePage>
+}
+
+export function CreativeExecutionSetupGenerateAdsPage() {
+  const id = Number(useParams().id); const { data } = useGetCreativeExecutionSetupQuery(id)
+  const list = useListGenerateAdsForSetupQuery(id); const [generate, state] = useGenerateAdMutation(); const [remove] = useDeleteGenerateAdMutation(); const [update] = useUpdateGenerateAdMutation(); const editEntity = useEditEntityPanel()
+  return <ResourcePage backTo={`/creative-execution-setup/${id}`} backLabel={(data?.name as string) ?? 'Creative Execution Setup'} title="Generate Ad">
+    <ResourceList title="Generate Ad" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/generate-ad/${item.id}`} itemLabel={(item) => `#${item.id}`} onGenerate={() => generate({ setupId: id })} isGenerating={state.isLoading} generateLabel="Generuj reklamę" onEdit={(item) => editEntity('Generate Ad', item, (fields) => update({ id: item.id as number, fields }).unwrap())} onDelete={(item) => remove({ id: item.id as number, setupId: id })} />
+  </ResourcePage>
+}
+
+function AdSetupForm({ creativeStrategyId, onSaved }: { creativeStrategyId: number; onSaved: () => void }) {
+  const { data: platforms = [] } = useListPlatformsQuery()
+  const { data: creativeTypes = [] } = useListCreativeTypesQuery()
+  const [create, state] = useCreateAdSetupMutation()
+  const [error, setError] = useState<string | null>(null)
+
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const form = new FormData(event.currentTarget)
+    setError(null)
+    try {
+      await create({
+        creativeStrategyId,
+        name: String(form.get('name') || '') || undefined,
+        creative_type: String(form.get('creative_type') || 'video'),
+        platform: String(form.get('platform') || 'tiktok'),
+        format: String(form.get('format') || 'Vertical 9:16'),
+      }).unwrap()
+      onSaved()
+    } catch {
+      setError('Nie udało się dodać Ad Setup.')
+    }
+  }
+
+  return <form onSubmit={(event) => void submit(event)} className="space-y-5">
+    <label className="block space-y-2"><span className="text-sm font-medium">Nazwa</span><input name="name" className="h-9 w-full rounded-md border px-2.5 text-sm" placeholder="Np. TikTok product demo" /></label>
+    <label className="block space-y-2"><span className="text-sm font-medium">Typ kreacji</span><select name="creative_type" defaultValue="video" className="h-9 w-full rounded-md border px-2.5 text-sm">{creativeTypes.map((creativeType) => <option key={creativeType.id} value={creativeType.id}>{creativeType.name}</option>)}</select></label>
+    <label className="block space-y-2"><span className="text-sm font-medium">Platforma</span><select name="platform" defaultValue="tiktok" className="h-9 w-full rounded-md border px-2.5 text-sm">{platforms.map((platform: Platform) => <option key={platform.id} value={platform.id}>{platform.name}</option>)}</select></label>
+    <label className="block space-y-2"><span className="text-sm font-medium">Format</span><input name="format" defaultValue="Vertical 9:16" className="h-9 w-full rounded-md border px-2.5 text-sm" /></label>
+    {error && <p className="text-sm text-destructive">{error}</p>}
+    <Button type="submit" disabled={state.isLoading}>{state.isLoading ? 'Dodawanie…' : 'Dodaj Ad Setup'}</Button>
+  </form>
+}
+
+function CreativeExecutionSetupForm({ adSetup, onSaved }: { adSetup: Entity; onSaved: () => void }) {
+  const [create, state] = useCreateCreativeExecutionSetupMutation()
+  const { data: frameworks = [] } = useListAdFrameworksQuery()
+  const { data: angles = [] } = useListCreativeAnglesQuery()
+  const { data: styles = [] } = useListExecutionStylesQuery()
+  const [frameworkId, setFrameworkId] = useState('')
+  const [angleId, setAngleId] = useState('')
+  const [styleId, setStyleId] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const creativeType = String(adSetup.creative_type)
+
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const form = new FormData(event.currentTarget)
+    const duration = form.get('duration_seconds')
+    const slides = form.get('number_of_slides')
+    setError(null)
+    try {
+      await create({
+        adSetupId: adSetup.id as number,
+        fields: {
+          name: String(form.get('name') || '') || 'Default setup',
+          ...(creativeType === 'video' && duration ? { duration_seconds: Number(duration) } : {}),
+          ...(creativeType === 'carousel' && slides ? { number_of_slides: Number(slides) } : {}),
+          ...(frameworkId ? { ad_framework_id: frameworkId } : {}),
+          ...(angleId ? { creative_angle_id: angleId } : {}),
+          ...(styleId ? { execution_style_id: styleId } : {}),
+          additional_instructions: String(form.get('additional_instructions') || '') || undefined,
+        },
+      }).unwrap()
+      onSaved()
+    } catch {
+      setError('Nie udało się dodać Creative Execution Setup.')
+    }
+  }
+
+  return <form onSubmit={(event) => void submit(event)} className="space-y-5">
+    <label className="block space-y-2"><span className="text-sm font-medium">Nazwa</span><input name="name" defaultValue="Default setup" className="h-9 w-full rounded-md border px-2.5 text-sm" /></label>
+    <div className="grid gap-4 sm:grid-cols-2">
+      <label className="block space-y-2"><span className="text-sm font-medium">Czas trwania (s)</span><input name="duration_seconds" type="number" defaultValue={15} disabled={creativeType !== 'video'} className="h-9 w-full rounded-md border px-2.5 text-sm disabled:opacity-50" /></label>
+      <label className="block space-y-2"><span className="text-sm font-medium">Liczba slajdów</span><input name="number_of_slides" type="number" defaultValue={5} disabled={creativeType !== 'carousel'} className="h-9 w-full rounded-md border px-2.5 text-sm disabled:opacity-50" /></label>
+    </div>
+    <div className="space-y-2"><span className="text-sm font-medium">Framework</span><SegmentedControl ariaLabel="Ad framework" value={frameworkId || undefined} options={frameworks.map((item: AdFramework) => ({ value: item.id, label: item.name }))} onValueChange={setFrameworkId} /></div>
+    <div className="space-y-2"><span className="text-sm font-medium">Creative angle</span><SegmentedControl ariaLabel="Creative angle" value={angleId || undefined} options={angles.map((item: CreativeAngle) => ({ value: item.id, label: item.name }))} onValueChange={setAngleId} /></div>
+    <div className="space-y-2"><span className="text-sm font-medium">Execution style</span><SegmentedControl ariaLabel="Execution style" value={styleId || undefined} options={styles.map((item: ExecutionStyle) => ({ value: item.id, label: item.name }))} onValueChange={setStyleId} /></div>
+    <label className="block space-y-2"><span className="text-sm font-medium">Dodatkowe instrukcje</span><textarea name="additional_instructions" rows={4} className="w-full rounded-md border px-2.5 py-2 text-sm" /></label>
+    {error && <p className="text-sm text-destructive">{error}</p>}
+    <Button type="submit" disabled={state.isLoading}>{state.isLoading ? 'Dodawanie…' : 'Dodaj konfigurację'}</Button>
+  </form>
 }

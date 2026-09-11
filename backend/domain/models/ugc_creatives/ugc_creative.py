@@ -32,6 +32,7 @@ class UgcCreative(Base, JSONSerializable):
     why_it_should_work = Column(String, nullable=True)
 
     is_favorite = Column(Boolean, nullable=False, default=False, server_default="0")
+    is_reviewed = Column(Boolean, nullable=False, default=False, server_default="0")
 
     # timestamps
     created_at = Column(

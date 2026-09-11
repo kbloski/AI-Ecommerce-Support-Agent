@@ -9,6 +9,7 @@ class AdStrategyMapper:
         return AdStrategyDto(
             id=item.id,
             message_strategy_id=item.message_strategy_id,
+            name=item.name,
             objective=item.objective,
             customer_stage=item.customer_stage,
             priority_audiences=item.priority_audiences,

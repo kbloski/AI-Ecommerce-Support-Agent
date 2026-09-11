@@ -7,11 +7,207 @@ def init_db():
     _rename_offer_raw_details_column()
     _migrate_offer_profile_to_offer_profiles()
     _migrate_checklists_to_offer_profiles()
+    _migrate_ad_execution_to_ad_setup()
+    _migrate_creative_execution_to_generate_ad()
+    _migrate_creative_execution_setups()
     _add_missing_favorite_columns()
     _add_missing_is_reviewed_columns()
+    _add_missing_ad_strategy_name_column()
     _add_missing_page_blueprint_columns()
     _rename_page_section_requirement_column()
     Base.metadata.create_all(bind=engine)
+
+def _migrate_ad_execution_to_ad_setup():
+    """Rename the Ad Execution aggregate without losing existing setup data."""
+    inspector = inspect(engine)
+    tables = set(inspector.get_table_names())
+
+    with engine.begin() as conn:
+        if "ad_execution" in tables and "ad_setup" in tables:
+            legacy_count = conn.execute(
+                text('SELECT COUNT(*) FROM "ad_execution"')
+            ).scalar_one()
+            new_count = conn.execute(
+                text('SELECT COUNT(*) FROM "ad_setup"')
+            ).scalar_one()
+
+            if legacy_count and new_count:
+                raise RuntimeError(
+                    "Both legacy 'ad_execution' and new 'ad_setup' tables contain data; "
+                    "migration requires manual resolution."
+                )
+
+            if legacy_count:
+                conn.execute(text('DROP TABLE "ad_setup"'))
+                conn.execute(text('ALTER TABLE "ad_execution" RENAME TO "ad_setup"'))
+            else:
+                conn.execute(text('DROP TABLE "ad_execution"'))
+        elif "ad_execution" in tables:
+            conn.execute(text('ALTER TABLE "ad_execution" RENAME TO "ad_setup"'))
+
+        if "generate_ads" not in tables:
+            return
+
+        columns = {
+            column["name"]
+            for column in inspect(conn).get_columns("generate_ads")
+        }
+        if "ad_execution_id" in columns and "ad_setup_id" not in columns:
+            conn.execute(
+                text(
+                    'ALTER TABLE "generate_ads" '
+                    'RENAME COLUMN "ad_execution_id" TO "ad_setup_id"'
+                )
+            )
+
+def _migrate_creative_execution_to_generate_ad():
+    """Rename Creative Execution tables and relation keys to Generate Ad."""
+    tables = set(inspect(engine).get_table_names())
+
+    def rename_table(conn, legacy_name: str, new_name: str) -> None:
+        if legacy_name not in tables:
+            return
+        if new_name not in tables:
+            conn.execute(text(f'ALTER TABLE "{legacy_name}" RENAME TO "{new_name}"'))
+            return
+
+        legacy_count = conn.execute(text(f'SELECT COUNT(*) FROM "{legacy_name}"')).scalar_one()
+        new_count = conn.execute(text(f'SELECT COUNT(*) FROM "{new_name}"')).scalar_one()
+        if legacy_count and new_count:
+            raise RuntimeError(
+                f"Both legacy '{legacy_name}' and new '{new_name}' tables contain data; "
+                "migration requires manual resolution."
+            )
+        if legacy_count:
+            conn.execute(text(f'DROP TABLE "{new_name}"'))
+            conn.execute(text(f'ALTER TABLE "{legacy_name}" RENAME TO "{new_name}"'))
+        else:
+            conn.execute(text(f'DROP TABLE "{legacy_name}"'))
+
+    with engine.begin() as conn:
+        rename_table(conn, "generate_ad_setups", "creative_execution_setups")
+        rename_table(conn, "creative_executions", "generate_ads")
+
+        current_tables = set(inspect(conn).get_table_names())
+        if "creative_execution_setups" in current_tables:
+            setup_columns = {
+                column["name"]
+                for column in inspect(conn).get_columns("creative_execution_setups")
+            }
+            if "ad_execution_id" in setup_columns and "ad_setup_id" not in setup_columns:
+                conn.execute(text(
+                    'ALTER TABLE "creative_execution_setups" '
+                    'RENAME COLUMN "ad_execution_id" TO "ad_setup_id"'
+                ))
+
+        if "generate_ads" in current_tables:
+            columns = {column["name"] for column in inspect(conn).get_columns("generate_ads")}
+            if "ad_execution_id" in columns and "ad_setup_id" not in columns:
+                conn.execute(text(
+                    'ALTER TABLE "generate_ads" '
+                    'RENAME COLUMN "ad_execution_id" TO "ad_setup_id"'
+                ))
+                columns = {column["name"] for column in inspect(conn).get_columns("generate_ads")}
+            if "generate_ad_setup_id" in columns and "creative_execution_setup_id" not in columns:
+                conn.execute(text(
+                    'ALTER TABLE "generate_ads" '
+                    'RENAME COLUMN "generate_ad_setup_id" TO "creative_execution_setup_id"'
+                ))
+
+def _migrate_creative_execution_setups():
+    """Persist generation options and attach legacy executions to a default setup."""
+    tables = set(inspect(engine).get_table_names())
+    if "ad_setup" not in tables:
+        return
+
+    with engine.begin() as conn:
+        conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS creative_execution_setups (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ad_setup_id INTEGER NOT NULL REFERENCES ad_setup(id) ON DELETE CASCADE,
+                name VARCHAR NOT NULL,
+                duration_seconds INTEGER,
+                number_of_slides INTEGER,
+                ad_framework_id VARCHAR,
+                creative_angle_id VARCHAR,
+                execution_style_id VARCHAR,
+                additional_instructions TEXT,
+                is_favorite BOOLEAN NOT NULL DEFAULT 0,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        """))
+
+        setup_columns = {
+            column["name"]
+            for column in inspect(conn).get_columns("creative_execution_setups")
+        }
+        if "configuration_json" in setup_columns:
+            conn.execute(text(
+                'ALTER TABLE "creative_execution_setups" DROP COLUMN "configuration_json"'
+            ))
+            setup_columns.remove("configuration_json")
+
+        missing_setup_columns = {
+            "duration_seconds": "INTEGER",
+            "number_of_slides": "INTEGER",
+            "ad_framework_id": "VARCHAR",
+            "creative_angle_id": "VARCHAR",
+            "execution_style_id": "VARCHAR",
+            "additional_instructions": "TEXT",
+            "is_favorite": "BOOLEAN NOT NULL DEFAULT 0",
+            "created_at": "DATETIME",
+            "updated_at": "DATETIME",
+        }
+        for column_name, definition in missing_setup_columns.items():
+            if column_name not in setup_columns:
+                conn.execute(text(
+                    f'ALTER TABLE "creative_execution_setups" '
+                    f'ADD COLUMN "{column_name}" {definition}'
+                ))
+
+        conn.execute(text("""
+            INSERT INTO creative_execution_setups (
+                ad_setup_id, name, duration_seconds, number_of_slides,
+                is_favorite
+            )
+            SELECT
+                setup.id,
+                'Default setup',
+                CASE WHEN setup.creative_type = 'video' THEN 15 ELSE NULL END,
+                CASE WHEN setup.creative_type = 'carousel' THEN 5 ELSE NULL END,
+                0
+            FROM ad_setup AS setup
+            WHERE NOT EXISTS (
+                SELECT 1 FROM creative_execution_setups AS execution_setup
+                WHERE execution_setup.ad_setup_id = setup.id
+            )
+        """))
+
+        if "generate_ads" not in tables:
+            return
+
+        columns = {
+            column["name"]
+            for column in inspect(conn).get_columns("generate_ads")
+        }
+        if "creative_execution_setup_id" not in columns:
+            conn.execute(text(
+                'ALTER TABLE "generate_ads" '
+                'ADD COLUMN creative_execution_setup_id INTEGER '
+                'REFERENCES creative_execution_setups(id) ON DELETE CASCADE'
+            ))
+
+        if "ad_setup_id" in columns:
+            conn.execute(text("""
+                UPDATE generate_ads
+                SET creative_execution_setup_id = (
+                    SELECT MIN(execution_setup.id)
+                    FROM creative_execution_setups AS execution_setup
+                    WHERE execution_setup.ad_setup_id = generate_ads.ad_setup_id
+                )
+                WHERE creative_execution_setup_id IS NULL
+            """))
 
 def _migrate_offers_to_offers_raw():
     """Migrate the retired Offer schema before SQLAlchemy creates offers_raw.
@@ -94,7 +290,7 @@ def _add_missing_is_reviewed_columns():
     inspector = inspect(engine)
     existing_tables = set(inspector.get_table_names())
 
-    for table in ("offer_profile_elements", "target_audiences", "checklist_item", "analysis_questions"):
+    for table in ("offer_profile_elements", "target_audiences", "checklist_item", "analysis_questions", "ugc_creatives"):
         if table not in existing_tables:
             continue
 
@@ -115,6 +311,17 @@ def _add_missing_is_reviewed_columns():
                         "WHEN review_status = 'pending' THEN 0 ELSE 1 END"
                         )
                     )
+
+def _add_missing_ad_strategy_name_column():
+    """Add the generated Ad Strategy name to databases created before this field."""
+    inspector = inspect(engine)
+    if "ad_strategy" not in inspector.get_table_names():
+        return
+
+    columns = {column["name"] for column in inspector.get_columns("ad_strategy")}
+    if "name" not in columns:
+        with engine.begin() as conn:
+            conn.execute(text('ALTER TABLE ad_strategy ADD COLUMN name VARCHAR'))
 
 def _add_missing_page_blueprint_columns():
     """Additive migration: adds `page_requirements_id` to `page_blueprint`

@@ -17,8 +17,9 @@ import { useListAdStrategyForMessageStrategyQuery } from '@/features/adStrategy/
 import { useListUgcCreativesForMessageStrategyQuery } from '@/features/ugcCreatives/ugcCreativesApi'
 import { useListPageStrategyForMessageStrategyQuery } from '@/features/pageStrategy/pageStrategyApi'
 import { useListCreativeStrategyForAdStrategyQuery } from '@/features/creativeStrategy/creativeStrategyApi'
-import { useListAdExecutionForCreativeStrategyQuery } from '@/features/adExecution/adExecutionApi'
-import { useListCreativeExecutionForAdExecutionQuery } from '@/features/creativeExecution/creativeExecutionApi'
+import { useListAdSetupForCreativeStrategyQuery } from '@/features/adSetup/adSetupApi'
+import { useListCreativeExecutionSetupsForAdSetupQuery } from '@/features/creativeExecutionSetup/creativeExecutionSetupApi'
+import { useListGenerateAdsForSetupQuery } from '@/features/generateAd/generateAdApi'
 import { useListPageRequirementsForPageStrategyQuery } from '@/features/pageRequirements/pageRequirementsApi'
 import { useListPageBlueprintForPageRequirementsQuery } from '@/features/pageBlueprint/pageBlueprintApi'
 import { useListPageContentPlanForPageBlueprintQuery } from '@/features/pageContentPlan/pageContentPlanApi'
@@ -53,13 +54,14 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
     { pattern: '/offer-strategy/:id/*', current: 'Offer strategy', entityType: 'offer_strategy', process: [['message-strategies', 'Message strategy']], resources: [] },
     { pattern: '/message-strategy/:id/*', current: 'Message strategy', entityType: 'message_strategy', process: [['ad-strategies', 'Ad strategy'], ['ugc-creatives', 'UGC creatives'], ['page-strategies', 'Page strategy']], resources: [] },
     { pattern: '/ad-strategy/:id/*', current: 'Ad strategy', entityType: 'ad_strategy', process: [['creative-strategies', 'Creative strategy']], resources: [] },
-    { pattern: '/creative-strategy/:id/*', current: 'Creative strategy', entityType: 'creative_strategy', process: [['ad-executions', 'Ad execution']], resources: [] },
-    { pattern: '/ad-execution/:id/*', current: 'Ad execution', entityType: 'ad_execution', process: [['creative-executions', 'Creative execution']], resources: [] },
+    { pattern: '/creative-strategy/:id/*', current: 'Creative strategy', entityType: 'creative_strategy', process: [['ad-setups', 'Ad Setup']], resources: [] },
+    { pattern: '/ad-setup/:id/*', current: 'Ad Setup', entityType: 'ad_setup', process: [['creative-execution-setups', 'Creative Execution Setup']], resources: [] },
+    { pattern: '/creative-execution-setup/:id/*', current: 'Creative Execution Setup', entityType: 'creative_execution_setup', process: [['generate-ads', 'Generate Ad']], resources: [] },
     { pattern: '/page-strategy/:id/*', current: 'Page strategy', entityType: 'page_strategy', process: [['page-requirements', 'Page requirements']], resources: [] },
     { pattern: '/page-requirements/:id/*', current: 'Page requirements', entityType: 'page_requirements', process: [['page-blueprints', 'Page blueprint']], resources: [] },
     { pattern: '/page-blueprint/:id/*', current: 'Page blueprint', entityType: 'page_blueprint', process: [['content-plans', 'Content plan']], resources: [] },
     { pattern: '/page-content-plan/:id/*', current: 'Content plan', entityType: 'page_content_plan', process: [['page-copies', 'Page copy']], resources: [] },
-    { pattern: '/creative-execution/:id/*', current: 'Creative execution', entityType: 'creative_execution', process: [], resources: [] },
+    { pattern: '/generate-ad/:id/*', current: 'Generate Ad', entityType: 'generate_ad', process: [], resources: [] },
     { pattern: '/ugc-creatives/:id/*', current: 'UGC creative', entityType: 'ugc_creative', process: [], resources: [] },
     { pattern: '/page-copy/:id/*', current: 'Page copy', entityType: 'page_copy', process: [], resources: [] },
   ] as const
@@ -103,8 +105,9 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
   const ugcCreatives = useListUgcCreativesForMessageStrategyQuery(currentEntityId, { skip: !isCurrentStage('Message strategy') })
   const pageStrategies = useListPageStrategyForMessageStrategyQuery(currentEntityId, { skip: !isCurrentStage('Message strategy') })
   const creativeStrategies = useListCreativeStrategyForAdStrategyQuery(currentEntityId, { skip: !isCurrentStage('Ad strategy') })
-  const adExecutions = useListAdExecutionForCreativeStrategyQuery(currentEntityId, { skip: !isCurrentStage('Creative strategy') })
-  const creativeExecutions = useListCreativeExecutionForAdExecutionQuery(currentEntityId, { skip: !isCurrentStage('Ad execution') })
+  const adSetups = useListAdSetupForCreativeStrategyQuery(currentEntityId, { skip: !isCurrentStage('Creative strategy') })
+  const creativeExecutionSetups = useListCreativeExecutionSetupsForAdSetupQuery(currentEntityId, { skip: !isCurrentStage('Ad Setup') })
+  const generateAds = useListGenerateAdsForSetupQuery(currentEntityId, { skip: !isCurrentStage('Creative Execution Setup') })
   const pageRequirements = useListPageRequirementsForPageStrategyQuery(currentEntityId, { skip: !isCurrentStage('Page strategy') })
   const pageBlueprints = useListPageBlueprintForPageRequirementsQuery(currentEntityId, { skip: !isCurrentStage('Page requirements') })
   const pageContentPlans = useListPageContentPlanForPageBlueprintQuery(currentEntityId, { skip: !isCurrentStage('Page blueprint') })
@@ -125,8 +128,9 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
     'ugc-creatives': ugcCreatives.data?.length,
     'page-strategies': pageStrategies.data?.length,
     'creative-strategies': creativeStrategies.data?.length,
-    'ad-executions': adExecutions.data?.length,
-    'creative-executions': creativeExecutions.data?.length,
+    'ad-setups': adSetups.data?.length,
+    'creative-execution-setups': creativeExecutionSetups.data?.length,
+    'generate-ads': generateAds.data?.length,
     'page-requirements': pageRequirements.data?.length,
     'page-blueprints': pageBlueprints.data?.length,
     'content-plans': pageContentPlans.data?.length,
@@ -138,6 +142,8 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
     questions: (analysis.data?.analysis_questions as Array<{ is_reviewed?: unknown }> | undefined)
       ?.filter((item) => item.is_reviewed !== true).length,
     items: (checklist.data?.checklist_items as Array<{ is_reviewed?: unknown }> | undefined)
+      ?.filter((item) => item.is_reviewed !== true).length,
+    'ugc-creatives': ugcCreatives.data
       ?.filter((item) => item.is_reviewed !== true).length,
   }
 

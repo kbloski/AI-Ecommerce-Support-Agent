@@ -9,6 +9,7 @@ class AdStrategyDto(JSONSerializable):
         self,
         id: int,
         message_strategy_id: int,
+        name: Optional[str],
         objective: Optional[dict],
         customer_stage: Optional[str],
         priority_audiences: Optional[List[dict]],
@@ -21,6 +22,7 @@ class AdStrategyDto(JSONSerializable):
     ):
         self.id = id
         self.message_strategy_id = message_strategy_id
+        self.name = name
         self.objective = objective
         self.customer_stage = customer_stage
         self.priority_audiences = priority_audiences
@@ -37,6 +39,7 @@ class AdStrategyDto(JSONSerializable):
         data = {
             "id": self.id,
             "message_strategy_id": self.message_strategy_id,
+            "name": self.name,
             "objective": self.objective,
             "customer_stage": self.customer_stage,
             "priority_audiences": self.priority_audiences,

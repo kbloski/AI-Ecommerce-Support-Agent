@@ -17,6 +17,7 @@ interface DetailShellProps {
   overview?: ReactNode
   fields?: ReactNode
   exclude?: string[]
+  includeRelationIds?: string[]
   itemActions?: Record<string, (item: Record<string, unknown>) => void>
   itemLinks?: Record<string, (item: Record<string, unknown>) => string>
   itemStatusActions?: Record<
@@ -29,6 +30,7 @@ interface DetailShellProps {
   editable?: {
     onSave: (fields: Record<string, unknown>) => Promise<unknown>
     isSaving?: boolean
+    content?: (onSaved: () => void) => ReactNode
   }
 }
 
@@ -42,6 +44,7 @@ export function DetailShell({
   overview,
   fields,
   exclude,
+  includeRelationIds,
   itemActions,
   itemLinks,
   itemStatusActions,
@@ -58,17 +61,20 @@ export function DetailShell({
     openPanel({
       title: `Edytuj: ${title}`,
       content: (
-        <EditableFields
-          key={String(data.id)}
-          data={data}
-          exclude={exclude}
-          isSaving={editable.isSaving}
-          onSave={async (fields) => {
-            const result = await editable.onSave(fields)
-            closePanel()
-            return result
-          }}
-        />
+        editable.content ? editable.content(closePanel) : (
+          <EditableFields
+            key={String(data.id)}
+            data={data}
+            exclude={exclude}
+            includeRelationIds={includeRelationIds}
+            isSaving={editable.isSaving}
+            onSave={async (fields) => {
+              const result = await editable.onSave(fields)
+              closePanel()
+              return result
+            }}
+          />
+        )
       ),
     })
   }
@@ -100,6 +106,7 @@ export function DetailShell({
               key={String(data.id)}
               data={data}
               exclude={exclude}
+              includeRelationIds={includeRelationIds}
               itemActions={itemActions}
               itemLinks={itemLinks}
               itemStatusActions={itemStatusActions}

@@ -50,4 +50,4 @@ class BrandMarketingService:
             default=str
         )
 
-        return build_llm_section("brand-marketing", brand_marketing_json, purpose=ContextSectionPurpose.BRAND_MARKETING.value)
+        return build_llm_section("brand-marketing", brand_marketing_json, purpose=ContextSectionPurpose.BRAND_STRATEGY.value)

@@ -13,8 +13,9 @@ import OfferStrategyDetailPage from '@/pages/OfferStrategyDetailPage'
 import MessageStrategyDetailPage from '@/pages/MessageStrategyDetailPage'
 import AdStrategyDetailPage from '@/pages/AdStrategyDetailPage'
 import CreativeStrategyDetailPage from '@/pages/CreativeStrategyDetailPage'
-import AdExecutionDetailPage from '@/pages/AdExecutionDetailPage'
-import CreativeExecutionDetailPage from '@/pages/CreativeExecutionDetailPage'
+import AdSetupDetailPage from '@/pages/AdSetupDetailPage'
+import CreativeExecutionSetupDetailPage from '@/pages/CreativeExecutionSetupDetailPage'
+import GenerateAdDetailPage from '@/pages/GenerateAdDetailPage'
 import UgcCreativeDetailPage from '@/pages/UgcCreativeDetailPage'
 import PageStrategyDetailPage from '@/pages/PageStrategyDetailPage'
 import PageRequirementsDetailPage from '@/pages/PageRequirementsDetailPage'
@@ -24,11 +25,11 @@ import PageCopyDetailPage from '@/pages/PageCopyDetailPage'
 import SettingsPage from '@/pages/SettingsPage'
 import { OfferProfileElementsPage, OfferProfileTargetAudiencesPage } from '@/pages/EntityRelationPages'
 import {
-  AdCreativeExecutionsPage, AdCreativeStrategiesPage, AnalysisQuestionsPage,
+  AdSetupCreativeExecutionSetupsPage, AdCreativeStrategiesPage, AnalysisQuestionsPage,
   BrandMarketingStrategiesPage, ChecklistItemsPage, OfferProfileAnalysesPage,
   OfferProfileBrandMarketingPage, MarketingOfferStrategiesPage, MessageAdStrategiesPage,
   MessagePageStrategiesPage, MessageUgcCreativesPage, OfferMessageStrategiesPage,
-  PageRequirementsPage, PageBlueprintsPage, PageContentPlansPage, PageCopiesPage, CreativeAdExecutionsPage, OfferProfileChecklistsPage,
+  PageRequirementsPage, PageBlueprintsPage, PageContentPlansPage, PageCopiesPage, CreativeAdSetupsPage, CreativeExecutionSetupGenerateAdsPage, OfferProfileChecklistsPage,
 } from '@/pages/ResourcePages'
 
 function App() {
@@ -66,10 +67,12 @@ function App() {
         <Route path="/ad-strategy/:id" element={<AdStrategyDetailPage />} />
         <Route path="/ad-strategy/:id/creative-strategies" element={<AdCreativeStrategiesPage />} />
         <Route path="/creative-strategy/:id" element={<CreativeStrategyDetailPage />} />
-        <Route path="/creative-strategy/:id/ad-executions" element={<CreativeAdExecutionsPage />} />
-        <Route path="/ad-execution/:id" element={<AdExecutionDetailPage />} />
-        <Route path="/ad-execution/:id/creative-executions" element={<AdCreativeExecutionsPage />} />
-        <Route path="/creative-execution/:id" element={<CreativeExecutionDetailPage />} />
+        <Route path="/creative-strategy/:id/ad-setups" element={<CreativeAdSetupsPage />} />
+        <Route path="/ad-setup/:id" element={<AdSetupDetailPage />} />
+        <Route path="/ad-setup/:id/creative-execution-setups" element={<AdSetupCreativeExecutionSetupsPage />} />
+        <Route path="/creative-execution-setup/:id" element={<CreativeExecutionSetupDetailPage />} />
+        <Route path="/creative-execution-setup/:id/generate-ads" element={<CreativeExecutionSetupGenerateAdsPage />} />
+        <Route path="/generate-ad/:id" element={<GenerateAdDetailPage />} />
         <Route path="/ugc-creatives/:id" element={<UgcCreativeDetailPage />} />
         <Route path="/page-strategy/:id" element={<PageStrategyDetailPage />} />
         <Route path="/page-strategy/:id/page-requirements" element={<PageRequirementsPage />} />

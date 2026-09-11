@@ -44,8 +44,9 @@ from domain.models.message_strategy.message_strategy import MessageStrategy
 from domain.models.ad_strategy.ad_strategy import AdStrategy
 
 from domain.models.creative_strategy.creative_strategy import CreativeStrategy
-from domain.models.ad_execution.ad_execution import AdExecution
-from domain.models.creative_execution.creative_execution import CreativeExecution
+from domain.models.ad_setup.ad_setup import AdSetup
+from domain.models.creative_execution_setup.creative_execution_setup import CreativeExecutionSetup
+from domain.models.generate_ad.generate_ad import GenerateAd
 from domain.models.ugc_creatives.ugc_creative import UgcCreative
 from domain.models.page_strategy.page_strategy import PageStrategy
 from domain.models.page_requirements.page_requirements import PageRequirements

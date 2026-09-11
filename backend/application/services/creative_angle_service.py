@@ -18,6 +18,10 @@ class CreativeAngleService:
         if creative_angle is None:
             return None
 
-        creative_angle_json = json.dumps(creative_angle, ensure_ascii=False, indent=2, default=str)
+        creative_angle_json = json.dumps(
+            creative_angle.to_content_dict(),
+            ensure_ascii=False,
+            indent=2,
+        )
 
         return build_llm_section("creative-angle", creative_angle_json, purpose=ContextSectionPurpose.CREATIVE_ANGLE.value)

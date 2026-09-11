@@ -20,6 +20,13 @@ export const ugcCreativesApi = api.injectEndpoints({
       query: (ms) => ({ url: `/message-strategy/${ms.id}/ugc-creatives/generate`, method: 'POST' }),
       invalidatesTags: (_result, _err, ms) => [listTag('UgcCreative', ms.id)],
     }),
+    updateUgcCreative: builder.mutation<Entity, { id: number; messageStrategyId: number; fields: Record<string, unknown> }>({
+      query: ({ id, fields }) => ({ url: `/ugc-creatives/${id}/update`, method: 'POST', body: { fields } }),
+      invalidatesTags: (_result, _err, { id, messageStrategyId }) => [
+        itemTag('UgcCreative', id),
+        listTag('UgcCreative', messageStrategyId),
+      ],
+    }),
     deleteUgcCreative: builder.mutation<void, { id: number; messageStrategyId: number }>({
       query: ({ id }) => ({ url: `/ugc-creatives/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, messageStrategyId }) => [
@@ -34,5 +41,6 @@ export const {
   useListUgcCreativesForMessageStrategyQuery,
   useGetUgcCreativeQuery,
   useGenerateUgcCreativesMutation,
+  useUpdateUgcCreativeMutation,
   useDeleteUgcCreativeMutation,
 } = ugcCreativesApi

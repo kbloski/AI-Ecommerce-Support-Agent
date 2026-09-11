@@ -53,5 +53,5 @@ class AdStrategyService:
         return build_llm_section(
             "ad-strategy",
             ad_strategy_json,
-            purpose=ContextSectionPurpose.CAMPAIGN.value,
+            purpose=ContextSectionPurpose.AD_STRATEGY.value,
         )

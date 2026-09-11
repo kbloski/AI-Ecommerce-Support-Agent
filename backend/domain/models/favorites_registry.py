@@ -13,8 +13,9 @@ from domain.models.offer_strategy.offer_strategy import OfferStrategy
 from domain.models.message_strategy.message_strategy import MessageStrategy
 from domain.models.ad_strategy.ad_strategy import AdStrategy
 from domain.models.creative_strategy.creative_strategy import CreativeStrategy
-from domain.models.ad_execution.ad_execution import AdExecution
-from domain.models.creative_execution.creative_execution import CreativeExecution
+from domain.models.ad_setup.ad_setup import AdSetup
+from domain.models.creative_execution_setup.creative_execution_setup import CreativeExecutionSetup
+from domain.models.generate_ad.generate_ad import GenerateAd
 from domain.models.ugc_creatives.ugc_creative import UgcCreative
 from domain.models.page_strategy.page_strategy import PageStrategy
 from domain.models.page_requirements.page_requirements import PageRequirements
@@ -36,8 +37,9 @@ FAVORITABLE_MODELS: Dict[str, Type[Base]] = {
     TableName.MESSAGE_STRATEGY.value: MessageStrategy,
     TableName.AD_STRATEGY.value: AdStrategy,
     TableName.CREATIVE_STRATEGY.value: CreativeStrategy,
-    TableName.AD_EXECUTION.value: AdExecution,
-    TableName.CREATIVE_EXECUTIONS.value: CreativeExecution,
+    TableName.AD_SETUP.value: AdSetup,
+    TableName.CREATIVE_EXECUTION_SETUPS.value: CreativeExecutionSetup,
+    TableName.GENERATE_ADS.value: GenerateAd,
     TableName.UGC_CREATIVES.value: UgcCreative,
     TableName.PAGE_STRATEGY.value: PageStrategy,
     TableName.PAGE_REQUIREMENTS.value: PageRequirements,

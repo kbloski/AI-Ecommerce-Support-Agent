@@ -30,6 +30,11 @@ class UgcCreativeRepository:
             .all()
         )
 
+    def update(self, item: UgcCreative) -> UgcCreative:
+        self.db.commit()
+        self.db.refresh(item)
+        return item
+
     # ❌ DELETE
     def delete(self, id: int) -> bool:
         item = self.db.query(UgcCreative).filter(UgcCreative.id == id).first()

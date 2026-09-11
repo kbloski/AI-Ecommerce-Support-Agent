@@ -1,6 +1,8 @@
 import json
 from typing import List, Optional
 
+from application.dtos.ads.ad_framework_dto import AdFrameworkDto
+
 from infrastructure.logging.logger import Logger
 from infrastructure.services.path_service import PathService
 
@@ -10,12 +12,12 @@ class AdFrameworksRepository:
         self.logger = logger
         self.path_service = path_service
 
-    def get_all(self) -> List[dict]:
+    def get_all(self) -> List[AdFrameworkDto]:
         with open(self.path_service.AD_FRAMEWORKS_FILE, "r", encoding="utf-8") as file:
-            return json.load(file)
+            return [AdFrameworkDto.from_dict(item) for item in json.load(file)]
 
-    def get_by_id(self, framework_id: str) -> Optional[dict]:
+    def get_by_id(self, framework_id: str) -> Optional[AdFrameworkDto]:
         for framework in self.get_all():
-            if framework.get("id") == framework_id:
+            if framework.id == framework_id:
                 return framework
         return None

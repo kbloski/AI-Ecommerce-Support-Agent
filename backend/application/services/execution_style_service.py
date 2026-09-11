@@ -18,6 +18,10 @@ class ExecutionStyleService:
         if execution_style is None:
             return None
 
-        execution_style_json = json.dumps(execution_style, ensure_ascii=False, indent=2, default=str)
+        execution_style_json = json.dumps(
+            execution_style.to_content_dict(),
+            ensure_ascii=False,
+            indent=2,
+        )
 
         return build_llm_section("execution-style", execution_style_json, purpose=ContextSectionPurpose.EXECUTION_STYLE.value)

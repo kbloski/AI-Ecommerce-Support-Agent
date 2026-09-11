@@ -14,8 +14,8 @@ import { useListFactStatusesQuery } from '@/features/factStatus/factStatusApi'
 
 const SKIP_KEYS = new Set(['id', 'created_at', 'updated_at'])
 
-function isSkipped(key: string): boolean {
-  return SKIP_KEYS.has(key) || (key.endsWith('_id') && key !== 'id')
+function isSkipped(key: string, includeRelationIds: string[] = []): boolean {
+  return SKIP_KEYS.has(key) || (key.endsWith('_id') && !includeRelationIds.includes(key))
 }
 
 function toFormValue(value: unknown): string {
@@ -166,6 +166,7 @@ interface EditableFieldsProps {
   onSave?: (fields: Record<string, unknown>) => Promise<unknown>
   isSaving?: boolean
   exclude?: string[]
+  includeRelationIds?: string[]
   itemActions?: Record<string, (item: Record<string, unknown>) => void>
   itemLinks?: Record<string, (item: Record<string, unknown>) => string>
   itemStatusActions?: Record<
@@ -182,6 +183,7 @@ export function EditableFields({
   onSave,
   isSaving,
   exclude = [],
+  includeRelationIds = [],
   itemActions,
   itemLinks,
   itemStatusActions,
@@ -201,10 +203,10 @@ export function EditableFields({
       ))
 
   const editableKeys = Object.keys(data).filter(
-    (key) => !isSkipped(key) && !exclude.includes(key) && !isRelationField(key)
+    (key) => !isSkipped(key, includeRelationIds) && !exclude.includes(key) && !isRelationField(key)
   )
   const relationKeys = Object.keys(data).filter(
-    (key) => !isSkipped(key) && !exclude.includes(key) && isRelationField(key)
+    (key) => !isSkipped(key, includeRelationIds) && !exclude.includes(key) && isRelationField(key)
   )
 
   const [values, setValues] = useState<Record<string, string>>(() =>

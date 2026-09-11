@@ -11,8 +11,9 @@ from application.handlers.offer_strategy.get_offer_strategy_handler import get_o
 from application.handlers.message_strategy.get_message_strategy_handler import get_message_strategy_handler
 from application.handlers.ad_strategy.get_ad_strategy_handler import get_ad_strategy_handler
 from application.handlers.creative_strategy.get_creative_strategy_handler import get_creative_strategy_handler
-from application.handlers.ad_execution.get_ad_execution_handler import get_ad_execution_handler
-from application.handlers.creative_execution.get_creative_execution_handler import get_creative_execution_handler
+from application.handlers.ad_setup.get_ad_setup_handler import get_ad_setup_handler
+from application.handlers.creative_execution_setup.get_creative_execution_setup_handler import get_creative_execution_setup_handler
+from application.handlers.generate_ad.get_generate_ad_handler import get_generate_ad_handler
 from application.handlers.ugc_creatives.get_ugc_creative_handler import get_ugc_creative_handler
 from application.handlers.page_strategy.get_page_strategy_handler import get_page_strategy_handler
 from application.handlers.page_requirements.get_page_requirements_handler import get_page_requirements_handler
@@ -76,17 +77,23 @@ STAGE_CONFIG: Dict[PipelineEntityType, Dict[str, Any]] = {
         "parent_field": "ad_strategy_id",
         "parent_stage": PipelineEntityType.AD_STRATEGY,
     },
-    PipelineEntityType.AD_EXECUTION: {
-        "get_handler": get_ad_execution_handler,
-        "context_service": "ad_execution_service",
+    PipelineEntityType.AD_SETUP: {
+        "get_handler": get_ad_setup_handler,
+        "context_service": "ad_setup_service",
         "parent_field": "creative_strategy_id",
         "parent_stage": PipelineEntityType.CREATIVE_STRATEGY,
     },
-    PipelineEntityType.CREATIVE_EXECUTION: {
-        "get_handler": get_creative_execution_handler,
+    PipelineEntityType.CREATIVE_EXECUTION_SETUP: {
+        "get_handler": get_creative_execution_setup_handler,
+        "context_service": "creative_execution_setup_service",
+        "parent_field": "ad_setup_id",
+        "parent_stage": PipelineEntityType.AD_SETUP,
+    },
+    PipelineEntityType.GENERATE_AD: {
+        "get_handler": get_generate_ad_handler,
         "context_service": None,  # liść gałęzi ADS
-        "parent_field": "ad_execution_id",
-        "parent_stage": PipelineEntityType.AD_EXECUTION,
+        "parent_field": "creative_execution_setup_id",
+        "parent_stage": PipelineEntityType.CREATIVE_EXECUTION_SETUP,
     },
     PipelineEntityType.UGC_CREATIVE: {
         "get_handler": get_ugc_creative_handler,

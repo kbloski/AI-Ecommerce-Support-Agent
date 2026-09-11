@@ -19,4 +19,5 @@ class UgcCreativeMapper:
             platform_fit=item.platform_fit,
             cta=item.cta,
             why_it_should_work=item.why_it_should_work,
+            is_reviewed=item.is_reviewed,
         )

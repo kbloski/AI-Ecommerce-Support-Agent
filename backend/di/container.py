@@ -56,12 +56,15 @@ from application.services.creative_strategy_service import CreativeStrategyServi
 from infrastructure.repositories.ugc_creative_repository import UgcCreativeRepository
 from application.assemblers.ugc_creative_assembler import UgcCreativeAssembler
 from application.services.ugc_creative_service import UgcCreativeService
-from infrastructure.repositories.ad_execution_repository import AdExecutionRepository
-from application.assemblers.ad_execution_assembler import AdExecutionAssembler
-from application.services.ad_execution_service import AdExecutionService
-from infrastructure.repositories.creative_execution_repository import CreativeExecutionRepository
-from application.assemblers.creative_execution_assembler import CreativeExecutionAssembler
-from application.services.creative_execution_service import CreativeExecutionService
+from infrastructure.repositories.ad_setup_repository import AdSetupRepository
+from application.assemblers.ad_setup_assembler import AdSetupAssembler
+from application.services.ad_setup_service import AdSetupService
+from infrastructure.repositories.creative_execution_setup_repository import CreativeExecutionSetupRepository
+from application.assemblers.creative_execution_setup_assembler import CreativeExecutionSetupAssembler
+from application.services.creative_execution_setup_service import CreativeExecutionSetupService
+from infrastructure.repositories.generate_ad_repository import GenerateAdRepository
+from application.assemblers.generate_ad_assembler import GenerateAdAssembler
+from application.services.generate_ad_service import GenerateAdService
 from infrastructure.repositories.page_strategy_repository import PageStrategyRepository
 from application.assemblers.page_strategy_assembler import PageStrategyAssembler
 from application.services.page_strategy_service import PageStrategyService
@@ -214,14 +217,20 @@ class Container(containers.DeclarativeContainer):
         db=db
     )
 
-    ad_execution_repository = providers.Singleton(
-        AdExecutionRepository,
+    ad_setup_repository = providers.Singleton(
+        AdSetupRepository,
         logger=logger,
         db=db
     )
 
-    creative_execution_repository = providers.Singleton(
-        CreativeExecutionRepository,
+    creative_execution_setup_repository = providers.Singleton(
+        CreativeExecutionSetupRepository,
+        logger=logger,
+        db=db
+    )
+
+    generate_ad_repository = providers.Singleton(
+        GenerateAdRepository,
         logger=logger,
         db=db
     )
@@ -334,13 +343,13 @@ class Container(containers.DeclarativeContainer):
         logger=logger,
     )
 
-    ad_execution_assembler = providers.Singleton(
-        AdExecutionAssembler,
+    ad_setup_assembler = providers.Singleton(
+        AdSetupAssembler,
         logger=logger,
     )
 
-    creative_execution_assembler = providers.Singleton(
-        CreativeExecutionAssembler,
+    generate_ad_assembler = providers.Singleton(
+        GenerateAdAssembler,
         logger=logger,
     )
 
@@ -394,6 +403,14 @@ class Container(containers.DeclarativeContainer):
         ExecutionStylesRepository,
         logger=logger,
         path_service=path_service,
+    )
+
+    creative_execution_setup_assembler = providers.Singleton(
+        CreativeExecutionSetupAssembler,
+        logger=logger,
+        ad_frameworks_repository=ad_frameworks_repository,
+        creative_angels_repository=creative_angels_repository,
+        execution_styles_repository=execution_styles_repository,
     )
 
     platforms_repository = providers.Singleton(
@@ -534,18 +551,25 @@ class Container(containers.DeclarativeContainer):
         ugc_creative_assembler=ugc_creative_assembler
     )
 
-    ad_execution_service = providers.Singleton(
-        AdExecutionService,
+    ad_setup_service = providers.Singleton(
+        AdSetupService,
         logger=logger,
-        ad_execution_repository=ad_execution_repository,
-        ad_execution_assembler=ad_execution_assembler
+        ad_setup_repository=ad_setup_repository,
+        ad_setup_assembler=ad_setup_assembler
     )
 
-    creative_execution_service = providers.Singleton(
-        CreativeExecutionService,
+    creative_execution_setup_service = providers.Singleton(
+        CreativeExecutionSetupService,
         logger=logger,
-        creative_execution_repository=creative_execution_repository,
-        creative_execution_assembler=creative_execution_assembler
+        creative_execution_setup_repository=creative_execution_setup_repository,
+        creative_execution_setup_assembler=creative_execution_setup_assembler
+    )
+
+    generate_ad_service = providers.Singleton(
+        GenerateAdService,
+        logger=logger,
+        generate_ad_repository=generate_ad_repository,
+        generate_ad_assembler=generate_ad_assembler
     )
 
     page_strategy_service = providers.Singleton(

@@ -18,6 +18,10 @@ class AdFrameworkService:
         if ad_framework is None:
             return None
 
-        ad_framework_json = json.dumps(ad_framework, ensure_ascii=False, indent=2, default=str)
+        ad_framework_json = json.dumps(
+            ad_framework.to_content_dict(),
+            ensure_ascii=False,
+            indent=2,
+        )
 
         return build_llm_section("ad-framework", ad_framework_json, purpose=ContextSectionPurpose.AD_FRAMEWORK.value)

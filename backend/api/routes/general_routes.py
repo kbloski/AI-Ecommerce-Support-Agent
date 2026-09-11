@@ -8,6 +8,7 @@ from application.handlers.ads.list_ad_frameworks_handler import list_ad_framewor
 from application.handlers.ads.list_creative_angels_handler import list_creative_angels_handler
 from application.handlers.ads.list_execution_styles_handler import list_execution_styles_handler
 from application.handlers.ads.list_platforms_handler import list_platforms_handler
+from application.handlers.ads.list_creative_types_handler import list_creative_types_handler
 from application.handlers.ads.list_fact_statuses_handler import list_fact_statuses_handler
 from application.handlers.offers.get_offers import get_offers
 from application.handlers.offers.create_offer import create_offer
@@ -34,8 +35,13 @@ from application.handlers.page_content_plan.update_page_content_plan_handler imp
 from application.handlers.page_copy.update_page_copy_handler import update_page_copy_handler
 from application.handlers.ad_strategy.update_ad_strategy_handler import update_ad_strategy_handler
 from application.handlers.creative_strategy.update_creative_strategy_handler import update_creative_strategy_handler
-from application.handlers.ad_execution.update_ad_execution_handler import update_ad_execution_handler
-from application.handlers.creative_execution.update_creative_execution_handler import update_creative_execution_handler
+from application.handlers.ad_setup.update_ad_setup_handler import update_ad_setup_handler
+from application.handlers.generate_ad.update_generate_ad_handler import update_generate_ad_handler
+from application.handlers.creative_execution_setup.create_creative_execution_setup_handler import create_creative_execution_setup_handler
+from application.handlers.creative_execution_setup.get_creative_execution_setup_handler import get_creative_execution_setup_handler
+from application.handlers.creative_execution_setup.get_ad_setup_creative_execution_setups_handler import get_ad_setup_creative_execution_setups_handler
+from application.handlers.creative_execution_setup.update_creative_execution_setup_handler import update_creative_execution_setup_handler
+from application.handlers.creative_execution_setup.delete_creative_execution_setup_handler import delete_creative_execution_setup_handler
 from application.handlers.target_audience.generate_target_audience_handler import generate_target_audience_handler
 from application.handlers.target_audience.get_target_audience_handler import get_target_audience_handler
 from application.handlers.target_audience.get_target_audience_preview_handler import get_target_audience_preview_handler
@@ -81,14 +87,14 @@ from application.handlers.ad_strategy.get_ad_strategy_handler import get_ad_stra
 from application.handlers.ad_strategy.get_message_strategy_ad_strategies_handler import get_message_strategy_ad_strategies_handler
 from application.handlers.ad_strategy.delete_ad_strategy_handler import delete_ad_strategy_handler
 from application.handlers.creative_strategy.generate_creative_strategy_handler import generate_creative_strategy_handler
-from application.handlers.ad_execution.create_ad_execution_handler import create_ad_execution_handler
-from application.handlers.ad_execution.get_ad_execution_handler import get_ad_execution_handler
-from application.handlers.ad_execution.get_creative_strategy_ad_executions_handler import get_creative_strategy_ad_executions_handler
-from application.handlers.ad_execution.delete_ad_execution_handler import delete_ad_execution_handler
-from application.handlers.creative_execution.generate_creative_execution_handler import generate_creative_execution_handler
-from application.handlers.creative_execution.get_creative_execution_handler import get_creative_execution_handler
-from application.handlers.creative_execution.get_ad_execution_creative_executions_handler import get_ad_execution_creative_executions_handler
-from application.handlers.creative_execution.delete_creative_execution_handler import delete_creative_execution_handler
+from application.handlers.ad_setup.create_ad_setup_handler import create_ad_setup_handler
+from application.handlers.ad_setup.get_ad_setup_handler import get_ad_setup_handler
+from application.handlers.ad_setup.get_creative_strategy_ad_setups_handler import get_creative_strategy_ad_setups_handler
+from application.handlers.ad_setup.delete_ad_setup_handler import delete_ad_setup_handler
+from application.handlers.generate_ad.generate_ad_handler import generate_ad_handler
+from application.handlers.generate_ad.get_generate_ad_handler import get_generate_ad_handler
+from application.handlers.generate_ad.get_creative_execution_setup_generate_ads_handler import get_creative_execution_setup_generate_ads_handler
+from application.handlers.generate_ad.delete_generate_ad_handler import delete_generate_ad_handler
 from application.handlers.creative_strategy.get_creative_strategy_handler import get_creative_strategy_handler
 from application.handlers.creative_strategy.get_ad_strategy_creative_strategies_handler import get_ad_strategy_creative_strategies_handler
 from application.handlers.creative_strategy.delete_creative_strategy_handler import delete_creative_strategy_handler
@@ -96,6 +102,7 @@ from application.handlers.ugc_creatives.generate_ugc_creatives_handler import ge
 from application.handlers.ugc_creatives.get_ugc_creative_handler import get_ugc_creative_handler
 from application.handlers.ugc_creatives.get_message_strategy_ugc_creatives_handler import get_message_strategy_ugc_creatives_handler
 from application.handlers.ugc_creatives.delete_ugc_creative_handler import delete_ugc_creative_handler
+from application.handlers.ugc_creatives.update_ugc_creative_handler import update_ugc_creative_handler
 from application.handlers.page_strategy.get_page_strategy_handler import get_page_strategy_handler
 from application.handlers.page_strategy.get_message_strategy_page_strategies_handler import get_message_strategy_page_strategies_handler
 from application.handlers.page_strategy.delete_page_strategy_handler import delete_page_strategy_handler
@@ -228,9 +235,9 @@ def register_general_routes(router: APIRouter):
     def _legacy_get_4(offer_profile_id: str):
         raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/brand-marketing/generate")
 
-    @router.get("/offer-profiles/{offer_profile_id}/brand-marketing/{brand_markeging_id}/marketing-strategy/generate")
-    def _legacy_get_5(offer_profile_id: str, brand_markeging_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/brand-marketing/{brand_markeging_id}/marketing-strategy/generate")
+    @router.get("/offer-profiles/{offer_profile_id}/brand-marketing/{brand_marketing_id}/marketing-strategy/generate")
+    def _legacy_get_5(offer_profile_id: str, brand_marketing_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/brand-marketing/{brand_marketing_id}/marketing-strategy/generate")
 
     @router.get("/marketing-strategy/{marketing_strategy_id}/offer-strategy/generate")
     def _legacy_get_6(marketing_strategy_id: str):
@@ -284,13 +291,13 @@ def register_general_routes(router: APIRouter):
     def _legacy_get_18():
         raise HTTPException(status_code=410, detail="This endpoint now requires POST /offers/create")
 
-    @router.get("/creative-strategy/{creative_strategy_id}/ad-execution/create")
+    @router.get("/creative-strategy/{creative_strategy_id}/ad-setup/create")
     def _legacy_get_19(creative_strategy_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /creative-strategy/{creative_strategy_id}/ad-execution/create")
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /creative-strategy/{creative_strategy_id}/ad-setup/create")
 
-    @router.get("/ad-execution/{ad_execution_id}/creative-execution/generate")
-    def _legacy_get_20(ad_execution_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /ad-execution/{ad_execution_id}/creative-execution/generate")
+    @router.get("/ad-setup/{ad_setup_id}/generate-ad/generate")
+    def _legacy_get_20(ad_setup_id: str):
+        raise HTTPException(status_code=410, detail="Create a Creative Execution Setup and use POST /creative-execution-setups/{id}/generate-ads/generate")
 
 
 
@@ -605,10 +612,13 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     # Marketing strategy
     # -----------------------------
-    @router.post("/offer-profiles/{offer_profile_id}/brand-marketing/{brand_markeging_id}/marketing-strategy/generate")
-    def offer_profile_marketing_strategy_generate( offer_profile_id: int, brand_markeging_id: int ):
+    @router.post("/offer-profiles/{offer_profile_id}/brand-marketing/{brand_marketing_id}/marketing-strategy/generate")
+    def offer_profile_marketing_strategy_generate(offer_profile_id: int, brand_marketing_id: int):
         try:
-            return generate_marketing_strategy_handler( offer_profile_id=offer_profile_id, brand_markeging_id=brand_markeging_id )
+            return generate_marketing_strategy_handler(
+                offer_profile_id=offer_profile_id,
+                brand_marketing_id=brand_marketing_id,
+            )
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
 
@@ -711,6 +721,10 @@ def register_general_routes(router: APIRouter):
     def get_ugc_creative( id: int ):
         return get_ugc_creative_handler( id=id )
 
+    @router.post("/ugc-creatives/{id}/update")
+    def update_ugc_creative_route(id: int, payload: UpdateFieldsRequest):
+        return update_ugc_creative_handler(id=id, fields=payload.fields)
+
     @router.delete("/ugc-creatives/{id}/delete")
     def delete_ugc_creative_route(id: int):
         return delete_ugc_creative_handler(id=id)
@@ -783,17 +797,17 @@ def register_general_routes(router: APIRouter):
 
 
     # -----------------------------
-    # Ad execution
+    # Ad Setup
     # -----------------------------
-    @router.post("/creative-strategy/{creative_strategy_id}/ad-execution/create")
-    def creative_strategy_ad_execution_create(
+    @router.post("/creative-strategy/{creative_strategy_id}/ad-setup/create")
+    def creative_strategy_ad_setup_create(
         creative_strategy_id: int,
         creative_type: str,
         platform: str,
         format: str,
         name: str | None = None
     ):
-        return create_ad_execution_handler(
+        return create_ad_setup_handler(
             creative_strategy_id=creative_strategy_id,
             creative_type=creative_type,
             platform=platform,
@@ -801,25 +815,25 @@ def register_general_routes(router: APIRouter):
             name=name
         )
 
-    @router.get("/creative-strategy/{creative_strategy_id}/ad-execution")
-    def get_creative_strategy_ad_executions( creative_strategy_id: int ):
-        return get_creative_strategy_ad_executions_handler( creative_strategy_id=creative_strategy_id )
+    @router.get("/creative-strategy/{creative_strategy_id}/ad-setup")
+    def get_creative_strategy_ad_setups( creative_strategy_id: int ):
+        return get_creative_strategy_ad_setups_handler( creative_strategy_id=creative_strategy_id )
 
-    @router.get("/ad-execution/{id}")
-    def get_ad_execution( id: int ):
-        return get_ad_execution_handler( id=id )
+    @router.get("/ad-setup/{id}")
+    def get_ad_setup( id: int ):
+        return get_ad_setup_handler( id=id )
 
-    @router.post("/ad-execution/{id}/update")
-    def update_ad_execution_route(id: int, payload: UpdateFieldsRequest):
-        return update_ad_execution_handler(id=id, fields=payload.fields)
+    @router.post("/ad-setup/{id}/update")
+    def update_ad_setup_route(id: int, payload: UpdateFieldsRequest):
+        return update_ad_setup_handler(id=id, fields=payload.fields)
 
-    @router.delete("/ad-execution/{id}/delete")
-    def delete_ad_execution_route(id: int):
-        return delete_ad_execution_handler(id=id)
+    @router.delete("/ad-setup/{id}/delete")
+    def delete_ad_setup_route(id: int):
+        return delete_ad_setup_handler(id=id)
 
-    @router.get("/ad-execution/{id}/delete")
-    def delete_ad_execution_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /ad-execution/{id}/delete")
+    @router.get("/ad-setup/{id}/delete")
+    def delete_ad_setup_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /ad-setup/{id}/delete")
 
 
     # -----------------------------
@@ -841,6 +855,10 @@ def register_general_routes(router: APIRouter):
     def platforms_list():
         return list_platforms_handler()
 
+    @router.get("/creative-types")
+    def creative_types_list():
+        return list_creative_types_handler()
+
     @router.get("/fact-statuses")
     def fact_statuses_list():
         return list_fact_statuses_handler()
@@ -850,45 +868,58 @@ def register_general_routes(router: APIRouter):
         return list_page_sections_handler()
 
     # -----------------------------
-    # Creative execution
+    # Creative Execution Setup
     # -----------------------------
-    @router.post("/ad-execution/{ad_execution_id}/creative-execution/generate")
-    def ad_execution_creative_execution_generate(
-        ad_execution_id: int,
-        duration_seconds: int | None = None,
-        number_of_slides: int | None = None,
-        ad_framework_id: str | None = None,
-        creative_angle_id: str | None = None,
-        execution_style_id: str | None = None
-    ):
-        return generate_creative_execution_handler(
-            ad_execution_id=ad_execution_id,
-            duration_seconds=duration_seconds,
-            number_of_slides=number_of_slides,
-            ad_framework_id=ad_framework_id,
-            creative_angle_id=creative_angle_id,
-            execution_style_id=execution_style_id
+    @router.post("/ad-setup/{ad_setup_id}/creative-execution-setups/create")
+    def create_creative_execution_setup(ad_setup_id: int, payload: UpdateFieldsRequest):
+        return create_creative_execution_setup_handler(ad_setup_id=ad_setup_id, fields=payload.fields)
+
+    @router.get("/ad-setup/{ad_setup_id}/creative-execution-setups")
+    def get_ad_setup_creative_execution_setups(ad_setup_id: int):
+        return get_ad_setup_creative_execution_setups_handler(ad_setup_id=ad_setup_id)
+
+    @router.get("/creative-execution-setups/{id}")
+    def get_creative_execution_setup(id: int):
+        return get_creative_execution_setup_handler(id=id)
+
+    @router.post("/creative-execution-setups/{id}/update")
+    def update_creative_execution_setup(id: int, payload: UpdateFieldsRequest):
+        return update_creative_execution_setup_handler(id=id, fields=payload.fields)
+
+    @router.delete("/creative-execution-setups/{id}/delete")
+    def delete_creative_execution_setup(id: int):
+        return delete_creative_execution_setup_handler(id=id)
+
+    # -----------------------------
+    # Generate Ad
+    # -----------------------------
+    @router.post("/creative-execution-setups/{creative_execution_setup_id}/generate-ads/generate")
+    def creative_execution_setup_generate(creative_execution_setup_id: int):
+        return generate_ad_handler(
+            creative_execution_setup_id=creative_execution_setup_id
         )
 
-    @router.get("/ad-execution/{ad_execution_id}/creative-execution")
-    def get_ad_execution_creative_executions( ad_execution_id: int ):
-        return get_ad_execution_creative_executions_handler( ad_execution_id=ad_execution_id )
+    @router.get("/creative-execution-setups/{creative_execution_setup_id}/generate-ads")
+    def get_creative_execution_setup_generate_ads(creative_execution_setup_id: int):
+        return get_creative_execution_setup_generate_ads_handler(
+            creative_execution_setup_id=creative_execution_setup_id
+        )
 
-    @router.get("/creative-execution/{id}")
-    def get_creative_execution( id: int ):
-        return get_creative_execution_handler( id=id )
+    @router.get("/generate-ad/{id}")
+    def get_generate_ad( id: int ):
+        return get_generate_ad_handler( id=id )
 
-    @router.post("/creative-execution/{id}/update")
-    def update_creative_execution_route(id: int, payload: UpdateFieldsRequest):
-        return update_creative_execution_handler(id=id, fields=payload.fields)
+    @router.post("/generate-ad/{id}/update")
+    def update_generate_ad_route(id: int, payload: UpdateFieldsRequest):
+        return update_generate_ad_handler(id=id, fields=payload.fields)
 
-    @router.delete("/creative-execution/{id}/delete")
-    def delete_creative_execution_route(id: int):
-        return delete_creative_execution_handler(id=id)
+    @router.delete("/generate-ad/{id}/delete")
+    def delete_generate_ad_route(id: int):
+        return delete_generate_ad_handler(id=id)
 
-    @router.get("/creative-execution/{id}/delete")
-    def delete_creative_execution_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /creative-execution/{id}/delete")
+    @router.get("/generate-ad/{id}/delete")
+    def delete_generate_ad_route_legacy_get(id: int):
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /generate-ad/{id}/delete")
 
 
     # -----------------------------

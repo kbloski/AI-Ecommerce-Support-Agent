@@ -19,6 +19,7 @@ class UgcCreativeDto(JSONSerializable):
         platform_fit: Optional[List[str]],
         cta: Optional[str],
         why_it_should_work: Optional[str],
+        is_reviewed: bool,
     ):
         self.id = id
         self.message_strategy_id = message_strategy_id
@@ -32,6 +33,7 @@ class UgcCreativeDto(JSONSerializable):
         self.platform_fit = platform_fit
         self.cta = cta
         self.why_it_should_work = why_it_should_work
+        self.is_reviewed = is_reviewed
 
     def to_dict(self, exclude=None):
         exclude = set(exclude or [])
@@ -49,6 +51,7 @@ class UgcCreativeDto(JSONSerializable):
             "platform_fit": self.platform_fit,
             "cta": self.cta,
             "why_it_should_work": self.why_it_should_work,
+            "is_reviewed": self.is_reviewed,
         }
 
         return {k: v for k, v in data.items() if k not in exclude}
