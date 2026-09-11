@@ -14,6 +14,7 @@ def init_db():
     _add_missing_is_reviewed_columns()
     _add_missing_ad_strategy_name_column()
     _add_missing_page_strategy_name_column()
+    _add_missing_page_requirements_name_column()
     _add_missing_page_blueprint_columns()
     _rename_page_section_requirement_column()
     Base.metadata.create_all(bind=engine)
@@ -414,6 +415,25 @@ def _add_missing_page_strategy_name_column():
                 ELSE 'Page Strategy ' || id
             END
             WHERE name IS NULL OR TRIM(name) = '' OR name = 'Page Strategy'
+        """))
+
+def _add_missing_page_requirements_name_column():
+    """Add a required display name and derive one for existing requirements."""
+    inspector = inspect(engine)
+    if "page_requirements" not in inspector.get_table_names():
+        return
+
+    columns = {column["name"] for column in inspector.get_columns("page_requirements")}
+    with engine.begin() as conn:
+        if "name" not in columns:
+            conn.execute(text(
+                "ALTER TABLE page_requirements "
+                "ADD COLUMN name VARCHAR NOT NULL DEFAULT 'Page Requirements'"
+            ))
+        conn.execute(text("""
+            UPDATE page_requirements
+            SET name = 'Page Requirements ' || id
+            WHERE name IS NULL OR TRIM(name) = '' OR name = 'Page Requirements'
         """))
 
 def _add_missing_page_blueprint_columns():

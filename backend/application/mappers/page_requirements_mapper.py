@@ -9,4 +9,5 @@ class PageRequirementsMapper:
         return PageRequirementsDto(
             id=item.id,
             page_strategy_id=item.page_strategy_id,
+            name=item.name,
         )

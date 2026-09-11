@@ -108,6 +108,7 @@ from application.handlers.page_strategy.get_page_strategy_handler import get_pag
 from application.handlers.page_strategy.get_message_strategy_page_strategies_handler import get_message_strategy_page_strategies_handler
 from application.handlers.page_strategy.delete_page_strategy_handler import delete_page_strategy_handler
 from application.handlers.page_requirements.create_page_requirements_handler import create_page_requirements_handler
+from application.handlers.page_requirements.generate_page_requirements_handler import generate_page_requirements_handler
 from application.handlers.page_requirements.get_page_requirements_handler import get_page_requirements_handler
 from application.handlers.page_requirements.get_page_strategy_page_requirements_handler import get_page_strategy_page_requirements_handler
 from application.handlers.page_requirements.update_page_requirements_handler import update_page_requirements_handler
@@ -168,6 +169,7 @@ class PageSectionRequirementInput(BaseModel):
 
 
 class UpdatePageRequirementsRequest(BaseModel):
+    name: str
     section_requirements: List[PageSectionRequirementInput]
 
 
@@ -971,8 +973,19 @@ def register_general_routes(router: APIRouter):
     # Page requirements
     # -----------------------------
     @router.post("/page-strategy/{page_strategy_id}/page-requirements/create")
-    def page_strategy_page_requirements_create( page_strategy_id: int ):
-        return create_page_requirements_handler(page_strategy_id=page_strategy_id)
+    def page_strategy_page_requirements_create(
+        page_strategy_id: int,
+        payload: UpdatePageRequirementsRequest,
+    ):
+        return create_page_requirements_handler(
+            page_strategy_id=page_strategy_id,
+            name=payload.name,
+            section_requirements=[item.dict() for item in payload.section_requirements],
+        )
+
+    @router.post("/page-strategy/{page_strategy_id}/page-requirements/generate")
+    def page_strategy_page_requirements_generate(page_strategy_id: int):
+        return generate_page_requirements_handler(page_strategy_id=page_strategy_id)
 
     @router.get("/page-strategy/{page_strategy_id}/page-requirements")
     def get_page_strategy_page_requirements( page_strategy_id: int ):
@@ -986,6 +999,7 @@ def register_general_routes(router: APIRouter):
     def update_page_requirements_route(id: int, payload: UpdatePageRequirementsRequest):
         return update_page_requirements_handler(
             id=id,
+            name=payload.name,
             section_requirements=[item.dict() for item in payload.section_requirements],
         )
 

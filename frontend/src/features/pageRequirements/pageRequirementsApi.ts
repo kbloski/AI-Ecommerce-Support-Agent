@@ -21,18 +21,36 @@ export const pageRequirementsApi = api.injectEndpoints({
       query: (id) => `/page-requirements/${id}`,
       providesTags: (_result, _err, id) => [itemTag('PageRequirements', id)],
     }),
-    createPageRequirements: builder.mutation<Entity, number>({
-      query: (pageStrategyId) => ({ url: `/page-strategy/${pageStrategyId}/page-requirements/create`, method: 'POST' }),
-      invalidatesTags: (_result, _err, pageStrategyId) => [listTag('PageRequirements', pageStrategyId)],
+    createPageRequirements: builder.mutation<
+      Entity,
+      { pageStrategyId: number; name: string; sectionRequirements: PageSectionRequirementInput[] }
+    >({
+      query: ({ pageStrategyId, name, sectionRequirements }) => ({
+        url: `/page-strategy/${pageStrategyId}/page-requirements/create`,
+        method: 'POST',
+        body: { name, section_requirements: sectionRequirements },
+      }),
+      invalidatesTags: (_result, _err, { pageStrategyId }) => [
+        listTag('PageRequirements', pageStrategyId),
+      ],
+    }),
+    generatePageRequirements: builder.mutation<Entity, number>({
+      query: (pageStrategyId) => ({
+        url: `/page-strategy/${pageStrategyId}/page-requirements/generate`,
+        method: 'POST',
+      }),
+      invalidatesTags: (_result, _err, pageStrategyId) => [
+        listTag('PageRequirements', pageStrategyId),
+      ],
     }),
     updatePageRequirements: builder.mutation<
       Entity,
-      { id: number; pageStrategyId: number; sectionRequirements: PageSectionRequirementInput[] }
+      { id: number; pageStrategyId: number; name: string; sectionRequirements: PageSectionRequirementInput[] }
     >({
-      query: ({ id, sectionRequirements }) => ({
+      query: ({ id, name, sectionRequirements }) => ({
         url: `/page-requirements/${id}/update`,
         method: 'POST',
-        body: { section_requirements: sectionRequirements },
+        body: { name, section_requirements: sectionRequirements },
       }),
       invalidatesTags: (_result, _err, { id, pageStrategyId }) => [
         itemTag('PageRequirements', id),
@@ -53,6 +71,7 @@ export const {
   useListPageRequirementsForPageStrategyQuery,
   useGetPageRequirementsQuery,
   useCreatePageRequirementsMutation,
+  useGeneratePageRequirementsMutation,
   useUpdatePageRequirementsMutation,
   useDeletePageRequirementsMutation,
 } = pageRequirementsApi

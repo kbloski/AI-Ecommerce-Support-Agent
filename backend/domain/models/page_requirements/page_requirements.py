@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, DateTime, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.sql import func
 
 from infrastructure.database.db import Base
@@ -11,6 +11,7 @@ class PageRequirements(Base, JSONSerializable):
     __tablename__ = TableName.PAGE_REQUIREMENTS.value
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
 
     page_strategy_id = Column(
         Integer,

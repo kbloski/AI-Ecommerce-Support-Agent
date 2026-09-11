@@ -4,7 +4,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useListPageSectionsQuery } from '@/features/pageSections/pageSectionsApi'
-import { useUpdatePageRequirementsMutation } from './pageRequirementsApi'
+import {
+  useCreatePageRequirementsMutation,
+  useUpdatePageRequirementsMutation,
+} from './pageRequirementsApi'
 import { PAGE_REQUIREMENT_OPTIONS, type PageSectionRequirement } from './pageRequirementsFields'
 import type { Entity } from '@/types'
 
@@ -15,17 +18,21 @@ interface SectionState {
 
 export function EditPageRequirementsForm({
   pageRequirements,
+  pageStrategyId,
   onSaved,
 }: {
-  pageRequirements: Entity
+  pageRequirements?: Entity
+  pageStrategyId?: number
   onSaved: () => void
 }) {
   const { data: sectionTypes, isLoading: sectionsLoading } = useListPageSectionsQuery()
   const [updatePageRequirements, updateState] = useUpdatePageRequirementsMutation()
+  const [createPageRequirements, createState] = useCreatePageRequirementsMutation()
   const [error, setError] = useState<string | null>(null)
+  const [name, setName] = useState(String(pageRequirements?.name ?? ''))
   const [values, setValues] = useState<Record<string, SectionState>>(() => {
     const requirements =
-      (pageRequirements.page_section_requirements as PageSectionRequirement[] | undefined) ?? []
+      (pageRequirements?.page_section_requirements as PageSectionRequirement[] | undefined) ?? []
 
     return Object.fromEntries(
       requirements.map((item) => [
@@ -45,6 +52,12 @@ export function EditPageRequirementsForm({
     }))
 
   const handleSave = async () => {
+    const normalizedName = name.trim()
+    if (!normalizedName) {
+      setError('Nazwa jest wymagana.')
+      return
+    }
+
     const sectionRequirements = Object.entries(values)
       .filter(([, value]) => value.requirement_type)
       .map(([page_section_type_id, value]) => ({
@@ -55,19 +68,45 @@ export function EditPageRequirementsForm({
 
     setError(null)
     try {
-      await updatePageRequirements({
-        id: pageRequirements.id as number,
-        pageStrategyId: pageRequirements.page_strategy_id as number,
-        sectionRequirements,
-      }).unwrap()
+      if (pageRequirements) {
+        await updatePageRequirements({
+          id: pageRequirements.id as number,
+          pageStrategyId: pageRequirements.page_strategy_id as number,
+          name: normalizedName,
+          sectionRequirements,
+        }).unwrap()
+      } else {
+        if (pageStrategyId == null) {
+          setError('Brak Page Strategy dla nowych wymagań.')
+          return
+        }
+        await createPageRequirements({
+          pageStrategyId,
+          name: normalizedName,
+          sectionRequirements,
+        }).unwrap()
+      }
       onSaved()
     } catch {
       setError('Nie udało się zapisać wymagań strony.')
     }
   }
 
+  const isSaving = updateState.isLoading || createState.isLoading
+  const formId = pageRequirements?.id ?? 'new'
+
   return (
     <div className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor={`page-requirements-name-${formId}`}>Nazwa</Label>
+        <Input
+          id={`page-requirements-name-${formId}`}
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          placeholder="Np. Landing page produktu"
+        />
+      </div>
+
       {sectionsLoading && <p className="text-sm text-muted-foreground">Ładowanie…</p>}
 
       <div className="space-y-3">
@@ -89,7 +128,10 @@ export function EditPageRequirementsForm({
                   <Select
                     value={value.requirement_type}
                     onValueChange={(next) =>
-                      next && setSectionValue(section.id, { requirement_type: next })
+                      next && setSectionValue(section.id, {
+                        requirement_type: next,
+                        ...(next === 'excluded' ? { position: '' } : {}),
+                      })
                     }
                   >
                     <SelectTrigger id={`requirement-${section.id}`}>
@@ -112,9 +154,10 @@ export function EditPageRequirementsForm({
                   <Input
                     id={`position-${section.id}`}
                     type="number"
+                    min={1}
                     placeholder="pozycja"
                     value={value.position ?? ''}
-                    disabled={!value.requirement_type}
+                    disabled={!value.requirement_type || value.requirement_type === 'excluded'}
                     onChange={(event) => setSectionValue(section.id, { position: event.target.value })}
                   />
                 </div>
@@ -125,8 +168,8 @@ export function EditPageRequirementsForm({
       </div>
 
       {error && <p className="text-sm text-destructive">{error}</p>}
-      <Button onClick={() => void handleSave()} disabled={updateState.isLoading || sectionsLoading}>
-        {updateState.isLoading ? 'Zapisywanie…' : 'Zapisz'}
+      <Button onClick={() => void handleSave()} disabled={isSaving || sectionsLoading}>
+        {isSaving ? 'Zapisywanie…' : 'Zapisz'}
       </Button>
     </div>
   )

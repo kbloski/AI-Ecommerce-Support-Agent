@@ -583,7 +583,8 @@ class Container(containers.DeclarativeContainer):
         PageRequirementsService,
         logger=logger,
         page_requirements_repository=page_requirements_repository,
-        page_requirements_assembler=page_requirements_assembler
+        page_requirements_assembler=page_requirements_assembler,
+        page_sections_service=page_sections_service,
     )
 
     page_blueprint_service = providers.Singleton(

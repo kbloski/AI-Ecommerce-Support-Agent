@@ -20,7 +20,7 @@ export default function PageRequirementsDetailPage() {
 
   return (
     <DetailShell
-      title=""
+      title={(pageRequirements?.name as string | undefined) ?? 'Page requirements'}
       backTo={pageRequirements ? `/page-strategy/${pageRequirements.page_strategy_id}` : undefined}
       backLabel="← Page strategy"
       data={pageRequirements}

@@ -8,7 +8,7 @@ from infrastructure.database.unit_of_work import unit_of_work
 ALLOWED_REQUIREMENT_TYPES = {item.value for item in PageSectionRequirementType}
 
 
-def update_page_requirements_handler(id: int, section_requirements: List[Dict[str, Any]]):
+def update_page_requirements_handler(id: int, name: str, section_requirements: List[Dict[str, Any]]):
     container = Container()
 
     page_requirements_repository = container.page_requirements_repository()
@@ -16,8 +16,13 @@ def update_page_requirements_handler(id: int, section_requirements: List[Dict[st
     page_sections_service = container.page_sections_service()
     page_requirements_service = container.page_requirements_service()
 
-    if page_requirements_repository.get_by_id(id) is None:
+    page_requirements = page_requirements_repository.get_by_id(id)
+    if page_requirements is None:
         raise ValueError(f"Page requirements {id} not found")
+
+    normalized_name = name.strip()
+    if not normalized_name:
+        raise ValueError("Page requirements name cannot be empty")
 
     allowed_section_types = page_sections_service.get_allowed_ids()
     seen_section_types = set()
@@ -46,6 +51,9 @@ def update_page_requirements_handler(id: int, section_requirements: List[Dict[st
         )
         for entry in section_requirements
     ]
+
+    page_requirements.name = normalized_name
+    page_requirements_repository.update(page_requirements)
 
     with unit_of_work(container.db()):
         page_section_requirements_repository.replace_for_page_requirements(
