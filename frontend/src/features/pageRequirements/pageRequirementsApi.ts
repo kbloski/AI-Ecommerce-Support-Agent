@@ -27,14 +27,17 @@ export const pageRequirementsApi = api.injectEndpoints({
     }),
     updatePageRequirements: builder.mutation<
       Entity,
-      { id: number; sectionRequirements: PageSectionRequirementInput[] }
+      { id: number; pageStrategyId: number; sectionRequirements: PageSectionRequirementInput[] }
     >({
       query: ({ id, sectionRequirements }) => ({
         url: `/page-requirements/${id}/update`,
         method: 'POST',
         body: { section_requirements: sectionRequirements },
       }),
-      invalidatesTags: (_result, _err, { id }) => [itemTag('PageRequirements', id)],
+      invalidatesTags: (_result, _err, { id, pageStrategyId }) => [
+        itemTag('PageRequirements', id),
+        listTag('PageRequirements', pageStrategyId),
+      ],
     }),
     deletePageRequirements: builder.mutation<void, { id: number; pageStrategyId: number }>({
       query: ({ id }) => ({ url: `/page-requirements/${id}/delete`, method: 'DELETE' }),

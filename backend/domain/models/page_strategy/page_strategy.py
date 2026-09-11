@@ -20,6 +20,7 @@ class PageStrategy(Base, JSONSerializable):
         nullable=False
     )
 
+    name = Column(String, nullable=False)
     goal = Column(String, nullable=True)
     conversion_action = Column(String, nullable=True)
 

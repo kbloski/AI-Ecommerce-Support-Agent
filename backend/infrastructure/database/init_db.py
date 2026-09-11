@@ -13,6 +13,7 @@ def init_db():
     _add_missing_favorite_columns()
     _add_missing_is_reviewed_columns()
     _add_missing_ad_strategy_name_column()
+    _add_missing_page_strategy_name_column()
     _add_missing_page_blueprint_columns()
     _rename_page_section_requirement_column()
     Base.metadata.create_all(bind=engine)
@@ -199,6 +200,11 @@ def _migrate_creative_execution_setups():
                 'REFERENCES creative_execution_setups(id) ON DELETE CASCADE'
             ))
 
+        if "name" not in columns:
+            conn.execute(text(
+                'ALTER TABLE "generate_ads" ADD COLUMN name VARCHAR'
+            ))
+
         if "ad_setup_id" in columns:
             conn.execute(text("""
                 UPDATE generate_ads
@@ -210,12 +216,25 @@ def _migrate_creative_execution_setups():
                 WHERE creative_execution_setup_id IS NULL
             """))
 
+        conn.execute(text("""
+            UPDATE generate_ads
+            SET name = 'Generated Ad ' || id
+            WHERE name IS NULL OR TRIM(name) = ''
+        """))
+
+        generate_ad_columns = {
+            column["name"]: column
+            for column in inspect(conn).get_columns("generate_ads")
+        }
+        columns = set(generate_ad_columns)
+
         # SQLite cannot make the newly introduced relation NOT NULL or remove the
         # legacy ad_setup_id safely with ALTER COLUMN. Rebuild the table once all
         # legacy rows have been attached to their default execution setup.
         needs_generate_ads_rebuild = (
             "ad_setup_id" in columns
             or generate_ad_columns.get("creative_execution_setup_id", {}).get("nullable", True)
+            or generate_ad_columns.get("name", {}).get("nullable", True)
         )
         if needs_generate_ads_rebuild:
             unmapped_count = conn.execute(text("""
@@ -239,6 +258,7 @@ def _migrate_creative_execution_setups():
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     creative_execution_setup_id INTEGER NOT NULL
                         REFERENCES creative_execution_setups(id) ON DELETE CASCADE,
+                    name VARCHAR NOT NULL,
                     content_json JSON NOT NULL,
                     is_favorite BOOLEAN NOT NULL DEFAULT 0,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -247,11 +267,11 @@ def _migrate_creative_execution_setups():
             """))
             conn.execute(text("""
                 INSERT INTO generate_ads_migrated (
-                    id, creative_execution_setup_id, content_json,
+                    id, creative_execution_setup_id, name, content_json,
                     is_favorite, created_at, updated_at
                 )
                 SELECT
-                    id, creative_execution_setup_id, content_json,
+                    id, creative_execution_setup_id, name, content_json,
                     COALESCE(is_favorite, 0), created_at, updated_at
                 FROM generate_ads
             """))
@@ -373,6 +393,28 @@ def _add_missing_ad_strategy_name_column():
     if "name" not in columns:
         with engine.begin() as conn:
             conn.execute(text('ALTER TABLE ad_strategy ADD COLUMN name VARCHAR'))
+
+def _add_missing_page_strategy_name_column():
+    """Add a required display name and derive names for existing strategies."""
+    inspector = inspect(engine)
+    if "page_strategy" not in inspector.get_table_names():
+        return
+
+    columns = {column["name"] for column in inspector.get_columns("page_strategy")}
+    with engine.begin() as conn:
+        if "name" not in columns:
+            conn.execute(text(
+                "ALTER TABLE page_strategy "
+                "ADD COLUMN name VARCHAR NOT NULL DEFAULT 'Page Strategy'"
+            ))
+        conn.execute(text("""
+            UPDATE page_strategy
+            SET name = CASE
+                WHEN goal IS NOT NULL AND TRIM(goal) != '' THEN SUBSTR(goal, 1, 255)
+                ELSE 'Page Strategy ' || id
+            END
+            WHERE name IS NULL OR TRIM(name) = '' OR name = 'Page Strategy'
+        """))
 
 def _add_missing_page_blueprint_columns():
     """Additive migration: adds `page_requirements_id` to `page_blueprint`

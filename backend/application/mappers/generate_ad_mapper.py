@@ -9,5 +9,6 @@ class GenerateAdMapper:
         return GenerateAdDto(
             id=item.id,
             creative_execution_setup_id=item.creative_execution_setup_id,
+            name=item.name,
             content_json=item.content_json,
         )

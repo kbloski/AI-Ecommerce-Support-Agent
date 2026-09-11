@@ -86,6 +86,10 @@ Wspólna mechanika zmiany szerokości znajduje się w `src/lib/useResizablePanel
 
 `generate_ads` wiąże się wyłącznie przez wymagane `creative_execution_setup_id`. Migracja w `infrastructure/database/init_db.py::_migrate_creative_execution_setups()` przebudowuje starszy wariant tabeli z wymaganym `ad_setup_id`, po wcześniejszym przypięciu historycznych rekordów do domyślnego `CreativeExecutionSetup`. Jest to konieczne, ponieważ samo dodanie nullable kolumny nie wystarczało i blokowało nowe INSERT-y.
 
+Od 2026-09-11 `GenerateAd` ma wymagane pole `name`. Wszystkie trzy prompty (`video`, `image`, `carousel`) zwracają krótką nazwę na root poziomie odpowiedzi obok `content`; handler ma fallback do nazwy konceptu/big idea/headline dla kompatybilności z niedokładną odpowiedzią LLM. Migracja uzupełnia historyczne rekordy nazwą `Generated Ad {id}`. Lista w `ResourcePages.tsx` już używa `item.name`, więc nie wymaga osobnego markupu.
+
+Od 2026-09-11 `PageStrategy` ma wymagane pole `name`, generowane wewnątrz obiektu `page_strategy`. Handler waliduje nazwę i w razie jej pominięcia przez LLM używa `main_message` lub `goal`. Addytywna migracja uzupełnia istniejące rekordy z `goal` (fallback `Page Strategy {id}`), a lista Page Strategy preferuje `item.name` przed historycznym `goal`.
+
 ## Komendy deweloperskie (z `README.md` projektu)
 
 Backend:

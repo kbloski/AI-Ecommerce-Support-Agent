@@ -366,20 +366,48 @@ Platform:
         content
     )
 
+    if not isinstance(result, dict):
+        raise ValueError("Generate Ad response must be a JSON object")
+
 
     content_json = result.get(
         "content",
         result
     )
 
+    if not isinstance(content_json, dict):
+        raise ValueError("Generate Ad content must be a JSON object")
+
+    name = _get_generated_ad_name(result, content_json, ad_setup.creative_type)
+
 
     entity = GenerateAd(
         creative_execution_setup_id=creative_execution_setup_id,
+        name=name,
         content_json=content_json
     )
 
 
     return generate_ad_service.create_generate_ad(entity)
+
+
+def _get_generated_ad_name(result: dict, content_json: dict, creative_type: str) -> str:
+    candidates = [
+        result.get("name"),
+        content_json.get("name"),
+        (content_json.get("creative_concept") or {}).get("concept_name")
+        if isinstance(content_json.get("creative_concept"), dict) else None,
+        (content_json.get("creative_thesis") or {}).get("big_idea")
+        if isinstance(content_json.get("creative_thesis"), dict) else None,
+        (content_json.get("visual_concept") or {}).get("concept_name")
+        if isinstance(content_json.get("visual_concept"), dict) else None,
+        (content_json.get("headline_strategy") or {}).get("headline")
+        if isinstance(content_json.get("headline_strategy"), dict) else None,
+    ]
+    for candidate in candidates:
+        if isinstance(candidate, str) and candidate.strip():
+            return candidate.strip()[:255]
+    return f"{creative_type.capitalize()} Ad"
 
 
 
@@ -976,6 +1004,7 @@ Nie generuj też osobnego obiektu `cta` — CTA ma być opisane bezpośrednio w 
 Zwróć dokładnie tę minimalną strukturę:
 
 {
+  "name": "Krótka, konkretna nazwa reklamy",
   "content": {
     "duration_seconds": 15,
 
@@ -1399,12 +1428,14 @@ Before returning, verify silently:
 - Do not return empty fields.
 - Do not use null values.
 - Return valid JSON only.
-- Entire specification is inside `content`.
+- Entire specification is inside `content`, except the concise display name in root `name`.
+- Root `name` must be a short, distinctive label for this specific ad concept.
 
 
 # Output Schema
 
 {
+  "name": "Concise, distinctive ad name",
   "content": {
     "visual_concept": {},
     "composition": {},
@@ -1781,12 +1812,14 @@ Before returning, verify silently:
 - Do not return empty fields.
 - Do not use null values.
 - Return valid JSON only.
-- Entire specification is inside `content`.
+- Entire specification is inside `content`, except the concise display name in root `name`.
+- Root `name` must be a short, distinctive label for this specific ad concept.
 
 
 # Output Schema
 
 {
+  "name": "Concise, distinctive ad name",
   "content": {
     "creative_concept": {},
     "carousel_structure": {},

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, DateTime, ForeignKey, JSON, Boolean
+from sqlalchemy import Column, Integer, DateTime, ForeignKey, JSON, Boolean, String
 from sqlalchemy.sql import func
 
 from infrastructure.database.db import Base
@@ -20,6 +20,7 @@ class GenerateAd(Base, JSONSerializable):
         nullable=False
     )
 
+    name = Column(String, nullable=False)
     content_json = Column(JSON, nullable=False)
 
     is_favorite = Column(Boolean, nullable=False, default=False, server_default="0")

@@ -9,6 +9,7 @@ class PageStrategyDto(JSONSerializable):
         self,
         id: int,
         message_strategy_id: int,
+        name: str,
         goal: Optional[str],
         conversion_action: Optional[str],
         target_audience: Optional[str],
@@ -32,6 +33,7 @@ class PageStrategyDto(JSONSerializable):
     ):
         self.id = id
         self.message_strategy_id = message_strategy_id
+        self.name = name
         self.goal = goal
         self.conversion_action = conversion_action
         self.target_audience = target_audience
@@ -59,6 +61,7 @@ class PageStrategyDto(JSONSerializable):
         data = {
             "id": self.id,
             "message_strategy_id": self.message_strategy_id,
+            "name": self.name,
             "goal": self.goal,
             "conversion_action": self.conversion_action,
             "target_audience": self.target_audience,

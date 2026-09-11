@@ -9,6 +9,7 @@ class PageStrategyMapper:
         return PageStrategyDto(
             id=item.id,
             message_strategy_id=item.message_strategy_id,
+            name=item.name,
             goal=item.goal,
             conversion_action=item.conversion_action,
             target_audience=item.target_audience,
