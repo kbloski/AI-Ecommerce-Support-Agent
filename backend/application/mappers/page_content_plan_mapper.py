@@ -8,6 +8,7 @@ class PageContentPlanMapper:
     def to_dto(item: PageContentPlan) -> PageContentPlanDto:
         return PageContentPlanDto(
             id=item.id,
+            name=item.name,
             page_blueprint_id=item.page_blueprint_id,
             sections=item.sections,
         )

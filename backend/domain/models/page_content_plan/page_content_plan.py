@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, DateTime, ForeignKey, JSON, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON, Boolean
 from sqlalchemy.sql import func
 
 from infrastructure.database.db import Base
@@ -12,6 +12,7 @@ class PageContentPlan(Base, JSONSerializable):
 
     # primary key
     id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
 
     page_blueprint_id = Column(
         Integer,

@@ -13,7 +13,7 @@ export default function PageContentPlanDetailPage() {
 
   return (
     <DetailShell
-      title="Page content plan"
+      title={(pageContentPlan?.name as string | undefined) ?? 'Page content plan'}
       backTo={pageContentPlan ? `/page-blueprint/${pageContentPlan.page_blueprint_id}` : undefined}
       backLabel="← Page blueprint"
       data={pageContentPlan}
