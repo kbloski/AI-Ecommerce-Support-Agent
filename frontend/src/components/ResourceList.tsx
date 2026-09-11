@@ -21,6 +21,7 @@ interface ResourceListProps {
   itemDescription?: (item: Entity) => ReactNode
   itemDetails?: (item: Entity) => ReactNode
   itemActions?: (item: Entity) => ReactNode
+  additionalActions?: ReactNode
   onGenerate?: () => void
   isGenerating?: boolean
   generateLabel?: string
@@ -46,6 +47,7 @@ export function ResourceList({
   itemDescription,
   itemDetails,
   itemActions,
+  additionalActions,
   onGenerate,
   isGenerating,
   generateLabel = 'Generuj',
@@ -73,11 +75,16 @@ export function ResourceList({
       onEdit={onEdit}
       onDelete={onDelete}
       emptyDescription="Wygeneruj lub dodaj pierwszy element, aby rozpocząć pracę."
-      actions={onGenerate ? (
-          <Button onClick={onGenerate} disabled={isGenerating} className="h-9 rounded-md bg-[#111111] px-4 text-white shadow-sm hover:bg-black">
-            <Plus />
-            {isGenerating ? 'Generowanie…' : generateLabel}
-          </Button>
+      actions={(onGenerate || additionalActions) ? (
+        <>
+          {additionalActions}
+          {onGenerate && (
+            <Button onClick={onGenerate} disabled={isGenerating} className="h-9 rounded-md bg-[#111111] px-4 text-white shadow-sm hover:bg-black">
+              <Plus />
+              {isGenerating ? 'Generowanie…' : generateLabel}
+            </Button>
+          )}
+        </>
       ) : undefined}
     />
   )

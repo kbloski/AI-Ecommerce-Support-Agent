@@ -40,6 +40,7 @@ import { useListExecutionStylesQuery, type ExecutionStyle } from '@/features/exe
 import { useListAdFrameworksQuery, type AdFramework } from '@/features/adFrameworks/adFrameworksApi'
 import { useListCreativeAnglesQuery, type CreativeAngle } from '@/features/creativeAngels/creativeAnglesApi'
 import { useListPlatformsQuery, type Platform } from '@/features/platforms/platformsApi'
+import { GenerateCreativeExecutionSetupsForm } from '@/features/creativeExecutionSetup/GenerateCreativeExecutionSetupsForm'
 
 function ResourcePage({ title: _title, children }: { backTo: string; backLabel: string; title: string; children: ReactNode }) {
   return <div className="w-full space-y-6 p-6 lg:p-10">
@@ -222,7 +223,22 @@ export function AdSetupCreativeExecutionSetupsPage() {
   const id = Number(useParams().id); const { data } = useGetAdSetupQuery(id)
   const list = useListCreativeExecutionSetupsForAdSetupQuery(id); const [remove] = useDeleteCreativeExecutionSetupMutation(); const { openPanel, closePanel } = useSidePanel()
   return <ResourcePage backTo={`/ad-setup/${id}`} backLabel={(data?.name as string) ?? 'Ad Setup'} title="Creative Execution Setup">
-    <ResourceList title="Creative Execution Setup" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/creative-execution-setup/${item.id}`} itemLabel={(item) => (item.name as string) ?? 'Bez nazwy'} onGenerate={() => data && openPanel({ title: 'Dodaj Creative Execution Setup', content: <CreativeExecutionSetupForm adSetup={data} onSaved={closePanel} /> })} generateLabel="Dodaj konfigurację" onDelete={(item) => remove({ id: item.id as number, adSetupId: id })} />
+    <ResourceList
+      title="Creative Execution Setup"
+      items={list.data}
+      isLoading={list.isLoading}
+      error={list.error}
+      linkTo={(item) => `/creative-execution-setup/${item.id}`}
+      itemLabel={(item) => (item.name as string) ?? 'Bez nazwy'}
+      onGenerate={() => openPanel({ title: 'Generuj Creative Execution Setup', content: <GenerateCreativeExecutionSetupsForm adSetupId={id} onSaved={closePanel} /> })}
+      generateLabel="Generuj konfiguracje"
+      additionalActions={data ? (
+        <Button variant="outline" className="h-9" onClick={() => openPanel({ title: 'Dodaj Creative Execution Setup', content: <CreativeExecutionSetupForm adSetup={data} onSaved={closePanel} /> })}>
+          Dodaj ręcznie
+        </Button>
+      ) : undefined}
+      onDelete={(item) => remove({ id: item.id as number, adSetupId: id })}
+    />
   </ResourcePage>
 }
 

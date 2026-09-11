@@ -71,6 +71,8 @@ Cała warstwa API frontendu to RTK Query (`src/store/api.ts`, jeden wspólny `cr
 
 ## Nowe/potwierdzone endpointy generujące (dodane/zweryfikowane 2026-09-09)
 
+Aktualizacja 2026-09-11: `POST /ad-setup/{ad_setup_id}/creative-execution-setups/generate` przyjmuje `{"count": 1..10}` i generuje dodatkowe `CreativeExecutionSetup` na podstawie `AdStrategy`, `CreativeStrategy`, `AdSetup`, katalogów reklamowych oraz istniejących konfiguracji. Wynik jest walidowany i zapisywany atomowo. Ręczne `POST .../create` nadal działa obok generowania.
+
 | Etap | Endpoint | AI? | Uwagi |
 |---|---|---|---|
 | OfferProfile (+ jej `OfferProfileElement`) | `POST /offers/{id}/offer-profiles/generate` | tak | Generuje `OfferProfile` i od razu komplet `OfferProfileElement` (typy z `OfferProfileElementType`) w jednym wywołaniu LLM — patrz `offer_profile_generate.py`. |

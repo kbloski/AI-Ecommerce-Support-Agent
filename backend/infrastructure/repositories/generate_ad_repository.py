@@ -13,10 +13,14 @@ class GenerateAdRepository:
 
     # ➕ CREATE
     def create(self, item: GenerateAd) -> GenerateAd:
-        self.db.add(item)
-        self.db.commit()
-        self.db.refresh(item)
-        return item
+        try:
+            self.db.add(item)
+            self.db.commit()
+            self.db.refresh(item)
+            return item
+        except Exception:
+            self.db.rollback()
+            raise
 
     # 🔍 GET BY ID
     def get_by_id(self, id: int) -> Optional[GenerateAd]:

@@ -187,10 +187,11 @@ def _migrate_creative_execution_setups():
         if "generate_ads" not in tables:
             return
 
-        columns = {
-            column["name"]
+        generate_ad_columns = {
+            column["name"]: column
             for column in inspect(conn).get_columns("generate_ads")
         }
+        columns = set(generate_ad_columns)
         if "creative_execution_setup_id" not in columns:
             conn.execute(text(
                 'ALTER TABLE "generate_ads" '
@@ -208,6 +209,56 @@ def _migrate_creative_execution_setups():
                 )
                 WHERE creative_execution_setup_id IS NULL
             """))
+
+        # SQLite cannot make the newly introduced relation NOT NULL or remove the
+        # legacy ad_setup_id safely with ALTER COLUMN. Rebuild the table once all
+        # legacy rows have been attached to their default execution setup.
+        needs_generate_ads_rebuild = (
+            "ad_setup_id" in columns
+            or generate_ad_columns.get("creative_execution_setup_id", {}).get("nullable", True)
+        )
+        if needs_generate_ads_rebuild:
+            unmapped_count = conn.execute(text("""
+                SELECT COUNT(*)
+                FROM generate_ads
+                WHERE creative_execution_setup_id IS NULL
+            """)).scalar_one()
+            if unmapped_count:
+                raise RuntimeError(
+                    f"Cannot migrate generate_ads: {unmapped_count} rows have no Creative Execution Setup"
+                )
+
+            current_tables = set(inspect(conn).get_table_names())
+            if "generate_ads_migrated" in current_tables:
+                raise RuntimeError(
+                    "Temporary table generate_ads_migrated already exists; migration requires manual resolution."
+                )
+
+            conn.execute(text("""
+                CREATE TABLE generate_ads_migrated (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    creative_execution_setup_id INTEGER NOT NULL
+                        REFERENCES creative_execution_setups(id) ON DELETE CASCADE,
+                    content_json JSON NOT NULL,
+                    is_favorite BOOLEAN NOT NULL DEFAULT 0,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            """))
+            conn.execute(text("""
+                INSERT INTO generate_ads_migrated (
+                    id, creative_execution_setup_id, content_json,
+                    is_favorite, created_at, updated_at
+                )
+                SELECT
+                    id, creative_execution_setup_id, content_json,
+                    COALESCE(is_favorite, 0), created_at, updated_at
+                FROM generate_ads
+            """))
+            conn.execute(text('DROP TABLE "generate_ads"'))
+            conn.execute(text(
+                'ALTER TABLE "generate_ads_migrated" RENAME TO "generate_ads"'
+            ))
 
 def _migrate_offers_to_offers_raw():
     """Migrate the retired Offer schema before SQLAlchemy creates offers_raw.

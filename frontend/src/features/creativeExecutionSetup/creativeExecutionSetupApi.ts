@@ -23,6 +23,14 @@ export const creativeExecutionSetupApi = api.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, { adSetupId }) => [listTag('CreativeExecutionSetup', adSetupId)],
     }),
+    generateCreativeExecutionSetups: builder.mutation<Entity[], { adSetupId: number; count: number }>({
+      query: ({ adSetupId, count }) => ({
+        url: `/ad-setup/${adSetupId}/creative-execution-setups/generate`,
+        method: 'POST',
+        body: { count },
+      }),
+      invalidatesTags: (_result, _error, { adSetupId }) => [listTag('CreativeExecutionSetup', adSetupId)],
+    }),
     updateCreativeExecutionSetup: builder.mutation<Entity, { id: number; fields: Record<string, unknown> }>({
       query: ({ id, fields }) => ({
         url: `/creative-execution-setups/${id}/update`,
@@ -45,6 +53,7 @@ export const {
   useListCreativeExecutionSetupsForAdSetupQuery,
   useGetCreativeExecutionSetupQuery,
   useCreateCreativeExecutionSetupMutation,
+  useGenerateCreativeExecutionSetupsMutation,
   useUpdateCreativeExecutionSetupMutation,
   useDeleteCreativeExecutionSetupMutation,
 } = creativeExecutionSetupApi

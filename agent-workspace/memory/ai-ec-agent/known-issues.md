@@ -4,6 +4,8 @@ Odkryte podczas pierwszej analizy 2026-09-03 (commit `b942f16`). To obserwacje, 
 
 ## Backend
 
+- ~~**`GenerateAd` nie zapisywał się po rozdzieleniu `AdSetup` / `CreativeExecutionSetup`** — stara tabela `generate_ads` zachowywała `ad_setup_id NOT NULL`, podczas gdy model zapisywał już wyłącznie `creative_execution_setup_id`, więc każdy INSERT kończył się naruszeniem `NOT NULL`.~~ Rozwiązane 2026-09-11: `_migrate_creative_execution_setups()` mapuje legacy rows do domyślnego setupu, a następnie przebudowuje tabelę do docelowego schematu z wymaganym `creative_execution_setup_id` i bez `ad_setup_id`. Repozytorium wykonuje rollback po błędzie zapisu.
+
 - **`Container()` tworzony per handler/request**, nie jako jeden obiekt aplikacji (np. `application/handlers/knowledges/knowledge_generate.py:50`). Providery `Singleton` w `di/container.py` są singletonami tylko w obrębie krótkotrwałej instancji — DB session i logger de facto tworzone od nowa za każdym razem. To Service Locator ad-hoc, nie klasyczny DI z jednym kontenerem aplikacji.
 - **Mutacje/generowanie idą przez `GET`**, oznaczone komentarzami `# POST in future` / `# DELETE in future` w `api/routes/general_routes.py` — niezgodne z semantyką HTTP, kosztowne operacje LLM wywoływane przez `GET` bez idempotencji.
 - **Brak globalnej obsługi błędów** — nieobsłużone wyjątki (np. `json.loads()` na złej odpowiedzi LLM) kończą się surowym HTTP 500 bez czytelnego komunikatu. Tylko pojedyncze handlery (np. `generate_page_copy_handler.py:153-172`) łapią błąd parsowania i zwracają `{"error", "raw_response"}`.

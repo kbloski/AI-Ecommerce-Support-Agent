@@ -38,6 +38,7 @@ from application.handlers.creative_strategy.update_creative_strategy_handler imp
 from application.handlers.ad_setup.update_ad_setup_handler import update_ad_setup_handler
 from application.handlers.generate_ad.update_generate_ad_handler import update_generate_ad_handler
 from application.handlers.creative_execution_setup.create_creative_execution_setup_handler import create_creative_execution_setup_handler
+from application.handlers.creative_execution_setup.generate_creative_execution_setups_handler import generate_creative_execution_setups_handler
 from application.handlers.creative_execution_setup.get_creative_execution_setup_handler import get_creative_execution_setup_handler
 from application.handlers.creative_execution_setup.get_ad_setup_creative_execution_setups_handler import get_ad_setup_creative_execution_setups_handler
 from application.handlers.creative_execution_setup.update_creative_execution_setup_handler import update_creative_execution_setup_handler
@@ -207,6 +208,10 @@ class CreateOfferProfileElementRequest(BaseModel):
 class GenerateOfferProfileElementsRequest(BaseModel):
     element_types: List[OfferProfileElementType] = Field(min_length=1)
     examples_per_type: int = 3
+
+
+class GenerateCreativeExecutionSetupsRequest(BaseModel):
+    count: int = Field(default=3, ge=1, le=10)
 
 
 def register_general_routes(router: APIRouter):
@@ -873,6 +878,16 @@ def register_general_routes(router: APIRouter):
     @router.post("/ad-setup/{ad_setup_id}/creative-execution-setups/create")
     def create_creative_execution_setup(ad_setup_id: int, payload: UpdateFieldsRequest):
         return create_creative_execution_setup_handler(ad_setup_id=ad_setup_id, fields=payload.fields)
+
+    @router.post("/ad-setup/{ad_setup_id}/creative-execution-setups/generate")
+    def generate_creative_execution_setups(
+        ad_setup_id: int,
+        payload: GenerateCreativeExecutionSetupsRequest,
+    ):
+        return generate_creative_execution_setups_handler(
+            ad_setup_id=ad_setup_id,
+            count=payload.count,
+        )
 
     @router.get("/ad-setup/{ad_setup_id}/creative-execution-setups")
     def get_ad_setup_creative_execution_setups(ad_setup_id: int):

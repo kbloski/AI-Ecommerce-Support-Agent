@@ -17,6 +17,17 @@ class CreativeExecutionSetupRepository:
         self.db.refresh(item)
         return item
 
+    def create_many(self, items: List[CreativeExecutionSetup]) -> List[CreativeExecutionSetup]:
+        try:
+            self.db.add_all(items)
+            self.db.commit()
+            for item in items:
+                self.db.refresh(item)
+            return items
+        except Exception:
+            self.db.rollback()
+            raise
+
     def get_by_id(self, id: int) -> Optional[CreativeExecutionSetup]:
         return self.db.query(CreativeExecutionSetup).filter(CreativeExecutionSetup.id == id).first()
 

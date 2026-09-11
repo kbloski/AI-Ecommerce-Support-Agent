@@ -80,6 +80,12 @@ Desktopowy `AppShell` składa się ze zwijanego `AppSidebar`, stale widocznego i
 
 Wspólna mechanika zmiany szerokości znajduje się w `src/lib/useResizablePanel.ts` i obsługuje pointer events, klawiaturę, limity, reset oraz opcjonalną persystencję. Korzystają z niej stały `AppContextSidebar` (panel zakotwiczony z lewej) i modalny prawy `SidePanel` (panel zakotwiczony z prawej). Nie łączyć tych paneli w jeden komponent wizualny: współdzielą mechanikę szerokości, ale różnią się modalnością, overlayem, zarządzaniem focusem i cyklem życia.
 
+### Generowanie Creative Execution Setup (dodane 2026-09-11)
+
+`POST /ad-setup/{ad_setup_id}/creative-execution-setups/generate` generuje 1–10 nowych konfiguracji w jednym wywołaniu LLM. Kontekst jest świadomie ograniczony do `AdStrategy → CreativeStrategy → AdSetup`, katalogów frameworków/angles/styles i istniejących setupów używanych do unikania duplikatów. Handler `application/handlers/creative_execution_setup/generate_creative_execution_setups_handler.py` waliduje całą odpowiedź przed zapisem; `CreativeExecutionSetupRepository.create_many()` zapisuje partię atomowo. Ręczny endpoint `.../create` pozostaje niezależny.
+
+`generate_ads` wiąże się wyłącznie przez wymagane `creative_execution_setup_id`. Migracja w `infrastructure/database/init_db.py::_migrate_creative_execution_setups()` przebudowuje starszy wariant tabeli z wymaganym `ad_setup_id`, po wcześniejszym przypięciu historycznych rekordów do domyślnego `CreativeExecutionSetup`. Jest to konieczne, ponieważ samo dodanie nullable kolumny nie wystarczało i blokowało nowe INSERT-y.
+
 ## Komendy deweloperskie (z `README.md` projektu)
 
 Backend:
