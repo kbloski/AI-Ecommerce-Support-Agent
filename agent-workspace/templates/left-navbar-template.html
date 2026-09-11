@@ -1,0 +1,309 @@
+<!DOCTYPE html><html lang="pl" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Elementy oferty - AIEC SASS</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style data-purpose="base-styling">
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  </style>
+</head>
+<body class="bg-white text-slate-800 antialiased min-h-screen flex flex-col">
+<!-- BEGIN: AppContainer -->
+<div class="flex flex-1 min-h-screen">
+<!-- BEGIN: PrimaryLeftSidebar -->
+<!-- Far-left slim application navigation bar -->
+<aside id="primary-sidebar" class="w-16 transition-all duration-200 ease-in-out border-r border-slate-200 bg-white flex flex-col flex-shrink-0 relative select-none z-20 overflow-hidden" data-purpose="primary-navigation"><div class="h-14 px-3 flex items-center justify-between border-b border-slate-100"><div class="w-10 h-10 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-sm mx-auto shadow-sm">A</div></div><nav class="flex-1 px-2 py-3 space-y-1 overflow-hidden"><a href="#" class="flex items-center justify-center w-10 h-10 mx-auto text-slate-600 rounded-md hover:bg-slate-50 hover:text-slate-900 transition-colors" title="Panel główny"><svg class="w-5 h-5 text-slate-500 stroke-[2] flex-shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect height="7" width="7" x="3" y="3"></rect><rect height="7" width="7" x="14" y="3"></rect><rect height="7" width="7" x="14" y="14"></rect><rect height="7" width="7" x="3" y="14"></rect></svg></a><a href="#" class="flex items-center justify-center w-10 h-10 mx-auto text-slate-900 bg-slate-100 rounded-md transition-colors relative shadow-sm" title="Oferta (Aktywna)"><div class="w-1.5 h-4 bg-slate-900 rounded-full absolute left-0.5 top-1/2 -translate-y-1/2"></div><svg class="w-5 h-5 text-slate-900 stroke-[2] flex-shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" x2="12" y1="22.08" y2="12"></line></svg></a><a href="#" class="flex items-center justify-center w-10 h-10 mx-auto text-slate-600 rounded-md hover:bg-slate-50 hover:text-slate-900 transition-colors" title="Projekty"><svg class="w-5 h-5 text-slate-500 stroke-[2] flex-shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg></a><a href="#" class="flex items-center justify-center w-10 h-10 mx-auto text-slate-600 rounded-md hover:bg-slate-50 hover:text-slate-900 transition-colors" title="Ustawienia"><svg class="w-5 h-5 text-slate-500 stroke-[2] flex-shrink-0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></a></nav></aside>
+<!-- END: PrimaryLeftSidebar -->
+<!-- BEGIN: SecondarySidebar -->
+<!-- Secondary context-specific navigation panel -->
+<aside id="secondary-sidebar" class="w-[270px] border-r border-slate-200 bg-slate-50/60 flex flex-col flex-shrink-0 select-none overflow-hidden" data-purpose="secondary-navigation">
+  <!-- Header -->
+  <div class="h-14 px-4 flex items-center justify-between border-b border-slate-200/70 bg-white">
+    <a class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors" href="#">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+      <span class="">Wróć do ofert</span>
+    </a>
+    <span class="text-[11px] font-mono text-slate-400 font-medium">#OFR-42</span>
+  </div>
+
+  <!-- Step Card -->
+  <div class="p-3.5 border-b border-slate-200/70 bg-white"><div class="flex items-center justify-between mb-1"><span class="text-[10px] font-semibold text-slate-400 tracking-wider uppercase">Aktualny etap</span><a href="#" class="text-[11px] text-slate-500 hover:text-slate-900 underline">Zmień</a></div><div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-900">Profil oferty</span></div></div>
+
+  <!-- Navigation sections list -->
+  <div class="flex-1 overflow-y-auto px-3 py-3 space-y-4">
+    <!-- PROCES -->
+    <div class="space-y-1">
+      <div class="flex items-center justify-between px-2 py-1 text-[11px] font-semibold text-slate-500 tracking-wider uppercase">
+        <span class="">Proces</span>
+        <button class="text-slate-400 hover:text-slate-700 text-xs font-bold" type="button">+</button>
+      </div>
+      <div class="space-y-0.5 pl-1">
+        <a class="flex items-center justify-between px-2.5 py-1.5 text-xs text-slate-600 rounded-md hover:bg-white hover:text-slate-900 transition-colors" href="#">
+          <span class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+            Marketing marki
+          </span>
+          <span class="px-1.5 py-0.2 text-[10px] text-slate-400 font-mono bg-white border border-slate-200/70 rounded">1</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- WIEDZA -->
+    <div class="space-y-1">
+      <div class="flex items-center justify-between px-2 py-1 text-[11px] font-semibold text-slate-500 tracking-wider uppercase">
+        <span class="">Wiedza</span>
+        <button class="text-slate-400 hover:text-slate-700 text-xs font-bold" type="button">+</button>
+      </div>
+      <div class="space-y-0.5 pl-1">
+        <a class="flex items-center justify-between px-2.5 py-1.5 text-xs text-slate-600 rounded-md hover:bg-white hover:text-slate-900 transition-colors" href="#">
+          <span class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+            Analizy
+          </span>
+          <span class="px-1.5 py-0.2 text-[10px] text-slate-400 font-mono bg-white border border-slate-200/70 rounded">1</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ZASOBY -->
+    <div class="space-y-1">
+      <div class="flex items-center justify-between px-2 py-1 text-[11px] font-semibold text-slate-900 tracking-wider uppercase">
+        <span class="">Zasoby</span>
+        <button class="text-slate-400 hover:text-slate-700 text-xs font-bold" type="button">+</button>
+      </div>
+      <div class="space-y-1 pl-1">
+        <a class="flex items-center justify-between px-2.5 py-1.5 text-xs text-slate-600 rounded-md hover:bg-white hover:text-slate-900 transition-colors" href="#">
+          <span class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+            Grupy docelowe
+          </span>
+          <span class="px-1.5 py-0.2 text-[10px] text-slate-400 font-mono">0</span>
+        </a>
+        <a class="flex items-center justify-between px-2.5 py-2 text-xs font-semibold text-slate-900 bg-white border border-slate-200 rounded-md shadow-sm transition-colors" href="#">
+          <span class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-900"></span>
+            Elementy oferty
+          </span>
+          <div class="flex items-center gap-1.5">
+            <span class="inline-flex items-center gap-0.5 px-1.5 py-0.2 text-[10px] font-medium font-mono text-rose-700 bg-rose-50 border border-rose-200 rounded" title="Wymaga weryfikacji">
+              <span class="font-bold">!</span> 12
+            </span>
+            <span class="px-1.5 py-0.2 text-[10px] text-slate-600 font-mono bg-slate-100 rounded">30</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Quick Actions / Narzędzia Ścieżki -->
+  <div class="p-3 border-t border-slate-200/70 bg-white space-y-2">
+    <div class="flex items-center justify-between px-1 mb-1">
+      <span class="text-[10px] font-semibold text-slate-400 tracking-wider uppercase">Narzędzia ścieżki</span>
+      <svg class="w-3 h-3 text-slate-400 cursor-pointer hover:text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+    <button class="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200/70 rounded transition-colors text-left" type="button">
+      <span class="flex items-center gap-2">
+        <svg class="w-3.5 h-3.5 text-slate-500 stroke-[2]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" x2="12" y1="15" y2="3"></line>
+        </svg>
+        <span class="">Pobierz dane (.txt / .json)</span>
+      </span>
+      <kbd class="text-[9px] font-mono text-slate-400">TXT</kbd>
+    </button>
+    <div class="grid grid-cols-2 gap-1.5">
+      <button class="flex items-center justify-center gap-1 px-2 py-1.5 text-[11px] font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-slate-200 rounded transition-colors" title="Kopiuj prompt kontekstowy" type="button">
+        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+        </svg>
+        <span class="">Prompt</span>
+      </button>
+      <button class="flex items-center justify-center gap-1 px-2 py-1.5 text-[11px] font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-slate-200 rounded transition-colors" title="Waliduj stan oferty" type="button">
+        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span class="">Waliduj</span>
+      </button>
+    </div>
+  </div>
+</aside>
+<!-- END: SecondarySidebar -->
+<!-- BEGIN: MainContentArea -->
+<!-- Content container with header and list of items -->
+<main class="flex-1 bg-white px-10 py-7 min-w-0" data-purpose="offer-elements-view">
+<!-- Top Header Bar -->
+<div class="flex items-center justify-between pb-7" data-purpose="view-header">
+<!-- Page Title with counter -->
+<div class="flex items-center gap-3">
+<h1 class="text-2xl font-bold tracking-tight text-slate-900">Elementy oferty</h1>
+<span class="text-xs text-slate-400 font-normal">30</span>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-3">
+<button class="px-3.5 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded hover:bg-slate-50 transition-colors shadow-sm" type="button">
+            Generuj elementy
+          </button>
+<button class="px-3.5 py-1.5 text-xs font-medium text-white bg-[#111111] hover:bg-black rounded transition-colors shadow-sm" onclick="document.getElementById('drawer-container').classList.remove('hidden')" type="button">
+            Dodaj element
+          </button>
+</div>
+</div>
+<!-- Item Rows List -->
+<div class="mb-6 max-w-5xl space-y-3.5" data-purpose="filter-toolbar"><div class="flex flex-wrap items-center justify-between gap-3 pb-1"><div class="relative flex-1 min-w-[260px] max-w-md"><svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line></svg><input class="w-full pl-9 pr-3.5 py-1.5 text-xs text-slate-800 bg-white border border-slate-200 rounded-md placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-colors shadow-sm" placeholder="Szukaj w elementach oferty..." type="text"></div><div class="flex items-center gap-2.5"><div class="relative"><select class="appearance-none bg-white border border-slate-200 text-slate-700 text-xs font-medium py-1.5 pl-3 pr-8 rounded-md hover:bg-slate-50 focus:outline-none transition-colors shadow-sm cursor-pointer"><option>Status: Wszystkie</option><option>Zaakceptowane</option><option>Do weryfikacji</option><option>Szkic</option></select><svg class="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></div><div class="relative"><select class="appearance-none bg-white border border-slate-200 text-slate-700 text-xs font-medium py-1.5 pl-3 pr-8 rounded-md hover:bg-slate-50 focus:outline-none transition-colors shadow-sm cursor-pointer"><option>Sortuj: Domyślne</option><option>Najnowsze</option><option>Po identyfikatorze</option><option>Alfabetycznie</option></select><svg class="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></div></div></div><div class="flex items-center gap-1.5 pt-0.5"><button class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-[#111111] text-white transition-colors shadow-sm" type="button"><span class="">Wszystkie typy</span><span class="text-[10px] font-mono opacity-85">30</span></button><button class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" type="button"><span class="">Korzyść</span><span class="text-[10px] font-mono px-1 py-0.2 bg-slate-100 text-slate-500 rounded">18</span></button><button class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" type="button"><span class="">Cecha</span><span class="text-[10px] font-mono px-1 py-0.2 bg-slate-100 text-slate-500 rounded">7</span></button><button class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" type="button"><span class="">Wartość</span><span class="text-[10px] font-mono px-1 py-0.2 bg-slate-100 text-slate-500 rounded">5</span></button></div></div><div class="space-y-3.5 max-w-5xl" data-purpose="items-list"><!-- Item 01 (Sprawdzony) -->
+<div class="group relative p-6 bg-white border border-slate-200 rounded-lg hover:border-slate-300 transition-all shadow-sm">
+  <div class="flex items-start gap-8">
+    <span class="text-xs font-mono text-slate-400 pt-0.5 select-none w-5 flex-shrink-0">01</span>
+    <div class="flex-1 space-y-2"><div class="flex items-center justify-between gap-3 flex-wrap"><h2 class="text-sm font-semibold text-slate-900 leading-none">Zaangażowanie estetyczne</h2><span class="text-[11px] text-slate-400 font-mono">Identyfikator 4</span></div><div class="flex items-center gap-2 flex-wrap pt-0.5"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600">Korzyść</span><span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-100"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Sprawdzony</span></div><p class="text-xs text-slate-600 leading-relaxed max-w-3xl pt-1">korzyść — łączy w sobie atrakcyjność wizualną z użytecznością funkcjonalną, dzięki czemu korzystanie z narzędzia na co dzień staje się przyjemniejsze.</p><div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between"><div class="flex items-center gap-2"><button class="px-2.5 py-1 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded hover:bg-slate-50 transition-colors" onclick="document.getElementById('drawer-container').classList.remove('hidden')" type="button">Edytuj</button><button class="px-2.5 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 rounded hover:bg-slate-100 transition-colors" type="button">Szczegóły</button><button class="px-2.5 py-1 text-xs font-medium text-slate-500 hover:text-slate-800 rounded hover:bg-slate-100 transition-colors" type="button">Oznacz jako niesprawdzone</button></div></div></div>
+  </div>
+</div>
+
+<!-- Item 02 (Sprawdzony) -->
+<div class="group relative p-6 bg-white border border-slate-200 rounded-lg hover:border-slate-300 transition-all shadow-sm">
+  <div class="flex items-start gap-8">
+    <span class="text-xs font-mono text-slate-400 pt-0.5 select-none w-5 flex-shrink-0">02</span>
+    <div class="flex-1 space-y-2"><div class="flex items-center justify-between gap-3 flex-wrap"><h2 class="text-sm font-semibold text-slate-900 leading-none">Możliwość dostosowania wartości prezentu</h2><span class="text-[11px] text-slate-400 font-mono">Identyfikator 3</span></div><div class="flex items-center gap-2 flex-wrap pt-0.5"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600">Korzyść</span><span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-100"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Sprawdzony</span></div><p class="text-xs text-slate-600 leading-relaxed max-w-3xl pt-1">korzyść — umożliwia odbiorcom personalizację prezentu poprzez wybór kartek odpowiadających ich konkretnym potrzebom lub zainteresowaniom.</p><div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between"><div class="flex items-center gap-2"><button class="px-2.5 py-1 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded hover:bg-slate-50 transition-colors" onclick="document.getElementById('drawer-container').classList.remove('hidden')" type="button">Edytuj</button><button class="px-2.5 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 rounded hover:bg-slate-100 transition-colors" type="button">Szczegóły</button><button class="px-2.5 py-1 text-xs font-medium text-slate-500 hover:text-slate-800 rounded hover:bg-slate-100 transition-colors" type="button">Oznacz jako niesprawdzone</button></div></div></div>
+  </div>
+</div>
+
+<!-- Item 03 (Wymaga sprawdzenia - stonowany / wyszarzony) -->
+<div class="group relative p-6 bg-slate-50/60 border border-slate-200 rounded-lg hover:border-slate-300 transition-all">
+  <div class="flex items-start gap-8">
+    <span class="text-xs font-mono text-slate-400 pt-0.5 select-none w-5 flex-shrink-0">03</span>
+    <div class="flex-1 space-y-2"><div class="flex items-center justify-between gap-3 flex-wrap"><h2 class="text-sm font-medium text-slate-700 leading-none">Ułatwianie wyrażania emocji</h2><span class="text-[11px] text-slate-400 font-mono">Identyfikator 2</span></div><div class="flex items-center gap-2 flex-wrap pt-0.5"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-200/70 text-slate-600">Korzyść</span><span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-rose-50 text-rose-700 border border-rose-200"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Wymaga sprawdzenia</span></div><p class="text-xs text-slate-500 leading-relaxed max-w-3xl pt-1">korzyść — zapewnia niewerbalne ujście dla wyrażania złożonych emocji za pomocą kolorowych, tematycznych podpowiedzi.</p><div class="pt-3 mt-3 border-t border-slate-200/70 flex items-center justify-between"><div class="flex items-center gap-2"><button class="px-3 py-1 text-xs font-medium text-white bg-[#111111] hover:bg-black rounded transition-colors shadow-sm" type="button">Zatwierdź</button><button class="px-2.5 py-1 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded hover:bg-slate-50 transition-colors" onclick="document.getElementById('drawer-container').classList.remove('hidden')" type="button">Edytuj</button><button class="px-2.5 py-1 text-xs font-medium text-slate-500 hover:text-rose-600 rounded hover:bg-slate-100 transition-colors" type="button">Odrzuć</button></div></div></div>
+  </div>
+</div>
+
+<!-- Item 04 (Sprawdzony) -->
+<div class="group relative p-6 bg-white border border-slate-200 rounded-lg hover:border-slate-300 transition-all shadow-sm">
+  <div class="flex items-start gap-8">
+    <span class="text-xs font-mono text-slate-400 pt-0.5 select-none w-5 flex-shrink-0">04</span>
+    <div class="flex-1 space-y-2"><div class="flex items-center justify-between gap-3 flex-wrap"><h2 class="text-sm font-semibold text-slate-900 leading-none">Zwiększona samoświadomość</h2><span class="text-[11px] text-slate-400 font-mono">Identyfikator 1</span></div><div class="flex items-center gap-2 flex-wrap pt-0.5"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600">Wartość</span><span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-100"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Sprawdzony</span></div><p class="text-xs text-slate-600 leading-relaxed max-w-3xl pt-1">korzyść — użytkownicy zyskują głębszy wgląd w swoje emocje i myśli poprzez ustrukturyzowane codzienne zachęty do refleksji.</p><div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between"><div class="flex items-center gap-2"><button class="px-2.5 py-1 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded hover:bg-slate-50 transition-colors" onclick="document.getElementById('drawer-container').classList.remove('hidden')" type="button">Edytuj</button><button class="px-2.5 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 rounded hover:bg-slate-100 transition-colors" type="button">Szczegóły</button><button class="px-2.5 py-1 text-xs font-medium text-slate-500 hover:text-slate-800 rounded hover:bg-slate-100 transition-colors" type="button">Oznacz jako niesprawdzone</button></div></div></div>
+  </div>
+</div>
+
+<!-- Item 05 (Wymaga sprawdzenia - stonowany / wyszarzony) -->
+<div class="group relative p-6 bg-slate-50/60 border border-slate-200 rounded-lg hover:border-slate-300 transition-all">
+  <div class="flex items-start gap-8">
+    <span class="text-xs font-mono text-slate-400 pt-0.5 select-none w-5 flex-shrink-0">05</span>
+    <div class="flex-1 space-y-2"><div class="flex items-center justify-between gap-3 flex-wrap"><h2 class="text-sm font-medium text-slate-700 leading-none">Organizacja tematyczna</h2><span class="text-[11px] text-slate-400 font-mono">Identyfikator 5</span></div><div class="flex items-center gap-2 flex-wrap pt-0.5"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-200/70 text-slate-600">Cecha</span><span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-rose-50 text-rose-700 border border-rose-200"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Wymaga sprawdzenia</span></div><p class="text-xs text-slate-500 leading-relaxed max-w-3xl pt-1">korzyść — pomaga użytkownikom systematycznie badać różne obszary emocjonalne i motywacyjne poprzez skategoryzowane podpowiedzi.</p><div class="pt-3 mt-3 border-t border-slate-200/70 flex items-center justify-between"><div class="flex items-center gap-2"><button class="px-3 py-1 text-xs font-medium text-white bg-[#111111] hover:bg-black rounded transition-colors shadow-sm" type="button">Zatwierdź</button><button class="px-2.5 py-1 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded hover:bg-slate-50 transition-colors" onclick="document.getElementById('drawer-container').classList.remove('hidden')" type="button">Edytuj</button><button class="px-2.5 py-1 text-xs font-medium text-slate-500 hover:text-rose-600 rounded hover:bg-slate-100 transition-colors" type="button">Odrzuć</button></div></div></div>
+  </div>
+</div>
+
+<!-- Item 06 (Wymaga sprawdzenia - stonowany / wyszarzony) -->
+<div class="group relative p-6 bg-slate-50/60 border border-slate-200 rounded-lg opacity-90 hover:border-slate-300 transition-all">
+  <div class="flex items-start gap-8">
+    <span class="text-xs font-mono text-slate-400 pt-0.5 select-none w-5 flex-shrink-0">06</span>
+    <div class="flex-1 space-y-2"><div class="flex items-center justify-between gap-3 flex-wrap"><h2 class="text-sm font-medium text-slate-700 leading-none">Równowaga estetyczna i użytkowa</h2><span class="text-[11px] text-slate-400 font-mono">Identyfikator 6</span></div><div class="flex items-center gap-2 flex-wrap pt-0.5"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-200/70 text-slate-600">Wartość</span><span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-rose-50 text-rose-700 border border-rose-200"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Wymaga sprawdzenia</span></div><p class="text-xs text-slate-500 leading-relaxed max-w-3xl pt-1">wartość — harmonia pomiędzy minimalistyczną formą graficzną a intuicyjnością nawigacji po systemie.</p><div class="pt-3 mt-3 border-t border-slate-200/70 flex items-center justify-between"><div class="flex items-center gap-2"><button class="px-3 py-1 text-xs font-medium text-white bg-[#111111] hover:bg-black rounded transition-colors shadow-sm" type="button">Zatwierdź</button><button class="px-2.5 py-1 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded hover:bg-slate-50 transition-colors" onclick="document.getElementById('drawer-container').classList.remove('hidden')" type="button">Edytuj</button><button class="px-2.5 py-1 text-xs font-medium text-slate-500 hover:text-rose-600 rounded hover:bg-slate-100 transition-colors" type="button">Odrzuć</button></div></div></div>
+  </div>
+</div></div><div class="mt-8 pt-5 border-t border-slate-200 max-w-5xl flex flex-wrap items-center justify-between gap-4 select-none text-xs text-slate-600" data-purpose="pagination"><div class="flex items-center gap-4"><span class="text-xs text-slate-500">Wyświetlono <span class="font-medium text-slate-900">1–6</span> z <span class="font-medium text-slate-900">30</span> elementów</span></div><div class="flex items-center gap-1"><button aria-label="Poprzednia strona" class="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded transition-colors disabled:opacity-40 disabled:pointer-events-none" type="button"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg></button><button class="w-7 h-7 flex items-center justify-center text-xs font-medium rounded bg-[#111111] text-white shadow-sm" type="button">1</button><button class="w-7 h-7 flex items-center justify-center text-xs font-medium rounded text-slate-600 hover:bg-slate-100 transition-colors" type="button">2</button><button class="w-7 h-7 flex items-center justify-center text-xs font-medium rounded text-slate-600 hover:bg-slate-100 transition-colors" type="button">3</button><span class="w-7 h-7 flex items-center justify-center text-xs text-slate-400 font-medium">...</span><button class="w-7 h-7 flex items-center justify-center text-xs font-medium rounded text-slate-600 hover:bg-slate-100 transition-colors" type="button">5</button><button aria-label="Następna strona" class="p-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded transition-colors" type="button"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg></button></div></div>
+</main>
+<!-- END: MainContentArea -->
+</div>
+<!-- END: AppContainer -->
+<!-- BEGIN: SlideOverDrawer -->
+<div class="fixed inset-0 z-50 flex justify-end transition-opacity duration-200 hidden" id="drawer-container">
+<!-- Backdrop overlay -->
+<div class="fixed inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" id="drawer-backdrop" onclick="document.getElementById('drawer-container').classList.add('hidden')"></div>
+<!-- Slide-out Panel -->
+<aside class="relative w-full max-w-[420px] bg-white h-screen border-l border-slate-200 shadow-2xl flex flex-col z-10">
+<!-- Drawer Header -->
+<div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+<div>
+<h2 class="text-base font-semibold text-slate-900">Edycja elementu</h2>
+<p class="text-xs text-slate-500 mt-0.5">Element #02 — Identyfikator 3</p>
+</div>
+<button class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors" id="drawer-close-btn" onclick="document.getElementById('drawer-container').classList.add('hidden')" title="Zamknij">
+<svg class="w-5 h-5 stroke-[2]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+<line x1="18" x2="6" y1="6" y2="18"></line>
+<line x1="6" x2="18" y1="6" y2="18"></line>
+</svg>
+</button>
+</div>
+<!-- Drawer Content / Form -->
+<div class="flex-1 overflow-y-auto p-6 space-y-5">
+<!-- Element Type Selection -->
+<div>
+<label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Typ elementu</label>
+<div class="grid grid-cols-3 gap-2">
+<label class="flex items-center justify-center py-2 px-3 border border-slate-900 bg-slate-900 text-white rounded-md text-xs font-medium cursor-pointer shadow-sm text-center">
+<input checked="" class="sr-only" name="element_type" type="radio" value="korzysc">
+<span class="">Korzyść</span>
+</label>
+<label class="flex items-center justify-center py-2 px-3 border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 rounded-md text-xs font-medium cursor-pointer transition-colors text-center">
+<input class="sr-only" name="element_type" type="radio" value="cecha">
+<span class="">Cecha</span>
+</label>
+<label class="flex items-center justify-center py-2 px-3 border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 rounded-md text-xs font-medium cursor-pointer transition-colors text-center">
+<input class="sr-only" name="element_type" type="radio" value="wartosc">
+<span class="">Wartość</span>
+</label>
+</div>
+</div>
+<!-- Element Title -->
+<div>
+<label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Nazwa elementu</label>
+<input class="w-full px-3 py-2 text-xs text-slate-800 bg-white border border-slate-200 rounded-md focus:outline-none focus:border-slate-400 transition-colors shadow-sm" type="text" value="Możliwość dostosowania wartości prezentu">
+</div>
+<!-- Description / Details -->
+<div>
+<label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Opis korzyści / szczegóły</label>
+<textarea class="w-full px-3 py-2 text-xs text-slate-800 bg-white border border-slate-200 rounded-md focus:outline-none focus:border-slate-400 transition-colors shadow-sm leading-relaxed" rows="4">umożliwia odbiorcom personalizację prezentu poprzez wybór kartek odpowiadających ich konkretnym potrzebom lub zainteresowaniom.</textarea>
+</div>
+<!-- Identifier / Tags -->
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Numer / ID</label>
+<input class="w-full px-3 py-2 text-xs text-slate-800 bg-white border border-slate-200 rounded-md focus:outline-none focus:border-slate-400 transition-colors shadow-sm" type="text" value="Identyfikator 3">
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Kolejność (Index)</label>
+<input class="w-full px-3 py-2 text-xs text-slate-800 bg-white border border-slate-200 rounded-md focus:outline-none focus:border-slate-400 transition-colors shadow-sm font-mono" type="text" value="02">
+</div>
+</div>
+<!-- Status badge / preview -->
+<div class="pt-2 border-t border-slate-100">
+<label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Status weryfikacji</label>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            Zaakceptowany
+          </span>
+<span class="text-[11px] text-slate-400">Widoczny na wygenerowanej ścieżce</span>
+</div>
+</div>
+</div>
+<!-- Drawer Footer Actions -->
+<div class="p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-2.5">
+<button class="px-3.5 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm" onclick="document.getElementById('drawer-container').classList.add('hidden')" type="button">
+        Anuluj
+      </button>
+<button class="px-4 py-2 text-xs font-medium text-white bg-[#111111] hover:bg-black rounded transition-colors shadow-sm" onclick="document.getElementById('drawer-container').classList.add('hidden')" type="button">
+        Zapisz zmiany
+      </button>
+</div>
+</aside>
+</div>
+<!-- END: SlideOverDrawer -->
+
+
+
+
+
+<script class="">document.addEventListener('DOMContentLoaded', function () { const secondarySidebar = document.getElementById('secondary-sidebar'); const collapsedBar = document.getElementById('context-collapsed-bar'); const collapseBtn = document.getElementById('collapse-context-btn'); const expandBtn = document.getElementById('expand-context-btn'); const quickToggleBtn = document.getElementById('quick-toggle-context'); function toggleSecondary() { if (!secondarySidebar || !collapsedBar) return; const isHidden = secondarySidebar.classList.contains('hidden'); if (isHidden) { secondarySidebar.classList.remove('hidden'); collapsedBar.classList.add('hidden'); } else { secondarySidebar.classList.add('hidden'); collapsedBar.classList.remove('hidden'); } } if (collapseBtn) collapseBtn.addEventListener('click', toggleSecondary); if (expandBtn) expandBtn.addEventListener('click', toggleSecondary); if (quickToggleBtn) quickToggleBtn.addEventListener('click', toggleSecondary); const primarySidebar = document.getElementById('primary-sidebar'); const togglePrimaryBtn = document.getElementById('toggle-primary-nav'); function togglePrimary() { if (!primarySidebar) return; primarySidebar.classList.toggle('w-16'); primarySidebar.classList.toggle('w-56'); } if (togglePrimaryBtn) togglePrimaryBtn.addEventListener('click', togglePrimary); window.addEventListener('keydown', function(e) { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'b') { e.preventDefault(); toggleSecondary(); } }); });</script>
+
+</body></html>

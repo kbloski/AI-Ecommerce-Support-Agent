@@ -5,6 +5,7 @@ import { DownloadPipelinePathButton } from '@/components/DownloadPipelinePathBut
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useSidePanel } from '@/lib/sidePanel'
+import type { useResizablePanel } from '@/lib/useResizablePanel'
 import { useListOfferProfileElementsQuery, useListOfferProfileForOfferQuery } from '@/features/offerProfiles/offerProfileApi'
 import { useListTargetAudiencesForOfferProfileQuery } from '@/features/targetAudiences/targetAudiencesApi'
 import { useGetAnalysisQuery, useListAnalysisForOfferProfileQuery } from '@/features/analysis/analysisApi'
@@ -27,18 +28,51 @@ import { useListPageCopyForPageContentPlanQuery } from '@/features/pageCopy/page
 
 const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
   cn(
-    'flex items-center gap-2 rounded-md px-3 py-2 text-sm',
+    'flex min-w-0 items-start gap-2 rounded-md px-3 py-2 text-sm whitespace-normal break-words',
     isActive
       ? 'bg-accent text-accent-foreground'
       : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
   )
 
+const sidebarActionClassName = 'h-auto min-h-7 w-full min-w-0 max-w-full shrink justify-start py-1.5 text-left leading-snug whitespace-normal'
+
+interface AppContextSidebarProps {
+  variant?: 'sidebar' | 'mobile'
+  width?: number
+  resize?: ReturnType<typeof useResizablePanel>
+}
+
 /** Secondary, contextual navigation shown next to the primary sidebar. Its content depends on which section of the app is active. */
-export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar' | 'mobile' }) {
+export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: AppContextSidebarProps) {
   const asideClassName = cn(
     variant === 'sidebar'
-      ? 'hidden w-56 shrink-0 flex-col border-r p-4 md:flex'
+      ? 'relative hidden shrink-0 flex-col border-r p-4 md:flex'
       : 'flex w-full flex-col p-2',
+  )
+  const renderSidebar = (content: React.ReactNode) => (
+    <aside className={asideClassName} style={variant === 'sidebar' ? { width } : undefined}>
+      {content}
+      {variant === 'sidebar' && resize && (
+        <div
+          role="separator"
+          tabIndex={0}
+          aria-orientation="vertical"
+          aria-label="Zmień szerokość nawigacji kontekstowej"
+          aria-valuemin={resize.minWidth}
+          aria-valuemax={resize.maxWidth}
+          aria-valuenow={resize.width}
+          className="absolute inset-y-0 -right-1 z-10 w-3 cursor-col-resize touch-none outline-none focus-visible:bg-primary/10"
+          onPointerDown={resize.startResize}
+          onPointerMove={resize.resize}
+          onPointerUp={resize.stopResize}
+          onPointerCancel={resize.stopResize}
+          onDoubleClick={resize.resetWidth}
+          onKeyDown={resize.resizeWithKeyboard}
+        >
+          <div className="mx-auto h-full w-px bg-border opacity-70 transition-all hover:w-0.5 hover:bg-primary hover:opacity-100" />
+        </div>
+      )}
+    </aside>
   )
   const { pathname } = useLocation()
   const navigate = useNavigate()
@@ -149,8 +183,8 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
 
   const navigationLink = (slug: string, label: string, to: string) => (
     <NavLink key={slug} to={to} className={navLinkClassName}>
-      <span>{label}</span>
-      <span className="ml-auto flex items-center gap-1.5">
+      <span className="min-w-0 flex-1">{label}</span>
+      <span className="ml-auto flex shrink-0 items-center gap-1.5">
         {attentionCounts[slug] !== undefined && attentionCounts[slug] > 0 && (
           <Badge variant="danger" className="font-mono" title={`Wymaga sprawdzenia: ${attentionCounts[slug]}`}><strong>!</strong>{attentionCounts[slug]}</Badge>
         )}
@@ -160,8 +194,8 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
   )
 
   if (pathname.startsWith('/settings')) {
-    return (
-      <aside className={asideClassName}>
+    return renderSidebar(
+      <>
         <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
           Ustawienia
         </h2>
@@ -176,14 +210,14 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
               Narzędzia
             </h2>
             <nav className="ml-2 space-y-1 border-l pl-2">
-              <Button type="button" variant="ghost" size="sm" className="w-full justify-start" onClick={() => openPanel(contextualPanel)}>
+              <Button type="button" variant="ghost" size="sm" className={sidebarActionClassName} onClick={() => openPanel(contextualPanel)}>
                 <CodeXml />
                 Zobacz JSON obiektu
               </Button>
             </nav>
           </section>
         )}
-      </aside>
+      </>,
     )
   }
 
@@ -191,8 +225,8 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
     const detailPath = section.match?.pathnameBase ?? pathname
     const currentPath = detailPath
 
-    return (
-      <aside className={asideClassName}>
+    return renderSidebar(
+      <>
         {showBackButton && (
           <button
             type="button"
@@ -257,10 +291,10 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
             </h2>
             <nav className="ml-2 space-y-1 border-l pl-2">
               {'entityType' in section.config && (
-                <DownloadPipelinePathButton entityType={section.config.entityType} entityId={Number(section.match?.params.id)} />
+                <DownloadPipelinePathButton className={sidebarActionClassName} entityType={section.config.entityType} entityId={Number(section.match?.params.id)} />
               )}
               {contextualPanel && (
-                <Button type="button" variant="ghost" size="sm" className="w-full justify-start" onClick={() => openPanel(contextualPanel)}>
+                <Button type="button" variant="ghost" size="sm" className={sidebarActionClassName} onClick={() => openPanel(contextualPanel)}>
                   <CodeXml />
                   Zobacz JSON obiektu
                 </Button>
@@ -268,20 +302,20 @@ export function AppContextSidebar({ variant = 'sidebar' }: { variant?: 'sidebar'
             </nav>
           </section>
         )}
-      </aside>
+      </>,
     )
   }
 
-  return <aside className="hidden w-56 shrink-0 flex-col border-r p-4 md:flex">
-    {showBackButton && (
-      <button
-        type="button"
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-2 rounded-md px-2 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-      >
-        <ArrowLeft className="size-4" />
-        Wstecz
-      </button>
-    )}
-  </aside>
+  return renderSidebar(
+    showBackButton ? (
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 rounded-md px-2 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+        >
+          <ArrowLeft className="size-4" />
+          Wstecz
+        </button>
+      ) : null,
+  )
 }

@@ -74,6 +74,12 @@ Do prostego, jednorazowego wywołania edycji z listy służy hook `lib/useEditEn
 
 Cały stan serwerowy żyje w cache RTK Query; stan UI lokalny to zwykły `useState` w komponentach stron.
 
+### Layout i panele boczne (zaktualizowane 2026-09-11)
+
+Desktopowy `AppShell` składa się ze zwijanego `AppSidebar`, stale widocznego i resizowalnego `AppContextSidebar` oraz głównej treści. `AppSidebar` przełącza się między paskiem ikon (64 px) i pełną nawigacją (224 px). `AppContextSidebar` ma szerokość 200–420 px zmienianą przez prawą krawędź; oba ustawienia są zapisywane w `localStorage`. Mobilnie oba zestawy nawigacji nadal są wyświetlane w jednym `Sheet` bez zwijania i resize.
+
+Wspólna mechanika zmiany szerokości znajduje się w `src/lib/useResizablePanel.ts` i obsługuje pointer events, klawiaturę, limity, reset oraz opcjonalną persystencję. Korzystają z niej stały `AppContextSidebar` (panel zakotwiczony z lewej) i modalny prawy `SidePanel` (panel zakotwiczony z prawej). Nie łączyć tych paneli w jeden komponent wizualny: współdzielą mechanikę szerokości, ale różnią się modalnością, overlayem, zarządzaniem focusem i cyklem życia.
+
 ## Komendy deweloperskie (z `README.md` projektu)
 
 Backend:

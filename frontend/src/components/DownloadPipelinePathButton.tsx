@@ -44,12 +44,14 @@ export function DownloadPipelinePathButton({
       type="button"
       variant="ghost"
       size="sm"
-      className={cn('w-full justify-start', className)}
+      className={cn('h-auto min-h-7 w-full min-w-0 max-w-full shrink justify-start py-1.5 text-left leading-snug whitespace-normal', className)}
       onClick={handleClick}
       disabled={isLoading}
     >
-      <Download />
-      {isLoading ? 'Pobieranie…' : 'Pobierz dane ścieżki (.txt)'}
+      <Download className="shrink-0" />
+      <span className="min-w-0 break-words">
+        {isLoading ? 'Pobieranie…' : 'Pobierz dane ścieżki (.txt)'}
+      </span>
     </Button>
   )
 }

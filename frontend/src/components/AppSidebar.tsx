@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Package, Settings } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LayoutDashboard, Package, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
 interface SidebarSection {
   label: string
@@ -12,6 +13,7 @@ interface SidebarSection {
 const SECTIONS: SidebarSection[] = [
   { label: 'Dashboard', to: '/', icon: LayoutDashboard },
   { label: 'Oferty', to: '/offers', icon: Package },
+  { label: 'Ustawienia', to: '/settings', icon: Settings },
 ]
 
 const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
@@ -23,31 +25,55 @@ const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
   )
 
 /** Primary left-hand navigation, persistent across the whole app. */
-export function AppSidebar({ variant = 'sidebar' }: { variant?: 'sidebar' | 'mobile' }) {
+interface AppSidebarProps {
+  variant?: 'sidebar' | 'mobile'
+  collapsed?: boolean
+  onToggle?: () => void
+}
+
+export function AppSidebar({ variant = 'sidebar', collapsed = false, onToggle }: AppSidebarProps) {
+  const isCollapsed = variant === 'sidebar' && collapsed
+
   return (
     <aside
       className={cn(
         variant === 'sidebar'
-          ? 'hidden w-56 shrink-0 flex-col border-r p-4 md:flex'
+          ? 'relative hidden shrink-0 flex-col border-r py-4 transition-[width] duration-200 ease-in-out md:flex'
           : 'flex w-full flex-col p-2',
+        variant === 'sidebar' && (isCollapsed ? 'w-16 px-2' : 'w-56 px-4'),
       )}
     >
-      <div className="mb-4 px-2 text-sm font-semibold">AIEC SASS</div>
+      <div className={cn('mb-4 flex h-8 items-center', isCollapsed ? 'justify-center' : 'justify-between px-2')}>
+        {!isCollapsed && <div className="text-sm font-semibold">AIEC SASS</div>}
+        {variant === 'sidebar' && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            onClick={onToggle}
+            aria-label={isCollapsed ? 'Rozwiń główne menu' : 'Zwiń główne menu'}
+            title={isCollapsed ? 'Rozwiń główne menu' : 'Zwiń główne menu'}
+          >
+            {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
+          </Button>
+        )}
+      </div>
       <nav className="space-y-1">
         {SECTIONS.map(({ label, to, icon: Icon }) => (
-          <NavLink key={to} to={to} end={to === '/'} className={navLinkClassName}>
-            <Icon className="size-4" />
-            {label}
+          <NavLink
+            key={to}
+            to={to}
+            end={to === '/'}
+            className={(state) => cn(navLinkClassName(state), isCollapsed && 'justify-center px-0')}
+            aria-label={isCollapsed ? label : undefined}
+            title={isCollapsed ? label : undefined}
+          >
+            <Icon className="size-4 shrink-0" />
+            {!isCollapsed && label}
           </NavLink>
         ))}
       </nav>
 
-      <nav className="mt-auto space-y-1 border-t pt-2">
-        <NavLink to="/settings" className={navLinkClassName}>
-          <Settings className="size-4" />
-          Ustawienia
-        </NavLink>
-      </nav>
     </aside>
   )
 }
