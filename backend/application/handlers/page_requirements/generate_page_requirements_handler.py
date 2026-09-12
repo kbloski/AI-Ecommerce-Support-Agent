@@ -294,103 +294,112 @@ the complete catalog of allowed page section types.
 PAGE REQUIREMENTS are a constraint and coverage layer between PAGE STRATEGY and
 PAGE BLUEPRINT.
 
-They should produce a page that is strategically focused AND sufficiently rich
-to persuade a real consideration-stage visitor.
-
 You are NOT writing copy.
 You are NOT creating the final blueprint.
-You are NOT blindly filling a standard landing-page template.
+You are NOT filling a standard landing-page template.
 
-Your job is to select a BALANCED, CONVERSION-COMPLETE SET of section types.
+Your job is to decide which available section types are required, optional, or
+excluded, and in what order, so the resulting page can execute the supplied Page
+Strategy clearly and completely.
 
 
-# CORE PRINCIPLE: BALANCED CONVERSION COVERAGE
+# PRODUCT- AND CONVERSION-MODEL-AGNOSTIC RULE
+
+This prompt is used across different products, services, software, offers,
+business models, audiences, page types, and conversion goals.
+
+Do not assume that the page:
+
+- sells a physical product,
+- is ecommerce,
+- uses a shopping cart,
+- targets consumers,
+- contains pricing,
+- needs social proof,
+- needs a product showcase,
+- needs a problem section,
+- needs urgency,
+- uses a trial,
+- generates a lead,
+- books a call or appointment,
+- requests a signup,
+- or has any other specific conversion model.
+
+The supplied PAGE STRATEGY determines the page job and conversion action.
+
+Treat section names, descriptions, and examples only as structural concepts.
+
+When a catalog section provides `selection_guidance`, use its `use_when` entries
+to decide whether the section is relevant and follow all of its `rules`.
+They are NOT facts about the current offer.
+
+Never infer a product type, service model, commercial model, customer behavior,
+proof asset, page mechanic, or conversion step merely because a familiar section
+type exists in the catalog.
+
+
+# AUTHORITATIVE INPUTS
+
+PAGE STRATEGY is authoritative for this page.
+
+Preserve its:
+
+- primary target customer,
+- dominant problem, need, task, opportunity, or decision context,
+- desired outcome,
+- core value proposition,
+- main message,
+- message angle,
+- emotional and rational drivers,
+- barriers and objections,
+- trust requirements,
+- competitive positioning,
+- brand voice direction,
+- conversion strategy,
+- customer journey strategy,
+- conversion action.
+
+Do not broaden the strategy.
+Do not add a second primary narrative.
+Do not invent a new use case or conversion path.
+
+The AVAILABLE PAGE SECTIONS catalog is authoritative for which section types may
+be selected.
+
+Use the catalog metadata to understand what each section type is intended to do.
+Do not invent section types.
+Do not treat a catalog label as evidence that the underlying content exists.
+
+For example, the existence of a proof-related section type does not mean proof
+exists. The existence of a pricing-related section type does not mean pricing
+needs its own block. The existence of a comparison-related section type does not
+mean a comparison is strategically justified.
+
+
+# CORE PRINCIPLE: COVER THE STRATEGY, NOT A TEMPLATE
+
+Select the smallest set of sections that still provides complete strategic
+coverage.
 
 Do NOT optimize for the fewest possible sections.
+Do NOT optimize for the largest possible page.
+Do NOT target a predetermined section count.
 
-Do NOT optimize for the most possible sections.
+The correct section count depends on:
 
-Optimize for complete persuasive coverage of the Page Strategy.
+- the complexity of the offer,
+- how much explanation the audience needs,
+- how much evaluation is required,
+- the number and importance of objections,
+- trust requirements,
+- the conversion action,
+- and the belief progression defined in Page Strategy.
 
-The final selection should contain enough section types to:
+A simple page may need few sections.
+A complex, high-consideration, or trust-heavy page may need more.
 
-- establish relevance,
-- frame or reinforce the customer problem when useful,
-- introduce the solution,
-- explain the central mechanism,
-- communicate practical value,
-- support product evaluation,
-- provide trust or evidence,
-- resolve meaningful objections,
-- present the offer,
-- and support the conversion action.
-
-A section does not need to be absolutely indispensable to be included.
-
-If a section performs a clear, strategy-supported persuasive job that improves
-the visitor's ability to understand, trust, evaluate, or choose the offer, it
-may be included.
-
-The section catalog is a toolbox, but a strong conversion page normally uses
-multiple complementary tools.
-
-
-# CALIBRATION: AVOID BOTH EXTREMES
-
-Previous failure modes to avoid:
-
-1. OVERBUILT PAGE
-   Marking almost every familiar landing-page section as required.
-
-2. UNDERBUILT PAGE
-   Keeping only a skeletal set because several sections partially overlap.
-
-Do not collapse the entire persuasion process into only a few sections.
-
-Different section types may discuss related subject matter while still serving
-different persuasive jobs.
-
-For example:
-
-- `solution` can establish what the product is,
-- `unique_mechanism` can explain why its approach is distinctive,
-- `how_it_works` can explain usage,
-- `benefits` can explain why the mechanism matters,
-- `product_showcase` can make the product tangible,
-- `features` can support detailed evaluation.
-
-These are NOT automatically redundant.
-
-They should be treated as redundant only when, for THIS Page Strategy, they
-would communicate substantially the same thing with no distinct decision value.
-
-
-# SOFT DENSITY GUIDANCE
-
-Use section count as a calibration signal, not a rigid quota.
-
-With a broad catalog of roughly 20+ section types, a typical dedicated product
-or conversion page will often include around 9-14 sections total across
-`required` and `optional`.
-
-A focused strategy may justify fewer.
-A complex or trust-heavy strategy may justify more.
-
-If you are about to include fewer than roughly 8 sections, re-check whether you
-have accidentally collapsed distinct persuasive jobs such as:
-
-- problem framing,
-- solution introduction,
-- mechanism explanation,
-- product evaluation,
-- benefit communication,
-- trust,
-- objections,
-- offer presentation,
-- conversion.
-
-Do not add filler merely to hit a number.
-But do not mistake extreme minimalism for strategic focus.
+Never add filler merely to make the page feel complete.
+Never remove a distinct strategic job merely to make the page shorter.
 
 
 # REQUIREMENT TYPES
@@ -404,636 +413,298 @@ For EVERY catalog section choose exactly one:
 
 ## REQUIRED
 
-Use `required` when the section type performs an important, direct job in
-executing the supplied Page Strategy and should be present in a complete page.
+Use `required` when the section performs an important, direct job in executing
+this Page Strategy and omitting it would make the page materially less clear,
+credible, evaluable, or conversion-ready.
 
-A section can be `required` when it materially contributes to one or more of:
+A required section should have a distinct role in the page's belief progression.
 
-- establishing the primary page message,
-- framing the dominant problem,
-- introducing the solution,
-- explaining the central mechanism,
-- demonstrating product usage,
-- communicating major benefits,
-- enabling product evaluation,
-- satisfying an explicit trust requirement,
-- resolving an important objection,
-- presenting the offer,
-- supporting the conversion action.
-
-Do NOT use an impossibly strict standard such as:
-
-"the page literally cannot function without this section."
-
-Instead ask:
-
-"Would omitting this section leave the page meaningfully weaker, less clear, or
-less complete against the supplied Page Strategy?"
-
-If YES, `required` may be appropriate.
-
-`required` still does NOT mean:
-- every common ecommerce section,
-- every potentially useful section,
-- every catalog item related to the product.
+Do not mark a section required merely because it is common for that page type.
 
 
 ## OPTIONAL
 
 Use `optional` when the section:
 
-- is supported by the strategy,
-- adds a distinct persuasive layer,
-- can strengthen evaluation, trust, clarity, or conversion,
-- but is not necessary in every valid execution of the page.
+- is supported by Page Strategy,
+- adds a distinct useful layer,
+- can strengthen clarity, evaluation, trust, or conversion,
+- but is not necessary in every valid execution.
 
-Optional sections are valuable flex points for PAGE BLUEPRINT.
+Optional sections are useful execution flex points for PAGE BLUEPRINT.
 
-They may also be used for asset-dependent content where the strategy supports
-the job but availability of the asset is not guaranteed.
-
-Do not make optional so restrictive that only a tiny skeleton remains.
+A section that depends on an asset or proof type that is not confirmed may only
+be optional when the Page Strategy supports the job AND the section can be used
+without implying that unsupported evidence already exists.
 
 
 ## EXCLUDED
 
 Use `excluded` when the section:
 
-- conflicts with the Page Strategy,
-- introduces a different primary narrative,
-- requires unsupported offer mechanics,
-- requires unsupported claims,
-- would be materially repetitive with no distinct job,
-- depends on proof that must not be fabricated,
-- or has no meaningful role in this specific page.
+- has no meaningful role in this Page Strategy,
+- conflicts with the primary narrative,
+- introduces an unsupported offer mechanic,
+- requires an unsupported claim,
+- depends on evidence that must not be fabricated,
+- introduces a different conversion path,
+- or duplicates another included section without adding distinct decision value.
 
-Do not prefer exclusion by default.
+Do not exclude a section merely because another section could mention the same
+topic briefly.
 
-Exclusion is for sections that are strategically unjustified, not merely
-non-essential.
+Overlap is acceptable when the sections perform different strategic jobs.
 
 
-# PAGE STRATEGY IS AUTHORITATIVE
+# NO NEW STRATEGIC TRUTHS
 
-Preserve the Page Strategy's:
-
-- primary target customer,
-- customer problem,
-- desired outcome,
-- value proposition,
-- main message,
-- message angle,
-- conversion strategy,
-- objections,
-- trust requirements,
-- customer journey,
-- conversion action.
+This is a constrained translation task from Page Strategy into page-section
+requirements.
 
 Do not invent:
 
 - new audiences,
-- new customer problems,
+- new pains or problems,
 - new desires,
 - new use cases,
-- new product mechanisms,
-- new outcomes,
+- new product or service mechanisms,
+- new benefits or outcomes,
 - new proof,
 - new competitors,
+- new comparisons,
 - new guarantees,
 - new policies,
 - new bonuses,
-- new urgency,
 - new pricing logic,
-- new conversion actions.
+- new urgency or scarcity,
+- new conversion actions,
+- new intermediate conversion steps,
+- new commercial terms,
+- new customer research or psychological states.
 
 Do not strengthen claims from Page Strategy.
 
+If Page Strategy is conservative, Page Requirements must remain conservative.
 
-# THINK IN PERSUASIVE LAYERS
 
-A complete conversion page often needs several complementary persuasive layers.
+# THINK IN STRATEGIC JOBS
 
-Evaluate whether the Page Strategy needs coverage across these layers:
+Do not start from section names.
+Start from the jobs the page must perform.
+
+Possible strategic jobs include, when supported:
 
 1. ENTRY / RELEVANCE
-   Why this page and product matter to this visitor.
+   Establish why this page matters to the intended visitor and what the primary
+   value direction is.
 
-2. PROBLEM / FRICTION
-   What specific difficulty, limitation, or unmet need makes the solution
-   relevant.
+2. NEED / PROBLEM / OPPORTUNITY FRAMING
+   Clarify the relevant situation, friction, task, limitation, opportunity, or
+   decision context.
 
-3. SOLUTION / VALUE
-   What the product is and what primary practical value it offers.
+3. OFFER / SOLUTION UNDERSTANDING
+   Clarify what the offer is and why it is relevant to the visitor's situation.
 
-4. MECHANISM / UNDERSTANDING
-   How the product's system, method, structure, or approach creates that value.
+4. MECHANISM / PROCESS / APPROACH
+   Explain how the offer works, how value is created, or what makes the approach
+   understandable.
 
-5. EXPERIENCE / USAGE
-   How the product is used and how it fits the customer's routine or context.
+5. USAGE / EXPERIENCE / DELIVERY
+   Clarify how the offer is used, accessed, delivered, implemented, or integrated
+   when that matters to the decision.
 
-6. PRODUCT EVALUATION
-   What the visitor gets, key attributes, contents, format, or quality.
+6. EVALUATION
+   Give the visitor the concrete information needed to assess fit, scope,
+   capabilities, inclusions, limitations, or other relevant attributes.
 
-7. BENEFIT / OUTCOME FRAMING
-   Why the confirmed product attributes and mechanism matter to the customer.
+7. VALUE / BENEFIT FRAMING
+   Explain why confirmed features, mechanisms, or offer characteristics matter to
+   the visitor.
 
 8. TRUST / EVIDENCE
-   What must be shown or explained for the visitor to believe the offer.
+   Show or explain what the Page Strategy says the visitor needs in order to
+   believe the offer.
 
-9. OBJECTION RESOLUTION
-   What meaningful doubts or barriers must be answered.
+9. OBJECTION / RISK RESOLUTION
+   Resolve supported doubts, barriers, decision factors, or uncertainty.
 
-10. OFFER / DECISION
-    What the visitor is selecting or buying.
+10. COMMERCIAL OR OFFER DECISION
+    Explain relevant offer terms, selection logic, scope, or commercial details
+    when they are part of the decision.
 
 11. CONVERSION
-    What action the page should support.
+    Support the exact conversion action defined in Page Strategy.
 
-Not every layer requires a separate section.
-But do not collapse several materially different layers into one section unless
-the strategy genuinely supports that simplification.
+Not every job requires its own section.
+Not every page needs every job.
 
-
-# CUSTOMER AWARENESS
-
-Use `customer_awareness_level` and `customer_journey_stage` to determine the
-weight of each layer, NOT whether entire persuasive layers should disappear.
-
-For solution-aware / consideration-stage visitors:
-
-Usually reduce basic education and increase emphasis on:
-
-- why this solution fits,
-- differentiation,
-- mechanism,
-- product understanding,
-- benefits,
-- practical evaluation,
-- trust,
-- objections,
-- offer decision.
-
-A solution-aware visitor may still need a `problem` section if the page must
-reframe the problem or make the product's relevance more concrete.
-
-Do not automatically exclude `problem` merely because the visitor is
-solution-aware.
+Use Page Strategy to determine which jobs matter and how much emphasis each one
+needs.
 
 
-# CUSTOMER JOURNEY STRATEGY
+# CUSTOMER AWARENESS AND JOURNEY
 
-Use `customer_journey_strategy` as the psychological progression the page must
-support.
+Use `customer_awareness_level`, `customer_journey_stage`, and
+`customer_journey_strategy` to determine:
+
+- what needs explanation,
+- what can be assumed,
+- where trust must be built,
+- what needs evaluation,
+- what objections matter,
+- and what belief must be established before conversion.
+
+Do not mechanically map awareness stages to fixed section types.
 
 Do not map every journey stage to exactly one section.
+A journey stage may require several distinct persuasive jobs.
+Several journey stages may sometimes be served by one section.
 
-Instead make sure the selected section set gives PAGE BLUEPRINT enough
-persuasive building blocks to create the full progression.
-
-One journey stage may need multiple section types because:
-
-- understanding a mechanism,
-- seeing the product,
-- and understanding its benefits
-
-are different cognitive jobs even when they support the same stage.
+The section set should give PAGE BLUEPRINT enough building blocks to execute the
+full belief progression without inventing new psychology.
 
 
 # SECTION RELATIONSHIPS
 
-Do not automatically treat these as substitutes:
+Related section types may coexist when each performs a distinct strategic job.
 
-- problem
-- transformation
-- solution
-- unique_mechanism
-- benefits
-- how_it_works
-- product_showcase
-- features
+Do not automatically collapse:
 
-They are allowed to coexist when each has a distinct role.
-
-Use the following distinctions.
-
-
-# HERO
-
-`hero` should usually be `required` for a dedicated conversion or product page.
-
-Its job is to establish:
-
-- relevance,
-- primary value,
-- product/category recognition,
-- conversion direction.
-
-Hero does not replace all deeper explanation.
-
-
-# PROBLEM
-
-Use `problem` when the visitor benefits from explicit articulation or reframing
-of the dominant friction.
-
-For solution-aware visitors, the section can still be valuable when it helps
-the visitor recognize:
-
-- why their current approach is insufficient,
-- why structure is needed,
-- why the product's mechanism is relevant.
-
-Use `optional` rather than `excluded` when problem reinforcement is useful but
-does not need major page space.
-
-Use `required` when the Page Strategy's belief progression depends on reframing
-the problem before presenting the mechanism.
-
-
-# TRANSFORMATION
-
-Use `transformation` when the Page Strategy contains a meaningful desired
-before/after shift, even if the shift is practical rather than dramatic.
-
-This can include movement such as:
-
-- unstructured -> structured,
-- uncertain -> guided,
-- difficult to begin -> clearer starting point,
-- generic experience -> more intentional experience,
-
-when those directions are supported by Page Strategy.
-
-Do not invent exaggerated emotional or life transformation.
-
-If a transformation framing can add clarity but is not central, prefer
-`optional`.
-
-
-# SOLUTION
-
-Use `solution` when the visitor should receive a dedicated explanation of what
-the product is as the answer to the identified friction.
-
-Do not assume hero fully replaces solution.
-
-A dedicated solution section can be important when the product category,
-format, or role requires more explanation than the hero should carry.
-
-Use `required` when product introduction is a distinct step in the belief
-progression.
-
-
-# UNIQUE MECHANISM
-
-Use `unique_mechanism` when the Page Strategy depends on a distinctive system,
-method, categorization, process, structure, or organizing principle.
-
-This section may coexist with:
-
-- solution,
-- how_it_works,
+- problem / need framing,
+- transformation or change framing,
+- solution or offer explanation,
+- mechanism,
+- how-it-works,
 - benefits,
-- product_showcase.
+- features or capabilities,
+- showcase or demonstration,
+- comparison,
+- trust,
+- objection handling,
+- offer details,
+- conversion reinforcement.
 
-Its job is specifically to explain WHY THIS APPROACH is meaningful or different.
+At the same time, do not keep multiple sections that would communicate
+substantially the same content with no distinct decision value.
 
-Do not invent uniqueness claims beyond the strategy.
-
-
-# HOW IT WORKS
-
-Use `how_it_works` when understanding usage materially affects purchase.
-
-It is especially useful when:
-
-- usage simplicity matters,
-- routine integration matters,
-- a physical interaction matters,
-- the visitor may not immediately understand the process,
-- usage concerns appear in objections or decision factors.
-
-Mechanism explanation and usage explanation are different jobs.
-Do not collapse them automatically.
+Evaluate redundancy by function, not by topic overlap.
 
 
-# BENEFITS
+# TRUST AND EVIDENCE
 
-Use `benefits` when the page needs a dedicated value layer connecting product
-mechanics and attributes to customer-relevant advantages.
+Translate `trust_requirements` into enough section coverage to answer the actual
+credibility questions in Page Strategy.
 
-For a consideration-stage page, benefits are often strategically important.
+Trust may come from explanation, demonstration, transparency, specifications,
+process clarity, proof, policy clarity, or other supported mechanisms.
 
-Do not exclude benefits simply because another section mentions value.
-
-A mechanism can explain HOW.
-Benefits explain WHY IT MATTERS.
-
-Use `required` when practical value is central to the Page Strategy.
-
-
-# FEATURES
-
-Use `features` when concrete product attributes help the visitor evaluate the
-offer.
-
-Features can coexist with benefits:
-
-- benefits answer "why does this matter?"
-- features answer "what specifically does the product include or do?"
-
-For physical products or structured tools, a feature layer is often useful for
-consideration-stage evaluation.
-
-Use `optional` if features could be absorbed into product showcase or offer.
-Use `required` when specific attributes are major rational drivers.
-
-
-# PRODUCT SHOWCASE
-
-Use `product_showcase` when the visitor benefits from seeing or understanding:
-
-- physical format,
-- visual design,
-- contents,
-- organization,
-- product quality,
-- scale,
-- materials,
-- presentation,
-- what they actually receive.
-
-If Page Strategy includes visible product quality, tactile format, visual
-coherence, or physical usability as trust or decision factors,
-`product_showcase` should usually be `required`.
-
-
-# COMPARISON
-
-Use `comparison` when the Page Strategy establishes a meaningful alternative,
-competitive set, or contrast.
-
-Examples:
-
-- physical vs digital,
-- guided vs unguided,
-- structured vs blank-page reflection.
-
-A comparison section does not require attacking competitors.
-
-If the contrast is strategically useful but not essential, use `optional`.
-
-Do not exclude comparison merely because differentiation could technically be
-communicated elsewhere.
-
-
-# SOCIAL PROOF / TESTIMONIALS / UGC / CASE STUDIES
-
-These sections depend on real evidence.
-
+Do not reduce trust to social proof by default.
 Never assume or fabricate proof.
-
-However, distinguish between:
-
-- strategic usefulness,
-- and confirmed asset availability.
-
-If the Page Strategy strongly benefits from trust reinforcement but does not
-confirm a specific proof asset, a compatible proof section may be `optional`
-rather than automatically excluded.
-
-Use `required` only when the Page Strategy clearly indicates that this kind of
-proof is part of the trust requirement and can legitimately be used.
-
-Use `excluded` when the proof type is irrelevant to the page or would imply
-unsupported evidence.
-
-Do not require all proof formats at once.
-
-Normally choose the proof format(s) best aligned to the strategy.
-
-
-# TRUST REQUIREMENTS
-
-Translate `trust_requirements` into enough section coverage to make the product
-credible.
-
-Trust may be established through:
-
-- product_showcase,
-- how_it_works,
-- unique_mechanism,
-- features,
-- social_proof,
-- testimonials,
-- objection_handling,
-- offer clarity.
-
-Do not reduce trust to only one section if several distinct trust questions
-exist.
-
-
-# OBJECTION HANDLING
-
-Use `objection_handling` when meaningful objections, barriers, or decision
-factors exist.
-
-For consideration-stage pages with explicit objections, this will often be
-`required`.
-
-Its job is direct persuasive resolution.
-
-
-# FAQ
-
-FAQ is different from primary objection handling.
-
-Use `faq` when the page would benefit from a secondary layer for practical,
-transactional, or lower-priority questions.
-
-If there are multiple questions beyond the core objections, `faq` may be
-`optional`.
-
-Do not exclude FAQ merely because objection handling exists.
-
-
-# OFFER
-
-For a page whose conversion action involves choosing or purchasing a product,
-`offer` should usually be `required`.
-
-It should support understanding of:
-
-- what is being selected,
-- what the customer receives,
-- relevant offer information,
-- the decision immediately before conversion.
-
-Do not invent offer mechanics.
-
-
-# PRICING
-
-A standalone `pricing` section is appropriate when price understanding,
-price framing, variants, or commercial evaluation deserve a distinct block.
-
-If price can live naturally inside `offer`, pricing may be `optional` or
-`excluded` as a standalone section.
-
-`excluded` does not mean price is omitted from the page.
-
-
-# RISK REVERSAL
-
-Use `risk_reversal` only when a real supported mechanism exists, such as:
-
-- returns,
-- guarantee,
-- refund policy,
-- trial,
-- cancellation protection.
-
-Do not invent risk reversal.
-
-If Page Strategy explicitly references such a mechanism, include it according
-to strategic importance.
-
-
-# URGENCY
-
-Use `urgency` only when legitimate urgency or scarcity exists in Page Strategy.
-
-Never invent:
-- deadlines,
-- countdowns,
-- scarcity,
-- limited stock,
-- expiring promotions.
-
-Otherwise exclude.
-
-
-# BONUS STACK
-
-Use `bonus_stack` only when real bonuses or additional offer components are
-supported.
-
-Otherwise exclude.
-
-
-# FINAL CTA
-
-For a dedicated conversion page, `final_cta` should usually be `required`.
-
-It should reinforce the exact `conversion_action` from Page Strategy after the
-visitor has received the necessary persuasion and evaluation context.
-
-Do not invent another conversion action.
+Do not require multiple proof formats merely because they exist in the catalog.
 
 
 # CONVERSION ACTION DISCIPLINE
 
-Support the exact strategic conversion action already defined.
+Support the exact `conversion_action` already defined in Page Strategy.
+
+Do not convert one action into another.
 
 Do not invent:
 
-- challenges,
-- quizzes,
-- onboarding,
-- category-selection interactions,
-- lead magnets,
-- trials,
-- post-purchase usage actions,
+- a lead magnet,
+- a quiz,
+- a trial,
+- a booking step,
+- a consultation,
+- an application,
+- a purchase step,
+- an onboarding step,
+- a signup,
+- or any other intermediate or alternative conversion mechanism,
 
-unless they are explicitly the Page Strategy conversion action.
+unless that mechanism is supported by Page Strategy.
 
 
 # ORDERING
 
 Assign a unique one-based `position` to every `required` and `optional` section.
-
 Use `null` for excluded sections.
 
 All non-null positions must form one contiguous sequence:
 
 1, 2, 3, 4, ...
 
-Order sections according to persuasive progression.
+Order sections according to the belief progression defined by Page Strategy.
 
-A common pattern is:
+A useful generic progression may move from:
 
-HERO / ENTRY
-→ PROBLEM OR REFRAME
-→ SOLUTION
-→ MECHANISM
-→ BENEFITS / EXPERIENCE
-→ PRODUCT EVALUATION
-→ TRUST / PROOF
-→ OBJECTION RESOLUTION
-→ OFFER
-→ FAQ OR SUPPORT
-→ FINAL CTA
+relevance
+→ understanding
+→ evaluation
+→ trust
+→ objection resolution
+→ decision
+→ conversion
 
-This is guidance, not a fixed template.
+but this is NOT a fixed template.
 
-Change the order when Page Strategy supports a better progression.
+Change the order whenever Page Strategy supports a different progression.
 
 
 # REQUIRED INTERNAL DECISION PROCESS
 
 Before producing JSON, reason internally:
 
-1. Identify the primary conversion belief.
-2. Identify the customer's starting state.
-3. Identify the major belief transitions.
-4. Identify the central product mechanism.
-5. Identify the distinct persuasion jobs needed to make that mechanism valuable.
-6. Identify what must be shown for product evaluation.
-7. Identify trust requirements.
-8. Identify objections and decision factors.
-9. Identify the offer and conversion action.
-10. Select enough section types to cover ALL meaningful jobs.
-11. Check for under-building:
-    - Did you collapse solution, mechanism, usage, benefits, and product
-      evaluation too aggressively?
-    - Did you remove useful consideration-stage sections only because another
-      section could theoretically mention the same topic?
-12. Check for over-building:
-    - Are any included sections truly repetitive with no distinct persuasive
-      function?
-13. Classify important jobs as `required`.
-14. Classify useful reinforcement as `optional`.
-15. Exclude only unsupported, irrelevant, or genuinely redundant sections.
-16. Order all included sections by belief progression.
+1. Identify the exact conversion action.
+2. Identify the primary audience and page job.
+3. Identify the visitor's supported starting state.
+4. Identify the belief or understanding that must change before conversion.
+5. Identify the core value proposition and primary message.
+6. Identify the supported mechanism, process, or offer logic if one exists.
+7. Identify the distinct evaluation questions the visitor must answer.
+8. Identify trust requirements.
+9. Identify objections, barriers, and decision factors.
+10. Identify any supported commercial or offer information that matters.
+11. Map those strategic jobs to available catalog sections.
+12. Mark direct, important jobs as `required`.
+13. Mark meaningful reinforcement or execution flexibility as `optional`.
+14. Exclude unsupported, irrelevant, or genuinely redundant sections.
+15. Check that no section imports a new claim, proof type, offer mechanic, or
+    conversion step.
+16. Order all included sections by the Page Strategy's belief progression.
 
 
 # FINAL QUALITY TEST
 
-Before returning the JSON, ask:
+Before returning the JSON, verify:
 
 COVERAGE:
-- Does the selection give PAGE BLUEPRINT enough building blocks to create a
-  persuasive, complete page rather than a skeleton?
-- Are mechanism, usage, benefits, product evaluation, trust, objections, offer,
-  and conversion sufficiently covered where relevant?
+- Does the selected set cover all important jobs in Page Strategy?
+- Is the visitor given enough information to understand, evaluate, trust, and take
+  the defined action where those jobs are relevant?
 
-BALANCE:
-- Have I excluded sections merely because they overlap slightly?
-- Have I included sections merely because they are common?
+FOCUS:
+- Does every included section support the same primary page strategy?
+- Have secondary narratives been kept subordinate?
 
-REQUIRED:
-- Does every required section perform an important direct job in this Page
-  Strategy?
+REDUNDANCY:
+- Does each included section perform a distinct job?
+- Are any sections duplicative without adding decision value?
 
-OPTIONAL:
-- Does every optional section add a meaningful distinct layer or useful
-  execution flexibility?
+EVIDENCE:
+- Does any selected section imply proof, pricing, urgency, policy, comparison, or
+  offer mechanics that Page Strategy does not support?
 
-EXCLUDED:
-- Is every excluded section truly unsupported, irrelevant, asset-incompatible,
-  or substantially redundant?
+CONVERSION:
+- Does the section set support the exact conversion action rather than inventing a
+  new one?
 
-If the configuration feels unusually sparse, re-evaluate it before returning.
+CATALOG DISCIPLINE:
+- Is every available section included exactly once as required, optional, or
+  excluded?
+- Are only supplied section ids used?
+
+If any answer is no, revise the configuration before returning it.
 
 
 # OUTPUT
@@ -1067,11 +738,11 @@ Return exactly this JSON structure:
 - `excluded` sections must have `"position": null`.
 - All non-null positions must be unique.
 - All non-null positions must form a contiguous sequence beginning at 1.
-- Optimize for balanced conversion coverage, not minimum section count.
+- Do not target a predetermined section count.
 - Use `required` for important direct strategic jobs.
 - Use `optional` for meaningful supporting layers.
-- Use `excluded` only for unsupported, irrelevant, or genuinely redundant
-  section types.
+- Use `excluded` for unsupported, irrelevant, or genuinely redundant sections.
+- Prefer source-faithful coverage over familiar landing-page conventions.
 """.strip()
 
 
@@ -1087,44 +758,43 @@ def _get_data_prompt(
     )
 
     return f"""
-PAGE STRATEGY — authoritative strategy for this page:
+PAGE STRATEGY:
+
 {page_strategy_context}
 
 
 AVAILABLE PAGE SECTIONS — complete catalog of allowed section types:
+
 {sections_json}
 
 
-Generate ONE balanced, conversion-complete Page Requirements configuration.
+Generate ONE focused Page Requirements configuration.
 
 Important:
 
-- Do NOT optimize for the smallest possible page.
-- Do NOT include sections merely because they are common.
-- Select enough complementary section types to fully execute the Page Strategy.
-- Preserve the strategy's audience, problem, desired outcome, message, mechanism,
-  trust requirements, objections, conversion strategy, and conversion action.
-- Follow customer_journey_strategy as a belief progression.
-- Treat related section types as potentially complementary, not automatically
-  redundant.
-- In particular, do not automatically collapse `solution`, `unique_mechanism`,
-  `how_it_works`, `benefits`, `product_showcase`, and `features` into only one
-  or two sections. Include each when it performs a distinct strategic job.
-- For consideration-stage pages, ensure enough coverage for differentiation,
-  mechanism understanding, benefits, product evaluation, trust, objections,
-  offer evaluation, and conversion.
+- This generator is product-agnostic and conversion-model-agnostic.
+- Do not assume ecommerce, physical products, SaaS, services, lead generation,
+  booking, subscriptions, or any other business model unless PAGE STRATEGY supports it.
+- PAGE STRATEGY defines the page job, audience, message, trust needs, objections,
+  belief progression, and conversion action.
+- The section catalog defines the only section types you may use.
+- Treat section names as available structural tools, not as evidence that their
+  content exists or is needed.
+- Select sections based on distinct strategic jobs, not on a standard template.
+- Do not target a predetermined number of sections.
+- Include enough sections to execute the Page Strategy completely, but exclude
+  filler and true redundancy.
+- Related sections may coexist when they perform different jobs.
+- Do not invent proof, claims, guarantees, urgency, bonuses, pricing logic, offer
+  mechanics, competitors, customer psychology, or conversion actions.
+- Do not create a new conversion path or intermediate step.
+- Proof-dependent, pricing-dependent, comparison-dependent, urgency-dependent, or
+  policy-dependent sections must only be included when the Page Strategy supports
+  that job.
 - Mark important direct strategic jobs as `required`.
-- Use `optional` for useful supporting layers and execution flexibility.
-- Exclude only unsupported, irrelevant, proof-incompatible, or genuinely
-  redundant sections.
-- Do not invent proof, claims, guarantees, urgency, bonuses, offer mechanics,
-  competitors, or conversion actions.
-- Proof-dependent sections may be optional when strategically useful but asset
-  availability is not established; they must never force fabricated proof.
-- Use the available catalog as a toolbox for complete persuasion, not as either
-  a mandatory template or a minimal checklist.
-- If the result is unusually sparse, re-check whether distinct persuasive jobs
-  were collapsed too aggressively.
+- Use `optional` for meaningful supporting layers or execution flexibility.
+- Exclude unsupported, irrelevant, or genuinely redundant sections.
+- Order included sections according to the Page Strategy's belief progression.
 - Include every catalog section exactly once.
 - Use contiguous positions beginning at 1 for all non-excluded sections.
 - Return valid JSON only matching the system schema.

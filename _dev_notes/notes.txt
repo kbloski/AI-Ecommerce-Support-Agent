@@ -335,6 +335,38 @@ When information conflicts:
    a product capability absent from upstream product truth.
 
 
+OFFER PROFILE — authoritative offer truth:
+{offer_profile_context}
+
+
+BRAND MARKETING — positioning and voice context:
+{brand_marketing_context}
+
+
+MARKETING STRATEGY — supporting audience and journey context:
+{marketing_strategy_context}
+
+
+OFFER STRATEGY — supporting value framing:
+{offer_strategy_context}
+
+
+MESSAGE STRATEGY — communication direction and claim ceiling:
+{message_strategy_context}
+
+
+PAGE STRATEGY — authoritative page scope and conversion logic:
+{page_strategy_context}
+
+
+PAGE BLUEPRINT — authoritative architecture and section boundaries:
+{page_blueprint_context}
+
+
+PAGE CONTENT PLAN — authoritative section-level copy brief:
+{page_content_plan_context}
+
+
 
 
 

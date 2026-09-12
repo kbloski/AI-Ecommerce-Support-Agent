@@ -2,111 +2,204 @@
   {
     "id": "hero",
     "name": "Hero",
-    "description": "Creates the first customer interaction, communicates the primary product value, and generates initial interest."
+    "description": "Creates the first customer interaction, communicates the primary product value, and generates initial interest.",
+    "selection_guidance": {
+      "use_when": ["The page needs an opening section that establishes primary relevance, value direction, and conversion direction."],
+      "rules": ["Do not mark it required solely because it is common on dedicated conversion pages."]
+    }
   },
   {
     "id": "problem",
     "name": "Problem",
-    "description": "Establishes the customer's problem, frustration, unmet need, undesirable situation, or gap between their current and desired state."
+    "description": "Establishes the customer's problem, frustration, unmet need, undesirable situation, or gap between their current and desired state.",
+    "selection_guidance": {
+      "use_when": ["Explicitly articulating or reframing the visitor's situation, friction, unmet need, task, or limitation materially improves understanding of why the offer is relevant."],
+      "rules": ["Do not force a negative pain narrative onto aspiration-led, opportunity-led, replacement-led, or purely informational page strategies."]
+    }
   },
   {
     "id": "transformation",
     "name": "Transformation",
-    "description": "Shows a clear before-and-after change in the customer's situation, results, experience, or visible outcome."
+    "description": "Shows a clear before-and-after change in the customer's situation, results, experience, or visible outcome.",
+    "selection_guidance": {
+      "use_when": ["Page Strategy contains a supported before-and-after or current-state-to-desired-state shift that is useful to communicate."],
+      "rules": ["The shift must not be stronger than Page Strategy.", "Do not manufacture emotional, behavioral, financial, health, or life transformation."]
+    }
   },
   {
     "id": "solution",
     "name": "Solution",
-    "description": "Positions the product as the solution to the customer's problem or desired outcome."
+    "description": "Positions the product as the solution to the customer's problem or desired outcome.",
+    "selection_guidance": {
+      "use_when": ["The visitor needs a dedicated explanation of what the offer is and how it addresses the supported situation."],
+      "rules": ["Do not assume the opening section already provides enough explanation."]
+    }
   },
   {
     "id": "unique_mechanism",
     "name": "Unique Mechanism",
-    "description": "Explains the distinctive underlying mechanism, technology, formulation, process, or method that makes the product work differently from alternatives."
+    "description": "Explains the distinctive underlying mechanism, technology, formulation, process, or method that makes the product work differently from alternatives.",
+    "selection_guidance": {
+      "use_when": ["Page Strategy depends on a meaningful supported mechanism, method, process, system, structure, approach, or organizing principle."],
+      "rules": ["The section name does not authorize a uniqueness claim.", "Do not imply the mechanism is proprietary, unique, superior, or exclusive unless Page Strategy supports that claim."]
+    }
   },
   {
     "id": "benefits",
     "name": "Benefits",
-    "description": "Explains what the customer gains or how their situation improves as a result of using the product."
+    "description": "Explains what the customer gains or how their situation improves as a result of using the product.",
+    "selection_guidance": {
+      "use_when": ["The page needs a dedicated layer connecting confirmed features, mechanisms, or offer characteristics to customer-relevant value."],
+      "rules": ["Do not convert a feature into an unsupported outcome.", "Benefits and features may coexist when they answer different decision questions."]
+    }
   },
   {
     "id": "how_it_works",
     "name": "How It Works",
-    "description": "Explains the steps, process, practical usage, or customer journey involved in using the product."
+    "description": "Explains the steps, process, practical usage, or customer journey involved in using the product.",
+    "selection_guidance": {
+      "use_when": ["Understanding the process, usage, delivery, workflow, implementation, or interaction materially affects the decision."],
+      "rules": ["Mechanism explanation and usage or process explanation may be different jobs; do not collapse them automatically when Page Strategy needs both."]
+    }
   },
   {
     "id": "product_showcase",
     "name": "Product Showcase",
-    "description": "Visually presents the product, its variants, appearance, interface, usage, or important details that benefit from demonstration."
+    "description": "Visually presents the product, its variants, appearance, interface, usage, or important details that benefit from demonstration.",
+    "selection_guidance": {
+      "use_when": ["Visual or concrete presentation of the supported offer, interface, deliverables, components, outputs, format, environment, or examples materially helps evaluation."],
+      "rules": ["Interpret the showcase according to the actual offer.", "Do not assume a physical product."]
+    }
   },
   {
     "id": "features",
     "name": "Features",
-    "description": "Describes concrete product attributes, specifications, components, capabilities, or included functionality."
+    "description": "Describes concrete product attributes, specifications, components, capabilities, or included functionality.",
+    "selection_guidance": {
+      "use_when": ["Concrete capabilities, attributes, inclusions, specifications, or offer characteristics materially help the visitor evaluate fit."],
+      "rules": ["Features and benefits may coexist when they answer different decision questions.", "Do not invent capabilities, attributes, inclusions, or specifications."]
+    }
   },
   {
     "id": "comparison",
     "name": "Comparison",
-    "description": "Compares the product with alternatives, competitors, previous methods, or other available solutions."
+    "description": "Compares the product with alternatives, competitors, previous methods, or other available solutions.",
+    "selection_guidance": {
+      "use_when": ["Page Strategy establishes a meaningful supported alternative, contrast, or comparison dimension."],
+      "rules": ["Do not invent competitor weaknesses, category alternatives, or superiority."]
+    }
   },
   {
     "id": "ugc",
     "name": "UGC",
-    "description": "Showcases simple, authentic-looking customer-created photos, videos, unboxings, demonstrations, reactions, or product-in-use content to make the product feel relatable, tangible, and socially validated."
+    "description": "Showcases simple, authentic-looking customer-created photos, videos, unboxings, demonstrations, reactions, or product-in-use content to make the product feel relatable, tangible, and socially validated.",
+    "selection_guidance": {
+      "use_when": ["Page Strategy supports UGC as a legitimate and strategically useful proof or demonstration format."],
+      "rules": ["Never assume or fabricate UGC assets.", "Use required only when Page Strategy clearly requires UGC and it can legitimately be used.", "Do not select it merely because another proof format is useful."]
+    }
   },
   {
     "id": "social_proof",
     "name": "Social Proof",
-    "description": "Builds trust using aggregate evidence such as ratings, customer counts, logos, awards, certifications, press mentions, adoption metrics, or other credibility signals."
+    "description": "Builds trust using aggregate evidence such as ratings, customer counts, logos, awards, certifications, press mentions, adoption metrics, or other credibility signals.",
+    "selection_guidance": {
+      "use_when": ["Page Strategy supports aggregate evidence as a legitimate and strategically useful trust mechanism."],
+      "rules": ["Never assume or fabricate ratings, customer counts, logos, awards, certifications, press mentions, adoption metrics, or other proof.", "Use required only when Page Strategy clearly requires this proof type and it can legitimately be used."]
+    }
   },
   {
     "id": "testimonials",
     "name": "Testimonials",
-    "description": "Uses direct customer quotes, reviews, endorsements, or personal experiences to build trust."
+    "description": "Uses direct customer quotes, reviews, endorsements, or personal experiences to build trust.",
+    "selection_guidance": {
+      "use_when": ["Page Strategy supports testimonials as a legitimate and strategically useful trust mechanism."],
+      "rules": ["Never assume or fabricate quotes, reviews, endorsements, or customer experiences.", "Use required only when Page Strategy clearly requires testimonials and they can legitimately be used."]
+    }
   },
   {
     "id": "case_studies",
     "name": "Case Studies",
-    "description": "Uses detailed customer success stories with context, actions, outcomes, and optionally measurable results."
+    "description": "Uses detailed customer success stories with context, actions, outcomes, and optionally measurable results.",
+    "selection_guidance": {
+      "use_when": ["Page Strategy supports case studies as a legitimate and strategically useful proof format."],
+      "rules": ["Never assume or fabricate customer stories, actions, outcomes, or measurements.", "Use required only when Page Strategy clearly requires case studies and they can legitimately be used."]
+    }
   },
   {
     "id": "objection_handling",
     "name": "Objection Handling",
-    "description": "Directly addresses specific reasons a customer may hesitate to buy and provides persuasive responses beyond a standard FAQ format."
+    "description": "Directly addresses specific reasons a customer may hesitate to buy and provides persuasive responses beyond a standard FAQ format.",
+    "selection_guidance": {
+      "use_when": ["Page Strategy contains meaningful barriers, doubts, or decision factors that deserve direct resolution."],
+      "rules": ["Do not invent objections merely to justify the section.", "Objection handling and FAQ may coexist when they serve different jobs."]
+    }
   },
   {
     "id": "offer",
     "name": "Offer",
-    "description": "Presents the complete purchase proposition, including what the customer receives, the core package, and the overall value."
+    "description": "Presents the complete purchase proposition, including what the customer receives, the core package, and the overall value.",
+    "selection_guidance": {
+      "use_when": ["The visitor needs a distinct block to understand what is being selected, requested, subscribed to, booked, purchased, applied for, or otherwise converted on."],
+      "rules": ["Do not assume the conversion action is a purchase.", "Do not invent offer mechanics."]
+    }
   },
   {
     "id": "bonus_stack",
     "name": "Bonus Stack",
-    "description": "Presents additional items, gifts, add-ons, services, or bonuses included beyond the core product or offer."
+    "description": "Presents additional items, gifts, add-ons, services, or bonuses included beyond the core product or offer.",
+    "selection_guidance": {
+      "use_when": ["Real additional offer components or bonuses are supported by Page Strategy."],
+      "rules": ["Exclude this section when additional components or bonuses are not supported.", "Do not invent bonuses, gifts, add-ons, or services."]
+    }
   },
   {
     "id": "pricing",
     "name": "Pricing",
-    "description": "Presents prices, plans, packages, subscriptions, payment options, product variants, or other purchase configurations."
+    "description": "Presents prices, plans, packages, subscriptions, payment options, product variants, or other purchase configurations.",
+    "selection_guidance": {
+      "use_when": ["Supported price, plan, commercial structure, package comparison, or other pricing information deserves its own decision block."],
+      "rules": ["Exclude this section when pricing is absent or not relevant to Page Strategy.", "Do not invent pricing or commercial details."]
+    }
   },
   {
     "id": "risk_reversal",
     "name": "Risk Reversal",
-    "description": "Reduces perceived purchase risk through guarantees, free trials, easy returns, cancellation policies, or other confidence-building assurances."
+    "description": "Reduces perceived purchase risk through guarantees, free trials, easy returns, cancellation policies, or other confidence-building assurances.",
+    "selection_guidance": {
+      "use_when": ["A real supported risk-reduction mechanism exists and matters to the decision."],
+      "rules": ["Do not invent guarantees, trials, refunds, cancellation terms, returns, or other risk-reduction mechanics."]
+    }
   },
   {
     "id": "urgency",
     "name": "Urgency",
-    "description": "Encourages immediate action when there is a genuine time-sensitive reason, such as a deadline, limited availability, or expiring offer."
+    "description": "Encourages immediate action when there is a genuine time-sensitive reason, such as a deadline, limited availability, or expiring offer.",
+    "selection_guidance": {
+      "use_when": ["Legitimate urgency or scarcity is explicitly supported by Page Strategy."],
+      "rules": ["Never invent deadlines, scarcity, limited availability, expiring terms, or countdowns."]
+    }
   },
   {
     "id": "faq",
     "name": "FAQ",
-    "description": "Answers common customer questions in a question-and-answer format and removes remaining uncertainty before purchase."
+    "description": "Answers common customer questions in a question-and-answer format and removes remaining uncertainty before purchase.",
+    "selection_guidance": {
+      "use_when": ["A secondary question-and-answer layer would help resolve supported practical, transactional, implementation, eligibility, compatibility, scope, or other lower-priority questions."],
+      "rules": ["Do not invent questions, objections, or transactional details.", "FAQ and objection handling may coexist when they serve different jobs."]
+    }
   },
   {
     "id": "final_cta",
     "name": "Final CTA",
-    "description": "Encourages the customer to take the primary conversion action and move toward the purchase decision."
+    "description": "Encourages the customer to take the primary conversion action and move toward the purchase decision.",
+    "selection_guidance": {
+      "use_when": [
+        "A dedicated closing conversion reinforcement is useful for the conversion action defined in Page Strategy."
+      ],
+      "rules": [
+        "Support the exact conversion action defined in Page Strategy.",
+        "Do not introduce a new or alternative conversion action."
+      ]
+    }
   }
 ]

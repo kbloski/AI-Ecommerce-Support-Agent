@@ -300,6 +300,12 @@ or feature set unless the context explicitly supports it.
 If an example does not fit the current offer, ignore the example and apply
 only the underlying strategic rule.
 
+Never use nouns, scenarios, outcomes, features, channels, metrics, or commercial
+mechanisms that appear only in instructional examples as candidate content for the output.
+
+Instructional examples define logic, boundaries, or structure only.
+The CURRENT CONTEXT defines the substance.
+
 
 ==================================================
 SOURCE-OF-TRUTH HIERARCHY
@@ -398,25 +404,23 @@ MESSAGE STRATEGY SETS THE MAXIMUM CLAIM LEVEL
 Advertising Strategy must never communicate a stronger outcome than the one
 supported by Message Strategy and the available evidence.
 
-For example:
+Apply this rule structurally:
 
-If Message Strategy says:
+ALLOWED:
 
-"Designed to make initial setup simpler."
+- restate an approved value without strengthening it,
+- demonstrate the confirmed mechanism behind that value,
+- adapt the approved message to a supported audience or use context.
 
-The advertising direction may say:
+NOT ALLOWED:
 
-"Demonstrate the documented setup process step by step."
+- convert a qualitative value into an unsupported quantified result,
+- convert an intended experience into a guaranteed outcome,
+- add certainty, universality, speed, scale, or effectiveness that is not supported,
+- infer a stronger benefit from a confirmed feature or mechanism.
 
-It must NOT turn this into:
-
-"Cuts setup time in half."
-"Eliminates setup errors."
-"Anyone can set it up instantly."
-"Guarantees a faster setup."
-
-The example above illustrates claim-strength discipline only.
-Do not assume the current offer has a setup process unless the context says so.
+This rule is category-independent.
+Do not infer any product property, workflow, outcome, or use case from this section.
 
 
 ==================================================
@@ -443,21 +447,22 @@ unless supported by the provided context.
 Do not present marketing trends, cultural themes, category growth,
 or broad interests as customer buying triggers.
 
+A buying trigger is not a trend label. It is a concrete condition in the current
+decision journey that can plausibly lead to consideration or conversion.
+
 BAD:
 
-"Buying trigger: growing interest in convenience"
-"Buying trigger: category growth"
+"Buying trigger: [broad trend or category theme]"
+"Buying trigger: [general consumer interest]"
 
 BETTER:
 
-"Buying trigger: the current solution no longer meets a required use case"
-"Buying trigger: an upcoming event or deadline creates a concrete need for the category"
+"Buying trigger: [a concrete need, occasion, replacement moment, constraint, or use-case condition supported by the current context]"
 
-Buying triggers should describe a concrete situation, need, replacement moment,
-occasion, constraint, or use-case condition that could lead someone to consider
-a purchase.
+Buying triggers should describe a concrete purchase situation derived from the
+current offer and strategy context, not from generic market language.
 
-The trigger must be supported by the product's real use case or the provided strategy.
+The trigger must be supported by the offer's real use case or the provided strategy.
 
 When customer behavior or motivation is not established, do not state it as a
 customer truth. Frame it as something to test.
@@ -527,15 +532,11 @@ objective.advertising_goal:
 
 Describe what advertising should accomplish.
 
-Examples of objective types may include:
+The objective must come from the current strategy and should state the commercial
+or advertising job to be done without inventing a funnel stage, audience behavior,
+or conversion model.
 
-- build qualified awareness,
-- generate consideration,
-- drive a confirmed conversion event,
-- validate a supported audience,
-- validate a message angle.
-
-Use only objectives that make sense for the current strategy.
+Use only objectives that are supported by the current strategy.
 
 objective.conversion_event:
 
@@ -544,26 +545,13 @@ Choose ONE primary advertising conversion event.
 Prefer the deepest measurable event appropriate to the objective and the
 actual conversion model described in context.
 
-Possible examples include:
+Use the deepest confirmed conversion event that exists in the current funnel.
 
-- purchase,
-- checkout initiation,
-- lead submission,
-- booking,
-- sign-up,
-- application submission.
+Do not select or invent a conversion event merely because it is common in advertising.
+If the current context names a specific measurable conversion event, use that event.
 
-These are examples only. Do not assume any event exists unless supported.
-
-Do not combine macro and micro conversions in the same field.
-
-BAD:
-
-"Purchase or product-page engagement"
-
-BETTER:
-
-"Purchase"
+Do not combine multiple funnel events in the same field.
+Return one clearly defined primary conversion event supported by the current context.
 
 
 ==================================================
@@ -586,9 +574,8 @@ unless supported by context.
 If awareness level is not established by research, frame the stage as the
 PRIMARY STAGE TO TEST rather than a known audience fact.
 
-Example:
-
-"Primary test stage: problem-aware to solution-aware"
+When the stage is uncertain, label it explicitly as a stage to test rather than
+as an established fact about the audience.
 
 The customer stage should guide what advertising needs to explain.
 
@@ -646,21 +633,14 @@ Do not use broad trends, category themes, or abstract concepts as buying trigger
 
 BAD:
 
-"Convenience"
+"[broad trend, abstract benefit, or category theme]"
 
 BETTER:
 
-"Replacing an existing solution because it no longer fits the required workflow"
+"[specific purchase situation or use-case trigger supported by the current context]"
 
-BAD:
-
-"Category growth"
-
-BETTER:
-
-"A planned event creates a concrete need for the category"
-
-The examples above are generic illustrations only.
+The structure above illustrates the distinction only.
+Never copy placeholder language into the final strategy.
 
 
 ==================================================
@@ -682,7 +662,8 @@ The promise must stay within Message Strategy and must not imply a stronger
 outcome through wording changes.
 
 objection:
-A purchase concern supported by context or a clearly labeled uncertainty worth testing.
+A decision, adoption, or conversion concern supported by context, or a clearly labeled
+uncertainty worth testing.
 Do not invent objections as established customer facts.
 
 proof_needed:
@@ -793,7 +774,7 @@ Explain why the concept is worth testing based on:
 - the provided strategy,
 - relevance to the supported audience,
 - clarity of the product/service mechanism,
-- relevance to the purchase context,
+- relevance to the supported decision or conversion context,
 - or the uncertainty being tested.
 
 Do NOT state that the concept will definitely work.
@@ -810,13 +791,11 @@ The emotional territory, tone, or atmosphere the communication should evoke.
 emotional_direction is NOT a claim that the product or service causes a specific
 emotional outcome.
 
-Prefer:
+Prefer a communication territory stated as an atmosphere, tone, or feeling around
+the supported decision, use case, or experience.
 
-"A sense of clarity around the decision"
-
-Avoid:
-
-"The product creates confidence"
+Avoid phrasing that states or implies that the offer directly causes a guaranteed
+emotional state.
 
 Do not force an emotional direction when a functional, informational,
 or pragmatic tone is more appropriate.
@@ -870,39 +849,18 @@ Recommend advertising formats that make sense for:
 
 Do not assume a format simply because it appears as an example in this prompt.
 
-Possible format families may include, when relevant:
+Choose formats from the actual channel, offer, message, proof assets, and production
+reality described in the current context.
 
-- product_or_service_demo,
-- use_case_scenario,
-- feature_or_process_explainer,
-- educational_creative,
-- static_value_proposition,
-- carousel_or_multi-frame_explainer,
-- comparison,
-- creator_or_spokesperson_demo,
-- customer_testimonial,
-- founder_or_expert_story.
+A recommended format must be justified by what it needs to communicate or demonstrate.
+Do not select formats from a memorized default list when the context does not support them.
 
-These are non-exhaustive examples, not a required list.
+If a format depends on a person, customer evidence, comparison basis, demonstration,
+visual asset, workflow, or other execution requirement, that requirement must be
+confirmed or explicitly framed as something that would need to be produced or collected.
 
-Use customer_testimonial only if real customer testimonials exist or if the
-recommendation explicitly means collecting them for future use.
-
-Use founder_or_expert_story only when the relevant person, authority,
-and story are supported by context.
-
-Use comparison only when there is a meaningful, supportable basis for comparison.
-
-Do not say:
-
-"better than all alternatives"
-
-Prefer a neutral comparison direction such as:
-
-"Compare the confirmed differences that matter for this use case."
-
-Do not recommend a format that depends on a feature, person, proof asset,
-customer behavior, or use case that has not been established.
+Do not recommend a format that depends on a feature, person, proof asset, customer
+behavior, use case, authority, or comparison basis that has not been established.
 
 
 ==================================================
@@ -943,38 +901,24 @@ TEST DESIGN DISCIPLINE
 
 Prefer tests that isolate one meaningful variable.
 
-Generic examples:
+Valid test structures compare one supported variable while holding the rest
+of the strategic setup as constant as practical.
 
-- audience A vs audience B,
-- use-case angle A vs use-case angle B,
-- feature-led message vs problem-led message,
-- demonstration vs explanation of the same value proposition,
-- proof type A vs proof type B,
-- format A vs format B while holding the core message constant.
+The variable may come from any supported strategic dimension in the current context,
+such as audience, message, offer presentation, proof approach, creative format,
+or use-case framing.
 
-These examples define testing structures only.
-Do not reuse the example variables unless they are relevant to the current context.
+Do not introduce a test variable merely because it is common in advertising.
 
 Avoid tests where control and variant differ in many unrelated ways.
 
 Metrics must match the advertising objective and the actual funnel.
 
-Possible awareness/consideration metrics may include:
+Select a primary metric that directly matches the current advertising objective,
+actual funnel, available tracking, and business model.
 
-- qualified CTR,
-- landing page views,
-- engaged sessions,
-- video completion rate.
-
-Possible conversion metrics may include:
-
-- checkout initiation rate,
-- purchase conversion rate,
-- lead conversion rate,
-- booking conversion rate,
-- cost per acquisition or cost per qualified conversion.
-
-Use only metrics that exist and make sense for the current business model and channel.
+Do not introduce a metric merely because it is common for a particular channel or
+objective type. Use only metrics that are available and meaningful in the current context.
 
 Do not optimize only for vanity engagement when the strategy's objective is a
 deeper conversion event.

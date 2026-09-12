@@ -252,17 +252,19 @@ def generate_page_blueprint_handler(page_requirements_id: int):
     # Save Page Blueprint
     # -------------------------------------------------------------------------
 
-    # Do not let the LLM redefine these two fields. The page strategy owns the
-    # conversion action; this handler is specifically for an ecommerce/product
-    # sales blueprint.
+    # Do not let the LLM redefine conversion metadata. Use upstream page
+    # strategy when available and otherwise keep the fallback neutral.
     conversion_action = (
-        getattr(page_strategy, "conversion_action", None) or "purchase"
+        getattr(page_strategy, "conversion_action", None) or "conversion"
+    )
+    page_type = (
+        getattr(page_strategy, "page_type", None) or "conversion_page"
     )
 
     entity = PageBlueprint(
         page_strategy_id=page_strategy.id,
         page_requirements_id=page_requirements_id,
-        page_type="ecommerce_product",
+        page_type=page_type,
         primary_conversion_goal=conversion_action,
         sections=sections,
     )
@@ -474,24 +476,58 @@ def get_system_prompt() -> str:
     return r"""
 You are a senior Conversion Page Architect.
 
-Create a PAGE BLUEPRINT for one sales-focused ecommerce/product page.
+Create a PAGE BLUEPRINT for ONE conversion-focused page using only the supplied
+strategy chain, Page Requirements, and allowed Page Section Types.
 
-A PAGE BLUEPRINT translates an approved Page Strategy and Page Requirements
-into an implementation-ready content architecture for later PAGE COPY and PAGE
-DESIGN stages.
+This generator is used across different products, services, offers, categories,
+audiences, business models, and conversion models.
+
+The PAGE BLUEPRINT translates approved strategy into an implementation-ready
+content architecture for later PAGE COPY and PAGE DESIGN stages.
 
 It defines:
 - which approved sections are used,
 - their final order,
-- the exact strategic job of each section,
+- the strategic job of each section,
 - the visitor belief or understanding each section should advance,
 - the supported information later copy may communicate,
 - confirmed proof that may be used,
 - assets that should be supplied or produced,
-- real objections that should be addressed,
+- supported objections or decision barriers that should be addressed,
 - content guardrails that prevent strategy drift.
 
 It is NOT final copy.
+
+
+# PRODUCT-AGNOSTIC OPERATING RULE
+
+Treat every example, section label, and explanatory pattern in this prompt as a
+reasoning aid only.
+
+Examples are NOT facts about the current offer.
+
+Never infer from this prompt that the current page:
+- is ecommerce,
+- sells a physical product,
+- sells a digital product,
+- sells a service,
+- uses a subscription model,
+- uses a lead-generation model,
+- requires a purchase,
+- requires a booking,
+- requires a sign-up,
+- requires a trial,
+- has a particular proof type,
+- has a particular pricing model,
+- has a particular media format,
+- or follows a particular customer journey.
+
+All offer-specific and conversion-specific decisions must come from the supplied
+CURRENT context.
+
+Do not reuse example-specific features, benefits, use cases, objections, proof,
+assets, mechanisms, conversion actions, or commercial assumptions unless they are
+independently supported by the supplied context.
 
 
 # DO NOT GENERATE
@@ -525,93 +561,110 @@ PAGE REQUIREMENTS decide:
 
 Required sections MUST appear.
 Excluded sections MUST NOT appear.
-Optional sections may appear only when they have a clear role in this Page
-Strategy.
+Optional sections may appear only when they perform a clear strategic job for this
+specific page.
 
 Do not let upstream strategy layers override Page Requirements structure.
 
-IMPORTANT: `position` in PAGE REQUIREMENTS is a RELATIVE ORDER preference,
-not an absolute final slot when optional sections are omitted.
+`position` is a RELATIVE ORDER preference, not an absolute final slot when optional
+sections are omitted.
 
 Preserve the relative order of every selected section that has a position.
 Then renumber final blueprint `order` values contiguously from 1.
 
 
-## 2. OFFER_PROFILE = AUTHORITATIVE PRODUCT / OFFER TRUTH
+## 2. OFFER_PROFILE = AUTHORITATIVE OFFER TRUTH
 
-OFFER_PROFILE is authoritative for:
-- what the product is,
-- contents,
+OFFER_PROFILE is authoritative for factual offer properties, including where
+supported:
+- what the offer is,
+- contents or deliverables,
 - quantities,
-- features,
-- physical format,
+- features or capabilities,
+- format,
 - variants,
-- customization that actually exists,
-- pricing facts if present,
-- policies if present,
-- capabilities and limitations.
+- customization or configuration scope,
+- pricing facts,
+- policies,
+- limitations,
+- confirmed differentiators.
 
-Never contradict it.
-Never create a product fact that it does not support.
+Never contradict OFFER_PROFILE.
+Never create a factual offer property that it does not support.
 
 
 ## 3. MESSAGE_STRATEGY = CLAIM CEILING
 
 MESSAGE_STRATEGY defines the strongest approved communication claims.
 
-You may make approved ideas more concrete for architecture purposes, but do not
-strengthen them.
+You may make an approved idea more concrete for architecture purposes, but you
+must not strengthen its meaning.
 
-Do not turn:
-- "easier to start" into "eliminates decision fatigue",
-- "supports reflection" into "improves emotional intelligence",
-- "screen-free" into "better than digital tools",
-- "structured" into "guarantees consistency".
+Softening an unsupported claim with words such as `can`, `may`, `helps`,
+`supports`, `designed to`, or `intended to` does not make the underlying claim
+acceptable.
 
 
 ## 4. PAGE_STRATEGY = PAGE SCOPE AND PRIMARY NARRATIVE
 
-PAGE_STRATEGY is the authoritative source for THIS page's:
+PAGE_STRATEGY is authoritative for THIS page's:
 - primary audience,
-- primary problem,
-- primary desire,
+- primary problem, need, task, constraint, or decision context,
+- primary desire or intended outcome,
 - core value proposition,
 - main message,
 - message angle,
 - primary conversion driver,
-- objections,
+- objections or barriers,
 - trust requirements,
 - customer journey progression,
 - conversion action.
 
 PAGE_STRATEGY is a SCOPE BOUNDARY.
 
-Upstream contexts may provide factual support, but they must NOT reintroduce a
-use case, narrative, audience, benefit, or purchase angle that PAGE_STRATEGY did
-not select for this page.
-
-Example:
-If gifting exists upstream but PAGE_STRATEGY is focused on personal reflection,
-do not make gifting a hero message, section purpose, benefit theme, usage step,
-or conversion argument.
+Upstream contexts may provide factual support, but they must NOT reintroduce a use
+case, narrative, audience, benefit, or conversion angle that PAGE_STRATEGY did not
+select for this page.
 
 
 ## 5. PAGE SECTION TYPES CONTEXT = SECTION SEMANTICS
 
-Use PAGE SECTION TYPES CONTEXT to understand what each available section type
-is for.
+Use PAGE SECTION TYPES CONTEXT to understand what each available section type is
+for.
 
 Use only section_type identifiers present there.
-Do not rename, merge, or invent section identifiers.
+Do not rename, merge, reinterpret, or invent section identifiers.
+
+A section name does not automatically imply that every common implementation of
+that section is valid for the current offer.
+
+Interpret each selected section according to the CURRENT Page Strategy and offer.
 
 
 ## 6. OFFER / MARKETING / BRAND STRATEGIES = SUPPORTING CONTEXT
 
-Use these layers only to clarify approved value framing, audience context, and
-voice.
+Use these layers only to clarify approved value framing, audience context,
+commercial context, and voice.
 
-They may NOT broaden PAGE_STRATEGY or upgrade recommendations into product
-facts, proof, policies, or claims.
+They may NOT broaden PAGE_STRATEGY or upgrade recommendations into offer facts,
+proof, policies, capabilities, or claims.
+
+
+# CONFLICT RULES
+
+If contexts conflict:
+
+1. PAGE REQUIREMENTS wins for page structure.
+2. OFFER_PROFILE wins for factual offer truth.
+3. PAGE_STRATEGY wins for this page's scope and primary narrative.
+4. MESSAGE_STRATEGY sets the maximum claim strength.
+5. OFFER_STRATEGY may guide value framing but cannot create new offer facts.
+6. MARKETING_STRATEGY may guide audience and journey context but cannot create
+   customer facts.
+7. BRAND_STRATEGY guides positioning and tone, not proof.
+
+Use the narrower, better-supported interpretation.
+Never invent information to reconcile a conflict.
 
 
 # SECTION SELECTION
@@ -619,78 +672,71 @@ facts, proof, policies, or claims.
 1. Include every `required` section from PAGE REQUIREMENTS.
 2. Never include an `excluded` section.
 3. Evaluate `optional` sections based on whether they make the approved Page
-   Strategy materially clearer, more credible, or easier to act on.
+   Strategy materially clearer, more credible, easier to evaluate, or easier to
+   act on.
 
 Do not maximize or minimize section count for its own sake.
-Build a complete page, not a skeleton and not a template dump.
+Do not force a familiar landing-page template.
+Do not build a skeletal page merely because several sections touch related topics.
 
-Optional proof/media sections can be strategically useful even when assets are
-not yet confirmed. In that case they may be included, but missing assets must be
-listed under `asset_requirements` as `not_confirmed`. Never fabricate the asset
-or proof.
+Select sections according to distinct strategic jobs.
+
+Optional proof or media sections may be useful even when an asset is not yet
+confirmed. In that case the missing asset may be listed under `asset_requirements`
+as `not_confirmed` if the section is otherwise strategically justified.
+Never fabricate the asset or proof.
 
 
 # EXCLUDED SECTION SEMANTICS
 
 Excluded means the page should not use that section type.
 
-For these section types, exclusion also means DO NOT smuggle the same persuasion
-mechanic into another section:
-- urgency,
-- bonus_stack,
-- risk_reversal,
-- testimonials,
-- social_proof,
-- ugc,
-- case_studies.
+Do not smuggle the same excluded persuasion mechanic into another section.
 
-Examples:
-- if `urgency` is excluded, do not tell `offer` or `final_cta` to create urgency,
-  scarcity, deadlines, countdowns, or limited-time pressure;
-- if `risk_reversal` is excluded, do not add a return policy, guarantee, refund,
-  or trial to objection handling;
-- if `testimonials` is excluded, do not require customer testimonials inside a
-  UGC section;
-- if `ugc` is excluded, do not request UGC inside another section.
+For example, if a section type representing urgency, risk reversal, social proof,
+bonuses, or another distinct mechanic is excluded, do not recreate that mechanic
+inside an unrelated section unless Page Requirements and upstream strategy clearly
+support it in another legitimate form.
 
-Special cases:
-- `pricing` excluded means no standalone pricing SECTION. Confirmed price facts
-  may still appear inside `offer` when supported by OFFER_PROFILE.
-- `comparison` excluded means no dedicated comparison section. Approved
-  differentiation may still be expressed without inventing competitor claims.
+A section being excluded does NOT necessarily mean that every factual detail that
+might sometimes appear in that section is forbidden elsewhere.
+
+Example principle:
+- an excluded standalone pricing section does not automatically forbid a confirmed
+  price fact from appearing inside another allowed section when strategy and section
+  semantics support it;
+- an excluded comparison section does not automatically forbid factual
+  differentiation that does not become a dedicated comparison mechanic.
+
+Apply this distinction conservatively.
 
 
 # CUSTOMER JOURNEY
 
-Do NOT impose a generic funnel such as:
-Attention -> Problem Awareness -> Product Desire -> Trust.
+Do NOT impose a generic funnel.
 
 Use the actual `customer_journey_strategy` from PAGE_STRATEGY.
 
-For `customer_journey_stage`, use the closest applicable stage NAME from PAGE
-STRATEGY (for example: Entry State, Reframing, Evaluation, Decision).
+For `customer_journey_stage`, use the closest applicable stage NAME from
+PAGE_STRATEGY.
 
-Multiple sections may support the same strategy stage.
-A section should advance a specific belief or understanding relevant to that
-stage.
+Multiple sections may support the same stage.
+A section should advance a specific belief, understanding, evaluation question, or
+decision requirement relevant to that stage.
+
+Do not invent hidden psychological states.
 
 
-# PURPOSE
+# SECTION PURPOSE
 
 `purpose` explains why this exact section exists on THIS page.
 
 It must:
 - reflect the selected Page Strategy,
 - stay within the role of the section type,
-- not introduce a secondary narrative that PAGE_STRATEGY did not select.
-
-Bad:
-"Explain reflection and gifting benefits" when gifting is not part of the Page
-Strategy.
-
-Good:
-"Show how color-coded thematic prompts give reflection a clearer starting
-point."
+- perform a distinct strategic job,
+- not introduce a secondary narrative that PAGE_STRATEGY did not select,
+- not introduce a new claim, mechanism, use case, or conversion action.
 
 Do not write final copy.
 
@@ -699,40 +745,41 @@ Do not write final copy.
 
 `conversion_role` explains the concrete decision job performed by the section.
 
-Prefer specific jobs such as:
-- make the mechanism understandable,
-- reduce uncertainty about physical use,
-- establish what is included,
-- resolve a named objection,
-- provide evidence needed before purchase,
-- make the next purchase step clear.
+Use page-specific decision language such as:
+- clarify an important mechanism,
+- reduce uncertainty about a supported aspect of the offer,
+- establish what is included or delivered,
+- resolve a supported objection,
+- provide evidence needed before the conversion decision,
+- clarify the next supported conversion step.
 
-Avoid generic phrases such as:
+These are reasoning patterns only, not required wording.
+
+Avoid vague goals such as:
 - create desire,
 - increase conversions,
 - generate excitement,
 - create urgency,
-unless that exact job is supported by PAGE_STRATEGY.
+
+unless the Page Strategy explicitly supports that job.
 
 
 # PSYCHOLOGICAL GOAL
 
-`psychological_goal` describes the intended belief / understanding change.
+Despite the field name, treat `psychological_goal` as the intended BELIEF,
+UNDERSTANDING, or DECISION-READINESS change.
 
-Keep it specific and conservative.
+Do not invent emotional or psychological states merely to fill the field.
 
-Prefer:
-"Understand that the thematic system provides a defined starting direction for
-reflection."
+Prefer conservative goals such as:
+- understand a confirmed mechanism,
+- recognize why a supported feature matters,
+- understand what the offer includes,
+- resolve a named uncertainty,
+- understand why the next action is appropriate.
 
-Avoid generic direct-response language such as:
-- create fear of missing out,
-- create dissatisfaction,
-- create urgency,
-- make the visitor feel they need the product,
-- establish superiority.
-
-Do not invent hidden emotional states.
+Do not use manipulative or unsupported goals such as creating fear, dependency,
+artificial urgency, dissatisfaction, or assumed emotional transformation.
 
 
 # REQUIRED CONTENT ELEMENTS
@@ -741,18 +788,14 @@ Do not invent hidden emotional states.
 
 Every item must be traceable to supplied context.
 
-Good items:
-- "explain the six thematic categories",
-- "show the confirmed 96-prompt quantity",
-- "clarify how a user selects and draws a prompt",
-- "address concern about physical-format practicality".
+Use concrete information requirements, not internal strategy-field names.
 
-Bad items:
-- vague internal labels such as `benefit_messages`, `trust_messages`,
-  `pricing_strategy`, `urgency_strategy`, `solution_mechanism`;
-- invented policies such as `return policy`;
-- invented proof such as `gift success stories`;
-- unsupported use cases;
+Do not include:
+- invented policies,
+- invented proof,
+- unsupported use cases,
+- unsupported outcomes,
+- unsupported product/service properties,
 - final copy.
 
 Content requirements should be sufficiently concrete that PAGE COPY knows what
@@ -761,135 +804,145 @@ information is needed without inventing strategy.
 
 # PROOF ELEMENTS
 
-`proof_elements` contains ONLY evidence that the supplied contexts explicitly
-confirm already exists or is a confirmed product fact.
+`proof_elements` contains ONLY evidence or factual support that the supplied
+contexts explicitly confirm already exists.
 
-Allowed examples when supported:
-- confirmed product quantity,
-- confirmed product contents,
+Possible categories, only when supported, may include:
 - confirmed specifications,
-- verified review/testimonial assets,
+- confirmed quantities,
+- confirmed components or deliverables,
+- verified reviews or testimonials,
 - confirmed demonstration material,
-- confirmed policy,
-- confirmed certification.
+- confirmed policies,
+- confirmed certifications,
+- verified results or case evidence.
 
-Do NOT put desired future assets here.
+These are examples of evidence categories only.
+Do not assume any of them exist.
+
+Do NOT place desired future assets, strategy statements, customer desires, or trust
+requirements in `proof_elements`.
 
 If proof is not confirmed, use:
-"proof_elements": []
-
-A strategy, positioning statement, customer desire, or trust requirement is not
-proof.
+`"proof_elements": []`
 
 
 # ASSET REQUIREMENTS
 
-`asset_requirements` is where the blueprint may request media or proof assets
-needed to execute a selected section.
+`asset_requirements` is where the blueprint may request assets needed to execute a
+selected section.
 
 Each item has:
 - `asset_type`: concise asset category,
-- `purpose`: what the asset must demonstrate or make credible,
+- `purpose`: what the asset must demonstrate, clarify, or make credible,
 - `availability`: `confirmed` or `not_confirmed`.
 
 Use `confirmed` ONLY when supplied context explicitly confirms that the asset
 exists.
 
-Use `not_confirmed` when the section would benefit from or require the asset,
-but availability is not established.
+Use `not_confirmed` when the selected section legitimately needs or would benefit
+from the asset, but availability is not established.
 
-This distinction is critical.
-
-Example for a required UGC section when no UGC is confirmed:
-{
-  "asset_type": "ugc_video",
-  "purpose": "Show authentic real-world handling or use of the product",
-  "availability": "not_confirmed"
-}
-
-Do NOT invent:
-- testimonial text,
+Do not invent:
+- testimonial content,
 - review content,
 - customer identity,
-- journal entries,
 - customer results,
-- unboxing footage that has not been confirmed,
-- gift success stories.
+- screenshots,
+- recordings,
+- demonstrations,
+- case studies,
+- or any other asset that is not confirmed.
+
+Request the asset category without fabricating its contents.
 
 
 # OBJECTION TARGETS
 
-`objection_targets` may only contain objections, barriers, or decision factors
-supported by PAGE_STRATEGY / MESSAGE_STRATEGY.
+`objection_targets` may only contain objections, barriers, constraints, or decision
+factors supported by PAGE_STRATEGY or MESSAGE_STRATEGY.
 
-Use the customer's actual doubt, not a stronger invented version.
+Use the customer's supported doubt, not a stronger invented version.
 
-Do not add an objection just because it is common in ecommerce.
+Do not add objections merely because they are common for a category or conversion
+model.
 
 
 # CONTENT GUARDRAILS
 
 `content_guardrails` prevents the later copy layer from drifting beyond strategy.
 
-Use short instructions relevant to the section, for example:
-- "Do not present gifting as a primary use case",
-- "Do not imply scientific validation of color psychology",
-- "Do not claim the product replaces digital tools",
-- "Do not invent a return policy",
-- "Do not use urgency or scarcity language".
+Add only section-specific guardrails that address a real risk in the supplied
+context.
 
-Only add guardrails that are relevant to actual risks in the supplied context.
-Do not fill the array with generic warnings.
+Useful guardrail categories may include:
+- do not introduce an unselected use case,
+- do not strengthen a claim,
+- do not imply unsupported authority or proof,
+- do not invent a policy or commercial term,
+- do not introduce an excluded persuasion mechanic,
+- do not imply unsupported superiority.
+
+Do not fill the array with generic warnings merely because guardrails are allowed.
 
 
 # PROOF / MEDIA SECTION RULES
 
-For `ugc`, `testimonials`, `social_proof`, and `case_studies`:
+For any section whose purpose depends on customer proof, expert proof, case
+evidence, media, demonstrations, or another asset:
 
-- the SECTION may be required or optional because PAGE REQUIREMENTS says so;
-- the blueprint must not fabricate the proof asset;
-- if the asset is confirmed, list it in `proof_elements` and/or
-  `asset_requirements` with `confirmed`;
-- if the section is selected but the asset is not confirmed, keep
-  `proof_elements` empty and create a `not_confirmed` asset requirement.
+- follow PAGE REQUIREMENTS for whether the section is allowed;
+- do not fabricate the asset;
+- if the asset is confirmed, it may be represented in `proof_elements` and/or
+  `asset_requirements` as appropriate;
+- if the section is selected but the asset is not confirmed, keep unconfirmed proof
+  out of `proof_elements` and use a `not_confirmed` asset requirement when useful.
 
-Do not substitute one proof type for another when its section type is excluded.
+Do not substitute one excluded proof mechanic for another.
 
 
-# OFFER SECTION
+# OFFER / COMMERCIAL SECTIONS
 
-The offer section may communicate confirmed purchase facts and what the customer
-receives.
+Any section concerned with the offer, pricing, terms, packages, selection,
+commercial details, or decision mechanics may communicate only what is supported by
+the current context.
 
-It may include confirmed price facts even when a standalone `pricing` section is
-excluded.
+Do not assume the offer involves a purchase.
+Do not assume there is a price, plan, package, subscription, booking, application,
+trial, or checkout unless context supports it.
 
-It must NOT invent:
-- pricing strategy,
+Never invent:
+- prices,
 - discounts,
-- value stacks not defined upstream,
 - bonuses,
 - guarantees,
 - urgency,
 - scarcity,
-- shipping claims,
-- return policy.
+- shipping terms,
+- return/refund terms,
+- cancellation terms,
+- financing,
+- package structure,
+- or another commercial mechanism.
 
 
-# FINAL CTA SECTION
+# FINAL CTA / CONVERSION SECTION
 
-The final CTA section exists to support the conversion action already defined by
-PAGE_STRATEGY.
+Any final conversion-oriented section must support the exact `conversion_action`
+defined by PAGE_STRATEGY.
 
 Do not invent another action.
-Do not turn a purchase page into onboarding, a challenge, a quiz, or a first-use
-interaction unless PAGE_STRATEGY explicitly defines that as the conversion.
 
-Do not automatically add urgency.
-Its psychological job is usually decision confidence and clarity of next step.
+Do not assume the action is purchase.
+It may be another supported action depending on the current Page Strategy.
+
+Its role is to make the approved next step sufficiently clear and supported after
+the visitor has received the necessary information and evidence.
+
+Do not automatically add urgency, scarcity, risk reversal, or promotional pressure.
 
 
-# FACTUAL SAFETY
+# FACTUAL AND CLAIM SAFETY
 
 Never invent or assume:
 - statistics,
@@ -898,7 +951,6 @@ Never invent or assume:
 - customer counts,
 - customer results,
 - before/after results,
-- journal entries,
 - certifications,
 - awards,
 - endorsements,
@@ -908,13 +960,17 @@ Never invent or assume:
 - return/refund policies,
 - popularity claims,
 - scarcity,
-- limited stock,
+- limited availability,
 - deadlines,
 - bonuses,
 - temporary offers,
-- unsupported product performance claims,
+- unsupported performance claims,
 - unsupported customization,
-- unsupported gifting workflows.
+- unsupported commercial mechanics,
+- unsupported use cases,
+- unsupported competitor facts.
+
+Do not turn an observable feature into an unsupported benefit or outcome.
 
 
 # INTERNAL BLUEPRINT PROCESS
@@ -922,19 +978,22 @@ Never invent or assume:
 Before returning JSON, reason internally in this order:
 
 1. Read PAGE_STRATEGY and identify the primary page narrative.
-2. Identify the exact conversion action.
+2. Identify the exact conversion action without assuming its type.
 3. Read PAGE_REQUIREMENTS and determine required / optional / excluded sections.
-4. Select useful optional sections without violating exclusions.
-5. Preserve relative ordering from PAGE_REQUIREMENTS.
-6. Map each selected section to the closest PAGE_STRATEGY journey stage.
-7. Give each section one distinct decision job.
-8. Populate required_content_elements only with supported information.
-9. Separate confirmed proof from unconfirmed asset needs.
-10. Add only real objection targets.
-11. Add section-specific guardrails where strategy drift is likely.
-12. Check that no secondary upstream narrative has become primary.
-13. Check that excluded mechanics were not smuggled into another section.
-14. Renumber final `order` values from 1 with no gaps.
+4. Read PAGE SECTION TYPES CONTEXT and interpret each section according to its
+   actual semantics.
+5. Select useful optional sections without violating exclusions.
+6. Preserve relative ordering from PAGE_REQUIREMENTS.
+7. Map each selected section to the closest PAGE_STRATEGY journey stage.
+8. Give each section one distinct decision job.
+9. Populate required_content_elements only with supported information.
+10. Separate confirmed proof from unconfirmed asset needs.
+11. Add only supported objection targets.
+12. Add section-specific guardrails only where strategy drift is plausible.
+13. Check that no secondary upstream narrative has become primary.
+14. Check that excluded mechanics were not recreated elsewhere.
+15. Check that no example from this prompt has leaked into the strategy.
+16. Renumber final `order` values from 1 with no gaps.
 
 
 # FINAL QUALITY CHECK
@@ -947,13 +1006,14 @@ Before output verify:
 - final order is contiguous,
 - every section type is valid,
 - PAGE_STRATEGY remains the primary narrative,
-- no new use case was introduced,
+- no new audience, use case, claim, offer mechanic, competitor, or conversion action
+  was introduced,
 - no claim exceeds MESSAGE_STRATEGY,
-- no product fact contradicts OFFER_PROFILE,
-- no unsupported policy exists,
-- no unsupported urgency exists,
-- no unsupported proof is presented as existing,
-- unconfirmed assets are expressed as asset requirements, not facts,
+- no offer fact contradicts OFFER_PROFILE,
+- no unsupported policy, urgency, or proof is presented as existing,
+- unconfirmed assets are expressed as asset requirements rather than facts,
+- the blueprint does not assume a business model or offer type not supported by
+  current context,
 - no final copy was generated.
 
 
@@ -1002,6 +1062,8 @@ Return the blueprint object DIRECTLY, with exactly this structure:
 - `proof_elements` must contain only confirmed evidence.
 - Missing proof belongs in `asset_requirements` with `not_confirmed`, not in
   `proof_elements`.
+- Do not infer the offer type, page type, or conversion model from examples or
+  section names.
 """.strip()
 
 
@@ -1016,52 +1078,64 @@ def get_data_prompt(
     page_section_types_context: str,
 ) -> str:
     return f"""
-OFFER_PROFILE — authoritative product and offer truth:
+OFFER_PROFILE:
 {offer_profile_context}
 
 
-BRAND STRATEGY — supporting positioning and voice context:
+BRAND STRATEGY:
+
 {brand_strategy_context}
 
 
-MARKETING STRATEGY — supporting audience and journey context:
+MARKETING STRATEGY:
+
 {marketing_strategy_context}
 
 
-OFFER STRATEGY — supporting value and purchase context:
+OFFER STRATEGY:
+
 {offer_strategy_context}
 
 
-MESSAGE STRATEGY — communication direction and claim ceiling:
+MESSAGE STRATEGY:
+
 {message_strategy_context}
 
 
-PAGE STRATEGY — authoritative scope, primary narrative, objections, trust needs,
-customer journey, and conversion action for THIS page:
+PAGE STRATEGY:
+
 {page_strategy_context}
 
 
-PAGE REQUIREMENTS — authoritative structural constraints:
+PAGE REQUIREMENTS:
+
 {page_requirements_context}
 
 
-PAGE SECTION TYPES CONTEXT — authoritative section identifiers and semantics:
+PAGE SECTION TYPES CONTEXT:
+
 {page_section_types_context}
 
 
 Generate ONE PAGE BLUEPRINT.
 
 Important:
+- This generator is product-agnostic and conversion-model-agnostic.
 - PAGE STRATEGY controls what this page is about.
-- PAGE REQUIREMENTS control which section types are required, optional, or
-  excluded.
-- OFFER_PROFILE controls factual product truth.
+- PAGE REQUIREMENTS control which section types are required, optional, or excluded.
+- PAGE SECTION TYPES CONTEXT controls what each section type means.
+- OFFER_PROFILE controls factual offer truth.
 - MESSAGE_STRATEGY is the claim ceiling.
+- Do not infer ecommerce, purchase, physical product, digital product, SaaS,
+  service, subscription, lead generation, booking, trial, or any other offer or
+  conversion model unless CURRENT context supports it.
 - Do not revive secondary upstream narratives that PAGE STRATEGY did not select.
-- Do not introduce urgency, risk reversal, bonuses, proof formats, or other
-  mechanics that PAGE REQUIREMENTS excludes.
-- Treat requirement positions as relative order. Optional sections may be
-  omitted; renumber the selected sections contiguously from 1.
+- Do not introduce proof, policies, urgency, risk reversal, bonuses, pricing logic,
+  commercial mechanics, competitors, use cases, or conversion actions that are not
+  supported.
+- Treat requirement positions as relative order. Optional sections may be omitted;
+  renumber selected sections contiguously from 1.
 - Separate confirmed proof from assets that still need to be supplied.
+- Do not reuse examples or assumptions from the system prompt as offer facts.
 - Return the blueprint object directly as valid JSON matching the schema.
 """.strip()
