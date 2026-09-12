@@ -4,6 +4,13 @@ import type { Entity } from '@/types'
 
 export const generateAdApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    listAllGenerateAds: builder.query<Entity[], void>({
+      query: () => '/generate-ads',
+      providesTags: (result) => [
+        ...(result ?? []).map((item) => itemTag('GenerateAd', item.id)),
+        listTag('GenerateAd', 'ALL'),
+      ],
+    }),
     listGenerateAdsForSetup: builder.query<Entity[], number>({
       query: (setupId) => `/creative-execution-setups/${setupId}/generate-ads`,
       providesTags: (result, _err, setupId) => [
@@ -38,12 +45,14 @@ export const generateAdApi = api.injectEndpoints({
       }),
       invalidatesTags: (_result, _err, { setupId }) => [
         listTag('GenerateAd', setupId),
+        listTag('GenerateAd', 'ALL'),
       ],
     }),
     deleteGenerateAd: builder.mutation<void, { id: number; setupId: number }>({
       query: ({ id }) => ({ url: `/generate-ad/${id}/delete`, method: 'DELETE' }),
       invalidatesTags: (_result, _err, { id, setupId }) => [
         listTag('GenerateAd', setupId),
+        listTag('GenerateAd', 'ALL'),
         itemTag('GenerateAd', id),
       ],
     }),
@@ -51,6 +60,7 @@ export const generateAdApi = api.injectEndpoints({
 })
 
 export const {
+  useListAllGenerateAdsQuery,
   useListGenerateAdsForSetupQuery,
   useGetGenerateAdQuery,
   useGenerateAdMutation,

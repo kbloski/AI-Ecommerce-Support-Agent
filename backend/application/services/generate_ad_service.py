@@ -33,6 +33,11 @@ class GenerateAdService:
         generate_ad_dto = GenerateAdMapper.to_dto(generate_ad_db)
         return self.generate_ad_assembler.assemble_dto(generate_ad_dto)
 
+    def get_all_generate_ads(self) -> List[GenerateAdDto]:
+        items = self.generate_ad_repository.get_all()
+        dtos = [GenerateAdMapper.to_dto(item) for item in items]
+        return [self.generate_ad_assembler.assemble_dto(dto) for dto in dtos]
+
     def get_generate_ads_by_setup(self, creative_execution_setup_id: int) -> List[GenerateAdDto]:
         items = self.generate_ad_repository.get_by_creative_execution_setup_id(creative_execution_setup_id)
         dtos = [GenerateAdMapper.to_dto(item) for item in items]

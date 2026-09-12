@@ -26,6 +26,13 @@ class GenerateAdRepository:
     def get_by_id(self, id: int) -> Optional[GenerateAd]:
         return self.db.query(GenerateAd).filter(GenerateAd.id == id).first()
 
+    def get_all(self) -> List[GenerateAd]:
+        return (
+            self.db.query(GenerateAd)
+            .order_by(GenerateAd.created_at.desc(), GenerateAd.id.desc())
+            .all()
+        )
+
     # 🔍 GET BY AD SETUP ID
     def get_by_creative_execution_setup_id(self, creative_execution_setup_id: int) -> List[GenerateAd]:
         return (

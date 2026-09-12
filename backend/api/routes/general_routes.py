@@ -94,6 +94,7 @@ from application.handlers.ad_setup.get_creative_strategy_ad_setups_handler impor
 from application.handlers.ad_setup.delete_ad_setup_handler import delete_ad_setup_handler
 from application.handlers.generate_ad.generate_ad_handler import generate_ad_handler
 from application.handlers.generate_ad.get_generate_ad_handler import get_generate_ad_handler
+from application.handlers.generate_ad.get_all_generate_ads_handler import get_all_generate_ads_handler
 from application.handlers.generate_ad.get_creative_execution_setup_generate_ads_handler import get_creative_execution_setup_generate_ads_handler
 from application.handlers.generate_ad.delete_generate_ad_handler import delete_generate_ad_handler
 from application.handlers.creative_strategy.get_creative_strategy_handler import get_creative_strategy_handler
@@ -921,6 +922,10 @@ def register_general_routes(router: APIRouter):
         return get_creative_execution_setup_generate_ads_handler(
             creative_execution_setup_id=creative_execution_setup_id
         )
+
+    @router.get("/generate-ads")
+    def get_all_generate_ads():
+        return get_all_generate_ads_handler()
 
     @router.get("/generate-ad/{id}")
     def get_generate_ad( id: int ):

@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from '@/components/AppShell'
 import DashboardPage from '@/pages/DashboardPage'
 import OffersPage from '@/pages/OffersPage'
+import GeneratedAdsPage from '@/pages/GeneratedAdsPage'
 import OfferDetailPage from '@/pages/OfferDetailPage'
 import OfferProfilesPage from '@/pages/OfferProfilesPage'
 import OfferProfileDetailPage from '@/pages/OfferProfileDetailPage'
@@ -38,6 +39,7 @@ function App() {
       <Route element={<AppShell />}>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/offers" element={<OffersPage />} />
+        <Route path="/generated-ads" element={<GeneratedAdsPage />} />
         <Route path="/offers/:offerId" element={<OfferDetailPage />} />
         <Route path="/offers/:offerId/offer-profiles" element={<OfferProfilesPage />} />
         <Route path="/offers/:offerId/offer_profiles" element={<OfferProfilesPage />} />

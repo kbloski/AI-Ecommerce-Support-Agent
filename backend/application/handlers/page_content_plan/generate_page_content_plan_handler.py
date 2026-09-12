@@ -135,7 +135,14 @@ def generate_page_content_plan_handler(
 
     page_content_plan_data = result.get("page_content_plan", {})
 
+    name = _get_page_content_plan_name(
+        page_content_plan_data=page_content_plan_data,
+        page_type=page_blueprint.page_type,
+        page_blueprint_id=page_blueprint_id,
+    )
+
     entity = PageContentPlan(
+        name=name.strip(),
         page_blueprint_id=page_blueprint_id,
         sections=page_content_plan_data.get("sections", []),
     )
@@ -143,6 +150,22 @@ def generate_page_content_plan_handler(
     created = page_content_plan_repository.create(entity)
 
     return page_content_plan_service.get_page_content_plan_by_id(id=created.id)
+
+
+def _get_page_content_plan_name(
+    page_content_plan_data: dict,
+    page_type: str | None,
+    page_blueprint_id: int,
+) -> str:
+    name = page_content_plan_data.get("name")
+    if isinstance(name, str) and name.strip():
+        return name.strip()
+
+    normalized_page_type = (page_type or "").strip()
+    if normalized_page_type:
+        return f"{normalized_page_type} Content Plan"
+
+    return f"Page Content Plan {page_blueprint_id}"
 
 
 def get_system_prompt() -> str:
@@ -442,6 +465,14 @@ Prefer:
 ==================================================
 FIELD DEFINITIONS
 ==================================================
+
+name
+
+Create a short, distinctive name for this Page Content Plan that reflects the
+page's approved purpose or central content direction.
+
+Do not return an empty name.
+
 
 content_goal
 
@@ -780,6 +811,7 @@ JSON FORMAT
 
 {
     "page_content_plan": {
+        "name": "",
         "sections": [
             {
                 "order": 1,
@@ -813,6 +845,7 @@ STRICT JSON RULES
 - Do not add commentary.
 - Do not add fields outside the schema.
 - Do not use null.
+- `page_content_plan.name` must be a non-empty string.
 - Preserve the exact Page Blueprint section order.
 - Preserve the exact Page Blueprint section_type values.
 - Do not invent information merely to fill a field.

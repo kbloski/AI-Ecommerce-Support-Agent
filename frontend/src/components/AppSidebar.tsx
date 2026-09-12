@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, LayoutDashboard, Package, Settings } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LayoutDashboard, Megaphone, Package, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
@@ -13,6 +13,7 @@ interface SidebarSection {
 const SECTIONS: SidebarSection[] = [
   { label: 'Dashboard', to: '/', icon: LayoutDashboard },
   { label: 'Oferty', to: '/offers', icon: Package },
+  { label: 'Wygenerowane reklamy', to: '/generated-ads', icon: Megaphone },
   { label: 'Ustawienia', to: '/settings', icon: Settings },
 ]
 
