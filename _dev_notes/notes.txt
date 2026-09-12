@@ -55,5 +55,174 @@ SOURCE PRIORITY:
 
 
 
+==================================================
+SOURCE PRIORITY
+==================================================
+
+Use the following source hierarchy:
+
+1. OFFER PROFILE
+
+Primary source of truth for:
+- what the product actually is,
+- features,
+- format,
+- components,
+- customization,
+- specifications,
+- product capabilities,
+- what is and is not included.
+
+2. OFFER STRATEGY
+
+Use for:
+- value proposition,
+- benefits,
+- offer positioning,
+- customer problems,
+- objection handling,
+- conversion logic,
+- existing trust mechanisms.
+
+Offer Strategy must never override confirmed product facts
+from the Offer Profile.
+
+3. BRAND STRATEGY
+
+Use for:
+- brand meaning,
+- desired perception,
+- tone,
+- emotional territory,
+- values,
+- positioning direction,
+- associations.
+
+4. MARKETING STRATEGY
+
+Use for:
+- audience priority,
+- customer journey,
+- acquisition context,
+- campaign direction,
+- marketing priorities.
+
+Marketing recommendations are not automatically customer-facing facts.
+
+The OFFER PROFILE is the source of truth for what the product actually is.
+
+The OFFER STRATEGY defines how the existing product should create value
+and overcome purchase barriers.
+
+The BRAND STRATEGY defines brand meaning, perception, tone,
+and emotional territory.
+
+The MARKETING STRATEGY defines audience and go-to-market priorities.
+
+Do not blindly repeat unsupported language from upstream strategies.
+
+
+The OFFER PROFILE is the source of truth for what the product actually is.
+
+The OFFER STRATEGY defines how the existing product should create value
+and overcome purchase barriers.
+
+The BRAND STRATEGY defines brand meaning, perception, tone,
+and emotional territory.
+
+The MARKETING STRATEGY defines audience and go-to-market priorities.
+
+Do not blindly repeat unsupported language from upstream strategies.
+
+If an upstream strategy contains:
+- exaggerated psychological benefits,
+- scientific language without evidence,
+- unsupported transformation claims,
+- invented testimonials,
+- invented return policies,
+- invented guarantees,
+- invented partnerships,
+- unsupported superiority claims,
+
+do not propagate them into the Message Strategy.
+
+
+==================================================
+SOURCE HIERARCHY
+==================================================
+
+Use the following hierarchy.
+
+
+1. OFFER PROFILE — PRODUCT TRUTH
+
+This is the ultimate source of truth for:
+
+- product features,
+- specifications,
+- format,
+- components,
+- quantities,
+- customization capabilities,
+- what is included,
+- what the product actually does.
+
+
+2. MESSAGE STRATEGY — CLAIM CEILING
+
+This defines the strongest communication claims
+that advertising is allowed to use.
+
+Advertising must NEVER make a stronger claim
+than the Message Strategy.
+
+If a claim does not exist in or is stronger than
+the approved Message Strategy, do not introduce it.
+
+
+3. OFFER STRATEGY
+
+Use for:
+
+- value mechanism,
+- offer positioning,
+- purchase barriers,
+- objections,
+- product benefits,
+- conversion logic.
+
+Offer Strategy does not override the claim limits
+defined by Message Strategy.
+
+
+4. MARKETING STRATEGY
+
+Use for:
+
+- audience prioritization,
+- acquisition context,
+- customer journey,
+- channel priorities,
+- campaign direction.
+
+Do not treat marketing hypotheses as customer facts.
+
+
+5. BRAND STRATEGY
+
+Use for:
+
+- brand personality,
+- emotional territory,
+- aesthetic direction,
+- positioning context.
+
+Brand Strategy is not evidence for scientific,
+psychological, or performance claims.
+
+
+
+
+
 
 

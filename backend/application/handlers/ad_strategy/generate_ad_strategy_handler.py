@@ -324,107 +324,28 @@ not:
 
 
 ==================================================
-SOURCE HIERARCHY
-==================================================
+KEY PRINCIPLE:
+COMMUNICATION STRATEGY SETS THE MAXIMUM CLAIM LEVEL
+===================================================
 
-Use the following hierarchy.
-
-
-1. OFFER PROFILE — PRODUCT TRUTH
-
-This is the ultimate source of truth for:
-
-- product features,
-- specifications,
-- format,
-- components,
-- quantities,
-- customization capabilities,
-- what is included,
-- what the product actually does.
-
-
-2. MESSAGE STRATEGY — CLAIM CEILING
-
-This defines the strongest communication claims
-that advertising is allowed to use.
-
-Advertising must NEVER make a stronger claim
-than the Message Strategy.
-
-If a claim does not exist in or is stronger than
-the approved Message Strategy, do not introduce it.
-
-
-3. OFFER STRATEGY
-
-Use for:
-
-- value mechanism,
-- offer positioning,
-- purchase barriers,
-- objections,
-- product benefits,
-- conversion logic.
-
-Offer Strategy does not override the claim limits
-defined by Message Strategy.
-
-
-4. MARKETING STRATEGY
-
-Use for:
-
-- audience prioritization,
-- acquisition context,
-- customer journey,
-- channel priorities,
-- campaign direction.
-
-Do not treat marketing hypotheses as customer facts.
-
-
-5. BRAND STRATEGY
-
-Use for:
-
-- brand personality,
-- emotional territory,
-- aesthetic direction,
-- positioning context.
-
-Brand Strategy is not evidence for scientific,
-psychological, or performance claims.
-
-
-==================================================
-CRITICAL RULE:
-MESSAGE STRATEGY IS THE CLAIM CEILING
-==================================================
-
-The Ad Strategy must never communicate a stronger outcome
-than the Message Strategy supports.
+Advertising Strategy must never communicate a stronger outcome than the one supported by the Communication Strategy.
 
 For example:
 
-If Message Strategy says:
+If the Communication Strategy says:
 
-"Supports structured reflection"
+"Helps organize everyday tasks."
 
-Advertising may say:
+The ad may say:
 
-"Demonstrate how the color-coded prompts provide structure
-for a short reflection routine."
+"Show how a simple category system helps structure everyday tasks."
 
-Advertising may NOT turn this into:
+The ad must NOT turn this into:
 
-"Improves emotional intelligence."
-
-"Manages stress."
-
-"Creates emotional balance."
-
-"Transforms mental well-being."
+"Increases productivity."
+"Saves an hour every day."
+"Eliminates chaos from daily planning."
+"Guarantees better organization."
 
 
 ==================================================
@@ -443,24 +364,19 @@ Do not invent:
 - lifestyle characteristics,
 - motivations not supported by context.
 
-Do not present marketing trends as customer buying triggers.
+Do not present marketing trends, cultural themes, or category growth as customer buying triggers.
 
 BAD:
 
-"Buying trigger: wellness trends"
-
-"Buying trigger: self-care product launches"
+"Buying trigger: growing interest in minimalism"
+"Buying trigger: trend toward personalized products"
 
 BETTER:
 
-"Buying trigger: deciding to start or restart
-a regular reflection routine"
+"Buying trigger: moving into a new home and looking for a practical household item"
+"Buying trigger: choosing a personalized gift for a specific occasion"
 
-"Buying trigger: upcoming birthday, holiday,
-milestone, or meaningful gifting occasion"
-
-Buying triggers should be concrete purchase situations
-derived from the use case.
+Buying triggers should describe concrete moments, needs, or situations that can lead someone to consider a purchase.
 
 
 ==================================================
@@ -481,24 +397,6 @@ Do not introduce claims such as:
 
 unless explicitly approved by Message Strategy
 and supported by evidence.
-
-Do not use:
-
-- color psychology,
-- scientifically proven,
-- research-backed,
-- therapeutic,
-- clinically validated,
-
-unless actual supporting evidence exists.
-
-If the product simply uses colors to organize themes,
-describe it as:
-
-- color-coded,
-- color-guided,
-- visually organized,
-- theme-based.
 
 
 ==================================================
@@ -620,19 +518,19 @@ Do not invent psychological needs.
 
 BAD:
 
-"Stress management"
+“Productivity”
 
 BETTER:
 
-"A simple structure that makes reflection easier to begin"
+“Looking for a simpler way to organize daily tasks”
 
 BAD:
 
-"Wellness trends"
+“Minimalism trends”
 
 BETTER:
 
-"Starting a new reflection habit"
+“Reducing clutter when setting up a new workspace”
 
 
 ==================================================
@@ -790,22 +688,6 @@ Do not automatically recommend:
 A before/after structure is allowed only when it demonstrates
 a factual process or product experience.
 
-For example:
-
-BEFORE:
-"I do not know what to reflect on."
-
-PRODUCT INTERACTION:
-"Choose a theme and draw a prompt."
-
-AFTER:
-"I now have a specific reflection question."
-
-This is acceptable.
-
-Mental-health or emotional-transformation before/after
-creative is not acceptable without evidence.
-
 
 ==================================================
 8. RECOMMENDED FORMATS
@@ -875,16 +757,6 @@ Primary decision metric.
 
 priority:
 Integer testing priority.
-
-
-Good:
-
-"Color-led product demonstration will generate higher
-qualified engagement than generic wellness imagery."
-
-Bad:
-
-"Color content will increase CTR by 32%."
 
 Never invent arbitrary uplift percentages.
 
@@ -1132,37 +1004,27 @@ Do not invent customer research, proof, testimonials, guarantees,
 policies, product capabilities, or psychological outcomes.
 
 
-==================================================
-OFFER PROFILE — PRODUCT TRUTH
-==================================================
+OFFER PROFILE 
 
 {offer_profile_context}
 
 
-==================================================
-BRAND STRATEGY — BRAND CONTEXT
-==================================================
+BRAND STRATEGY 
 
 {brand_strategy_context}
 
 
-==================================================
-MARKETING STRATEGY — GO-TO-MARKET CONTEXT
-==================================================
+MARKETING STRATEGY 
 
 {marketing_strategy_context}
 
 
-==================================================
-OFFER STRATEGY — VALUE AND PURCHASE LOGIC
-==================================================
+OFFER STRATEGY 
 
 {offer_strategy_context}
 
 
-==================================================
-MESSAGE STRATEGY — APPROVED MESSAGE SPACE / CLAIM CEILING
-==================================================
+MESSAGE STRATEGY
 
 {message_strategy_context}
 

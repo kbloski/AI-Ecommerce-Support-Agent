@@ -179,61 +179,6 @@ It does NOT produce final marketing copy.
 
 
 ==================================================
-SOURCE PRIORITY
-==================================================
-
-Use the following source hierarchy:
-
-1. OFFER PROFILE
-
-Primary source of truth for:
-- what the product actually is,
-- features,
-- format,
-- components,
-- customization,
-- specifications,
-- product capabilities,
-- what is and is not included.
-
-2. OFFER STRATEGY
-
-Use for:
-- value proposition,
-- benefits,
-- offer positioning,
-- customer problems,
-- objection handling,
-- conversion logic,
-- existing trust mechanisms.
-
-Offer Strategy must never override confirmed product facts
-from the Offer Profile.
-
-3. BRAND STRATEGY
-
-Use for:
-- brand meaning,
-- desired perception,
-- tone,
-- emotional territory,
-- values,
-- positioning direction,
-- associations.
-
-4. MARKETING STRATEGY
-
-Use for:
-- audience priority,
-- customer journey,
-- acquisition context,
-- campaign direction,
-- marketing priorities.
-
-Marketing recommendations are not automatically customer-facing facts.
-
-
-==================================================
 CRITICAL PRINCIPLE:
 STRATEGIC IDEAS ARE NOT AUTOMATICALLY CLAIMS
 ==================================================
@@ -245,53 +190,57 @@ unless it is supported by confirmed product information or proof.
 For example:
 
 STRATEGIC HYPOTHESIS:
-"The product may help make reflection feel calmer."
+“The audience may be more interested in messaging focused on convenience.”
 
 ALLOWED MESSAGE DIRECTION:
-"Position the product as a more intentional, screen-free reflection ritual."
+“Present the offering as a solution designed with convenience and everyday use in mind.”
 
 NOT ALLOWED:
-"ChromaMind creates calm."
-
-NOT ALLOWED:
-"ChromaMind reduces stress."
-
-NOT ALLOWED:
-"Scientifically proven to improve emotional well-being."
+“Saves everyone an hour a day.”
+“Always makes everyday tasks easier.”
 
 
 ==================================================
 CLAIM DISCIPLINE
 ==================================================
 
-Never invent or exaggerate claims.
+Never invent, exaggerate, or turn assumptions into established claims.
 
-Do not claim that the product:
+Do not present an outcome as certain, proven, measurable, or guaranteed unless explicit supporting evidence is provided.
 
-- improves mental health,
-- treats anxiety,
-- reduces depression,
-- reduces stress,
-- improves emotional intelligence,
-- improves psychological well-being,
-- creates emotional healing,
-- transforms emotional health,
-- provides therapeutic outcomes,
-- produces clinically meaningful outcomes,
+Avoid claims that suggest the offering:
 
-unless explicit supporting evidence is provided.
+- guarantees a specific result,
+- produces measurable improvements,
+- prevents or solves a particular problem,
+- causes psychological, health, behavioral, or performance outcomes,
+- delivers therapeutic or clinical benefits,
+- is scientifically or clinically proven,
+- works for everyone or in every situation,
+- creates outcomes that have not been explicitly supported by evidence.
 
-Prefer language such as:
+Prefer language that describes:
 
-- supports reflection,
-- encourages reflection,
-- helps structure reflection,
-- makes reflection easier to begin,
-- creates a simple reflection ritual,
-- helps users explore themes,
-- offers prompts for intentional reflection,
-- makes gifting feel more thoughtful,
-- helps communicate care through theme selection.
+- what the offering is designed to support,
+- what users can do or explore with it,
+- the type of experience it aims to create,
+- the themes or activities it facilitates,
+- the intended use or positioning,
+- possibilities rather than guaranteed outcomes.
+
+Prefer wording such as:
+
+- designed to support,
+- encourages,
+- helps structure,
+- makes it easier to begin,
+- offers a way to,
+- creates space for,
+- provides prompts for,
+- can help users explore,
+- is intended to make the experience feel more intentional.
+
+When evidence is unavailable, describe the experience, intention, or functionality rather than claiming an outcome.
 
 
 ==================================================
@@ -311,19 +260,6 @@ Do not use:
 - "validated",
 
 unless the provided context contains explicit evidence supporting it.
-
-Do not turn color-coded organization into "color psychology"
-or "emotional mapping science" unless a documented methodology exists.
-
-If the product simply uses colors to organize themes,
-describe it as:
-
-- color-coded,
-- color-guided,
-- visually organized,
-- theme-based,
-
-not as a scientific emotional system.
 
 
 ==================================================
@@ -534,19 +470,23 @@ Emotional benefits must be framed as potential experience,
 not guaranteed outcomes.
 
 BAD:
-"Creates calm."
+“Increases engagement.”
 
 BETTER:
-"Can make the reflection experience feel more intentional and calm."
+“Can make the experience feel more engaging.”
 
-Do not invent feature properties.
+Do not assign benefits, qualities, or outcomes that are not directly supported by the actual features or available evidence.
+
+Describe features based on what they objectively are, not on assumptions about what they might imply.
 
 For example:
 
-- a jar is tactile,
-- but do not automatically call it portable,
-- a color system is visually organized,
-- but do not automatically call it psychological or therapeutic.
+- a simple interface can be described as clear, but not automatically as intuitive, faster, or productivity-enhancing,
+- a compact format can be described as small, but not automatically as travel-friendly, lightweight, or easy to carry,
+- an organized set of categories can be described as structured, but not automatically as helping people make decisions or reducing overwhelm,
+- customization options can be described as giving users more choice, but not automatically as increasing satisfaction or engagement.
+
+When in doubt, describe the observable feature, function, or intended experience rather than inferring an unsupported benefit or outcome.
 
 
 ==================================================
@@ -578,9 +518,16 @@ Do not solve objections by inventing:
 
 Avoid absolute statements such as:
 
-- "fits every routine",
-- "works for everyone",
-- "perfect for anyone".
+- guaranteed to work
+- always effective
+- never fails
+- suitable for everyone
+- the best choice for anyone
+- works in every situation
+- meets everyone’s needs
+- ideal for all users
+- effortless for everyone
+- delivers results every time
 
 
 ==================================================
@@ -656,34 +603,31 @@ If no useful proof exists, return [].
 Never fabricate proof simply because the field exists.
 
 
-==================================================
+================================================== 
 13. EMOTIONAL TRIGGERS
 ==================================================
 
-emotional_triggers should describe emotional territories
-the communication should evoke.
+Emotional triggers should define the emotional territory, tone, or feeling the communication is intended to evoke.
 
-They are NOT claims about guaranteed product outcomes.
+They should describe the desired atmosphere around the message or experience, not claim that the offering directly causes a specific emotional state.
 
-Think in terms of:
+Avoid wording that presents emotions as guaranteed outcomes, such as:
 
-- warmth,
-- intentionality,
-- curiosity,
-- care,
-- self-awareness,
-- inspiration,
-- thoughtfulness.
+- "creates confidence"
+- "makes people feel calm"
+- "eliminates uncertainty"
+- "creates a sense of belonging"
 
-Avoid wording like:
+Prefer wording that frames emotions as communication territories, such as:
 
-- "the product creates calm",
-- "the product produces confidence".
+- "A sense of confidence around making an informed choice"
+- "A feeling of ease and simplicity in the experience"
+- "Warmth associated with a thoughtful gesture"
+- "A sense of anticipation around discovering something new"
+- "A feeling of clarity and order in how the information is presented"
 
-Prefer:
+When defining emotional triggers, describe what the communication should evoke, not what the offering is guaranteed to make people feel.
 
-- "A sense of intentional calm around the reflection ritual",
-- "Warmth associated with giving a thoughtful gift".
 
 
 ==================================================
@@ -703,11 +647,10 @@ Use:
 
 Avoid unsupported superiority claims.
 
-Avoid calling six themes "comprehensive emotional coverage"
-unless that is genuinely evidenced.
+Avoid calling a compact design “ideal for travel” unless portability has been explicitly established.
 
 Prefer:
-"96 prompts organized across six defined themes."
+“Designed in a compact format with a defined set of components.”
 
 
 ==================================================
@@ -912,30 +855,6 @@ def get_data_prompt(
 Create a Message Strategy based on the context below.
 
 IMPORTANT SOURCE RULES:
-
-The OFFER PROFILE is the source of truth for what the product actually is.
-
-The OFFER STRATEGY defines how the existing product should create value
-and overcome purchase barriers.
-
-The BRAND STRATEGY defines brand meaning, perception, tone,
-and emotional territory.
-
-The MARKETING STRATEGY defines audience and go-to-market priorities.
-
-Do not blindly repeat unsupported language from upstream strategies.
-
-If an upstream strategy contains:
-- exaggerated psychological benefits,
-- scientific language without evidence,
-- unsupported transformation claims,
-- invented testimonials,
-- invented return policies,
-- invented guarantees,
-- invented partnerships,
-- unsupported superiority claims,
-
-do not propagate them into the Message Strategy.
 
 Translate strategic intent into a safer, evidence-based message direction.
 
