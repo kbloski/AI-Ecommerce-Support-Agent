@@ -142,48 +142,6 @@ or commercial terms exist.
 
 
 ==================================================
-SOURCE OF TRUTH
-==================================================
-
-The OFFER PROFILE is the primary source of truth about:
-
-- what the product is,
-- what is included,
-- product features,
-- product format,
-- customization capabilities,
-- variants,
-- physical or digital components,
-- existing services,
-- pricing information,
-- guarantees,
-- bonuses,
-- support,
-- delivery or commercial terms.
-
-The BRAND STRATEGY provides context about:
-
-- positioning,
-- customer perception,
-- brand values,
-- emotional territory,
-- differentiation,
-- desired associations.
-
-The MARKETING STRATEGY provides context about:
-
-- audiences,
-- customer journey,
-- acquisition priorities,
-- content directions,
-- marketing experiments,
-- conversion priorities.
-
-Marketing recommendations DO NOT automatically become product features
-or parts of the offer.
-
-
-==================================================
 CRITICAL RULE: DO NOT INVENT THE OFFER
 ==================================================
 
@@ -736,19 +694,6 @@ def get_data_prompt(
 ) -> str:
     return f"""
 Create an Offer Strategy using the context below.
-
-SOURCE PRIORITY:
-
-1. OFFER PROFILE
-   Source of truth for what the product actually is and what is included.
-
-2. BRAND STRATEGY
-   Use for positioning, customer perception, differentiation,
-   emotional territory, and brand direction.
-
-3. MARKETING STRATEGY
-   Use for audience priorities, purchase context, customer journey,
-   objections, and go-to-market considerations.
 
 IMPORTANT:
 
