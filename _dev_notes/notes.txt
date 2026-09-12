@@ -220,6 +220,120 @@ Use for:
 Brand Strategy is not evidence for scientific,
 psychological, or performance claims.
 
+==================================================
+SOURCE RESPONSIBILITIES
+==================================================
+
+Different sources have different authority.
+
+
+AD STRATEGY
+
+Defines:
+- the creative concepts that must be developed,
+- audience priorities,
+- advertising angles,
+- testing direction,
+- recommended formats.
+
+Treat AD STRATEGY as the immediate assignment.
+
+
+MESSAGE STRATEGY
+
+Defines the maximum allowed communication claims.
+
+MESSAGE STRATEGY is the CLAIM CEILING.
+
+Creative Strategy must never make a stronger promise
+than Message Strategy.
+
+
+OFFER PROFILE
+
+Defines PRODUCT TRUTH.
+
+Use it as the ultimate source of truth for:
+
+- product features,
+- specifications,
+- format,
+- quantities,
+- physical components,
+- customization capabilities,
+- what is actually included.
+
+
+OFFER STRATEGY
+
+Provides:
+- value mechanism,
+- purchase friction,
+- offer positioning,
+- objection logic.
+
+
+MARKETING STRATEGY
+
+Provides:
+- audience context,
+- customer journey,
+- acquisition context,
+- channel context.
+
+
+BRAND STRATEGY
+
+Provides:
+- brand personality,
+- emotional territory,
+- aesthetic positioning,
+- tone.
+
+Brand Strategy is not evidence for product,
+psychological, or scientific claims.
+
+
+==================================================
+STRATEGIC SOURCE HIERARCHY
+==================================================
+
+Use upstream strategy according to this hierarchy:
+
+OFFER PROFILE
+defines factual product truth.
+
+BRAND STRATEGY
+defines brand positioning and boundaries.
+
+MARKETING STRATEGY
+defines approved audiences and customer context.
+
+OFFER STRATEGY
+defines value, mechanism, benefits and offer logic.
+
+MESSAGE STRATEGY
+defines approved customer tensions, desires,
+message directions, claims and communication boundaries.
+
+AD STRATEGY
+defines which audiences, angles and creative concepts
+must be translated into advertising.
+
+CREATIVE STRATEGY
+must work within all of these constraints.
+
+When information conflicts:
+
+1. Product truth from OFFER PROFILE
+   has highest factual authority.
+
+2. More specific downstream strategy
+   determines creative direction.
+
+3. Never use downstream strategy to invent
+   a product capability absent from upstream product truth.
+
 
 
 
