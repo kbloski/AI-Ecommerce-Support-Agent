@@ -15,6 +15,9 @@
     "selection_guidance": {
       "use_when": ["Explicitly articulating or reframing the visitor's situation, friction, unmet need, task, or limitation materially improves understanding of why the offer is relevant."],
       "rules": ["Do not force a negative pain narrative onto aspiration-led, opportunity-led, replacement-led, or purely informational page strategies."]
+    },
+    "blueprint_guidance": {
+      "rules": ["Describe only the supported customer problem, need, task, opportunity, or decision friction.", "Do not create market statistics, broad most-people claims, competitor failure claims, or emotional pain not selected by Page Strategy."]
     }
   },
   {
@@ -24,6 +27,9 @@
     "selection_guidance": {
       "use_when": ["Page Strategy contains a supported before-and-after or current-state-to-desired-state shift that is useful to communicate."],
       "rules": ["The shift must not be stronger than Page Strategy.", "Do not manufacture emotional, behavioral, financial, health, or life transformation."]
+    },
+    "blueprint_guidance": {
+      "rules": ["Treat transformation only as an approved change, contrast, or desired state.", "Do not convert an intended or desired state into a guaranteed result.", "Do not create before-and-after evidence unless it is confirmed."]
     }
   },
   {
@@ -33,6 +39,9 @@
     "selection_guidance": {
       "use_when": ["The visitor needs a dedicated explanation of what the offer is and how it addresses the supported situation."],
       "rules": ["Do not assume the opening section already provides enough explanation."]
+    },
+    "blueprint_guidance": {
+      "rules": ["Explain only confirmed solution components and their supported relevance.", "Do not turn a feature into an unsupported outcome."]
     }
   },
   {
@@ -42,6 +51,9 @@
     "selection_guidance": {
       "use_when": ["Page Strategy depends on a meaningful supported mechanism, method, process, system, structure, approach, or organizing principle."],
       "rules": ["The section name does not authorize a uniqueness claim.", "Do not imply the mechanism is proprietary, unique, superior, or exclusive unless Page Strategy supports that claim."]
+    },
+    "blueprint_guidance": {
+      "rules": ["Explain only a confirmed mechanism, process, structure, method, or organizing principle.", "The section name does not authorize claims such as unique, proprietary, exclusive, scientifically designed, or superior unless supported.", "If no distinct mechanism is confirmed and the section is required, record the needed clarification in missing_inputs rather than inventing one."]
     }
   },
   {
@@ -51,6 +63,9 @@
     "selection_guidance": {
       "use_when": ["The page needs a dedicated layer connecting confirmed features, mechanisms, or offer characteristics to customer-relevant value."],
       "rules": ["Do not convert a feature into an unsupported outcome.", "Benefits and features may coexist when they answer different decision questions."]
+    },
+    "blueprint_guidance": {
+      "rules": ["Benefits must be supported by Page Strategy or Message Strategy.", "Do not derive causal outcomes merely from features."]
     }
   },
   {
@@ -60,6 +75,9 @@
     "selection_guidance": {
       "use_when": ["Understanding the process, usage, delivery, workflow, implementation, or interaction materially affects the decision."],
       "rules": ["Mechanism explanation and usage or process explanation may be different jobs; do not collapse them automatically when Page Strategy needs both."]
+    },
+    "blueprint_guidance": {
+      "rules": ["Use only confirmed process or usage steps.", "Do not invent missing steps to make the process feel complete."]
     }
   },
   {
@@ -87,6 +105,9 @@
     "selection_guidance": {
       "use_when": ["Page Strategy establishes a meaningful supported alternative, contrast, or comparison dimension."],
       "rules": ["Do not invent competitor weaknesses, category alternatives, or superiority."]
+    },
+    "blueprint_guidance": {
+      "rules": ["Use only supported comparison criteria and confirmed comparison facts.", "Do not invent competitors, alternative weaknesses, superiority, market leadership, or category norms."]
     }
   },
   {
@@ -96,6 +117,9 @@
     "selection_guidance": {
       "use_when": ["Page Strategy supports UGC as a legitimate and strategically useful proof or demonstration format."],
       "rules": ["Never assume or fabricate UGC assets.", "Use required only when Page Strategy clearly requires UGC and it can legitimately be used.", "Do not select it merely because another proof format is useful."]
+    },
+    "blueprint_guidance": {
+      "rules": ["The section type does not prove that UGC exists.", "Use proof_elements only for confirmed UGC.", "If the section is required and UGC is not confirmed, keep the section, record the missing proof source in missing_inputs, and prevent downstream fabrication with a content guardrail."]
     }
   },
   {
@@ -105,6 +129,9 @@
     "selection_guidance": {
       "use_when": ["Page Strategy supports aggregate evidence as a legitimate and strategically useful trust mechanism."],
       "rules": ["Never assume or fabricate ratings, customer counts, logos, awards, certifications, press mentions, adoption metrics, or other proof.", "Use required only when Page Strategy clearly requires this proof type and it can legitimately be used."]
+    },
+    "blueprint_guidance": {
+      "rules": ["The section type does not prove that social proof exists.", "Use proof_elements only for confirmed social proof.", "If the section is required and proof is not confirmed, keep the section, record the missing proof source in missing_inputs, and prevent downstream fabrication with a content guardrail."]
     }
   },
   {
@@ -114,6 +141,9 @@
     "selection_guidance": {
       "use_when": ["Page Strategy supports testimonials as a legitimate and strategically useful trust mechanism."],
       "rules": ["Never assume or fabricate quotes, reviews, endorsements, or customer experiences.", "Use required only when Page Strategy clearly requires testimonials and they can legitimately be used."]
+    },
+    "blueprint_guidance": {
+      "rules": ["The section type does not prove that testimonials exist.", "Use proof_elements only for confirmed testimonials.", "If the section is required and testimonials are not confirmed, keep the section, record the missing proof source in missing_inputs, and prevent downstream fabrication with a content guardrail."]
     }
   },
   {
@@ -123,6 +153,9 @@
     "selection_guidance": {
       "use_when": ["Page Strategy supports case studies as a legitimate and strategically useful proof format."],
       "rules": ["Never assume or fabricate customer stories, actions, outcomes, or measurements.", "Use required only when Page Strategy clearly requires case studies and they can legitimately be used."]
+    },
+    "blueprint_guidance": {
+      "rules": ["The section type does not prove that case studies exist.", "Use proof_elements only for confirmed case studies.", "If the section is required and case studies are not confirmed, keep the section, record the missing proof source in missing_inputs, and prevent downstream fabrication with a content guardrail."]
     }
   },
   {
@@ -132,6 +165,9 @@
     "selection_guidance": {
       "use_when": ["Page Strategy contains meaningful barriers, doubts, or decision factors that deserve direct resolution."],
       "rules": ["Do not invent objections merely to justify the section.", "Objection handling and FAQ may coexist when they serve different jobs."]
+    },
+    "blueprint_guidance": {
+      "rules": ["Address only objections selected upstream.", "Do not invent a solution when the underlying capability, term, policy, proof, or feature is not confirmed."]
     }
   },
   {

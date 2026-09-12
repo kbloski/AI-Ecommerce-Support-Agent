@@ -22,10 +22,16 @@ class PageSectionsService:
     def get_all(self) -> List[dict]:
         return self.page_sections_repository.get_all()
 
+    def get_all_for_requirements(self) -> List[dict]:
+        return [
+            self._project_section(section, "selection_guidance")
+            for section in self.get_all()
+        ]
+
     def get_allowed_ids(self) -> Set[str]:
         return {section["id"] for section in self.get_all()}
 
-    def build_llm_context_for_requirements(self, page_requirements_id: int) -> str:
+    def build_llm_context_for_blueprint(self, page_requirements_id: int) -> str:
         section_requirements = self.page_section_requirements_repository.find_for_page_requirements(
             page_requirements_id=page_requirements_id
         )
@@ -40,7 +46,9 @@ class PageSectionsService:
             if section is None:
                 continue
 
-            sections.append(section)
+            sections.append(
+                self._project_section(section, "blueprint_guidance")
+            )
 
         page_sections_json = json.dumps(
             sections,
@@ -50,3 +58,14 @@ class PageSectionsService:
         )
 
         return build_llm_section("page-section-types", page_sections_json)
+
+    @staticmethod
+    def _project_section(section: dict, guidance_field: str) -> dict:
+        projected = {
+            "id": section["id"],
+            "name": section["name"],
+            "description": section["description"],
+        }
+        if guidance_field in section:
+            projected[guidance_field] = section[guidance_field]
+        return projected

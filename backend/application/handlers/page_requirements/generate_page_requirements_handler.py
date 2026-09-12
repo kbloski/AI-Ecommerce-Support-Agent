@@ -35,7 +35,7 @@ def generate_page_requirements_handler(page_strategy_id: int):
             f"Page Strategy not found: {page_strategy_id}"
         )
 
-    sections = page_sections_service.get_all()
+    sections = page_sections_service.get_all_for_requirements()
     if not sections:
         raise ValueError(
             "Cannot generate Page Requirements without page sections"
