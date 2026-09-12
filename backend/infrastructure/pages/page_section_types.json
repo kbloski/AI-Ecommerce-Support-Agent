@@ -3,239 +3,500 @@
     "id": "hero",
     "name": "Hero",
     "description": "Creates the first customer interaction, communicates the primary product value, and generates initial interest.",
-    "selection_guidance": {
-      "use_when": ["The page needs an opening section that establishes primary relevance, value direction, and conversion direction."],
-      "rules": ["Do not mark it required solely because it is common on dedicated conversion pages."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "The page needs an opening section that establishes primary relevance, value direction, and conversion direction."
+        ],
+        "rules": [
+          "Do not mark it required solely because it is common on dedicated conversion pages."
+        ]
+      },
+      "blueprint": {
+        "rules": []
+      }
     }
   },
   {
     "id": "problem",
     "name": "Problem",
     "description": "Establishes the customer's problem, frustration, unmet need, undesirable situation, or gap between their current and desired state.",
-    "selection_guidance": {
-      "use_when": ["Explicitly articulating or reframing the visitor's situation, friction, unmet need, task, or limitation materially improves understanding of why the offer is relevant."],
-      "rules": ["Do not force a negative pain narrative onto aspiration-led, opportunity-led, replacement-led, or purely informational page strategies."]
-    },
-    "blueprint_guidance": {
-      "rules": ["Describe only the supported customer problem, need, task, opportunity, or decision friction.", "Do not create market statistics, broad most-people claims, competitor failure claims, or emotional pain not selected by Page Strategy."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "Explicitly articulating or reframing the visitor's situation, friction, unmet need, task, or limitation materially improves understanding of why the offer is relevant."
+        ],
+        "rules": [
+          "Do not force a negative pain narrative onto aspiration-led, opportunity-led, replacement-led, or purely informational page strategies."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "Describe only the supported customer problem, need, task, opportunity, or decision friction.",
+          "Do not create market statistics, broad most-people claims, competitor failure claims, or emotional pain not selected by Page Strategy."
+        ]
+      }
     }
   },
   {
     "id": "transformation",
     "name": "Transformation",
     "description": "Shows a clear before-and-after change in the customer's situation, results, experience, or visible outcome.",
-    "selection_guidance": {
-      "use_when": ["Page Strategy contains a supported before-and-after or current-state-to-desired-state shift that is useful to communicate."],
-      "rules": ["The shift must not be stronger than Page Strategy.", "Do not manufacture emotional, behavioral, financial, health, or life transformation."]
-    },
-    "blueprint_guidance": {
-      "rules": ["Treat transformation only as an approved change, contrast, or desired state.", "Do not convert an intended or desired state into a guaranteed result.", "Do not create before-and-after evidence unless it is confirmed."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "Page Strategy contains a supported before-and-after or current-state-to-desired-state shift that is useful to communicate."
+        ],
+        "rules": [
+          "The shift must not be stronger than Page Strategy.",
+          "Do not manufacture emotional, behavioral, financial, health, or life transformation."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "Treat transformation only as an approved change, contrast, or desired state.",
+          "Do not convert an intended or desired state into a guaranteed result.",
+          "Do not create before-and-after evidence unless it is confirmed."
+        ]
+      }
     }
   },
   {
     "id": "solution",
     "name": "Solution",
     "description": "Positions the product as the solution to the customer's problem or desired outcome.",
-    "selection_guidance": {
-      "use_when": ["The visitor needs a dedicated explanation of what the offer is and how it addresses the supported situation."],
-      "rules": ["Do not assume the opening section already provides enough explanation."]
-    },
-    "blueprint_guidance": {
-      "rules": ["Explain only confirmed solution components and their supported relevance.", "Do not turn a feature into an unsupported outcome."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "The visitor needs a dedicated explanation of what the offer is and how it addresses the supported situation."
+        ],
+        "rules": [
+          "Do not assume the opening section already provides enough explanation."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "Explain only confirmed solution components and their supported relevance.",
+          "Do not turn a feature into an unsupported outcome."
+        ]
+      }
     }
   },
   {
     "id": "unique_mechanism",
     "name": "Unique Mechanism",
     "description": "Explains the distinctive underlying mechanism, technology, formulation, process, or method that makes the product work differently from alternatives.",
-    "selection_guidance": {
-      "use_when": ["Page Strategy depends on a meaningful supported mechanism, method, process, system, structure, approach, or organizing principle."],
-      "rules": ["The section name does not authorize a uniqueness claim.", "Do not imply the mechanism is proprietary, unique, superior, or exclusive unless Page Strategy supports that claim."]
-    },
-    "blueprint_guidance": {
-      "rules": ["Explain only a confirmed mechanism, process, structure, method, or organizing principle.", "The section name does not authorize claims such as unique, proprietary, exclusive, scientifically designed, or superior unless supported.", "If no distinct mechanism is confirmed and the section is required, record the needed clarification in missing_inputs rather than inventing one."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "Page Strategy depends on a meaningful supported mechanism, method, process, system, structure, approach, or organizing principle."
+        ],
+        "rules": [
+          "The section name does not authorize a uniqueness claim.",
+          "Do not imply the mechanism is proprietary, unique, superior, or exclusive unless Page Strategy supports that claim."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "Explain only a confirmed mechanism, process, structure, method, or organizing principle.",
+          "The section name does not authorize claims such as unique, proprietary, exclusive, scientifically designed, or superior unless supported.",
+          "If no distinct mechanism is confirmed and the section is required, record the needed clarification in missing_inputs rather than inventing one."
+        ]
+      }
     }
   },
   {
     "id": "benefits",
     "name": "Benefits",
     "description": "Explains what the customer gains or how their situation improves as a result of using the product.",
-    "selection_guidance": {
-      "use_when": ["The page needs a dedicated layer connecting confirmed features, mechanisms, or offer characteristics to customer-relevant value."],
-      "rules": ["Do not convert a feature into an unsupported outcome.", "Benefits and features may coexist when they answer different decision questions."]
-    },
-    "blueprint_guidance": {
-      "rules": ["Benefits must be supported by Page Strategy or Message Strategy.", "Do not derive causal outcomes merely from features."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "The page needs a dedicated layer connecting confirmed features, mechanisms, or offer characteristics to customer-relevant value."
+        ],
+        "rules": [
+          "Do not convert a feature into an unsupported outcome.",
+          "Benefits and features may coexist when they answer different decision questions."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "Benefits must be supported by Page Strategy or Message Strategy.",
+          "Do not derive causal outcomes merely from features."
+        ]
+      }
     }
   },
   {
     "id": "how_it_works",
     "name": "How It Works",
     "description": "Explains the steps, process, practical usage, or customer journey involved in using the product.",
-    "selection_guidance": {
-      "use_when": ["Understanding the process, usage, delivery, workflow, implementation, or interaction materially affects the decision."],
-      "rules": ["Mechanism explanation and usage or process explanation may be different jobs; do not collapse them automatically when Page Strategy needs both."]
-    },
-    "blueprint_guidance": {
-      "rules": ["Use only confirmed process or usage steps.", "Do not invent missing steps to make the process feel complete."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "Understanding the process, usage, delivery, workflow, implementation, or interaction materially affects the decision."
+        ],
+        "rules": [
+          "Mechanism explanation and usage or process explanation may be different jobs; do not collapse them automatically when Page Strategy needs both."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "Use only confirmed process or usage steps.",
+          "Do not invent missing steps to make the process feel complete."
+        ]
+      }
     }
   },
   {
     "id": "product_showcase",
     "name": "Product Showcase",
     "description": "Visually presents the product, its variants, appearance, interface, usage, or important details that benefit from demonstration.",
-    "selection_guidance": {
-      "use_when": ["Visual or concrete presentation of the supported offer, interface, deliverables, components, outputs, format, environment, or examples materially helps evaluation."],
-      "rules": ["Interpret the showcase according to the actual offer.", "Do not assume a physical product."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "Visual or concrete presentation of the supported offer, interface, deliverables, components, outputs, format, environment, or examples materially helps evaluation."
+        ],
+        "rules": [
+          "Interpret the showcase according to the actual offer.",
+          "Do not assume a physical product."
+        ]
+      },
+      "blueprint": {
+        "rules": []
+      }
     }
   },
   {
     "id": "features",
     "name": "Features",
     "description": "Describes concrete product attributes, specifications, components, capabilities, or included functionality.",
-    "selection_guidance": {
-      "use_when": ["Concrete capabilities, attributes, inclusions, specifications, or offer characteristics materially help the visitor evaluate fit."],
-      "rules": ["Features and benefits may coexist when they answer different decision questions.", "Do not invent capabilities, attributes, inclusions, or specifications."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "Concrete capabilities, attributes, inclusions, specifications, or offer characteristics materially help the visitor evaluate fit."
+        ],
+        "rules": [
+          "Features and benefits may coexist when they answer different decision questions.",
+          "Do not invent capabilities, attributes, inclusions, or specifications."
+        ]
+      },
+      "blueprint": {
+        "rules": []
+      }
     }
   },
   {
     "id": "comparison",
     "name": "Comparison",
     "description": "Compares the product with alternatives, competitors, previous methods, or other available solutions.",
-    "selection_guidance": {
-      "use_when": ["Page Strategy establishes a meaningful supported alternative, contrast, or comparison dimension."],
-      "rules": ["Do not invent competitor weaknesses, category alternatives, or superiority."]
-    },
-    "blueprint_guidance": {
-      "rules": ["Use only supported comparison criteria and confirmed comparison facts.", "Do not invent competitors, alternative weaknesses, superiority, market leadership, or category norms."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "Page Strategy establishes a meaningful supported alternative, contrast, or comparison dimension."
+        ],
+        "rules": [
+          "Do not invent competitor weaknesses, category alternatives, or superiority."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "Use only supported comparison criteria and confirmed comparison facts.",
+          "Do not invent competitors, alternative weaknesses, superiority, market leadership, or category norms."
+        ]
+      }
     }
   },
   {
     "id": "ugc",
     "name": "UGC",
     "description": "Showcases simple, authentic-looking customer-created photos, videos, unboxings, demonstrations, reactions, or product-in-use content to make the product feel relatable, tangible, and socially validated.",
-    "selection_guidance": {
-      "use_when": ["Page Strategy supports UGC as a legitimate and strategically useful proof or demonstration format."],
-      "rules": ["Never assume or fabricate UGC assets.", "Use required only when Page Strategy clearly requires UGC and it can legitimately be used.", "Do not select it merely because another proof format is useful."]
-    },
-    "blueprint_guidance": {
-      "rules": ["The section type does not prove that UGC exists.", "Use proof_elements only for confirmed UGC.", "If the section is required and UGC is not confirmed, keep the section, record the missing proof source in missing_inputs, and prevent downstream fabrication with a content guardrail."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "Page Strategy supports UGC as a legitimate and strategically useful proof or demonstration format."
+        ],
+        "rules": [
+          "Never assume or fabricate UGC assets.",
+          "Use required only when Page Strategy clearly requires UGC and it can legitimately be used.",
+          "Do not select it merely because another proof format is useful."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "The section type does not prove that UGC exists.",
+          "Use proof_elements only for confirmed UGC.",
+          "If the section is required and UGC is not confirmed, keep the section, record the missing proof source in missing_inputs, and prevent downstream fabrication with a content guardrail."
+        ]
+      }
     }
   },
   {
     "id": "social_proof",
     "name": "Social Proof",
     "description": "Builds trust using aggregate evidence such as ratings, customer counts, logos, awards, certifications, press mentions, adoption metrics, or other credibility signals.",
-    "selection_guidance": {
-      "use_when": ["Page Strategy supports aggregate evidence as a legitimate and strategically useful trust mechanism."],
-      "rules": ["Never assume or fabricate ratings, customer counts, logos, awards, certifications, press mentions, adoption metrics, or other proof.", "Use required only when Page Strategy clearly requires this proof type and it can legitimately be used."]
-    },
-    "blueprint_guidance": {
-      "rules": ["The section type does not prove that social proof exists.", "Use proof_elements only for confirmed social proof.", "If the section is required and proof is not confirmed, keep the section, record the missing proof source in missing_inputs, and prevent downstream fabrication with a content guardrail."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "Page Strategy supports aggregate evidence as a legitimate and strategically useful trust mechanism."
+        ],
+        "rules": [
+          "Never assume or fabricate ratings, customer counts, logos, awards, certifications, press mentions, adoption metrics, or other proof.",
+          "Use required only when Page Strategy clearly requires this proof type and it can legitimately be used."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "The section type does not prove that social proof exists.",
+          "Use proof_elements only for confirmed social proof.",
+          "If the section is required and proof is not confirmed, keep the section, record the missing proof source in missing_inputs, and prevent downstream fabrication with a content guardrail."
+        ]
+      }
     }
   },
   {
     "id": "testimonials",
     "name": "Testimonials",
     "description": "Uses direct customer quotes, reviews, endorsements, or personal experiences to build trust.",
-    "selection_guidance": {
-      "use_when": ["Page Strategy supports testimonials as a legitimate and strategically useful trust mechanism."],
-      "rules": ["Never assume or fabricate quotes, reviews, endorsements, or customer experiences.", "Use required only when Page Strategy clearly requires testimonials and they can legitimately be used."]
-    },
-    "blueprint_guidance": {
-      "rules": ["The section type does not prove that testimonials exist.", "Use proof_elements only for confirmed testimonials.", "If the section is required and testimonials are not confirmed, keep the section, record the missing proof source in missing_inputs, and prevent downstream fabrication with a content guardrail."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "Page Strategy supports testimonials as a legitimate and strategically useful trust mechanism."
+        ],
+        "rules": [
+          "Never assume or fabricate quotes, reviews, endorsements, or customer experiences.",
+          "Use required only when Page Strategy clearly requires testimonials and they can legitimately be used."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "The section type does not prove that testimonials exist.",
+          "Use proof_elements only for confirmed testimonials.",
+          "If the section is required and testimonials are not confirmed, keep the section, record the missing proof source in missing_inputs, and prevent downstream fabrication with a content guardrail."
+        ]
+      }
     }
   },
   {
     "id": "case_studies",
     "name": "Case Studies",
     "description": "Uses detailed customer success stories with context, actions, outcomes, and optionally measurable results.",
-    "selection_guidance": {
-      "use_when": ["Page Strategy supports case studies as a legitimate and strategically useful proof format."],
-      "rules": ["Never assume or fabricate customer stories, actions, outcomes, or measurements.", "Use required only when Page Strategy clearly requires case studies and they can legitimately be used."]
-    },
-    "blueprint_guidance": {
-      "rules": ["The section type does not prove that case studies exist.", "Use proof_elements only for confirmed case studies.", "If the section is required and case studies are not confirmed, keep the section, record the missing proof source in missing_inputs, and prevent downstream fabrication with a content guardrail."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "Page Strategy supports case studies as a legitimate and strategically useful proof format."
+        ],
+        "rules": [
+          "Never assume or fabricate customer stories, actions, outcomes, or measurements.",
+          "Use required only when Page Strategy clearly requires case studies and they can legitimately be used."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "The section type does not prove that case studies exist.",
+          "Use proof_elements only for confirmed case studies.",
+          "If the section is required and case studies are not confirmed, keep the section, record the missing proof source in missing_inputs, and prevent downstream fabrication with a content guardrail."
+        ]
+      }
     }
   },
   {
     "id": "objection_handling",
     "name": "Objection Handling",
     "description": "Directly addresses specific reasons a customer may hesitate to buy and provides persuasive responses beyond a standard FAQ format.",
-    "selection_guidance": {
-      "use_when": ["Page Strategy contains meaningful barriers, doubts, or decision factors that deserve direct resolution."],
-      "rules": ["Do not invent objections merely to justify the section.", "Objection handling and FAQ may coexist when they serve different jobs."]
-    },
-    "blueprint_guidance": {
-      "rules": ["Address only objections selected upstream.", "Do not invent a solution when the underlying capability, term, policy, proof, or feature is not confirmed."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "Page Strategy contains meaningful barriers, doubts, or decision factors that deserve direct resolution."
+        ],
+        "rules": [
+          "Do not invent objections merely to justify the section.",
+          "Objection handling and FAQ may coexist when they serve different jobs."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "Address only objections selected upstream.",
+          "Do not invent a solution when the underlying capability, term, policy, proof, or feature is not confirmed."
+        ]
+      }
     }
   },
   {
     "id": "offer",
     "name": "Offer",
     "description": "Presents the complete purchase proposition, including what the customer receives, the core package, and the overall value.",
-    "selection_guidance": {
-      "use_when": ["The visitor needs a distinct block to understand what is being selected, requested, subscribed to, booked, purchased, applied for, or otherwise converted on."],
-      "rules": ["Do not assume the conversion action is a purchase.", "Do not invent offer mechanics."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "The visitor needs a distinct block to understand what is being selected, requested, subscribed to, booked, purchased, applied for, or otherwise converted on."
+        ],
+        "rules": [
+          "Do not assume the conversion action is a purchase.",
+          "Do not invent offer mechanics."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "Do not assume purchase, checkout, package, price, plan, tier, subscription, booking, or application mechanics.",
+          "Use only confirmed offer structure and the conversion model defined upstream."
+        ]
+      }
     }
   },
   {
     "id": "bonus_stack",
     "name": "Bonus Stack",
     "description": "Presents additional items, gifts, add-ons, services, or bonuses included beyond the core product or offer.",
-    "selection_guidance": {
-      "use_when": ["Real additional offer components or bonuses are supported by Page Strategy."],
-      "rules": ["Exclude this section when additional components or bonuses are not supported.", "Do not invent bonuses, gifts, add-ons, or services."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "Real additional offer components or bonuses are supported by Page Strategy."
+        ],
+        "rules": [
+          "Exclude this section when additional components or bonuses are not supported.",
+          "Do not invent bonuses, gifts, add-ons, or services."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "Do not invent bonuses or additional offer components.",
+          "Use only confirmed bonus components."
+        ]
+      }
     }
   },
   {
     "id": "pricing",
     "name": "Pricing",
     "description": "Presents prices, plans, packages, subscriptions, payment options, product variants, or other purchase configurations.",
-    "selection_guidance": {
-      "use_when": ["Supported price, plan, commercial structure, package comparison, or other pricing information deserves its own decision block."],
-      "rules": ["Exclude this section when pricing is absent or not relevant to Page Strategy.", "Do not invent pricing or commercial details."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "Supported price, plan, commercial structure, package comparison, or other pricing information deserves its own decision block."
+        ],
+        "rules": [
+          "Exclude this section when pricing is absent or not relevant to Page Strategy.",
+          "Do not invent pricing or commercial details."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "Do not invent prices, discounts, tiers, packages, or payment terms.",
+          "Use only confirmed pricing facts.",
+          "If pricing is required but missing, record the required pricing input in missing_inputs."
+        ]
+      }
     }
   },
   {
     "id": "risk_reversal",
     "name": "Risk Reversal",
     "description": "Reduces perceived purchase risk through guarantees, free trials, easy returns, cancellation policies, or other confidence-building assurances.",
-    "selection_guidance": {
-      "use_when": ["A real supported risk-reduction mechanism exists and matters to the decision."],
-      "rules": ["Do not invent guarantees, trials, refunds, cancellation terms, returns, or other risk-reduction mechanics."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "A real supported risk-reduction mechanism exists and matters to the decision."
+        ],
+        "rules": [
+          "Do not invent guarantees, trials, refunds, cancellation terms, returns, or other risk-reduction mechanics."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "The section does not prove that a risk-reversal mechanism exists.",
+          "Use only confirmed mechanisms.",
+          "If none is confirmed and the section is required, keep the section, record the exact needed term or policy in missing_inputs, and prevent downstream invention with a content guardrail."
+        ]
+      }
     }
   },
   {
     "id": "urgency",
     "name": "Urgency",
     "description": "Encourages immediate action when there is a genuine time-sensitive reason, such as a deadline, limited availability, or expiring offer.",
-    "selection_guidance": {
-      "use_when": ["Legitimate urgency or scarcity is explicitly supported by Page Strategy."],
-      "rules": ["Never invent deadlines, scarcity, limited availability, expiring terms, or countdowns."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "Legitimate urgency or scarcity is explicitly supported by Page Strategy."
+        ],
+        "rules": [
+          "Never invent deadlines, scarcity, limited availability, expiring terms, or countdowns."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "Do not invent deadlines, scarcity, limited stock, expiring promotions, or time pressure.",
+          "Use only urgency explicitly supported by the current context."
+        ]
+      }
     }
   },
   {
     "id": "faq",
     "name": "FAQ",
     "description": "Answers common customer questions in a question-and-answer format and removes remaining uncertainty before purchase.",
-    "selection_guidance": {
-      "use_when": ["A secondary question-and-answer layer would help resolve supported practical, transactional, implementation, eligibility, compatibility, scope, or other lower-priority questions."],
-      "rules": ["Do not invent questions, objections, or transactional details.", "FAQ and objection handling may coexist when they serve different jobs."]
+    "guidance": {
+      "shared_rules": [],
+      "selection": {
+        "use_when": [
+          "A secondary question-and-answer layer would help resolve supported practical, transactional, implementation, eligibility, compatibility, scope, or other lower-priority questions."
+        ],
+        "rules": [
+          "Do not invent questions, objections, or transactional details.",
+          "FAQ and objection handling may coexist when they serve different jobs."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "Questions must come from selected objections, supported barriers, confirmed practical customer uncertainties, Page Requirements, or strategy.",
+          "Answers must be supported by factual context.",
+          "When a selected question depends on an unconfirmed answer, record the exact missing answer in missing_inputs instead of inventing it."
+        ]
+      }
     }
   },
   {
     "id": "final_cta",
     "name": "Final CTA",
     "description": "Encourages the customer to take the primary conversion action and move toward the purchase decision.",
-    "selection_guidance": {
-      "use_when": [
-        "A dedicated closing conversion reinforcement is useful for the conversion action defined in Page Strategy."
+    "guidance": {
+      "shared_rules": [
+        "Support the exact conversion action defined in Page Strategy."
       ],
-      "rules": [
-        "Support the exact conversion action defined in Page Strategy.",
-        "Do not introduce a new or alternative conversion action."
-      ]
+      "selection": {
+        "use_when": [
+          "A dedicated closing conversion reinforcement is useful for the conversion action defined in Page Strategy."
+        ],
+        "rules": [
+          "Do not introduce a new or alternative conversion action."
+        ]
+      },
+      "blueprint": {
+        "rules": [
+          "Do not invent another action, urgency, scarcity, discount, pressure, or intermediate conversion mechanism."
+        ]
+      }
     }
   }
 ]

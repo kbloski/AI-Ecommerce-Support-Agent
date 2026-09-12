@@ -684,10 +684,13 @@ Softening an unsupported claim with words such as `can`, `may`, `helps`,
 acceptable.
 
 
-## PAGE SECTION TYPES CONTEXT = SECTION SEMANTICS ONLY
+## PAGE SECTION TYPES CONTEXT = SECTION SEMANTICS AND BLUEPRINT RULES
 
-Use PAGE SECTION TYPES CONTEXT only to understand what each available section
-type is structurally intended to do.
+Use PAGE SECTION TYPES CONTEXT to understand what each available section type is
+structurally intended to do.
+
+For each section, follow `guidance.shared_rules` and all rules in
+`guidance.blueprint.rules` while planning that section.
 
 A section label does NOT establish facts.
 
@@ -933,161 +936,7 @@ Do not fill this array with generic boilerplate.
 
 
 ==================================================
-9. SECTION-TYPE SAFETY
-==================================================
-
-Section types define structural roles only.
-They never authorize unsupported content.
-
-Apply these rules whenever the corresponding section type exists.
-
-
-## problem
-
-Describe only the supported customer problem, need, task, opportunity, or
-decision friction.
-
-Do not create market statistics, broad "most people" claims, competitor failure
-claims, or emotional pain not selected by PAGE_STRATEGY.
-
-
-## transformation
-
-Treat transformation only as an approved change, contrast, or desired state.
-
-Do not convert an intended or desired state into a guaranteed result.
-Do not create before/after evidence unless confirmed.
-
-
-## solution
-
-Explain only confirmed solution components and their supported relevance.
-
-Do not turn a feature into an unsupported outcome.
-
-
-## unique_mechanism
-
-Explain only a confirmed mechanism, process, structure, method, or organizing
-principle.
-
-The section_type name does NOT authorize claims such as unique, proprietary,
-exclusive, scientifically designed, or superior unless supported.
-
-If no distinct mechanism is confirmed and the section is required, record the
-needed clarification in `missing_inputs` rather than inventing one.
-
-
-## benefits
-
-Benefits must be supported by PAGE_STRATEGY or MESSAGE_STRATEGY.
-
-Do not derive causal outcomes merely from features.
-
-
-## how_it_works
-
-Use only confirmed process or usage steps.
-
-Do not invent missing steps to make the process feel complete.
-
-
-## objection_handling
-
-Address only selected objections.
-
-Do not invent a solution when the underlying capability, term, policy, proof,
-or feature is not confirmed.
-
-
-## risk_reversal
-
-The existence of this section does NOT prove that any risk-reversal mechanism exists.
-
-Use only confirmed mechanisms.
-
-If none is confirmed and the section is required:
-- keep the section,
-- do not invent the mechanism,
-- add the exact needed term or policy to `missing_inputs`,
-- add a guardrail preventing downstream invention.
-
-
-## offer
-
-Do not assume purchase, checkout, package, price, plan, tier, subscription,
-booking, or application mechanics.
-
-Use only confirmed offer structure and the conversion model defined upstream.
-
-
-## faq
-
-Questions must come from selected objections, supported barriers, confirmed
-practical customer uncertainties, or explicit PAGE REQUIREMENTS / strategy.
-
-Answers must be supported by factual context.
-
-If a strategically selected question depends on an unconfirmed answer:
-- do not invent the answer,
-- record the exact missing answer or input in `missing_inputs`.
-
-
-## comparison
-
-Use only supported comparison criteria and confirmed comparison facts.
-
-Do not invent competitors, alternative weaknesses, superiority, market
-leadership, or category norms.
-
-
-## social_proof / testimonials / ugc / case_studies
-
-The section type does NOT prove that the corresponding proof exists.
-
-Use `proof_elements` only for confirmed proof.
-
-If the section is required and the proof source is not confirmed:
-- keep the section,
-- leave unsupported proof out,
-- record the missing proof source in `missing_inputs`,
-- add a guardrail preventing fabricated proof.
-
-
-## pricing
-
-Do not invent price, discounts, tiers, packages, or payment terms.
-
-Use only confirmed pricing facts.
-
-If pricing is required but missing, record the required pricing input in
-`missing_inputs`.
-
-
-## urgency
-
-Do not invent deadlines, scarcity, limited stock, expiring promotions, or time pressure.
-
-Use only urgency explicitly supported by CURRENT context.
-
-
-## bonus_stack
-
-Do not invent bonuses or additional offer components.
-
-Use only confirmed bonus components.
-
-
-## final_cta
-
-Support the exact PAGE_STRATEGY conversion action.
-
-Do not invent another action, urgency, scarcity, discount, pressure, or
-intermediate conversion mechanics.
-
-
-==================================================
-10. FACTUAL AND CLAIM SAFETY
+9. FACTUAL AND CLAIM SAFETY
 ==================================================
 
 Never invent or assume:
@@ -1119,14 +968,14 @@ Do not turn an observable feature into an unsupported benefit or outcome.
 
 
 ==================================================
-11. INTERNAL PROCESS
+10. INTERNAL PROCESS
 ==================================================
 
 Before returning JSON, reason internally in this order:
 
 1. Identify PAGE_STRATEGY scope, narrative, journey, and exact conversion action.
 2. Read PAGE REQUIREMENTS and determine required, optional, and excluded sections.
-3. Read PAGE SECTION TYPES CONTEXT for section semantics only.
+3. Read PAGE SECTION TYPES CONTEXT for section semantics and blueprint guidance.
 4. Select optional sections conservatively.
 5. Preserve relative ordering.
 6. For each selected section, assign one distinct strategic job.
@@ -1145,7 +994,7 @@ Before returning JSON, reason internally in this order:
 
 
 ==================================================
-12. FINAL QUALITY CHECK
+11. FINAL QUALITY CHECK
 ==================================================
 
 Before output verify:
@@ -1169,7 +1018,7 @@ Before output verify:
 
 
 ==================================================
-13. OUTPUT
+12. OUTPUT
 ==================================================
 
 Return the blueprint object DIRECTLY with exactly this structure:
@@ -1202,7 +1051,7 @@ Return the blueprint object DIRECTLY with exactly this structure:
 
 
 ==================================================
-14. OUTPUT RULES
+13. OUTPUT RULES
 ==================================================
 
 - Return valid JSON only.

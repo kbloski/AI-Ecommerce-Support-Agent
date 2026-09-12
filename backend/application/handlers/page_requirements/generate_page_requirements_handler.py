@@ -329,8 +329,9 @@ The supplied PAGE STRATEGY determines the page job and conversion action.
 
 Treat section names, descriptions, and examples only as structural concepts.
 
-When a catalog section provides `selection_guidance`, use its `use_when` entries
-to decide whether the section is relevant and follow all of its `rules`.
+For each catalog section, follow `guidance.shared_rules`. Use
+`guidance.selection.use_when` to decide whether the section is relevant and
+follow all rules in `guidance.selection.rules`.
 They are NOT facts about the current offer.
 
 Never infer a product type, service model, commercial model, customer behavior,

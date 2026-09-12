@@ -24,7 +24,7 @@ class PageSectionsService:
 
     def get_all_for_requirements(self) -> List[dict]:
         return [
-            self._project_section(section, "selection_guidance")
+            self._project_section(section, "selection")
             for section in self.get_all()
         ]
 
@@ -47,7 +47,7 @@ class PageSectionsService:
                 continue
 
             sections.append(
-                self._project_section(section, "blueprint_guidance")
+                self._project_section(section, "blueprint")
             )
 
         page_sections_json = json.dumps(
@@ -60,12 +60,16 @@ class PageSectionsService:
         return build_llm_section("page-section-types", page_sections_json)
 
     @staticmethod
-    def _project_section(section: dict, guidance_field: str) -> dict:
+    def _project_section(section: dict, guidance_stage: str) -> dict:
         projected = {
             "id": section["id"],
             "name": section["name"],
             "description": section["description"],
         }
-        if guidance_field in section:
-            projected[guidance_field] = section[guidance_field]
+
+        guidance = section.get("guidance", {})
+        projected["guidance"] = {
+            "shared_rules": guidance.get("shared_rules", []),
+            guidance_stage: guidance.get(guidance_stage, {"rules": []}),
+        }
         return projected
