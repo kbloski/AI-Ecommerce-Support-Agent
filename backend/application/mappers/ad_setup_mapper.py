@@ -1,4 +1,4 @@
-from domain.models.ad_setup.ad_setup import AdSetup
+from domain.models.ad.ad_setup import AdSetup
 from application.dtos.ad_setup.ad_setup_response_dto import AdSetupDto
 
 

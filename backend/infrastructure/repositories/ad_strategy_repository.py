@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from domain.models.ad_strategy.ad_strategy import AdStrategy
+from domain.models.ad.ad_strategy import AdStrategy
 from infrastructure.logging.logger import Logger
 
 

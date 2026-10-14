@@ -9,7 +9,7 @@ from di.container import Container
 def list_ollama_models_handler(url: Optional[str] = None):
     container = Container()
     settings = container.settings()
-    repository = container.app_ollama_settings_repository()
+    repository = container.app_properties_repository()
 
     overrides = repository.get()
     if url:

@@ -1,4 +1,4 @@
-from domain.models.page_strategy.page_strategy import PageStrategy
+from domain.models.page.page_strategy import PageStrategy
 from application.dtos.page_strategy.page_strategy_response_dto import PageStrategyDto
 
 

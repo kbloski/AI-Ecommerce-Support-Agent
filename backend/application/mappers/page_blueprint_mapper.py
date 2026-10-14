@@ -1,4 +1,4 @@
-from domain.models.page_blueprint.page_blueprint import PageBlueprint
+from domain.models.page.page_blueprint import PageBlueprint
 from application.dtos.page_blueprint.page_blueprint_response_dto import PageBlueprintDto
 
 

@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from domain.models.page_content_plan.page_content_plan import PageContentPlan
+from domain.models.page.page_content_plan import PageContentPlan
 from infrastructure.logging.logger import Logger
 
 

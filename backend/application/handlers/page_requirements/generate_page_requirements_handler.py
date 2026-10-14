@@ -4,8 +4,8 @@ from di.container import Container
 from domain.enums.llm_message_role import LlmMessageRole
 from domain.enums.page_section_requirement_type import PageSectionRequirementType
 from domain.models.llm.llm_message import LlmMessage
-from domain.models.page_requirements.page_requirements import PageRequirements
-from domain.models.page_requirements.page_section_requirement import (
+from domain.models.page.page_requirements import PageRequirements
+from domain.models.page.page_section_requirement import (
     PageSectionRequirement,
 )
 from infrastructure.database.unit_of_work import unit_of_work

@@ -1,7 +1,7 @@
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from domain.models.offers.offer_raw import OfferRaw
+from domain.models.offer.offer_raw import OfferRaw
 from infrastructure.logging.logger import Logger
 from common.results.paginated_result import PaginatedResult
 

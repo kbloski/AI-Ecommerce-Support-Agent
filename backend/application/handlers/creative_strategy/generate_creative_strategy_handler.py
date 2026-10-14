@@ -4,7 +4,7 @@ from di.container import Container
 from domain.enums.creative_types import CreativeTypes
 from domain.models.llm.llm_message import LlmMessage
 from domain.enums.llm_message_role import LlmMessageRole
-from domain.models.creative_strategy.creative_strategy import CreativeStrategy
+from domain.models.creative.creative_strategy import CreativeStrategy
 
 
 def generate_creative_strategy_handler(
@@ -12,7 +12,7 @@ def generate_creative_strategy_handler(
 ):
     container = Container()
 
-    offer_profile_service = container.offer_profile_service()
+    offer_source_service = container.offer_source_service()
     brand_marketing_service = container.brand_marketing_service()
     marketing_strategy_service = container.marketing_strategy_service()
     offer_strategy_service = container.offer_strategy_service()
@@ -100,8 +100,8 @@ def generate_creative_strategy_handler(
     # BUILD CONTEXT
     # --------------------------------------------------
 
-    offer_profile_context = offer_profile_service.build_llm_context(
-        offer_profile_id=brand_strategy.offer_profile_id
+    offer_source_context = offer_source_service.build_llm_context(
+        offer_source_id=brand_strategy.offer_source_id
     )
 
     brand_strategy_context = (
@@ -147,7 +147,7 @@ def generate_creative_strategy_handler(
             LlmMessage(
                 role=LlmMessageRole.USER,
                 content=get_data_prompt(
-                    offer_profile_context=offer_profile_context,
+                    offer_source_context=offer_source_context,
                     brand_strategy_context=brand_strategy_context,
                     marketing_strategy_context=marketing_strategy_context,
                     offer_strategy_context=offer_strategy_context,
@@ -363,7 +363,7 @@ formats, and testing direction.
 MESSAGE STRATEGY:
 defines the maximum allowed claim level.
 
-OFFER PROFILE:
+OFFER SOURCE:
 is the source of truth about the product.
 
 OFFER STRATEGY:
@@ -597,7 +597,7 @@ The selected problem must be:
 - directly connected to a confirmed product mechanism.
 
 The selected product mechanism must:
-- be confirmed by the OFFER PROFILE or upstream strategy,
+- be confirmed by the OFFER SOURCE or upstream strategy,
 - directly address the selected obstacle,
 - be demonstrable or understandable in the creative,
 - support the actual promise being made.
@@ -933,7 +933,7 @@ Each Creative Strategy must satisfy all conditions:
     not merely that the feature exists.
 18. emotion_flow supports the same persuasive sequence.
 19. Do not exceed the MESSAGE STRATEGY claim ceiling.
-20. Do not introduce product capabilities absent from the OFFER PROFILE.
+20. Do not introduce product capabilities absent from the OFFER SOURCE.
 21. Do not invent proof, policies, outcomes, or product capabilities.
 22. creative_type and recommended_format describe different things.
 23. Each strategy comes from its own approved concept.
@@ -1050,7 +1050,7 @@ Do not omit approved concepts.
 
 
 def get_data_prompt(
-    offer_profile_context: str,
+    offer_source_context: str,
     brand_strategy_context: str,
     marketing_strategy_context: str,
     offer_strategy_context: str,
@@ -1074,7 +1074,7 @@ Do not:
 - rename concepts.
 
 Use:
-- OFFER PROFILE as the source of truth about the product,
+- OFFER SOURCE as the source of truth about the product,
 - MESSAGE STRATEGY as the maximum allowed claim level,
 - AD STRATEGY as the immediate creative assignment,
 - the remaining strategies as context.
@@ -1091,10 +1091,10 @@ Do not invent missing:
 
 
 ==================================================
-OFFER PROFILE
+OFFER SOURCE
 ==================================================
 
-{offer_profile_context}
+{offer_source_context}
 
 
 ==================================================

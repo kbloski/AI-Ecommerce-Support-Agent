@@ -3,9 +3,9 @@ import { DetailShell } from '@/components/DetailShell'
 import { useGetChecklistQuery } from '@/features/checklists/checklistsApi'
 
 export default function ChecklistDetailPage() {
-  const { offerProfileId: offerProfileIdParam, checklistId: checklistIdParam } =
+  const { offerSourceId: offerSourceIdParam, checklistId: checklistIdParam } =
     useParams()
-  const offerProfileId = Number(offerProfileIdParam)
+  const offerSourceId = Number(offerSourceIdParam)
   const checklistId = Number(checklistIdParam)
 
   const { data, isLoading, error } = useGetChecklistQuery(checklistId)
@@ -13,7 +13,7 @@ export default function ChecklistDetailPage() {
   return (
     <DetailShell
       title={data?.name === 'analysis_checklist' ? `Checklista #${checklistId}` : (data?.name as string) ?? `Checklista #${checklistId}`}
-      backTo={`/offer-profiles/${offerProfileId}/checklists`}
+      backTo={`/offer-sources/${offerSourceId}/checklists`}
       backLabel="← Checklisty"
       data={data}
       isLoading={isLoading}

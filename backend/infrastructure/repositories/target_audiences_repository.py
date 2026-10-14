@@ -42,17 +42,17 @@ class TargetAudiencesRepository:
 
 
     # 🔍 GET BY ID
-    def find_for_offer_profile(
+    def find_for_offer_source(
         self,
-        offer_profile_id: int = None,
+        offer_source_id: int = None,
     ) -> list[TargetAudience]:
 
-        if offer_profile_id is None:
+        if offer_source_id is None:
             return []
 
         return (
             self.db.query(TargetAudience)
-            .filter(TargetAudience.offer_profile_id == offer_profile_id)
+            .filter(TargetAudience.offer_source_id == offer_source_id)
             .order_by(
                 TargetAudience.is_reviewed.asc(),
                 TargetAudience.created_at.desc(),
@@ -61,9 +61,9 @@ class TargetAudiencesRepository:
             .all()
         )
 
-    def search_for_offer_profile(
+    def search_for_offer_source(
         self,
-        offer_profile_id: int,
+        offer_source_id: int,
         page: int = 1,
         page_size: int = 20,
         is_reviewed: bool | None = None,
@@ -73,7 +73,7 @@ class TargetAudiencesRepository:
         page_size = max(1, page_size)
 
         query = self.db.query(TargetAudience).filter(
-            TargetAudience.offer_profile_id == offer_profile_id
+            TargetAudience.offer_source_id == offer_source_id
         )
 
         if is_reviewed is not None:

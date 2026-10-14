@@ -3,7 +3,7 @@ import json
 from typing import List
 
 from infrastructure.logging.logger import Logger
-from domain.models.ad_strategy.ad_strategy import AdStrategy
+from domain.models.ad.ad_strategy import AdStrategy
 from application.dtos.ad_strategy.ad_strategy_response_dto import AdStrategyDto
 from infrastructure.repositories.ad_strategy_repository import AdStrategyRepository
 from application.mappers.ad_strategy_mapper import AdStrategyMapper

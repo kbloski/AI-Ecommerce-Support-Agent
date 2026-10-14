@@ -3,11 +3,11 @@ from enum import Enum
 
 class TableName(str, Enum):
     OFFERS_RAW = "offers_raw"
-    OFFER_PROFILES = "offer_profiles"
-    OFFER_PROFILE_ELEMENTS = "offer_profile_elements"
+    OFFER_SOURCES = "offer_sources"
+    OFFER_SOURCE_ELEMENTS = "offer_source_elements"
     TARGET_AUDIENCES = "target_audiences"
     ANALYSIS = "analysis"
-    OFFER_PROFILE_ANALYSIS = "offer_profile_analysis"
+    OFFER_SOURCE_ANALYSIS = "offer_source_analysis"
     ANALYSIS_QUESTIONS= "analysis_questions"
     QUESTION_ANSWERS = "question_answers"
     CHECKLIST = "checklist"
@@ -29,4 +29,4 @@ class TableName(str, Enum):
     PAGE_BLUEPRINT = "page_blueprint"
     PAGE_CONTENT_PLAN = "page_content_plan"
     PAGE_COPY = "page_copy"
-    APP_OLLAMA_SETTINGS = "app_ollama_settings"
+    APP_PROPERTIES = "app_properties"

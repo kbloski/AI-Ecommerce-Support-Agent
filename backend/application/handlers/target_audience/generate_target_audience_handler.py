@@ -2,7 +2,7 @@ import json
 from typing import Dict, Any
 
 from di.container import Container
-from application.mappers.offer_profile_mapper import OfferProfileMapper
+from application.mappers.offer_source_mapper import OfferSourceMapper
 from application.mappers.target_audience_mapper import TargetAudienceMapper
 
 from domain.models.llm.llm_message import LlmMessage
@@ -21,15 +21,15 @@ from infrastructure.ai.prompts.uniqueness import build_uniqueness_prompt
 
 
 def generate_target_audience_handler(
-    offer_profile_id: int
+    offer_source_id: int
 ) -> Dict[str, Any]:
     container = Container()
 
     target_audience_repo = container.target_audiences_repository()
     
     ai_service = container.ai_service()
-    offer_profile_service = container.offer_profile_service()
-    offer_profile_context = offer_profile_service.build_llm_context(offer_profile_id=offer_profile_id)
+    offer_source_service = container.offer_source_service()
+    offer_source_context = offer_source_service.build_llm_context(offer_source_id=offer_source_id)
     
     response = ai_service.chat_llm(
         messages=[
@@ -39,7 +39,7 @@ def generate_target_audience_handler(
             ),
             LlmMessage(
                 role=LlmMessageRole.USER,
-                content=get_target_audience_prompt(offer_profile_context=offer_profile_context)
+                content=get_target_audience_prompt(offer_source_context=offer_source_context)
             )
         ]
     )
@@ -51,7 +51,7 @@ def generate_target_audience_handler(
     for t in audiences_arr:
         new_target_audiences.append(
             TargetAudience(
-                offer_profile_id=offer_profile_id,
+                offer_source_id=offer_source_id,
                 fact_status=FactStatus.UNVERIFIED.value,
                 name=t["name"],
                 reason=t["reason"],
@@ -206,13 +206,13 @@ Incorrect example:
 """
 
 
-def get_target_audience_prompt(offer_profile_context: str) -> str:
+def get_target_audience_prompt(offer_source_context: str) -> str:
     return f"""
 Analyze the product information.
 
 PRODUCT DATA:
 
-{offer_profile_context}
+{offer_source_context}
 
 
 Generate target audience segments.

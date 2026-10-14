@@ -14,7 +14,7 @@ export type TargetAudienceSort = 'unreviewed_first' | 'reviewed_first'
 
 export interface UpdateTargetAudienceArgs {
   id: number
-  offerProfileId?: number
+  offerSourceId?: number
   fact_status?: string
   is_reviewed?: boolean
   name?: string
@@ -42,54 +42,54 @@ export interface UpdateTargetAudienceArgs {
 
 export const targetAudiencesApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    listTargetAudiencesForOfferProfile: builder.query<PaginatedTargetAudiencesResult, {
-      offerProfileId: number
+    listTargetAudiencesForOfferSource: builder.query<PaginatedTargetAudiencesResult, {
+      offerSourceId: number
       page?: number
       pageSize?: number
       isReviewed?: boolean
       sort?: TargetAudienceSort
     }>({
-      query: ({ offerProfileId, page = 1, pageSize = 20, isReviewed, sort = 'unreviewed_first' }) => ({
-        url: `/offer-profiles/${offerProfileId}/target-audiences`,
+      query: ({ offerSourceId, page = 1, pageSize = 20, isReviewed, sort = 'unreviewed_first' }) => ({
+        url: `/offer-sources/${offerSourceId}/target-audiences`,
         params: { page, page_size: pageSize, is_reviewed: isReviewed, sort },
       }),
-      providesTags: (result, _err, { offerProfileId }) => [
+      providesTags: (result, _err, { offerSourceId }) => [
         ...(result?.items ?? []).map((item) => itemTag('TargetAudience', item.id)),
-        listTag('TargetAudience', offerProfileId),
+        listTag('TargetAudience', offerSourceId),
       ],
     }),
-    generateTargetAudiences: builder.mutation<Entity[], { offerProfileId: number }>({
-      query: ({ offerProfileId }) => ({ url: `/offer-profiles/${offerProfileId}/target-audiences/generate`, method: 'POST' }),
-      invalidatesTags: (_result, _err, { offerProfileId }) => [
-        listTag('TargetAudience', offerProfileId),
-        itemTag('OfferProfile', offerProfileId),
+    generateTargetAudiences: builder.mutation<Entity[], { offerSourceId: number }>({
+      query: ({ offerSourceId }) => ({ url: `/offer-sources/${offerSourceId}/target-audiences/generate`, method: 'POST' }),
+      invalidatesTags: (_result, _err, { offerSourceId }) => [
+        listTag('TargetAudience', offerSourceId),
+        itemTag('OfferSource', offerSourceId),
       ],
     }),
-    deleteTargetAudience: builder.mutation<void, { id: number; offerProfileId: number }>({
+    deleteTargetAudience: builder.mutation<void, { id: number; offerSourceId: number }>({
       query: ({ id }) => ({ url: `/target-audiences/${id}/delete`, method: 'DELETE' }),
-      invalidatesTags: (_result, _err, { id, offerProfileId }) => [
-        listTag('TargetAudience', offerProfileId),
+      invalidatesTags: (_result, _err, { id, offerSourceId }) => [
+        listTag('TargetAudience', offerSourceId),
         itemTag('TargetAudience', id),
-        itemTag('OfferProfile', offerProfileId),
+        itemTag('OfferSource', offerSourceId),
       ],
     }),
     updateTargetAudience: builder.mutation<Entity, UpdateTargetAudienceArgs>({
-      query: ({ id, offerProfileId: _offerProfileId, ...body }) => ({
+      query: ({ id, offerSourceId: _offerSourceId, ...body }) => ({
         url: `/target-audiences/${id}/update`,
         method: 'POST',
         body,
       }),
-      invalidatesTags: (_result, _err, { id, offerProfileId }) => [
+      invalidatesTags: (_result, _err, { id, offerSourceId }) => [
         itemTag('TargetAudience', id),
-        ...(offerProfileId === undefined ? [] : [listTag('TargetAudience', offerProfileId)]),
-        ...(offerProfileId === undefined ? [] : [itemTag('OfferProfile', offerProfileId)]),
+        ...(offerSourceId === undefined ? [] : [listTag('TargetAudience', offerSourceId)]),
+        ...(offerSourceId === undefined ? [] : [itemTag('OfferSource', offerSourceId)]),
       ],
     }),
   }),
 })
 
 export const {
-  useListTargetAudiencesForOfferProfileQuery,
+  useListTargetAudiencesForOfferSourceQuery,
   useGenerateTargetAudiencesMutation,
   useDeleteTargetAudienceMutation,
   useUpdateTargetAudienceMutation,

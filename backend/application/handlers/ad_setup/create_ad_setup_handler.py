@@ -1,6 +1,6 @@
 from di.container import Container
 
-from domain.models.ad_setup.ad_setup import AdSetup
+from domain.models.ad.ad_setup import AdSetup
 from domain.enums.enums import CreativeTypes
 
 ALLOWED_CREATIVE_TYPES = [item.value for item in CreativeTypes]

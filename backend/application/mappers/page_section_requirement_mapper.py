@@ -1,4 +1,4 @@
-from domain.models.page_requirements.page_section_requirement import PageSectionRequirement
+from domain.models.page.page_section_requirement import PageSectionRequirement
 from application.dtos.page_requirements.page_section_requirement_dto import PageSectionRequirementDto
 
 

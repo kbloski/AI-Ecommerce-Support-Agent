@@ -13,7 +13,7 @@ from domain.enums.enums import (
     CreativeTypes
 )
 
-from domain.models.generate_ad.generate_ad import (
+from domain.models.ad.generate_ad import (
     GenerateAd
 )
 
@@ -38,8 +38,8 @@ def generate_ad_handler(
         container.generate_ad_service()
     )
 
-    offer_profile_service = (
-        container.offer_profile_service()
+    offer_source_service = (
+        container.offer_source_service()
     )
 
 
@@ -153,8 +153,8 @@ def generate_ad_handler(
     # Create user prompt
 
     prompt = get_data_prompt(
-        offer_profile_context=offer_profile_service.build_llm_context(
-            offer_profile_id=brand_strategy.offer_profile_id
+        offer_source_context=offer_source_service.build_llm_context(
+            offer_source_id=brand_strategy.offer_source_id
         ),
 
         brand_strategy_context=brand_marketing_service.build_llm_context(
@@ -412,7 +412,7 @@ def _get_generated_ad_name(result: dict, content_json: dict, creative_type: str)
 
 
 def get_data_prompt(
-    offer_profile_context: str,
+    offer_source_context: str,
     brand_strategy_context: str,
     marketing_strategy_context: str,
     offer_strategy_context: str,
@@ -423,8 +423,8 @@ def get_data_prompt(
     creative_execution_setup_context: str,
 ) -> str:
     return f"""
-OFFER_PROFILE:
-{offer_profile_context}
+OFFER_SOURCE:
+{offer_source_context}
 
 
 BRAND STRATEGY:

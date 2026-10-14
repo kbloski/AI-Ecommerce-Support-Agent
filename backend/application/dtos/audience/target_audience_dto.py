@@ -8,7 +8,7 @@ class TargetAudienceDto(JSONSerializable):
     def __init__(
         self,
         id: int,
-        offer_profile_id: int | None,
+        offer_source_id: int | None,
         fact_status: str,
         is_reviewed: bool,
         name: str,
@@ -34,7 +34,7 @@ class TargetAudienceDto(JSONSerializable):
         marketing_channels: List[Any] | None,
     ):
         self.id = id
-        self.offer_profile_id = offer_profile_id
+        self.offer_source_id = offer_source_id
         self.fact_status = fact_status
         self.is_reviewed = is_reviewed
 
@@ -72,7 +72,7 @@ class TargetAudienceDto(JSONSerializable):
 
         data = {
             "id": self.id,
-            "offer_profile_id": self.offer_profile_id,
+            "offer_source_id": self.offer_source_id,
             "fact_status": self.fact_status,
             "is_reviewed": self.is_reviewed,
 
@@ -112,5 +112,5 @@ class TargetAudienceDto(JSONSerializable):
         }
 
     def to_content_dict(self):
-        data = self.to_dict(exclude=["id", "offer_profile_id", "is_reviewed"])
+        data = self.to_dict(exclude=["id", "offer_source_id", "is_reviewed"])
         return data

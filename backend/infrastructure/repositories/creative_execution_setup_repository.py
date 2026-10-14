@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from domain.models.creative_execution_setup.creative_execution_setup import CreativeExecutionSetup
+from domain.models.creative.creative_execution_setup import CreativeExecutionSetup
 from infrastructure.logging.logger import Logger
 
 

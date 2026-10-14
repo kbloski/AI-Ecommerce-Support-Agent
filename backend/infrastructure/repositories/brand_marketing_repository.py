@@ -22,11 +22,11 @@ class BrandMarketingRepository:
     def get_by_id(self, id: int) -> Optional[BrandMarketing]:
         return self.db.query(BrandMarketing).filter(BrandMarketing.id == id).first()
 
-    # 🔍 GET BY OFFER_PROFILE ID
-    def get_by_offer_profile_id(self, offer_profile_id: int) -> List[BrandMarketing]:
+    # 🔍 GET BY OFFER_SOURCE ID
+    def get_by_offer_source_id(self, offer_source_id: int) -> List[BrandMarketing]:
         return (
             self.db.query(BrandMarketing)
-            .filter(BrandMarketing.offer_profile_id == offer_profile_id)
+            .filter(BrandMarketing.offer_source_id == offer_source_id)
             .all()
         )
 

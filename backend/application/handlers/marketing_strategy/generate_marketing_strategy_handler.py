@@ -7,12 +7,12 @@ from domain.models.marketing_strategy.marketing_strategy import MarketingStrateg
 
 
 def generate_marketing_strategy_handler(
-    offer_profile_id: int,
+    offer_source_id: int,
     brand_marketing_id: int,
 ):
     container = Container()
 
-    offer_profile_service = container.offer_profile_service()
+    offer_source_service = container.offer_source_service()
     brand_marketing_service = container.brand_marketing_service()
     brand_marketing_repository = container.brand_marketing_repository()
     ai_service = container.ai_service()
@@ -26,14 +26,14 @@ def generate_marketing_strategy_handler(
             f"Brand marketing {brand_marketing_id} not found"
         )
 
-    if brand_marketing.offer_profile_id != offer_profile_id:
+    if brand_marketing.offer_source_id != offer_source_id:
         raise ValueError(
             f"Brand marketing {brand_marketing_id} "
-            f"does not belong to offer_profile {offer_profile_id}"
+            f"does not belong to offer_source {offer_source_id}"
         )
 
-    offer_profile_context = offer_profile_service.build_llm_context(
-        offer_profile_id=offer_profile_id
+    offer_source_context = offer_source_service.build_llm_context(
+        offer_source_id=offer_source_id
     )
 
     brand_strategy_context = brand_marketing_service.build_llm_context(
@@ -41,7 +41,7 @@ def generate_marketing_strategy_handler(
     )
 
     user_prompt = get_data_prompt(
-        offer_profile_context=offer_profile_context,
+        offer_source_context=offer_source_context,
         brand_strategy_context=brand_strategy_context,
     )
 
@@ -106,7 +106,7 @@ customer acquisition, positioning execution, growth strategy, and marketing
 experimentation.
 
 Your task is to create a practical MARKETING STRATEGY based strictly on the
-provided OFFER PROFILE and BRAND STRATEGY.
+provided OFFER SOURCE and BRAND STRATEGY.
 
 The strategy must help determine:
 
@@ -170,7 +170,7 @@ SOURCE-OF-TRUTH RULE
 
 Use the supplied context as the source of truth.
 
-- Offer Profile = factual properties, capabilities, use cases, inclusions,
+- Offer Source = factual properties, capabilities, use cases, inclusions,
   limitations, delivery model, and confirmed mechanics of the offer.
 - Brand Strategy = positioning, brand principles, tone, differentiation, and
   expression.
@@ -639,7 +639,7 @@ internal consistency are more important than completeness.
 """
 
 def get_data_prompt(
-    offer_profile_context: str,
+    offer_source_context: str,
     brand_strategy_context: str,
 ) -> str:
     return f"""
@@ -654,7 +654,7 @@ community model, creator fit, conversion path, or KPI from examples or common
 marketing practice.
 
 Every factual statement in the strategy must be supported by the CURRENT
-Offer Profile or Brand Strategy.
+Offer Source or Brand Strategy.
 
 Every unsupported but strategically useful idea must be framed as:
 
@@ -672,7 +672,7 @@ current context.
 
 Use:
 
-- Offer Profile as the source of truth for factual offer properties,
+- Offer Source as the source of truth for factual offer properties,
   capabilities, use cases, inclusions, limitations, and mechanics.
 - Brand Strategy as the source of truth for positioning, differentiation,
   brand principles, tone, and expression.
@@ -681,9 +681,9 @@ When information is uncertain, stay conservative and turn the uncertainty
 into a recommendation or experiment rather than a factual statement.
 
 
-OFFER PROFILE
+OFFER SOURCE
 
-{offer_profile_context}
+{offer_source_context}
 
 
 BRAND STRATEGY

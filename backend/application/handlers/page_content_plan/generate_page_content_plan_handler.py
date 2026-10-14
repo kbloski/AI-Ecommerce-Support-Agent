@@ -3,7 +3,7 @@ import json
 from di.container import Container
 from domain.models.llm.llm_message import LlmMessage
 from domain.enums.llm_message_role import LlmMessageRole
-from domain.models.page_content_plan.page_content_plan import PageContentPlan
+from domain.models.page.page_content_plan import PageContentPlan
 
 
 def generate_page_content_plan_handler(
@@ -12,7 +12,7 @@ def generate_page_content_plan_handler(
 
     container = Container()
 
-    offer_profile_service = container.offer_profile_service()
+    offer_source_service = container.offer_source_service()
     brand_marketing_service = container.brand_marketing_service()
     marketing_strategy_service = container.marketing_strategy_service()
     page_strategy_service = container.page_strategy_service()
@@ -63,8 +63,8 @@ def generate_page_content_plan_handler(
 
     data_prompt = get_data_prompt(
 
-        offer_profile_context=offer_profile_service.build_llm_context(
-            offer_profile_id=brand_marketing.offer_profile_id
+        offer_source_context=offer_source_service.build_llm_context(
+            offer_source_id=brand_marketing.offer_source_id
         ),
 
         brand_marketing_context=brand_marketing_service.build_llm_context(
@@ -328,9 +328,9 @@ It must NOT:
 - turn a feature into an unsupported outcome.
 
 
-4. OFFER PROFILE = AUTHORITATIVE OFFER TRUTH
+4. OFFER SOURCE = AUTHORITATIVE OFFER TRUTH
 
-OFFER PROFILE controls factual properties such as:
+OFFER SOURCE controls factual properties such as:
 - what the offer is,
 - confirmed features or capabilities,
 - included elements,
@@ -348,7 +348,7 @@ Never invent factual offer information.
 
 Use OFFER STRATEGY to understand approved value logic and offer framing.
 
-It may NOT override factual truth from OFFER PROFILE or the claim ceiling from
+It may NOT override factual truth from OFFER SOURCE or the claim ceiling from
 MESSAGE STRATEGY.
 
 
@@ -379,7 +379,7 @@ When sources overlap or conflict:
 
 - PAGE BLUEPRINT wins for section structure and section-level purpose.
 - PAGE STRATEGY wins for this page's scope and conversion logic.
-- OFFER PROFILE wins for factual offer truth.
+- OFFER SOURCE wins for factual offer truth.
 - MESSAGE STRATEGY sets the maximum claim strength.
 - OFFER STRATEGY guides value framing.
 - MARKETING STRATEGY guides supported audience/journey context.
@@ -541,7 +541,7 @@ Every element must be traceable to:
 - Page Strategy,
 - Message Strategy,
 - Offer Strategy,
-- or confirmed Offer Profile facts.
+- or confirmed Offer Source facts.
 
 Do not add information merely because it is commonly found in this type of
 section or page.
@@ -853,7 +853,7 @@ STRICT JSON RULES
 
 
 def get_data_prompt(
-    offer_profile_context: str,
+    offer_source_context: str,
     brand_marketing_context: str,
     marketing_strategy_context: str,
     offer_strategy_context: str,
@@ -870,7 +870,7 @@ IMPORTANT:
 - PAGE BLUEPRINT is authoritative for section architecture and section-level jobs.
 - PAGE STRATEGY is authoritative for this page's scope, primary narrative,
   customer journey, and conversion action.
-- OFFER PROFILE is authoritative for factual offer properties and capabilities.
+- OFFER SOURCE is authoritative for factual offer properties and capabilities.
 - MESSAGE STRATEGY is the maximum allowed claim level.
 - OFFER STRATEGY may guide value framing but may not create new facts.
 - MARKETING STRATEGY may guide supported audience and journey context but may
@@ -885,9 +885,9 @@ IMPORTANT:
 - Return only valid JSON using the exact schema defined in the system prompt.
 
 
-OFFER PROFILE:
+OFFER SOURCE:
 
-{offer_profile_context}
+{offer_source_context}
 
 
 BRAND MARKETING:

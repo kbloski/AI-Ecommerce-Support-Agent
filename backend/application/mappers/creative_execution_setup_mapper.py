@@ -1,5 +1,5 @@
 from application.dtos.creative_execution_setup.creative_execution_setup_response_dto import CreativeExecutionSetupDto
-from domain.models.creative_execution_setup.creative_execution_setup import CreativeExecutionSetup
+from domain.models.creative.creative_execution_setup import CreativeExecutionSetup
 
 
 class CreativeExecutionSetupMapper:

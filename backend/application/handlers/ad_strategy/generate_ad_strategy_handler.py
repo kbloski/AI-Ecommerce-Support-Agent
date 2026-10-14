@@ -3,7 +3,7 @@ import json
 from di.container import Container
 from domain.models.llm.llm_message import LlmMessage
 from domain.enums.llm_message_role import LlmMessageRole
-from domain.models.ad_strategy.ad_strategy import AdStrategy
+from domain.models.ad.ad_strategy import AdStrategy
 
 
 def generate_ad_strategy_handler(
@@ -11,7 +11,7 @@ def generate_ad_strategy_handler(
 ):
     container = Container()
 
-    offer_profile_service = container.offer_profile_service()
+    offer_source_service = container.offer_source_service()
     brand_marketing_service = container.brand_marketing_service()
     marketing_strategy_service = container.marketing_strategy_service()
     offer_strategy_service = container.offer_strategy_service()
@@ -77,8 +77,8 @@ def generate_ad_strategy_handler(
     # BUILD CONTEXT
     # --------------------------------------------------
 
-    offer_profile_context = offer_profile_service.build_llm_context(
-        offer_profile_id=brand_strategy.offer_profile_id
+    offer_source_context = offer_source_service.build_llm_context(
+        offer_source_id=brand_strategy.offer_source_id
     )
 
     brand_strategy_context = (
@@ -118,7 +118,7 @@ def generate_ad_strategy_handler(
             LlmMessage(
                 role=LlmMessageRole.USER,
                 content=get_data_prompt(
-                    offer_profile_context=offer_profile_context,
+                    offer_source_context=offer_source_context,
                     brand_strategy_context=brand_strategy_context,
                     marketing_strategy_context=marketing_strategy_context,
                     offer_strategy_context=offer_strategy_context,
@@ -255,7 +255,7 @@ You are a senior Advertising Strategist specializing in:
 
 Your task is to create an AD STRATEGY based only on the provided:
 
-- Offer Profile,
+- Offer Source,
 - Brand Strategy,
 - Marketing Strategy,
 - Offer Strategy,
@@ -313,7 +313,7 @@ SOURCE-OF-TRUTH HIERARCHY
 
 Use each source for the type of information it is responsible for:
 
-- Offer Profile = factual product/service properties, capabilities,
+- Offer Source = factual product/service properties, capabilities,
   specifications, inclusions, limitations, and confirmed mechanics.
 - Brand Strategy = brand positioning, brand principles, tone, and expression.
 - Marketing Strategy = strategic audiences, market priorities, channels,
@@ -325,9 +325,9 @@ Use each source for the type of information it is responsible for:
 
 When sources overlap or conflict:
 
-- factual capability claims must not exceed Offer Profile,
+- factual capability claims must not exceed Offer Source,
 - claim strength must not exceed Message Strategy,
-- offer mechanics must not exceed Offer Strategy or Offer Profile,
+- offer mechanics must not exceed Offer Strategy or Offer Source,
 - audience/channel recommendations must stay within supported Marketing Strategy,
 - use the narrower, better-supported interpretation,
 - never invent information to reconcile a conflict.
@@ -938,7 +938,7 @@ Rules:
 
 3. Every promise must remain within Message Strategy.
 
-4. Every value mechanism must be supported by Offer Profile or Offer Strategy.
+4. Every value mechanism must be supported by Offer Source or Offer Strategy.
 
 5. Every proof reference must be either:
    - confirmed evidence,
@@ -1110,7 +1110,7 @@ testability, and internal consistency are more important than volume.
 
 
 def get_data_prompt(
-    offer_profile_context: str,
+    offer_source_context: str,
     brand_strategy_context: str,
     marketing_strategy_context: str,
     offer_strategy_context: str,
@@ -1146,7 +1146,7 @@ Message Strategy supports.
 
 SOURCE RESPONSIBILITIES:
 
-- Use Offer Profile as the source of truth for factual product/service
+- Use Offer Source as the source of truth for factual product/service
   properties, capabilities, specifications, inclusions, and limitations.
 - Use Brand Strategy for brand positioning and expression.
 - Use Marketing Strategy for supported audiences, priorities, channels,
@@ -1158,7 +1158,7 @@ If an upstream source contains stronger or unsupported language but Message
 Strategy has corrected or softened it, follow Message Strategy for claim strength.
 
 If Message Strategy implies a factual capability that is not supported by
-Offer Profile, do not invent that capability. Use the narrower supported truth.
+Offer Source, do not invent that capability. Use the narrower supported truth.
 
 If sources conflict, do not invent a reconciliation.
 Use the narrowest interpretation supported by the relevant source of truth.
@@ -1170,9 +1170,9 @@ Do not reuse examples from the system prompt unless the same fact or situation
 is independently supported by the current context.
 
 
-OFFER PROFILE
+OFFER SOURCE
 
-{offer_profile_context}
+{offer_source_context}
 
 
 BRAND STRATEGY

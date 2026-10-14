@@ -1,7 +1,7 @@
 from typing import List
 
 from infrastructure.logging.logger import Logger
-from domain.models.ugc_creatives.ugc_creative import UgcCreative
+from domain.models.creative.ugc_creative import UgcCreative
 from application.dtos.ugc_creatives.ugc_creative_response_dto import UgcCreativeDto
 from infrastructure.repositories.ugc_creative_repository import UgcCreativeRepository
 from application.mappers.ugc_creative_mapper import UgcCreativeMapper

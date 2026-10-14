@@ -3,7 +3,7 @@ import json
 from di.container import Container
 from domain.models.llm.llm_message import LlmMessage
 from domain.enums.llm_message_role import LlmMessageRole
-from domain.models.page_strategy.page_strategy import PageStrategy
+from domain.models.page.page_strategy import PageStrategy
 
 
 def _parse_llm_json(content: str) -> dict:
@@ -154,7 +154,7 @@ def generate_page_strategy_json_handler(
 ):
     container = Container()
 
-    offer_profile_service = container.offer_profile_service()
+    offer_source_service = container.offer_source_service()
     message_strategy_service = container.message_strategy_service()
     brand_marketing_service = container.brand_marketing_service()
     marketing_strategy_service = container.marketing_strategy_service()
@@ -206,8 +206,8 @@ def generate_page_strategy_json_handler(
             f"{marketing_strategy.brand_marketing_id}"
         )
 
-    offer_profile_context = offer_profile_service.build_llm_context(
-        offer_profile_id=brand_strategy.offer_profile_id
+    offer_source_context = offer_source_service.build_llm_context(
+        offer_source_id=brand_strategy.offer_source_id
     )
     brand_strategy_context = brand_marketing_service.build_llm_context(
         brand_marketing_id=marketing_strategy.brand_marketing_id
@@ -223,7 +223,7 @@ def generate_page_strategy_json_handler(
     )
 
     contexts = {
-        "OFFER_PROFILE": offer_profile_context,
+        "OFFER_SOURCE": offer_source_context,
         "BRAND_STRATEGY": brand_strategy_context,
         "MARKETING_STRATEGY": marketing_strategy_context,
         "OFFER_STRATEGY": offer_strategy_context,
@@ -245,7 +245,7 @@ def generate_page_strategy_json_handler(
             LlmMessage(
                 role=LlmMessageRole.USER,
                 content=get_data_prompt(
-                    offer_profile_context=offer_profile_context,
+                    offer_source_context=offer_source_context,
                     brand_strategy_context=brand_strategy_context,
                     marketing_strategy_context=marketing_strategy_context,
                     offer_strategy_context=offer_strategy_context,
@@ -437,9 +437,9 @@ SOURCE RESPONSIBILITIES
 
 All supplied context remains relevant, but each layer has a different job.
 
-1. OFFER_PROFILE = AUTHORITATIVE OFFER TRUTH
+1. OFFER_SOURCE = AUTHORITATIVE OFFER TRUTH
 
-Use OFFER_PROFILE as the source of truth for confirmed offer facts, including
+Use OFFER_SOURCE as the source of truth for confirmed offer facts, including
 where available:
 
 - what the offer is,
@@ -454,7 +454,7 @@ where available:
 - confirmed differentiators,
 - confirmed policies or commercial mechanics.
 
-Do not contradict OFFER_PROFILE.
+Do not contradict OFFER_SOURCE.
 Do not add an offer fact, capability, policy, guarantee, component,
 customization option, result, or proof that it does not support.
 
@@ -529,9 +529,9 @@ CONFLICT RULES
 
 If contexts conflict:
 
-1. OFFER_PROFILE wins for factual offer truth.
+1. OFFER_SOURCE wins for factual offer truth.
 2. MESSAGE_STRATEGY wins for communication emphasis and claim strength,
-   unless it contradicts OFFER_PROFILE.
+   unless it contradicts OFFER_SOURCE.
 3. OFFER_STRATEGY guides value and decision framing.
 4. MARKETING_STRATEGY guides audience and journey context.
 5. BRAND_STRATEGY guides positioning and tone.
@@ -1045,7 +1045,7 @@ OUTPUT RULES
 
 
 def get_data_prompt(
-    offer_profile_context: str,
+    offer_source_context: str,
     brand_strategy_context: str,
     marketing_strategy_context: str,
     offer_strategy_context: str,
@@ -1071,7 +1071,7 @@ Use secondary arguments only when they support that primary direction.
 
 SOURCE RESPONSIBILITIES:
 
-- OFFER_PROFILE is authoritative for factual offer truth.
+- OFFER_SOURCE is authoritative for factual offer truth.
 - BRAND_STRATEGY guides positioning and voice.
 - MARKETING_STRATEGY guides audience and journey context.
 - OFFER_STRATEGY guides supported value and conversion framing.
@@ -1088,9 +1088,9 @@ situation, or conversion behavior is independently supported by the CURRENT
 context.
 
 
-OFFER_PROFILE:
+OFFER_SOURCE:
 
-{offer_profile_context}
+{offer_source_context}
 
 
 BRAND STRATEGY:

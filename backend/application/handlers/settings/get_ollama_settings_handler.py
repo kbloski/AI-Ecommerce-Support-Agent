@@ -12,7 +12,7 @@ FIELD_DEFAULT_GETTERS = {
 def get_ollama_settings_handler():
     container = Container()
     settings = container.settings()
-    repository = container.app_ollama_settings_repository()
+    repository = container.app_properties_repository()
 
     overrides = repository.get()
 

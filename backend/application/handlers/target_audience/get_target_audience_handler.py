@@ -3,7 +3,7 @@ from di.container import Container
 from application.mappers.target_audience_mapper import TargetAudienceMapper
 
 def get_target_audience_handler(
-    offer_profile_id: int,
+    offer_source_id: int,
     page: int = 1,
     page_size: int = 20,
     is_reviewed: bool | None = None,
@@ -13,8 +13,8 @@ def get_target_audience_handler(
 
     target_audiences_repository = container.target_audiences_repository()
 
-    result = target_audiences_repository.search_for_offer_profile(
-        offer_profile_id=offer_profile_id,
+    result = target_audiences_repository.search_for_offer_source(
+        offer_source_id=offer_source_id,
         page=page,
         page_size=page_size,
         is_reviewed=is_reviewed,

@@ -1,4 +1,4 @@
-from domain.models.creative_strategy.creative_strategy import CreativeStrategy
+from domain.models.creative.creative_strategy import CreativeStrategy
 from application.dtos.creative_strategy.creative_strategy_response_dto import CreativeStrategyDto
 
 

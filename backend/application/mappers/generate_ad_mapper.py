@@ -1,4 +1,4 @@
-from domain.models.generate_ad.generate_ad import GenerateAd
+from domain.models.ad.generate_ad import GenerateAd
 from application.dtos.generate_ad.generate_ad_response_dto import GenerateAdDto
 
 

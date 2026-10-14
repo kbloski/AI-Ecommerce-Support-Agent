@@ -1,5 +1,5 @@
 from di.container import Container
-from domain.models.offers.offer_raw import OfferRaw
+from domain.models.offer.offer_raw import OfferRaw
 from application.mappers.offer_mapper import OfferMapper
 
 

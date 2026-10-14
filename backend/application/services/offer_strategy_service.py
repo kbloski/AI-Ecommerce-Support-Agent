@@ -3,7 +3,7 @@ import json
 from typing import List
 
 from infrastructure.logging.logger import Logger
-from domain.models.offer_strategy.offer_strategy import OfferStrategy
+from domain.models.offer.offer_strategy import OfferStrategy
 from application.dtos.offer_strategy.offer_strategy_response_dto import OfferStrategyDto
 from infrastructure.repositories.offer_strategy_repository import OfferStrategyRepository
 from application.mappers.offer_strategy_mapper import OfferStrategyMapper

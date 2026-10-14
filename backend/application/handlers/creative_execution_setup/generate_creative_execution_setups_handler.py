@@ -4,7 +4,7 @@ from typing import Any
 from di.container import Container
 from domain.enums.enums import CreativeTypes
 from domain.enums.llm_message_role import LlmMessageRole
-from domain.models.creative_execution_setup.creative_execution_setup import CreativeExecutionSetup
+from domain.models.creative.creative_execution_setup import CreativeExecutionSetup
 from domain.models.llm.llm_message import LlmMessage
 
 

@@ -8,7 +8,7 @@ class BrandMarketingDto(JSONSerializable):
     def __init__(
         self,
         id: int,
-        offer_profile_id: int,
+        offer_source_id: int,
         brand_name: Optional[str],
         brand_positioning: Optional[str],
         brand_category: Optional[str],
@@ -45,7 +45,7 @@ class BrandMarketingDto(JSONSerializable):
         brand_never_do: Optional[List[str]],
     ):
         self.id = id
-        self.offer_profile_id = offer_profile_id
+        self.offer_source_id = offer_source_id
         self.brand_name = brand_name
         self.brand_positioning = brand_positioning
         self.brand_category = brand_category
@@ -86,7 +86,7 @@ class BrandMarketingDto(JSONSerializable):
 
         data = {
             "id": self.id,
-            "offer_profile_id": self.offer_profile_id,
+            "offer_source_id": self.offer_source_id,
             "brand_name": self.brand_name,
             "brand_positioning": self.brand_positioning,
             "brand_category": self.brand_category,

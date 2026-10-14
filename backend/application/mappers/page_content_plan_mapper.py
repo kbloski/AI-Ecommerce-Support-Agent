@@ -1,4 +1,4 @@
-from domain.models.page_content_plan.page_content_plan import PageContentPlan
+from domain.models.page.page_content_plan import PageContentPlan
 from application.dtos.page_content_plan.page_content_plan_response_dto import PageContentPlanDto
 
 

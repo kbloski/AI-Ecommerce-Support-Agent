@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from domain.models.generate_ad.generate_ad import GenerateAd
+from domain.models.ad.generate_ad import GenerateAd
 from infrastructure.logging.logger import Logger
 
 

@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from domain.models.creative_strategy.creative_strategy import CreativeStrategy
+from domain.models.creative.creative_strategy import CreativeStrategy
 from infrastructure.logging.logger import Logger
 
 

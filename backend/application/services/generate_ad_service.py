@@ -1,7 +1,7 @@
 from typing import List
 
 from infrastructure.logging.logger import Logger
-from domain.models.generate_ad.generate_ad import GenerateAd
+from domain.models.ad.generate_ad import GenerateAd
 from application.dtos.generate_ad.generate_ad_response_dto import GenerateAdDto
 from infrastructure.repositories.generate_ad_repository import GenerateAdRepository
 from application.mappers.generate_ad_mapper import GenerateAdMapper

@@ -1,0 +1,3 @@
+ollama signin
+ollama pull gpt-oss:120b-cloud
+ollama list

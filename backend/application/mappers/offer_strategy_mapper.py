@@ -1,4 +1,4 @@
-from domain.models.offer_strategy.offer_strategy import OfferStrategy
+from domain.models.offer.offer_strategy import OfferStrategy
 from application.dtos.offer_strategy.offer_strategy_response_dto import OfferStrategyDto
 
 

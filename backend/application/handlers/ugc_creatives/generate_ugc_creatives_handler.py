@@ -3,7 +3,7 @@ import json
 from di.container import Container
 from domain.models.llm.llm_message import LlmMessage
 from domain.enums.llm_message_role import LlmMessageRole
-from domain.models.ugc_creatives.ugc_creative import UgcCreative
+from domain.models.creative.ugc_creative import UgcCreative
 from infrastructure.ai.prompts.uniqueness import build_uniqueness_prompt
 from application.mappers.ugc_creative_mapper import UgcCreativeMapper
 
@@ -15,7 +15,7 @@ def generate_ugc_creatives_handler(
     container = Container()
 
 
-    offer_profile_service = container.offer_profile_service()
+    offer_source_service = container.offer_source_service()
 
     brand_marketing_service = (
         container.brand_marketing_service()
@@ -82,8 +82,8 @@ def generate_ugc_creatives_handler(
             LlmMessage(
                 role=LlmMessageRole.USER,
                 content=get_data_prompt(
-                    offer_profile_context=offer_profile_service.build_llm_context(
-                        offer_profile_id=brand_strategy.offer_profile_id
+                    offer_source_context=offer_source_service.build_llm_context(
+                        offer_source_id=brand_strategy.offer_source_id
                     ),
 
                     brand_strategy_context=brand_marketing_service.build_llm_context(
@@ -379,15 +379,15 @@ RULES:
 
 
 def get_data_prompt(
-    offer_profile_context: str,
+    offer_source_context: str,
     brand_strategy_context: str,
     marketing_strategy_context: str,
     offer_strategy_context: str,
     message_strategy_context: str
 ) -> str:
     return f"""
-OFFER_PROFILE:
-{offer_profile_context}
+OFFER_SOURCE:
+{offer_source_context}
 
 
 BRAND STRATEGY:

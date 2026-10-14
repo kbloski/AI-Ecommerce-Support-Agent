@@ -1,4 +1,4 @@
-from domain.models.ad_strategy.ad_strategy import AdStrategy
+from domain.models.ad.ad_strategy import AdStrategy
 from application.dtos.ad_strategy.ad_strategy_response_dto import AdStrategyDto
 
 

@@ -3,7 +3,7 @@ from enum import Enum
 
 class ContextSectionPurpose(str, Enum):
     # Core business context
-    OFFER_PROFILE = (
+    OFFER_SOURCE = (
         "Facts describing the offer, product, target customers, capabilities, "
         "constraints, and the actual scope of the product."
     )

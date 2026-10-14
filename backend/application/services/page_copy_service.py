@@ -1,7 +1,7 @@
 from typing import List
 
 from infrastructure.logging.logger import Logger
-from domain.models.page_copy.page_copy import PageCopy
+from domain.models.page.page_copy import PageCopy
 from application.dtos.page_copy.page_copy_response_dto import PageCopyDto
 from infrastructure.repositories.page_copy_repository import PageCopyRepository
 from application.mappers.page_copy_mapper import PageCopyMapper

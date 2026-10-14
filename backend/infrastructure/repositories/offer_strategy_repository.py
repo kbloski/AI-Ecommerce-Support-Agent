@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from domain.models.offer_strategy.offer_strategy import OfferStrategy
+from domain.models.offer.offer_strategy import OfferStrategy
 from infrastructure.logging.logger import Logger
 
 

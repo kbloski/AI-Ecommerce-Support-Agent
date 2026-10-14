@@ -1,5 +1,5 @@
 from dependency_injector import containers, providers
-from application.services.offer_profile_service import OfferProfileService
+from application.services.offer_source_service import OfferSourceService
 from application.services.ai_service import AiService
 from application.services.ollama_service import OllamaService
 from application.services.product_service import ProductService
@@ -22,13 +22,13 @@ from infrastructure.parsers.txt_parser import TxtParser
 from core.settings import Settings
 from infrastructure.database.db import SessionLocal
 from application.assemblers.offer_assembler import OfferAssembler
-from infrastructure.repositories.offer_profile_repository import OfferProfileRepository
-from infrastructure.repositories.offer_profile_elements_repository import OfferProfileElementsRepository
-from application.assemblers.offer_profile_assembler import OfferProfileAssembler
+from infrastructure.repositories.offer_source_repository import OfferSourceRepository
+from infrastructure.repositories.offer_source_elements_repository import OfferSourceElementsRepository
+from application.assemblers.offer_source_assembler import OfferSourceAssembler
 from infrastructure.repositories.target_audiences_repository import TargetAudiencesRepository
 from application.assemblers.target_audience_assembler import TargetAudienceAssembler
 from infrastructure.repositories.analysis_repository import AnalysisRepository
-from infrastructure.repositories.offer_profile_analysis_repository import OfferProfileAnalysisRepository
+from infrastructure.repositories.offer_source_analysis_repository import OfferSourceAnalysisRepository
 from application.assemblers.analysis_assembler import AnalysisAssembler
 from infrastructure.repositories.analysis_questions_repository import AnalysisQuestionsRepository
 from infrastructure.repositories.question_answer_repository import QuestionAnswerRepository
@@ -81,7 +81,7 @@ from application.services.page_content_plan_service import PageContentPlanServic
 from infrastructure.repositories.page_copy_repository import PageCopyRepository
 from application.assemblers.page_copy_assembler import PageCopyAssembler
 from application.services.page_copy_service import PageCopyService
-from infrastructure.repositories.app_ollama_settings_repository import AppOllamaSettingsRepository
+from infrastructure.repositories.app_properties_repository import AppPropertiesRepository
 
 class Container(containers.DeclarativeContainer):
     db = providers.Singleton(
@@ -121,14 +121,14 @@ class Container(containers.DeclarativeContainer):
         db=db
     )
 
-    offer_profile_repository = providers.Singleton(
-        OfferProfileRepository,
+    offer_source_repository = providers.Singleton(
+        OfferSourceRepository,
         logger=logger,
         db=db
     )
 
-    offer_profile_elements_repository = providers.Singleton(
-        OfferProfileElementsRepository,
+    offer_source_elements_repository = providers.Singleton(
+        OfferSourceElementsRepository,
         logger=logger,
         db=db
     )
@@ -169,8 +169,8 @@ class Container(containers.DeclarativeContainer):
         db=db
     )
 
-    offer_profile_analysis_repository = providers.Singleton(
-        OfferProfileAnalysisRepository,
+    offer_source_analysis_repository = providers.Singleton(
+        OfferSourceAnalysisRepository,
         logger=logger,
         db=db
     )
@@ -282,12 +282,12 @@ class Container(containers.DeclarativeContainer):
         offers_repository=offers_repository,
     )
 
-    offer_profile_assembler = providers.Singleton(
-        OfferProfileAssembler,
+    offer_source_assembler = providers.Singleton(
+        OfferSourceAssembler,
         logger=logger,
-        offer_profile_repository=offer_profile_repository,
+        offer_source_repository=offer_source_repository,
         target_audiences_repository=target_audiences_repository,
-        offer_profile_elements_repository=offer_profile_elements_repository
+        offer_source_elements_repository=offer_source_elements_repository
     )
 
     target_audience_assembler =  providers.Singleton(
@@ -456,8 +456,8 @@ class Container(containers.DeclarativeContainer):
         page_section_requirements_repository=page_section_requirements_repository,
     )
 
-    app_ollama_settings_repository = providers.Singleton(
-        AppOllamaSettingsRepository,
+    app_properties_repository = providers.Singleton(
+        AppPropertiesRepository,
         logger=logger,
         db=db
     )
@@ -466,7 +466,7 @@ class Container(containers.DeclarativeContainer):
         OllamaService,
         logger=logger,
         settings=settings,
-        app_ollama_settings_repository=app_ollama_settings_repository,
+        app_properties_repository=app_properties_repository,
     )
 
     ai_service =  providers.Singleton(
@@ -476,15 +476,15 @@ class Container(containers.DeclarativeContainer):
         ollama_service=ollama_service,
     )
 
-    offer_profile_service = providers.Singleton(
-        OfferProfileService,
+    offer_source_service = providers.Singleton(
+        OfferSourceService,
         logger=logger,
         docx_parser=docx_parser,
         txt_parser=txt_parser,
         path_service=path_service,
         ai_service=ai_service,
-        offer_profile_repository=offer_profile_repository,
-        offer_profile_assembler=offer_profile_assembler
+        offer_source_repository=offer_source_repository,
+        offer_source_assembler=offer_source_assembler
     )
 
     product_service = providers.Singleton(

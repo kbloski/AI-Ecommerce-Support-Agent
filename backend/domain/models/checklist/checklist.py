@@ -10,9 +10,9 @@ class Checklist(Base, JSONSerializable):
     __tablename__ = TableName.CHECKLIST.value
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    offer_profile_id = Column(
+    offer_source_id = Column(
         Integer,
-        ForeignKey(f"{TableName.OFFER_PROFILES}.id", ondelete="CASCADE"),
+        ForeignKey(f"{TableName.OFFER_SOURCES}.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )

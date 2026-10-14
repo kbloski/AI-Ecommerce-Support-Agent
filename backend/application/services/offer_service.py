@@ -35,5 +35,5 @@ class OfferService:
         return build_llm_section(
             "offer",
             offer_json,
-            purpose=ContextSectionPurpose.OFFER_PROFILE.value,
+            purpose=ContextSectionPurpose.OFFER_SOURCE.value,
         )

@@ -7,15 +7,15 @@ from domain.models.brand_marketing.brand_marketing import BrandMarketing
 
 
 def generate_brand_marketing_handler(
-    offer_profile_id: int
+    offer_source_id: int
 ):
     container = Container()
 
-    offer_profile_service = container.offer_profile_service()
+    offer_source_service = container.offer_source_service()
     ai_service = container.ai_service()
     brand_marketing_repository = container.brand_marketing_repository()
     brand_marketing_service = container.brand_marketing_service()
-    offer_profile_context = offer_profile_service.build_llm_context(offer_profile_id=offer_profile_id)
+    offer_source_context = offer_source_service.build_llm_context(offer_source_id=offer_source_id)
 
     response = ai_service.chat_llm(
         messages=[
@@ -25,7 +25,7 @@ def generate_brand_marketing_handler(
             ),
             LlmMessage(
                 role=LlmMessageRole.USER,
-                content=get_data_prompt(offer_profile_context=offer_profile_context)
+                content=get_data_prompt(offer_source_context=offer_source_context)
             ),
             LlmMessage(
                 role=LlmMessageRole.USER,
@@ -47,7 +47,7 @@ def generate_brand_marketing_handler(
     data = json.loads(content)
 
     entity = BrandMarketing(
-        offer_profile_id=offer_profile_id,
+        offer_source_id=offer_source_id,
         brand_name=data.get("brand_name"),
         brand_positioning=data.get("brand_positioning"),
         brand_category=data.get("brand_category"),
@@ -93,7 +93,7 @@ def get_system_prompt() -> str:
     return """
 You are an expert in brand strategy and brand marketing.
 
-Your task is to analyze offer_profile base data:
+Your task is to analyze offer_source base data:
 - offer information,
 - target audiences,
 - customer voice,
@@ -233,9 +233,9 @@ STRICT JSON RULES:
 
 
 
-def get_data_prompt(offer_profile_context: str) -> str:
+def get_data_prompt(offer_source_context: str) -> str:
     return f"""
-OFFER_PROFILE:
+OFFER_SOURCE:
 
-{offer_profile_context}
+{offer_source_context}
 """

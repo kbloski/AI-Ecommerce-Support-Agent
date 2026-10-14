@@ -6,7 +6,7 @@ from application.dtos.creative_execution_setup.creative_execution_setup_response
 from application.mappers.creative_execution_setup_mapper import CreativeExecutionSetupMapper
 from application.services.llm_context_builder import build_llm_section
 from domain.enums.context_section_purpose import ContextSectionPurpose
-from domain.models.creative_execution_setup.creative_execution_setup import CreativeExecutionSetup
+from domain.models.creative.creative_execution_setup import CreativeExecutionSetup
 from infrastructure.logging.logger import Logger
 from infrastructure.repositories.creative_execution_setup_repository import CreativeExecutionSetupRepository
 

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
-from domain.models.page_requirements.page_section_requirement import PageSectionRequirement
+from domain.models.page.page_section_requirement import PageSectionRequirement
 from infrastructure.logging.logger import Logger
 
 

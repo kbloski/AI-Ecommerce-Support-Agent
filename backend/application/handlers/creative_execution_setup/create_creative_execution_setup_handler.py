@@ -1,6 +1,6 @@
 from di.container import Container
 from domain.enums.enums import CreativeTypes
-from domain.models.creative_execution_setup.creative_execution_setup import CreativeExecutionSetup
+from domain.models.creative.creative_execution_setup import CreativeExecutionSetup
 
 
 def create_creative_execution_setup_handler(ad_setup_id: int, fields: dict):

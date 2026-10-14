@@ -1,4 +1,4 @@
-from domain.models.page_requirements.page_requirements import PageRequirements
+from domain.models.page.page_requirements import PageRequirements
 from application.dtos.page_requirements.page_requirements_dto import PageRequirementsDto
 
 

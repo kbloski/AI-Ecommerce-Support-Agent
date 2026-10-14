@@ -3,7 +3,7 @@ import json
 from typing import List
 
 from infrastructure.logging.logger import Logger
-from domain.models.page_strategy.page_strategy import PageStrategy
+from domain.models.page.page_strategy import PageStrategy
 from application.dtos.page_strategy.page_strategy_response_dto import PageStrategyDto
 from infrastructure.repositories.page_strategy_repository import PageStrategyRepository
 from application.mappers.page_strategy_mapper import PageStrategyMapper

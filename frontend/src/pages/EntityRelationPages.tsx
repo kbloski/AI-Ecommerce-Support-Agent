@@ -11,31 +11,31 @@ import { Textarea } from '@/components/ui/textarea'
 import { useSidePanel } from '@/lib/sidePanel'
 import { EditTargetAudienceForm } from '@/features/targetAudiences/TargetAudienceForm'
 import {
-  useCreateOfferProfileElementMutation,
-  useDeleteOfferProfileElementMutation,
-  useGenerateOfferProfileElementsMutation,
-  useListOfferProfileElementsQuery,
-  useListOfferProfileElementTypesQuery,
-  useUpdateOfferProfileElementMutation,
-  type OfferProfileElementSort,
-} from '@/features/offerProfiles/offerProfileApi'
-import { useDeleteTargetAudienceMutation, useGenerateTargetAudiencesMutation, useListTargetAudiencesForOfferProfileQuery, useUpdateTargetAudienceMutation } from '@/features/targetAudiences/targetAudiencesApi'
+  useCreateOfferSourceElementMutation,
+  useDeleteOfferSourceElementMutation,
+  useGenerateOfferSourceElementsMutation,
+  useListOfferSourceElementsQuery,
+  useListOfferSourceElementTypesQuery,
+  useUpdateOfferSourceElementMutation,
+  type OfferSourceElementSort,
+} from '@/features/offerSources/offerSourceApi'
+import { useDeleteTargetAudienceMutation, useGenerateTargetAudiencesMutation, useListTargetAudiencesForOfferSourceQuery, useUpdateTargetAudienceMutation } from '@/features/targetAudiences/targetAudiencesApi'
 import type { Entity } from '@/types'
 
-export function OfferProfileTargetAudiencesPage() {
-  const offerProfileId = Number(useParams().offerProfileId)
+export function OfferSourceTargetAudiencesPage() {
+  const offerSourceId = Number(useParams().offerSourceId)
   const [page, setPage] = useState(1)
   const [isReviewedFilter, setIsReviewedFilter] = useState<ReviewStatusFilterValue>('')
   const [reviewStatusSort, setReviewStatusSort] = useState<ReviewStatusSort>('unreviewed_first')
-  const { data: result, isLoading, error } = useListTargetAudiencesForOfferProfileQuery({
-    offerProfileId,
+  const { data: result, isLoading, error } = useListTargetAudiencesForOfferSourceQuery({
+    offerSourceId,
     page,
     pageSize: 6,
     isReviewed: isReviewedFilter === '' ? undefined : isReviewedFilter === 'true',
     sort: reviewStatusSort,
   })
-  const { data: unreviewedResult } = useListTargetAudiencesForOfferProfileQuery({
-    offerProfileId,
+  const { data: unreviewedResult } = useListTargetAudiencesForOfferSourceQuery({
+    offerSourceId,
     pageSize: 1,
     isReviewed: false,
   })
@@ -65,7 +65,7 @@ export function OfferProfileTargetAudiencesPage() {
         isLoading={isLoading}
         error={error}
         itemLabel={(item) => (item.name as string) ?? `#${item.id}`}
-        onGenerate={() => generate({ offerProfileId })}
+        onGenerate={() => generate({ offerSourceId })}
         isGenerating={generateState.isLoading}
         generateLabel="Generuj grupy docelowe"
         contentBeforeList={
@@ -87,7 +87,7 @@ export function OfferProfileTargetAudiencesPage() {
           title: 'Edytuj grupę docelową',
           content: <EditTargetAudienceForm id={item.id as number} data={item} onSaved={closePanel} />,
         })}
-        onDelete={(item) => remove({ id: item.id as number, offerProfileId })}
+        onDelete={(item) => remove({ id: item.id as number, offerSourceId })}
         itemActions={(item) => (
           <Button
             variant={item.is_reviewed ? 'ghost' : 'default'}
@@ -95,7 +95,7 @@ export function OfferProfileTargetAudiencesPage() {
             className="h-7 px-2.5 text-xs"
             onClick={() => updateTargetAudience({
               id: item.id as number,
-              offerProfileId,
+              offerSourceId,
               is_reviewed: item.is_reviewed !== true,
             })}
           >
@@ -107,16 +107,16 @@ export function OfferProfileTargetAudiencesPage() {
   )
 }
 
-export function OfferProfileElementsPage() {
-  const offerProfileId = Number(useParams().offerProfileId)
+export function OfferSourceElementsPage() {
+  const offerSourceId = Number(useParams().offerSourceId)
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [elementType, setElementType] = useState('')
   const [isReviewedFilter, setIsReviewedFilter] = useState<ReviewStatusFilterValue>('')
-  const [sort, setSort] = useState<OfferProfileElementSort>('created_at_desc')
-  const { data: elementTypes = [] } = useListOfferProfileElementTypesQuery()
-  const { data: result, isLoading, error } = useListOfferProfileElementsQuery({
-    offerProfileId,
+  const [sort, setSort] = useState<OfferSourceElementSort>('created_at_desc')
+  const { data: elementTypes = [] } = useListOfferSourceElementTypesQuery()
+  const { data: result, isLoading, error } = useListOfferSourceElementsQuery({
+    offerSourceId,
     page,
     pageSize: 6,
     search,
@@ -124,14 +124,14 @@ export function OfferProfileElementsPage() {
     isReviewed: isReviewedFilter === '' ? undefined : isReviewedFilter === 'true',
     sort,
   })
-  const { data: unreviewedElementsResult } = useListOfferProfileElementsQuery({
-    offerProfileId,
+  const { data: unreviewedElementsResult } = useListOfferSourceElementsQuery({
+    offerSourceId,
     pageSize: 1,
     isReviewed: false,
   })
   const elements = result?.items ?? []
-  const [remove] = useDeleteOfferProfileElementMutation()
-  const [updateElement] = useUpdateOfferProfileElementMutation()
+  const [remove] = useDeleteOfferSourceElementMutation()
+  const [updateElement] = useUpdateOfferSourceElementMutation()
   const { openPanel, closePanel } = useSidePanel()
 
   const updateSearch = (value: string) => {
@@ -144,7 +144,7 @@ export function OfferProfileElementsPage() {
     setPage(1)
   }
 
-  const updateSort = (value: OfferProfileElementSort) => {
+  const updateSort = (value: OfferSourceElementSort) => {
     setSort(value)
     setPage(1)
   }
@@ -193,7 +193,7 @@ export function OfferProfileElementsPage() {
             <select
               aria-label="Sortowanie elementów oferty"
               value={sort}
-              onChange={(event) => updateSort(event.target.value as OfferProfileElementSort)}
+              onChange={(event) => updateSort(event.target.value as OfferSourceElementSort)}
               className="h-9 rounded-lg border border-input bg-transparent px-2.5 text-sm"
             >
               <option value="created_at_desc">Najnowsze</option>
@@ -229,15 +229,15 @@ export function OfferProfileElementsPage() {
         ) : undefined}
         onEdit={(element) => openPanel({
           title: 'Edytuj element oferty',
-          content: <OfferProfileElementForm offerProfileId={offerProfileId} element={element} onSaved={closePanel} />,
+          content: <OfferSourceElementForm offerSourceId={offerSourceId} element={element} onSaved={closePanel} />,
         })}
-        onDelete={(element) => remove({ id: element.id as number, offerProfileId })}
+        onDelete={(element) => remove({ id: element.id as number, offerSourceId })}
         itemActions={(element) => (
           <Button
             variant={element.is_reviewed ? 'ghost' : 'default'}
             size="sm"
             className="h-7 px-2.5 text-xs"
-            onClick={() => updateElement({ id: element.id as number, offerProfileId, fields: { is_reviewed: element.is_reviewed !== true } })}
+            onClick={() => updateElement({ id: element.id as number, offerSourceId, fields: { is_reviewed: element.is_reviewed !== true } })}
           >
             {element.is_reviewed ? 'Oznacz jako niesprawdzone' : 'Zatwierdź'}
           </Button>
@@ -249,14 +249,14 @@ export function OfferProfileElementsPage() {
               className="h-10 rounded-none px-4"
               onClick={() => openPanel({
                 title: 'Generuj elementy oferty',
-                content: <GenerateOfferProfileElementsForm offerProfileId={offerProfileId} onGenerated={closePanel} />,
+                content: <GenerateOfferSourceElementsForm offerSourceId={offerSourceId} onGenerated={closePanel} />,
               })}
             >
               Generuj elementy
             </Button>
             <Button className="h-10 rounded-none px-4" onClick={() => openPanel({
               title: 'Dodaj element oferty',
-              content: <OfferProfileElementForm offerProfileId={offerProfileId} onSaved={closePanel} />,
+              content: <OfferSourceElementForm offerSourceId={offerSourceId} onSaved={closePanel} />,
             })}>
               Dodaj element
             </Button>
@@ -271,15 +271,15 @@ function formatElementType(type: string) {
   return type.replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase())
 }
 
-function GenerateOfferProfileElementsForm({
-  offerProfileId,
+function GenerateOfferSourceElementsForm({
+  offerSourceId,
   onGenerated,
 }: {
-  offerProfileId: number
+  offerSourceId: number
   onGenerated: () => void
 }) {
-  const { data: types = [], isLoading: areTypesLoading } = useListOfferProfileElementTypesQuery()
-  const [generate, generateState] = useGenerateOfferProfileElementsMutation()
+  const { data: types = [], isLoading: areTypesLoading } = useListOfferSourceElementTypesQuery()
+  const [generate, generateState] = useGenerateOfferSourceElementsMutation()
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [examplesPerType, setExamplesPerType] = useState(3)
   const [error, setError] = useState<string | null>(null)
@@ -288,7 +288,7 @@ function GenerateOfferProfileElementsForm({
     setError(null)
     try {
       await generate({
-        offerProfileId,
+        offerSourceId,
         element_types: selectedTypes,
         examples_per_type: examplesPerType,
       }).unwrap()
@@ -334,18 +334,18 @@ function GenerateOfferProfileElementsForm({
   )
 }
 
-function OfferProfileElementForm({
-  offerProfileId,
+function OfferSourceElementForm({
+  offerSourceId,
   element,
   onSaved,
 }: {
-  offerProfileId: number
+  offerSourceId: number
   element?: Entity
   onSaved: () => void
 }) {
-  const { data: types = [], isLoading: areTypesLoading } = useListOfferProfileElementTypesQuery()
-  const [create, createState] = useCreateOfferProfileElementMutation()
-  const [update, updateState] = useUpdateOfferProfileElementMutation()
+  const { data: types = [], isLoading: areTypesLoading } = useListOfferSourceElementTypesQuery()
+  const [create, createState] = useCreateOfferSourceElementMutation()
+  const [update, updateState] = useUpdateOfferSourceElementMutation()
   const [error, setError] = useState<string | null>(null)
   const [isReviewed, setIsReviewed] = useState(Boolean(element?.is_reviewed))
   const isEditing = Boolean(element)
@@ -365,9 +365,9 @@ function OfferProfileElementForm({
 
     try {
       if (element) {
-        await update({ id: element.id as number, offerProfileId, fields }).unwrap()
+        await update({ id: element.id as number, offerSourceId, fields }).unwrap()
       } else {
-        await create({ offerProfileId, ...fields }).unwrap()
+        await create({ offerSourceId, ...fields }).unwrap()
       }
       onSaved()
     } catch {

@@ -3,7 +3,7 @@ import json
 from typing import List
 
 from infrastructure.logging.logger import Logger
-from domain.models.creative_strategy.creative_strategy import CreativeStrategy
+from domain.models.creative.creative_strategy import CreativeStrategy
 from application.dtos.creative_strategy.creative_strategy_response_dto import CreativeStrategyDto
 from infrastructure.repositories.creative_strategy_repository import CreativeStrategyRepository
 from application.mappers.creative_strategy_mapper import CreativeStrategyMapper

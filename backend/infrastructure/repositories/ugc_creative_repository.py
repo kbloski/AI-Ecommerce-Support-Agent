@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from domain.models.ugc_creatives.ugc_creative import UgcCreative
+from domain.models.creative.ugc_creative import UgcCreative
 from infrastructure.logging.logger import Logger
 
 

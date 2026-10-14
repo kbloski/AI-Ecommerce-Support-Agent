@@ -11,7 +11,7 @@ def generate_message_strategy_handler(
 ):
     container = Container()
 
-    offer_profile_service = container.offer_profile_service()
+    offer_source_service = container.offer_source_service()
     brand_marketing_service = container.brand_marketing_service()
     marketing_strategy_service = container.marketing_strategy_service()
     offer_strategy_service = container.offer_strategy_service()
@@ -50,8 +50,8 @@ def generate_message_strategy_handler(
             f"{marketing_strategy.brand_marketing_id} not found"
         )
 
-    offer_profile_context = offer_profile_service.build_llm_context(
-        offer_profile_id=brand_strategy.offer_profile_id
+    offer_source_context = offer_source_service.build_llm_context(
+        offer_source_id=brand_strategy.offer_source_id
     )
 
     brand_strategy_context = brand_marketing_service.build_llm_context(
@@ -77,7 +77,7 @@ def generate_message_strategy_handler(
             LlmMessage(
                 role=LlmMessageRole.USER,
                 content=get_data_prompt(
-                    offer_profile_context=offer_profile_context,
+                    offer_source_context=offer_source_context,
                     brand_strategy_context=brand_strategy_context,
                     marketing_strategy_context=marketing_strategy_context,
                     offer_strategy_context=offer_strategy_context,
@@ -140,7 +140,7 @@ claim discipline, and conversion-oriented communication strategy.
 
 Your task is to create a Message Strategy based only on:
 
-- the confirmed Offer Profile,
+- the confirmed Offer Source,
 - the Brand Strategy,
 - the Marketing Strategy,
 - the Offer Strategy.
@@ -211,7 +211,7 @@ SOURCE-OF-TRUTH HIERARCHY
 
 Use each source for the type of information it is responsible for:
 
-- Offer Profile = factual offer properties, capabilities, specifications,
+- Offer Source = factual offer properties, capabilities, specifications,
   inclusions, limitations, mechanics, and confirmed evidence.
 - Brand Strategy = brand positioning, principles, tone, and intended perception.
 - Marketing Strategy = supported audiences, market priorities, channels,
@@ -221,8 +221,8 @@ Use each source for the type of information it is responsible for:
 
 When sources overlap or conflict:
 
-- factual capabilities must not exceed Offer Profile,
-- commercial mechanics must not exceed Offer Profile or confirmed Offer Strategy,
+- factual capabilities must not exceed Offer Source,
+- commercial mechanics must not exceed Offer Source or confirmed Offer Strategy,
 - audience statements must not exceed supported Marketing Strategy,
 - messaging must use the narrowest, best-supported interpretation,
 - never invent information to reconcile a conflict.
@@ -936,7 +936,7 @@ Rules:
 
 4. Do not turn a Marketing Strategy hypothesis into an established customer fact.
 
-5. Do not make messaging claims stronger than Offer Profile and Offer Strategy support.
+5. Do not make messaging claims stronger than Offer Source and Offer Strategy support.
 
 6. Benefits must be traceable to supported mechanisms or offer characteristics.
 
@@ -1062,7 +1062,7 @@ and internal consistency are more important than completeness.
 
 
 def get_data_prompt(
-    offer_profile_context: str,
+    offer_source_context: str,
     brand_strategy_context: str,
     marketing_strategy_context: str,
     offer_strategy_context: str,
@@ -1084,7 +1084,7 @@ explicitly permits uncertainty.
 
 SOURCE RESPONSIBILITIES:
 
-- Use Offer Profile as the source of truth for factual offer properties,
+- Use Offer Source as the source of truth for factual offer properties,
   capabilities, specifications, inclusions, limitations, and confirmed evidence.
 - Use Brand Strategy for brand positioning, principles, tone, and intended perception.
 - Use Marketing Strategy for supported audiences, priorities, channels,
@@ -1097,7 +1097,7 @@ Do not strengthen claims beyond the available evidence.
 Do not convert recommendations, hypotheses, campaign ideas, or audience assumptions
 into established customer or offer facts.
 
-If an upstream strategy contains language that conflicts with factual Offer Profile
+If an upstream strategy contains language that conflicts with factual Offer Source
 information, follow the narrower factual interpretation.
 
 If sources conflict, do not invent a reconciliation.
@@ -1106,9 +1106,9 @@ Do not reuse examples from the system prompt unless the same fact or situation i
 independently supported by the current context.
 
 
-OFFER PROFILE
+OFFER SOURCE
 
-{offer_profile_context}
+{offer_source_context}
 
 
 BRAND STRATEGY

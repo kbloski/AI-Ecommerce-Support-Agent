@@ -3,7 +3,7 @@ import json
 from typing import List
 
 from infrastructure.logging.logger import Logger
-from domain.models.page_blueprint.page_blueprint import PageBlueprint
+from domain.models.page.page_blueprint import PageBlueprint
 from application.dtos.page_blueprint.page_blueprint_response_dto import PageBlueprintDto
 from infrastructure.repositories.page_blueprint_repository import PageBlueprintRepository
 from application.mappers.page_blueprint_mapper import PageBlueprintMapper

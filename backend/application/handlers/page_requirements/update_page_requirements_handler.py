@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 
 from di.container import Container
 from domain.enums.page_section_requirement_type import PageSectionRequirementType
-from domain.models.page_requirements.page_section_requirement import PageSectionRequirement
+from domain.models.page.page_section_requirement import PageSectionRequirement
 from infrastructure.database.unit_of_work import unit_of_work
 
 ALLOWED_REQUIREMENT_TYPES = {item.value for item in PageSectionRequirementType}

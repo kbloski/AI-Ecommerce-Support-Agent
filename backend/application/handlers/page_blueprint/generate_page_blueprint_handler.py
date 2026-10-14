@@ -1,7 +1,7 @@
 from di.container import Container
 from domain.enums.llm_message_role import LlmMessageRole
 from domain.models.llm.llm_message import LlmMessage
-from domain.models.page_blueprint.page_blueprint import PageBlueprint
+from domain.models.page.page_blueprint import PageBlueprint
 from application.services.llm_result_validation import (
     LlmGenerationError,
     parse_llm_json,
@@ -27,7 +27,7 @@ def generate_page_blueprint_handler(page_requirements_id: int):
     page_requirements_service = container.page_requirements_service()
     page_strategy_service = container.page_strategy_service()
     message_strategy_service = container.message_strategy_service()
-    offer_profile_service = container.offer_profile_service()
+    offer_source_service = container.offer_source_service()
     brand_marketing_service = container.brand_marketing_service()
     marketing_strategy_service = container.marketing_strategy_service()
     offer_strategy_service = container.offer_strategy_service()
@@ -108,8 +108,8 @@ def generate_page_blueprint_handler(page_requirements_id: int):
     # Build context
     # -------------------------------------------------------------------------
 
-    offer_profile_context = offer_profile_service.build_llm_context(
-        offer_profile_id=brand_strategy.offer_profile_id
+    offer_source_context = offer_source_service.build_llm_context(
+        offer_source_id=brand_strategy.offer_source_id
     )
     brand_strategy_context = brand_marketing_service.build_llm_context(
         brand_marketing_id=marketing_strategy.brand_marketing_id
@@ -136,7 +136,7 @@ def generate_page_blueprint_handler(page_requirements_id: int):
     )
 
     contexts = {
-        "OFFER_PROFILE": offer_profile_context,
+        "OFFER_SOURCE": offer_source_context,
         "BRAND_STRATEGY": brand_strategy_context,
         "MARKETING_STRATEGY": marketing_strategy_context,
         "OFFER_STRATEGY": offer_strategy_context,
@@ -155,7 +155,7 @@ def generate_page_blueprint_handler(page_requirements_id: int):
 
     system_prompt = get_system_prompt()
     user_prompt = get_data_prompt(
-        offer_profile_context=offer_profile_context,
+        offer_source_context=offer_source_context,
         brand_strategy_context=brand_strategy_context,
         marketing_strategy_context=marketing_strategy_context,
         offer_strategy_context=offer_strategy_context,
@@ -617,9 +617,9 @@ or operational information:
 - prevent downstream copy from presenting the missing information as fact.
 
 
-## OFFER_PROFILE = FACTUAL OFFER TRUTH
+## OFFER_SOURCE = FACTUAL OFFER TRUTH
 
-OFFER_PROFILE is authoritative for factual offer properties, including when present:
+OFFER_SOURCE is authoritative for factual offer properties, including when present:
 - what the offer actually is,
 - contents or deliverables,
 - quantities,
@@ -633,7 +633,7 @@ OFFER_PROFILE is authoritative for factual offer properties, including when pres
 - limitations,
 - confirmed differentiators.
 
-A factual statement about the offer must be supported by OFFER_PROFILE or by
+A factual statement about the offer must be supported by OFFER_SOURCE or by
 another CURRENT source that explicitly establishes that fact as confirmed.
 
 Planning language, strategy language, positioning, recommendations, hypotheses,
@@ -724,7 +724,7 @@ They may NOT create or confirm:
 
 When inputs overlap:
 - PAGE REQUIREMENTS wins for structure.
-- OFFER_PROFILE wins for factual offer truth.
+- OFFER_SOURCE wins for factual offer truth.
 - PAGE_STRATEGY wins for page scope, narrative, journey, objections, and conversion.
 - MESSAGE_STRATEGY sets the maximum claim strength.
 - PAGE SECTION TYPES CONTEXT defines structural meaning only.
@@ -1074,7 +1074,7 @@ Return the blueprint object DIRECTLY with exactly this structure:
 
 
 def get_data_prompt(
-    offer_profile_context: str,
+    offer_source_context: str,
     brand_strategy_context: str,
     marketing_strategy_context: str,
     offer_strategy_context: str,
@@ -1092,7 +1092,7 @@ IMPORTANT:
 - PAGE REQUIREMENTS control structure, not truth.
 - A required section MUST appear, but its usual fact, proof, policy, commercial
   mechanic, or capability must NOT be invented merely because the section exists.
-- OFFER_PROFILE controls factual offer truth.
+- OFFER_SOURCE controls factual offer truth.
 - PAGE_STRATEGY controls this page's scope, narrative, customer journey,
   selected barriers, trust needs, and conversion action.
 - MESSAGE_STRATEGY is the maximum claim strength; it is not evidence by itself.
@@ -1116,8 +1116,8 @@ IMPORTANT:
 - Return the blueprint object directly as valid JSON matching the exact schema.
 
 
-OFFER_PROFILE — authoritative factual offer truth:
-{offer_profile_context}
+OFFER_SOURCE — authoritative factual offer truth:
+{offer_source_context}
 
 
 BRAND STRATEGY — supporting positioning and voice context:

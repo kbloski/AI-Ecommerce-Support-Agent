@@ -4,7 +4,7 @@ import re
 from di.container import Container
 from domain.enums.llm_message_role import LlmMessageRole
 from domain.models.llm.llm_message import LlmMessage
-from application.mappers.offer_profile_mapper import OfferProfileMapper
+from application.mappers.offer_source_mapper import OfferSourceMapper
 from domain.models.checklist.checklist_item import ChecklistItem
 from application.mappers.checklist_item_mapper import ChecklistItemMapper
 
@@ -49,7 +49,7 @@ Do not write:
 
 Generate real search examples based on the product information.
 
-Every task must be possible to complete without additional offer_profile.
+Every task must be possible to complete without additional offer_source.
 
 Do not create generic advice.
 
@@ -100,13 +100,13 @@ Search phrases should reflect real queries used by people in Poland, not only di
 """
 
 
-def prepare_user_prompt(offer_profile_context: str) -> str:
+def prepare_user_prompt(offer_source_context: str) -> str:
     return f"""
 Based on the product data, prepare a product research checklist.
 
 Product data:
 
-{offer_profile_context}
+{offer_source_context}
 
 
 Generate a list of tasks that the user should perform to validate the potential of this product.
@@ -313,44 +313,44 @@ Return ONLY a JSON array following the format defined in the SYSTEM PROMPT.
 
 
 def analyse_checklist_generate_handler(
-    offer_profile_id: int,
+    offer_source_id: int,
     checklist_id: int
 ):
     container = Container()
 
     logger = container.logger()
     ai_service = container.ai_service()
-    offer_profile_service = container.offer_profile_service()
+    offer_source_service = container.offer_source_service()
     checklist_repository = container.checklist_repository()
     checklist_items_repository = container.checklist_items_repository()
 
     checklist = checklist_repository.get_by_id(checklist_id)
     if checklist is None:
         raise LookupError(f"Checklist with id {checklist_id} not found")
-    if checklist.offer_profile_id != offer_profile_id:
-        raise ValueError("Checklist does not belong to the requested OfferProfile")
+    if checklist.offer_source_id != offer_source_id:
+        raise ValueError("Checklist does not belong to the requested OfferSource")
 
     logger.info(
         f"Checklist generation started. "
-        f"offer_profile_id={offer_profile_id}, checklist_id={checklist_id}"
+        f"offer_source_id={offer_source_id}, checklist_id={checklist_id}"
     )
 
     # ---------
     # Get product data
     # ---------
 
-    logger.info("Fetching product offer_profile data")
+    logger.info("Fetching product offer_source data")
 
 
 
-    logger.info("Building product offer_profile LLM context")
+    logger.info("Building product offer_source LLM context")
 
-    offer_profile_context = offer_profile_service.build_llm_context(
-        offer_profile_id=offer_profile_id
+    offer_source_context = offer_source_service.build_llm_context(
+        offer_source_id=offer_source_id
     )
 
     logger.info(
-        f"Product data prepared. Size={len(offer_profile_context)} chars"
+        f"Product data prepared. Size={len(offer_source_context)} chars"
     )
 
 
@@ -361,7 +361,7 @@ def analyse_checklist_generate_handler(
     logger.info("Preparing user prompt")
 
     user_prompt = prepare_user_prompt(
-        offer_profile_context=offer_profile_context
+        offer_source_context=offer_source_context
     )
 
     logger.info(

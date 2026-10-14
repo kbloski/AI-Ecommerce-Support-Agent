@@ -3,7 +3,7 @@ import json
 from typing import List
 
 from infrastructure.logging.logger import Logger
-from domain.models.page_requirements.page_requirements import PageRequirements
+from domain.models.page.page_requirements import PageRequirements
 from domain.enums.context_section_purpose import ContextSectionPurpose
 from application.dtos.page_requirements.page_requirements_dto import PageRequirementsDto
 from infrastructure.repositories.page_requirements_repository import PageRequirementsRepository

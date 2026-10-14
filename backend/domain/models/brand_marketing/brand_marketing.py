@@ -13,10 +13,10 @@ class BrandMarketing(Base, JSONSerializable):
     # primary key
     id = Column(Integer, primary_key=True, autoincrement=True)
 
-    # relation to product offer_profile
-    offer_profile_id = Column(
+    # relation to product offer_source
+    offer_source_id = Column(
         Integer,
-        ForeignKey(TableName.OFFER_PROFILES.value+".id", ondelete="CASCADE"),
+        ForeignKey(TableName.OFFER_SOURCES.value+".id", ondelete="CASCADE"),
         nullable=False
     )
 

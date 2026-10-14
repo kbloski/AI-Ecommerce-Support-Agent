@@ -1,4 +1,4 @@
-from domain.models.ugc_creatives.ugc_creative import UgcCreative
+from domain.models.creative.ugc_creative import UgcCreative
 from application.dtos.ugc_creatives.ugc_creative_response_dto import UgcCreativeDto
 
 

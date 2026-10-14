@@ -5,12 +5,12 @@ import { ListFilters, ReviewStatusFilter, ReviewStatusSortSelect, type ReviewSta
 import { Button } from '@/components/ui/button'
 import { SegmentedControl } from '@/components/SegmentedControl'
 import type { Entity } from '@/types'
-import { useGetOfferProfileQuery } from '@/features/offerProfiles/offerProfileApi'
+import { useGetOfferSourceQuery } from '@/features/offerSources/offerSourceApi'
 import { useEditEntityPanel } from '@/lib/useEditEntityPanel'
 import { useSidePanel } from '@/lib/sidePanel'
-import { useCreateAnalysisMutation, useDeleteAnalysisMutation, useDeleteAnalysisQuestionMutation, useGenerateAnalysisAnswersMutation, useListAnalysisForOfferProfileQuery, useListAnalysisQuestionsQuery, useUpdateAnalysisQuestionMutation } from '@/features/analysis/analysisApi'
-import { useDeleteBrandMarketingMutation, useGenerateBrandMarketingMutation, useListBrandMarketingForOfferProfileQuery, useUpdateBrandMarketingMutation } from '@/features/brandMarketing/brandMarketingApi'
-import { useCreateChecklistMutation, useDeleteChecklistItemMutation, useDeleteChecklistMutation, useGenerateChecklistMutation, useGetChecklistQuery, useListChecklistsForOfferProfileQuery, useUpdateChecklistItemMutation } from '@/features/checklists/checklistsApi'
+import { useCreateAnalysisMutation, useDeleteAnalysisMutation, useDeleteAnalysisQuestionMutation, useGenerateAnalysisAnswersMutation, useListAnalysisForOfferSourceQuery, useListAnalysisQuestionsQuery, useUpdateAnalysisQuestionMutation } from '@/features/analysis/analysisApi'
+import { useDeleteBrandMarketingMutation, useGenerateBrandMarketingMutation, useListBrandMarketingForOfferSourceQuery, useUpdateBrandMarketingMutation } from '@/features/brandMarketing/brandMarketingApi'
+import { useCreateChecklistMutation, useDeleteChecklistItemMutation, useDeleteChecklistMutation, useGenerateChecklistMutation, useGetChecklistQuery, useListChecklistsForOfferSourceQuery, useUpdateChecklistItemMutation } from '@/features/checklists/checklistsApi'
 import { useGetBrandMarketingQuery } from '@/features/brandMarketing/brandMarketingApi'
 import { useDeleteMarketingStrategyMutation, useGenerateMarketingStrategyMutation, useListMarketingStrategyForBrandMarketingQuery, useUpdateMarketingStrategyMutation } from '@/features/marketingStrategy/marketingStrategyApi'
 import { useGetMarketingStrategyQuery } from '@/features/marketingStrategy/marketingStrategyApi'
@@ -49,39 +49,39 @@ function ResourcePage({ title: _title, children }: { backTo: string; backLabel: 
   </div>
 }
 
-export function OfferProfileAnalysesPage() {
-  const offerProfileId = Number(useParams().offerProfileId)
-  const list = useListAnalysisForOfferProfileQuery(offerProfileId)
+export function OfferSourceAnalysesPage() {
+  const offerSourceId = Number(useParams().offerSourceId)
+  const list = useListAnalysisForOfferSourceQuery(offerSourceId)
   const [create, state] = useCreateAnalysisMutation()
   const [remove] = useDeleteAnalysisMutation()
-  return <ResourcePage backTo={`/offer-profiles/${offerProfileId}`} backLabel="OfferProfile" title="Analizy">
-    <ResourceList title="Analizy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/offer-profiles/${offerProfileId}/analysis/${item.id}`} itemLabel={(item) => `Analiza #${item.id}`} onGenerate={() => create({ offerProfileId })} isGenerating={state.isLoading} generateLabel="Utwórz analizę" onDelete={(item) => remove({ id: item.id as number, offerProfileId })} />
+  return <ResourcePage backTo={`/offer-sources/${offerSourceId}`} backLabel="OfferSource" title="Analizy">
+    <ResourceList title="Analizy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/offer-sources/${offerSourceId}/analysis/${item.id}`} itemLabel={(item) => `Analiza #${item.id}`} onGenerate={() => create({ offerSourceId })} isGenerating={state.isLoading} generateLabel="Utwórz analizę" onDelete={(item) => remove({ id: item.id as number, offerSourceId })} />
   </ResourcePage>
 }
 
-export function OfferProfileBrandMarketingPage() {
-  const offerProfileId = Number(useParams().offerProfileId)
-  const { data } = useGetOfferProfileQuery(offerProfileId)
-  const list = useListBrandMarketingForOfferProfileQuery(offerProfileId)
+export function OfferSourceBrandMarketingPage() {
+  const offerSourceId = Number(useParams().offerSourceId)
+  const { data } = useGetOfferSourceQuery(offerSourceId)
+  const list = useListBrandMarketingForOfferSourceQuery(offerSourceId)
   const [generate, state] = useGenerateBrandMarketingMutation()
   const [remove] = useDeleteBrandMarketingMutation()
   const [update] = useUpdateBrandMarketingMutation()
   const editEntity = useEditEntityPanel()
-  return <ResourcePage backTo={`/offer-profiles/${offerProfileId}`} backLabel={(data?.offer_summary as string) ?? 'OfferProfile'} title="Brand marketing">
-    <ResourceList title="Brand marketing" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/brand-marketing/${item.id}`} itemLabel={(item) => (item.brand_name as string) ?? `#${item.id}`} onGenerate={() => generate({ offerProfileId })} isGenerating={state.isLoading} generateLabel="Generuj brand marketing" onEdit={(item) => editEntity('Brand marketing', item, (fields) => update({ id: item.id as number, fields }).unwrap())} onDelete={(item) => remove({ id: item.id as number, offerProfileId })} />
+  return <ResourcePage backTo={`/offer-sources/${offerSourceId}`} backLabel={(data?.offer_summary as string) ?? 'OfferSource'} title="Brand marketing">
+    <ResourceList title="Brand marketing" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/brand-marketing/${item.id}`} itemLabel={(item) => (item.brand_name as string) ?? `#${item.id}`} onGenerate={() => generate({ offerSourceId })} isGenerating={state.isLoading} generateLabel="Generuj brand marketing" onEdit={(item) => editEntity('Brand marketing', item, (fields) => update({ id: item.id as number, fields }).unwrap())} onDelete={(item) => remove({ id: item.id as number, offerSourceId })} />
   </ResourcePage>
 }
 
-export function OfferProfileChecklistsPage() {
-  const { offerProfileId } = useParams(); const id = Number(offerProfileId)
-  const list = useListChecklistsForOfferProfileQuery(id); const [create, state] = useCreateChecklistMutation(); const [remove] = useDeleteChecklistMutation()
-  return <ResourcePage backTo={`/offer-profiles/${id}`} backLabel="OfferProfile" title="Checklisty">
-    <ResourceList title="Checklisty" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/offer-profiles/${id}/checklists/${item.id}`} itemLabel={(item) => checklistLabel(item, item.id as number)} onGenerate={() => create({ offerProfileId: id })} isGenerating={state.isLoading} generateLabel="Utwórz checklistę" onDelete={(item) => remove({ id: item.id as number, offerProfileId: id })} />
+export function OfferSourceChecklistsPage() {
+  const { offerSourceId } = useParams(); const id = Number(offerSourceId)
+  const list = useListChecklistsForOfferSourceQuery(id); const [create, state] = useCreateChecklistMutation(); const [remove] = useDeleteChecklistMutation()
+  return <ResourcePage backTo={`/offer-sources/${id}`} backLabel="OfferSource" title="Checklisty">
+    <ResourceList title="Checklisty" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/offer-sources/${id}/checklists/${item.id}`} itemLabel={(item) => checklistLabel(item, item.id as number)} onGenerate={() => create({ offerSourceId: id })} isGenerating={state.isLoading} generateLabel="Utwórz checklistę" onDelete={(item) => remove({ id: item.id as number, offerSourceId: id })} />
   </ResourcePage>
 }
 
 export function AnalysisQuestionsPage() {
-  const { offerProfileId, analysisId } = useParams(); const aid = Number(analysisId)
+  const { offerSourceId, analysisId } = useParams(); const aid = Number(analysisId)
   const [page, setPage] = useState(1)
   const [isReviewedFilter, setIsReviewedFilter] = useState<ReviewStatusFilterValue>('')
   const [reviewStatusSort, setReviewStatusSort] = useState<ReviewStatusSort>('unreviewed_first')
@@ -90,7 +90,7 @@ export function AnalysisQuestionsPage() {
   const [generate, state] = useGenerateAnalysisAnswersMutation(); const [remove] = useDeleteAnalysisQuestionMutation()
   const [update] = useUpdateAnalysisQuestionMutation()
   const questions = result?.items ?? []
-  return <ResourcePage backTo={`/offer-profiles/${offerProfileId}/analysis/${aid}`} backLabel={`Analiza #${aid}`} title="Pytania">
+  return <ResourcePage backTo={`/offer-sources/${offerSourceId}/analysis/${aid}`} backLabel={`Analiza #${aid}`} title="Pytania">
     <ResourceList
       title="Pytania"
       items={questions}
@@ -100,7 +100,7 @@ export function AnalysisQuestionsPage() {
       error={error}
       itemLabel={(item) => String(item.question ?? `Pytanie #${item.id}`)}
       itemDescription={(item) => item.answer ? String(item.answer) : 'Brak odpowiedzi'}
-      onGenerate={() => { void generate({ offerProfileId: Number(offerProfileId), analysisId: aid }) }}
+      onGenerate={() => { void generate({ offerSourceId: Number(offerSourceId), analysisId: aid }) }}
       isGenerating={state.isLoading}
       generateLabel="Generuj odpowiedzi"
       contentBeforeList={<ReviewFilters value={isReviewedFilter} sort={reviewStatusSort} onValueChange={(value) => { setIsReviewedFilter(value); setPage(1) }} onSortChange={(value) => { setReviewStatusSort(value); setPage(1) }} />}
@@ -133,13 +133,13 @@ function ReviewButton({ item, onToggle }: { item: Entity; onToggle: () => void }
 }
 
 export function ChecklistItemsPage() {
-  const { offerProfileId, checklistId } = useParams(); const cid = Number(checklistId)
+  const { offerSourceId, checklistId } = useParams(); const cid = Number(checklistId)
   const { data, isLoading, error } = useGetChecklistQuery(cid); const [generate, state] = useGenerateChecklistMutation(); const [remove] = useDeleteChecklistItemMutation()
   const [update] = useUpdateChecklistItemMutation()
   const [isReviewedFilter, setIsReviewedFilter] = useState<ReviewStatusFilterValue>('')
   const [reviewStatusSort, setReviewStatusSort] = useState<ReviewStatusSort>('unreviewed_first')
   const items = reviewableItems((data?.checklist_items as Entity[] | undefined) ?? [], isReviewedFilter, reviewStatusSort)
-  return <ResourcePage backTo={`/offer-profiles/${offerProfileId}/checklists/${cid}`} backLabel={checklistLabel(data, cid)} title="Zadania">
+  return <ResourcePage backTo={`/offer-sources/${offerSourceId}/checklists/${cid}`} backLabel={checklistLabel(data, cid)} title="Zadania">
     <ResourceList
       title="Zadania"
       items={items}
@@ -147,7 +147,7 @@ export function ChecklistItemsPage() {
       attentionItems={unreviewedCount((data?.checklist_items as Entity[] | undefined) ?? [])}
       isLoading={isLoading}
       error={error}
-      onGenerate={() => { void generate({ offerProfileId: Number(offerProfileId), checklistId: cid }) }}
+      onGenerate={() => { void generate({ offerSourceId: Number(offerSourceId), checklistId: cid }) }}
       isGenerating={state.isLoading}
       generateLabel="Generuj zadania"
       itemLabel={(item) => (item.title as string) ?? `Zadanie #${item.id}`}

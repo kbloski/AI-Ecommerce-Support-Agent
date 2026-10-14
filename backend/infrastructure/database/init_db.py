@@ -3,10 +3,12 @@ from .db import Base, engine
 from domain.models import models
 
 def init_db():
+    _migrate_app_ollama_settings_to_app_properties()
     _migrate_offers_to_offers_raw()
     _rename_offer_raw_details_column()
     _migrate_offer_profile_to_offer_profiles()
-    _migrate_checklists_to_offer_profiles()
+    _migrate_offer_profiles_to_offer_sources()
+    _migrate_checklists_to_offer_sources()
     _migrate_ad_execution_to_ad_setup()
     _migrate_creative_execution_to_generate_ad()
     _migrate_creative_execution_setups()
@@ -285,7 +287,7 @@ def _migrate_creative_execution_setups():
 def _migrate_offers_to_offers_raw():
     """Migrate the retired Offer schema before SQLAlchemy creates offers_raw.
 
-    Offer records (and their OfferProfile references) are preserved. Offer items,
+    Offer records (and their OfferSource references) are preserved. Offer items,
     insights, and pricing are intentionally removed with this feature.
     """
     inspector = inspect(engine)
@@ -363,7 +365,7 @@ def _add_missing_is_reviewed_columns():
     inspector = inspect(engine)
     existing_tables = set(inspector.get_table_names())
 
-    for table in ("offer_profile_elements", "target_audiences", "checklist_item", "analysis_questions", "ugc_creatives"):
+    for table in ("offer_source_elements", "target_audiences", "checklist_item", "analysis_questions", "ugc_creatives"):
         if table not in existing_tables:
             continue
 
@@ -492,8 +494,8 @@ def _rename_page_section_requirement_column():
                 )
             )
 
-def _migrate_checklists_to_offer_profiles():
-    """Replace the retired analysis_checklist link with checklist.offer_profile_id."""
+def _migrate_checklists_to_offer_sources():
+    """Replace the retired analysis_checklist link with checklist.offer_source_id."""
     inspector = inspect(engine)
     tables = set(inspector.get_table_names())
     if "checklist" not in tables:
@@ -501,20 +503,85 @@ def _migrate_checklists_to_offer_profiles():
 
     columns = {column["name"] for column in inspector.get_columns("checklist")}
     with engine.begin() as conn:
-        if "offer_profile_id" not in columns:
-            conn.execute(text('ALTER TABLE "checklist" ADD COLUMN offer_profile_id INTEGER'))
+        if "offer_source_id" not in columns:
+            conn.execute(text('ALTER TABLE "checklist" ADD COLUMN offer_source_id INTEGER'))
 
-        if {"analysis_checklist", "offer_profile_analysis"}.issubset(tables):
+        if {"analysis_checklist", "offer_source_analysis"}.issubset(tables):
             conn.execute(text("""
                 UPDATE checklist
-                SET offer_profile_id = (
-                    SELECT offer_profile_analysis.offer_profile_id
+                SET offer_source_id = (
+                    SELECT offer_source_analysis.offer_source_id
                     FROM analysis_checklist
-                    JOIN offer_profile_analysis
-                      ON offer_profile_analysis.analysis_id = analysis_checklist.analysis_id
+                    JOIN offer_source_analysis
+                      ON offer_source_analysis.analysis_id = analysis_checklist.analysis_id
                     WHERE analysis_checklist.checklist_id = checklist.id
                     LIMIT 1
                 )
-                WHERE offer_profile_id IS NULL
+                WHERE offer_source_id IS NULL
             """))
             conn.execute(text('DROP TABLE "analysis_checklist"'))
+
+
+def _migrate_app_ollama_settings_to_app_properties():
+    """Preserve existing Ollama overrides when renaming application properties."""
+    with engine.begin() as conn:
+        tables = set(inspect(conn).get_table_names())
+        if "app_ollama_settings" not in tables:
+            return
+
+        if "app_properties" in tables:
+            legacy_count = conn.execute(
+                text('SELECT COUNT(*) FROM "app_ollama_settings"')
+            ).scalar_one()
+            new_count = conn.execute(
+                text('SELECT COUNT(*) FROM "app_properties"')
+            ).scalar_one()
+            if legacy_count and new_count:
+                raise RuntimeError(
+                    "Both 'app_ollama_settings' and 'app_properties' contain data; "
+                    "migration requires manual resolution."
+                )
+            if not legacy_count:
+                conn.execute(text('DROP TABLE "app_ollama_settings"'))
+                return
+            conn.execute(text('DROP TABLE "app_properties"'))
+
+        conn.execute(text(
+            'ALTER TABLE "app_ollama_settings" RENAME TO "app_properties"'
+        ))
+
+
+def _migrate_offer_profiles_to_offer_sources():
+    """Rename source tables and relation columns without losing the offer graph."""
+    renames = (
+        ("offer_profiles", "offer_sources"),
+        ("offer_profile_elements", "offer_source_elements"),
+        ("offer_profile_analysis", "offer_source_analysis"),
+    )
+    with engine.begin() as conn:
+        tables = set(inspect(conn).get_table_names())
+        # Check all collisions before changing any table.
+        for old, new in renames:
+            if old in tables and new in tables:
+                raise RuntimeError(
+                    f"Both '{old}' and '{new}' exist; migration requires manual resolution."
+                )
+        for table in tables:
+            columns = {column["name"] for column in inspect(conn).get_columns(table)}
+            if {"offer_profile_id", "offer_source_id"} <= columns:
+                raise RuntimeError(
+                    f"Both offer_profile_id and offer_source_id exist in '{table}'."
+                )
+        for old, new in renames:
+            if old in tables:
+                conn.execute(text(f'ALTER TABLE "{old}" RENAME TO "{new}"'))
+        for table in inspect(conn).get_table_names():
+            columns = {column["name"] for column in inspect(conn).get_columns(table)}
+            if "offer_profile_id" in columns:
+                if "offer_source_id" in columns:
+                    raise RuntimeError(
+                        f"Both offer_profile_id and offer_source_id exist in '{table}'."
+                    )
+                conn.execute(text(
+                    f'ALTER TABLE "{table}" RENAME COLUMN "offer_profile_id" TO "offer_source_id"'
+                ))

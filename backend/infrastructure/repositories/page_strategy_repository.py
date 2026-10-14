@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from domain.models.page_strategy.page_strategy import PageStrategy
+from domain.models.page.page_strategy import PageStrategy
 from infrastructure.logging.logger import Logger
 
 

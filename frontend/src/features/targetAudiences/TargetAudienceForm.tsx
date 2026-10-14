@@ -66,7 +66,7 @@ export function EditTargetAudienceForm({
 
     const formData = new FormData(e.currentTarget)
 
-    const payload: UpdateTargetAudienceArgs = { id, offerProfileId: data.offer_profile_id as number }
+    const payload: UpdateTargetAudienceArgs = { id, offerSourceId: data.offer_source_id as number }
 
     if (factStatus) payload.fact_status = factStatus
     payload.is_reviewed = isReviewed

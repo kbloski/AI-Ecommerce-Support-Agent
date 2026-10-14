@@ -3,7 +3,7 @@ import json
 from di.container import Container
 from domain.models.llm.llm_message import LlmMessage
 from domain.enums.llm_message_role import LlmMessageRole
-from domain.models.offer_strategy.offer_strategy import OfferStrategy
+from domain.models.offer.offer_strategy import OfferStrategy
 
 
 def generate_offer_strategy_handler(
@@ -11,7 +11,7 @@ def generate_offer_strategy_handler(
 ):
     container = Container()
 
-    offer_profile_service = container.offer_profile_service()
+    offer_source_service = container.offer_source_service()
     brand_marketing_service = container.brand_marketing_service()
     marketing_strategy_service = container.marketing_strategy_service()
     ai_service = container.ai_service()
@@ -38,8 +38,8 @@ def generate_offer_strategy_handler(
             f"Brand marketing {marketing_strategy.brand_marketing_id} not found"
         )
 
-    offer_profile_context = offer_profile_service.build_llm_context(
-        offer_profile_id=brand_strategy.offer_profile_id
+    offer_source_context = offer_source_service.build_llm_context(
+        offer_source_id=brand_strategy.offer_source_id
     )
 
     brand_strategy_context = brand_marketing_service.build_llm_context(
@@ -61,7 +61,7 @@ def generate_offer_strategy_handler(
             LlmMessage(
                 role=LlmMessageRole.USER,
                 content=get_data_prompt(
-                    offer_profile_context=offer_profile_context,
+                    offer_source_context=offer_source_context,
                     brand_strategy_context=brand_strategy_context,
                     marketing_strategy_context=marketing_strategy_context,
                 ),
@@ -123,7 +123,7 @@ business models, categories, and customer types.
 
 Your task is to create an OFFER STRATEGY based only on:
 
-- the confirmed Offer Profile,
+- the confirmed Offer Source,
 - the Brand Strategy,
 - the Marketing Strategy.
 
@@ -186,7 +186,7 @@ SOURCE-OF-TRUTH HIERARCHY
 
 Use each source only for the type of information it can legitimately support:
 
-- Offer Profile = factual offer properties, capabilities, inclusions,
+- Offer Source = factual offer properties, capabilities, inclusions,
   limitations, specifications, delivery model, confirmed terms, and actual
   components.
 - Brand Strategy = positioning, brand principles, tone, and brand-level
@@ -194,7 +194,7 @@ Use each source only for the type of information it can legitimately support:
 - Marketing Strategy = audience priorities, market priorities, channel
   recommendations, acquisition logic, and hypotheses to test.
 
-Offer Profile has final authority over what the offer actually contains,
+Offer Source has final authority over what the offer actually contains,
 what it can do, and which commercial terms actually exist.
 
 Marketing Strategy recommendations are NOT automatically existing offer
@@ -714,7 +714,7 @@ All sections must agree with each other and with the source hierarchy.
 Rules:
 
 1. Every feature, capability, inclusion, term, and mechanism must be supported
-   by Offer Profile.
+   by Offer Source.
 
 2. Marketing Strategy may influence priorities and framing, but it may not
    create product or commercial facts.
@@ -740,7 +740,7 @@ Rules:
 9. If information is missing, remain conservative rather than filling the gap
    with a plausible assumption.
 
-10. Offer Profile always takes precedence when determining what the offer
+10. Offer Source always takes precedence when determining what the offer
     actually contains or can do.
 
 
@@ -850,7 +850,7 @@ realism, and internal consistency are more important than completeness.
 
 
 def get_data_prompt(
-    offer_profile_context: str,
+    offer_source_context: str,
     brand_strategy_context: str,
     marketing_strategy_context: str,
 ) -> str:
@@ -869,7 +869,7 @@ and conversion lever in the output must be supported by the current context.
 
 SOURCE RESPONSIBILITIES:
 
-- Use Offer Profile as the source of truth for what the offer actually is,
+- Use Offer Source as the source of truth for what the offer actually is,
   contains, does, includes, supports, and limits.
 - Use Brand Strategy to inform positioning and expression.
 - Use Marketing Strategy to inform priorities, audiences, market context, and
@@ -880,10 +880,10 @@ the offer.
 
 If Marketing Strategy suggests a tactic, feature, commercial mechanism,
 channel, partnership, proof asset, promotion, policy, or offer modification,
-do not treat it as existing unless Offer Profile independently confirms it.
+do not treat it as existing unless Offer Source independently confirms it.
 
-If Brand Strategy implies a product property or capability that Offer Profile
-does not confirm, use the narrower Offer Profile truth.
+If Brand Strategy implies a product property or capability that Offer Source
+does not confirm, use the narrower Offer Source truth.
 
 If sources conflict, do not invent a reconciliation.
 Use the narrowest interpretation supported by the relevant source of truth.
@@ -895,9 +895,9 @@ or outcomes.
 If information is unavailable, keep the relevant field conservative or empty.
 
 
-OFFER PROFILE
+OFFER SOURCE
 
-{offer_profile_context}
+{offer_source_context}
 
 
 BRAND STRATEGY

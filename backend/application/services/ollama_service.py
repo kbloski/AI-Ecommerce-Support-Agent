@@ -1,7 +1,7 @@
 from ollama import Client
 from infrastructure.logging.logger import Logger
 from core.settings import Settings
-from infrastructure.repositories.app_ollama_settings_repository import AppOllamaSettingsRepository
+from infrastructure.repositories.app_properties_repository import AppPropertiesRepository
 
 from domain.models.ollama.llm_ollama_message import LlmOllamaMessage
 from domain.enums.ollama_message_role import OllamaMessageRole
@@ -12,12 +12,12 @@ def _with_fallback(value, fallback):
 
 
 class OllamaService:
-    def __init__(self, logger: Logger, settings: Settings, app_ollama_settings_repository: AppOllamaSettingsRepository):
+    def __init__(self, logger: Logger, settings: Settings, app_properties_repository: AppPropertiesRepository):
         self.logger = logger
 
         # Nadpisania per instancja aplikacji (baza danych) mają pierwszeństwo
         # przed wartościami domyślnymi z `.env`. Zob. memory/ai-ec-agent/architecture.md.
-        overrides = app_ollama_settings_repository.get()
+        overrides = app_properties_repository.get()
 
         self.llm_model = _with_fallback(overrides.ollama_model if overrides else None, settings.get_ollama_llm_model())
         self.num_ctx = _with_fallback(overrides.ollama_context_length if overrides else None, settings.get_ollama_num_ctx())

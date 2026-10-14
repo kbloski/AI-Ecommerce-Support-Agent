@@ -8,7 +8,7 @@ ALLOWED_FIELDS = {"ollama_url", "ollama_model", "ollama_timeout", "ollama_contex
 
 def save_ollama_settings_handler(fields: Dict[str, Any]):
     container = Container()
-    repository = container.app_ollama_settings_repository()
+    repository = container.app_properties_repository()
 
     updates = {key: value for key, value in fields.items() if key in ALLOWED_FIELDS}
     repository.upsert(updates)

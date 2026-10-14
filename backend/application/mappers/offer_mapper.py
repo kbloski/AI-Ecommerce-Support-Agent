@@ -1,4 +1,4 @@
-from domain.models.offers.offer_raw import OfferRaw
+from domain.models.offer.offer_raw import OfferRaw
 from application.dtos.offers.offer_dto import OfferDto
 
 class OfferMapper:
