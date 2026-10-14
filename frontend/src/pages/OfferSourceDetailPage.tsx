@@ -4,17 +4,12 @@ import {
   useGetOfferSourceQuery,
   useUpdateOfferSourceMutation,
 } from '@/features/offerSources/offerSourceApi'
-import {
-  useDeleteTargetAudienceMutation,
-  useUpdateTargetAudienceMutation,
-} from '@/features/targetAudiences/targetAudiencesApi'
+
 
 export default function OfferSourceDetailPage() {
   const offerSourceId = Number(useParams().offerSourceId)
   const { data: offer_source, isLoading, error } = useGetOfferSourceQuery(offerSourceId)
 
-  const [deleteTargetAudience] = useDeleteTargetAudienceMutation()
-  const [updateTargetAudience] = useUpdateTargetAudienceMutation()
 
   const [updateOfferSource, updateOfferSourceState] = useUpdateOfferSourceMutation()
 
@@ -26,17 +21,6 @@ export default function OfferSourceDetailPage() {
       data={offer_source}
       isLoading={isLoading}
       error={error}
-      itemActions={{
-        target_audiences: (item) => deleteTargetAudience({ id: item.id as number, offerSourceId }),
-      }}
-      itemStatusActions={{
-        target_audiences: (item, factStatus) =>
-          updateTargetAudience({
-            id: item.id as number,
-            offerSourceId,
-            fact_status: factStatus,
-          }).unwrap(),
-      }}
       editable={{
         onSave: (fields) => updateOfferSource({ id: offerSourceId, fields }).unwrap(),
         isSaving: updateOfferSourceState.isLoading,

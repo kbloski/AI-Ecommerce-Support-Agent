@@ -28,7 +28,7 @@ import PageBlueprintDetailPage from '@/pages/PageBlueprintDetailPage'
 import PageContentPlanDetailPage from '@/pages/PageContentPlanDetailPage'
 import PageCopyDetailPage from '@/pages/PageCopyDetailPage'
 import SettingsPage from '@/pages/SettingsPage'
-import { OfferSourceElementsPage, OfferSourceTargetAudiencesPage } from '@/pages/EntityRelationPages'
+import { OfferSourceElementsPage, OfferProfileTargetAudiencesPage } from '@/pages/EntityRelationPages'
 import {
   AdSetupCreativeExecutionSetupsPage, AdCreativeStrategiesPage, AnalysisQuestionsPage,
   BrandMarketingStrategiesPage, ChecklistItemsPage, OfferSourceAnalysesPage,
@@ -48,7 +48,7 @@ function App() {
         <Route path="/offers/:offerId/offer-sources" element={<OfferSourcesPage />} />
         <Route path="/offers/:offerId/offer_sources" element={<OfferSourcesPage />} />
         <Route path="/offer-sources/:offerSourceId" element={<OfferSourceDetailPage />} />
-        <Route path="/offer-sources/:offerSourceId/target-audiences" element={<OfferSourceTargetAudiencesPage />} />
+        <Route path="/offer-profiles/:offerProfileId/target-audiences" element={<OfferProfileTargetAudiencesPage />} />
         <Route path="/offer-profiles/:offerProfileId/additional-contexts" element={<OfferProfileAdditionalContextsPage />} />
         <Route path="/offer-profiles/:offerProfileId" element={<OfferProfileDetailPage />} />
         <Route path="/offer-sources/:offerSourceId/profiles" element={<OfferProfilesPage />} />

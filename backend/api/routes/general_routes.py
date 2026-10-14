@@ -178,26 +178,15 @@ class UpdateTargetAudienceRequest(BaseModel):
     fact_status: Optional[FactStatus] = None
     is_reviewed: Optional[bool] = None
     name: Optional[str] = None
-    reason: Optional[str] = None
-    score: Optional[float] = None
-    confidence: Optional[float] = None
     age_min: Optional[int] = None
     age_max: Optional[int] = None
     gender: Optional[str] = None
-    location: Optional[str] = None
-    purchasing_power: Optional[str] = None
     lifestyles: Optional[List[Any]] = None
     values: Optional[List[Any]] = None
-    awareness_level: Optional[str] = None
-    price_sensitivity: Optional[str] = None
-    research_level: Optional[str] = None
-    decision_time: Optional[str] = None
     pain_points: Optional[List[Any]] = None
     motivations: Optional[List[Any]] = None
     buying_triggers: Optional[List[Any]] = None
-    objections: Optional[List[Any]] = None
-    message_angles: Optional[List[Any]] = None
-    marketing_channels: Optional[List[Any]] = None
+    desires: Optional[List[Any]] = None
 
 
 
@@ -451,21 +440,21 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
 
     #  POST in future
-    @router.post("/offer-sources/{offer_source_id}/target-audiences/generate")
-    def generate_target_audience(offer_source_id: int):
-        return generate_target_audience_handler( offer_source_id=offer_source_id)
+    @router.post("/offer-profiles/{offer_profile_id}/target-audiences/generate")
+    def generate_target_audience(offer_profile_id: int):
+        return generate_target_audience_handler( offer_profile_id=offer_profile_id)
 
     # #  GET in future
-    @router.get("/offer-sources/{offer_source_id}/target-audiences")
+    @router.get("/offer-profiles/{offer_profile_id}/target-audiences")
     def get_target_audience(
-        offer_source_id: int,
+        offer_profile_id: int,
         page: int = Query(default=1, ge=1),
         page_size: int = Query(default=20, ge=1, le=100),
         is_reviewed: bool | None = None,
         sort: Literal["unreviewed_first", "reviewed_first"] = "unreviewed_first",
     ):
         return get_target_audience_handler(
-            offer_source_id=offer_source_id,
+            offer_profile_id=offer_profile_id,
             page=page,
             page_size=page_size,
             is_reviewed=is_reviewed,

@@ -2,6 +2,8 @@ from enum import Enum
 
 
 class ContextSectionPurpose(str, Enum):
+    OFFER_PROFILE = "Profile information and attached additional contexts defining the offer perspective."
+
     # Core business context
     OFFER_SOURCE = (
         "Facts describing the offer, product, target customers, capabilities, "

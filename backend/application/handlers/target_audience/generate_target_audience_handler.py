@@ -1,8 +1,9 @@
 import json
 from typing import Dict, Any
 
+from fastapi import HTTPException
+
 from di.container import Container
-from application.mappers.offer_source_mapper import OfferSourceMapper
 from application.mappers.target_audience_mapper import TargetAudienceMapper
 
 from domain.models.llm.llm_message import LlmMessage
@@ -10,10 +11,6 @@ from domain.models.audience.target_audience import TargetAudience
 
 from domain.enums.llm_message_role import LlmMessageRole
 from domain.enums.audience_gender import AudienceGender
-from domain.enums.decision_time import DecisionTime
-from domain.enums.awareness_level import AwarenessLevel
-from domain.enums.intensity_level import IntensityLevel
-from domain.enums.purchasing_power import PurchasingPower
 from domain.enums.fact_status import FactStatus
 
 from infrastructure.ai.prompts.uniqueness import build_uniqueness_prompt
@@ -21,16 +18,19 @@ from infrastructure.ai.prompts.uniqueness import build_uniqueness_prompt
 
 
 def generate_target_audience_handler(
-    offer_source_id: int
+    offer_profile_id: int
 ) -> Dict[str, Any]:
     container = Container()
 
     target_audience_repo = container.target_audiences_repository()
-    
+
     ai_service = container.ai_service()
-    offer_source_service = container.offer_source_service()
-    offer_source_context = offer_source_service.build_llm_context(offer_source_id=offer_source_id)
-    
+    offer_profile_service = container.offer_profile_service()
+    try:
+        offer_profile_context = offer_profile_service.build_llm_context(offer_profile_id=offer_profile_id)
+    except LookupError as error:
+        raise HTTPException(404, str(error)) from error
+
     response = ai_service.chat_llm(
         messages=[
             LlmMessage(
@@ -39,7 +39,7 @@ def generate_target_audience_handler(
             ),
             LlmMessage(
                 role=LlmMessageRole.USER,
-                content=get_target_audience_prompt(offer_source_context=offer_source_context)
+                content=get_target_audience_prompt(offer_profile_context=offer_profile_context)
             )
         ]
     )
@@ -51,29 +51,18 @@ def generate_target_audience_handler(
     for t in audiences_arr:
         new_target_audiences.append(
             TargetAudience(
-                offer_source_id=offer_source_id,
+                offer_profile_id=offer_profile_id,
                 fact_status=FactStatus.UNVERIFIED.value,
                 name=t["name"],
-                reason=t["reason"],
-                score=t['score'],
-                confidence=t['confidence'],
                 age_min=t["age_min"],
                 age_max=t["age_max"],
                 gender=t["gender"],
-                location=t["location"],
-                purchasing_power=t["purchasing_power"],
                 lifestyles=t["lifestyles"],
                 values=t["values"],
-                awareness_level=t["awareness_level"],
-                price_sensitivity=t["price_sensitivity"],
-                research_level=t["research_level"],
-                decision_time=t["decision_time"],
                 pain_points=t["pain_points"],
                 motivations=t["motivations"],
                 buying_triggers=t["buying_triggers"],
-                objections=t["objections"],
-                message_angles=t["message_angles"],
-                marketing_channels=t["marketing_channels"]
+                desires=t["desires"],
             )
         )
 
@@ -111,49 +100,25 @@ Rules:
 - Label assumptions.
 - Results must be useful for advertising and marketing.
 
-Requirements:
-- confidence MUST be a float between 0 and 1.
-- score MUST be an float between 0 and 1.
-
+Use null for unknown demographic fields and empty arrays for missing list data.
+Desires describe what the audience wants; motivations describe why they act.
 Return ONLY valid JSON.
 """
 
 
 def get_target_audience_schema() -> str:
-    return json.dumps(
-{
-    "audiences": [
-        {
-            "name": "",
-            "score": 0,
-            "confidence": 0,
-            "reason": "",
-
-            "age_min": 0,
-            "age_max": 0,
-
-            "gender": "",
-            "location": "",
-            "purchasing_power": "",
-
-            "lifestyles": [""],
-            "values": [""],
-
-            "awareness_level": "",
-            "price_sensitivity": "",
-            "research_level": "",
-            "decision_time": "",
-
-            "pain_points": [""],
-            "motivations": [""],
-            "buying_triggers": [""],
-            "objections": [""],
-
-            "message_angles": [""],
-            "marketing_channels": [""]
-        }
-    ]
-}, ensure_ascii=False, indent=2)
+    return json.dumps({"audiences": [{
+        "name": "",
+        "age_min": None,
+        "age_max": None,
+        "gender": None,
+        "lifestyles": [],
+        "values": [],
+        "pain_points": [],
+        "desires": [],
+        "motivations": [],
+        "buying_triggers": [],
+    }]}, ensure_ascii=False, indent=2)
 
 
 def _enum_values(enum_cls) -> str:
@@ -168,25 +133,9 @@ gender:
 AudienceGenderEnum:
 {_enum_values(AudienceGender)}
 
-purchasing_power:
-PurchasingPowerEnum:
-{_enum_values(PurchasingPower)}
 
-awareness_level:
-AwarenessLevelEnum:
-{_enum_values(AwarenessLevel)}
 
-price_sensitivity:
-IntensityLevelEnum:
-{_enum_values(IntensityLevel)}
 
-research_level:
-IntensityLevelEnum:
-{_enum_values(IntensityLevel)}
-
-decision_time:
-DecisionTimeEnum:
-{_enum_values(DecisionTime)}
 
 
 Enum rules:
@@ -206,16 +155,18 @@ Incorrect example:
 """
 
 
-def get_target_audience_prompt(offer_source_context: str) -> str:
+def get_target_audience_prompt(offer_profile_context: str) -> str:
     return f"""
 Analyze the product information.
 
-PRODUCT DATA:
+OFFER PROFILE CONTEXT:
 
-{offer_source_context}
+{offer_profile_context}
 
 
-Generate target audience segments.
+Generate target audience segments for this specific offer profile.
+Use its name and attached additional information to define its perspective.
+Use only information included in the profile context; do not invent product capabilities.
 
 
 Response format:

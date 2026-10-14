@@ -19,23 +19,23 @@ import {
   useUpdateOfferSourceElementMutation,
   type OfferSourceElementSort,
 } from '@/features/offerSources/offerSourceApi'
-import { useDeleteTargetAudienceMutation, useGenerateTargetAudiencesMutation, useListTargetAudiencesForOfferSourceQuery, useUpdateTargetAudienceMutation } from '@/features/targetAudiences/targetAudiencesApi'
+import { useDeleteTargetAudienceMutation, useGenerateTargetAudiencesMutation, useListTargetAudiencesForOfferProfileQuery, useUpdateTargetAudienceMutation } from '@/features/targetAudiences/targetAudiencesApi'
 import type { Entity } from '@/types'
 
-export function OfferSourceTargetAudiencesPage() {
-  const offerSourceId = Number(useParams().offerSourceId)
+export function OfferProfileTargetAudiencesPage() {
+  const offerProfileId = Number(useParams().offerProfileId)
   const [page, setPage] = useState(1)
   const [isReviewedFilter, setIsReviewedFilter] = useState<ReviewStatusFilterValue>('')
   const [reviewStatusSort, setReviewStatusSort] = useState<ReviewStatusSort>('unreviewed_first')
-  const { data: result, isLoading, error } = useListTargetAudiencesForOfferSourceQuery({
-    offerSourceId,
+  const { data: result, isLoading, error } = useListTargetAudiencesForOfferProfileQuery({
+    offerProfileId,
     page,
     pageSize: 6,
     isReviewed: isReviewedFilter === '' ? undefined : isReviewedFilter === 'true',
     sort: reviewStatusSort,
   })
-  const { data: unreviewedResult } = useListTargetAudiencesForOfferSourceQuery({
-    offerSourceId,
+  const { data: unreviewedResult } = useListTargetAudiencesForOfferProfileQuery({
+    offerProfileId,
     pageSize: 1,
     isReviewed: false,
   })
@@ -65,7 +65,7 @@ export function OfferSourceTargetAudiencesPage() {
         isLoading={isLoading}
         error={error}
         itemLabel={(item) => (item.name as string) ?? `#${item.id}`}
-        onGenerate={() => generate({ offerSourceId })}
+        onGenerate={() => generate({ offerProfileId })}
         isGenerating={generateState.isLoading}
         generateLabel="Generuj grupy docelowe"
         contentBeforeList={
@@ -87,7 +87,7 @@ export function OfferSourceTargetAudiencesPage() {
           title: 'Edytuj grupę docelową',
           content: <EditTargetAudienceForm id={item.id as number} data={item} onSaved={closePanel} />,
         })}
-        onDelete={(item) => remove({ id: item.id as number, offerSourceId })}
+        onDelete={(item) => remove({ id: item.id as number, offerProfileId })}
         itemActions={(item) => (
           <Button
             variant={item.is_reviewed ? 'ghost' : 'default'}
@@ -95,7 +95,7 @@ export function OfferSourceTargetAudiencesPage() {
             className="h-7 px-2.5 text-xs"
             onClick={() => updateTargetAudience({
               id: item.id as number,
-              offerSourceId,
+              offerProfileId,
               is_reviewed: item.is_reviewed !== true,
             })}
           >

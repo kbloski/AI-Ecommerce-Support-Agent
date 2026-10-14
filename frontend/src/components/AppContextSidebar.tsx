@@ -10,7 +10,7 @@ import { useListProfileContextsQuery } from '@/features/additionalContexts/addit
 import { useListOfferProfilesQuery } from '@/features/offerProfiles/offerProfilesApi'
 import { useListOfferFactsQuery } from '@/features/offerFacts/offerFactsApi'
 import { useListOfferSourceElementsQuery, useListOfferSourceForOfferQuery } from '@/features/offerSources/offerSourceApi'
-import { useListTargetAudiencesForOfferSourceQuery } from '@/features/targetAudiences/targetAudiencesApi'
+import { useListTargetAudiencesForOfferProfileQuery } from '@/features/targetAudiences/targetAudiencesApi'
 import { useGetAnalysisQuery, useListAnalysisForOfferSourceQuery } from '@/features/analysis/analysisApi'
 import { useListBrandMarketingForOfferSourceQuery } from '@/features/brandMarketing/brandMarketingApi'
 import { useGetChecklistQuery, useListChecklistsForOfferSourceQuery } from '@/features/checklists/checklistsApi'
@@ -83,10 +83,10 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   const showBackButton = pathname !== '/' && pathname !== '/offers'
   const sections = [
     { pattern: '/offers/:id/*', current: 'Oferta', entityType: 'offer', process: [['offer-sources', 'Źródła oferty']], resources: [] },
-    { pattern: '/offer-sources/:id/*', current: 'Offer source', entityType: 'offer_source', process: [['profiles', 'Profile oferty'], ['brand-marketing', 'Marketing marki (przestarzały)']], offer_source: [['analyses', 'Analizy produktu (przestarzały)'], ['checklists', 'Checklisty (przestarzały)']], resources: [['facts', 'Fakty o produkcie'], ['target-audiences', 'Grupy docelowe (przestarzały)'], ['elements', 'Elementy oferty (przestarzały)']] },
+    { pattern: '/offer-sources/:id/*', current: 'Offer source', entityType: 'offer_source', process: [['profiles', 'Profile oferty'], ['brand-marketing', 'Marketing marki (przestarzały)']], offer_source: [['analyses', 'Analizy produktu (przestarzały)'], ['checklists', 'Checklisty (przestarzały)']], resources: [['facts', 'Fakty o produkcie'], ['elements', 'Elementy oferty (przestarzały)']] },
     { pattern: '/offer-sources/:offerSourceId/analysis/:id/*', current: 'Analiza', process: [], resources: [['questions', 'Pytania']] },
     { pattern: '/offer-sources/:offerSourceId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },
-    { pattern: '/offer-profiles/:id/*', current: 'Profil oferty', attached: [['additional-contexts', 'Dodatkowe informacje']], process: [], resources: [] },
+    { pattern: '/offer-profiles/:id/*', current: 'Profil oferty', attached: [['additional-contexts', 'Dodatkowe informacje']], process: [], resources: [['target-audiences', 'Grupy docelowe']] },
     { pattern: '/brand-marketing/:id/*', current: 'Brand marketing', entityType: 'brand_marketing', process: [['marketing-strategies', 'Marketing strategy']], resources: [] },
     { pattern: '/marketing-strategy/:id/*', current: 'Marketing strategy', entityType: 'marketing_strategy', process: [['offer-strategies', 'Offer strategy']], resources: [] },
     { pattern: '/offer-strategy/:id/*', current: 'Offer strategy', entityType: 'offer_strategy', process: [['message-strategies', 'Message strategy']], resources: [] },
@@ -114,13 +114,13 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   const isAnalysisSection = section?.config.current === 'Analiza'
   const isChecklistSection = section?.config.current === 'Checklista'
   const isCurrentStage = (stage: string) => section?.config.current === stage && Number.isInteger(currentEntityId)
-  const targetAudiences = useListTargetAudiencesForOfferSourceQuery(
-    { offerSourceId, pageSize: 1 },
-    { skip: skipOfferSourceResources },
+  const targetAudiences = useListTargetAudiencesForOfferProfileQuery(
+    { offerProfileId: currentEntityId, pageSize: 1 },
+    { skip: !isCurrentStage('Profil oferty') },
   )
-  const unreviewedTargetAudiences = useListTargetAudiencesForOfferSourceQuery(
-    { offerSourceId, pageSize: 1, isReviewed: false },
-    { skip: skipOfferSourceResources },
+  const unreviewedTargetAudiences = useListTargetAudiencesForOfferProfileQuery(
+    { offerProfileId: currentEntityId, pageSize: 1, isReviewed: false },
+    { skip: !isCurrentStage('Profil oferty') },
   )
   const offerSourceElements = useListOfferSourceElementsQuery(
     { offerSourceId },

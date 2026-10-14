@@ -17,23 +17,15 @@ const LIST_FIELDS = [
   'pain_points',
   'motivations',
   'buying_triggers',
-  'objections',
-  'message_angles',
-  'marketing_channels',
+  'desires',
 ] as const
 
 const TEXT_FIELDS = [
   'name',
   'gender',
-  'location',
-  'purchasing_power',
-  'awareness_level',
-  'price_sensitivity',
-  'research_level',
-  'decision_time',
 ] as const
 
-const NUMBER_FIELDS = ['score', 'confidence', 'age_min', 'age_max'] as const
+const NUMBER_FIELDS = ['age_min', 'age_max'] as const
 
 function toJson(value: unknown): string {
   return JSON.stringify(Array.isArray(value) ? value : [], null, 2)
@@ -66,7 +58,7 @@ export function EditTargetAudienceForm({
 
     const formData = new FormData(e.currentTarget)
 
-    const payload: UpdateTargetAudienceArgs = { id, offerSourceId: data.offer_source_id as number }
+    const payload: UpdateTargetAudienceArgs = { id, offerProfileId: data.offer_profile_id as number }
 
     if (factStatus) payload.fact_status = factStatus
     payload.is_reviewed = isReviewed
@@ -76,7 +68,6 @@ export function EditTargetAudienceForm({
       if (raw !== null) payload[field] = String(raw)
     }
 
-    payload.reason = String(formData.get('reason') ?? '')
 
     for (const field of NUMBER_FIELDS) {
       const raw = formData.get(field)
@@ -146,10 +137,6 @@ export function EditTargetAudienceForm({
         </div>
       ))}
 
-      <div className="space-y-1">
-        <Label htmlFor="reason">Reason</Label>
-        <Textarea id="reason" name="reason" defaultValue={(data.reason as string) ?? ''} />
-      </div>
 
       <div className="grid grid-cols-2 gap-4">
         {NUMBER_FIELDS.map((field) => (

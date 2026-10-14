@@ -11,6 +11,9 @@ from sqlalchemy.pool import StaticPool
 from api.routes.offer_profiles_routes import router
 from application.handlers.offer_profiles import create_offer_profile_handler, list_offer_profiles_handler
 from infrastructure.repositories.offer_profiles_repository import OfferProfilesRepository
+from infrastructure.repositories.additional_contexts_repository import AdditionalContextsRepository
+from application.services.offer_profile_service import OfferProfileService
+from application.assemblers.offer_profile_assembler import OfferProfileAssembler
 from infrastructure.database.db import Base
 from infrastructure.database import init_db as migration
 from domain.models import models
@@ -30,6 +33,8 @@ class OfferProfileTests(unittest.TestCase):
         self.db.add_all([OfferSource(id=1, offer_id=1), OfferSource(id=2, offer_id=1)]); self.db.commit()
         repo = OfferProfilesRepository(None, self.db)
         container = SimpleNamespace(offer_profiles_repository=lambda: repo, offer_source_repository=lambda: SimpleNamespace(get_by_id=lambda id: self.db.get(OfferSource, id)))
+        service = OfferProfileService(repo, OfferProfileAssembler(AdditionalContextsRepository(None, self.db)))
+        container.offer_profile_service = lambda: service
         self.overrides = ExitStack()
         for action in ("create", "list", "get", "update", "delete"):
             module = importlib.import_module(f"application.handlers.offer_profiles.{action}_offer_profile{'s' if action == 'list' else ''}_handler")

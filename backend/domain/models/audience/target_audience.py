@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float, Index, JSON, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Index, JSON, Boolean
 from sqlalchemy.sql import func
 
 from infrastructure.database.db import Base
@@ -13,9 +13,9 @@ class TargetAudience(Base, JSONSerializable):
     id = Column(Integer, primary_key=True, autoincrement=True)
 
     # Relation
-    offer_source_id = Column(
+    offer_profile_id = Column(
         Integer,
-        ForeignKey(TableName.OFFER_SOURCES + ".id", ondelete="CASCADE"),
+        ForeignKey(TableName.OFFER_PROFILES + ".id", ondelete="CASCADE"),
         nullable=True,
         index=True,
     )
@@ -26,38 +26,27 @@ class TargetAudience(Base, JSONSerializable):
 
     # Basic information
     name = Column(String(255), nullable=False)
-    reason = Column(String, nullable=True)
 
     # AI evaluation
-    score = Column(Float, nullable=True)
-    confidence = Column(Float, nullable=True)
 
     # Demographics
     age_min = Column(Integer, nullable=True)
     age_max = Column(Integer, nullable=True)
     gender = Column(String(50), nullable=True)
-    location = Column(String(255), nullable=True)
-    purchasing_power = Column(String(100), nullable=True)
 
     # Psychographics
     lifestyles = Column(JSON, nullable=True)
     values = Column(JSON, nullable=True)
 
     # Buying behavior
-    awareness_level = Column(String(50), nullable=True)
-    price_sensitivity = Column(String(50), nullable=True)
-    research_level = Column(String(50), nullable=True)
-    decision_time = Column(String(100), nullable=True)
 
     # Customer insights
     pain_points = Column(JSON, nullable=True)
     motivations = Column(JSON, nullable=True)
     buying_triggers = Column(JSON, nullable=True)
-    objections = Column(JSON, nullable=True)
+    desires = Column(JSON, nullable=True)
 
     # Marketing
-    message_angles = Column(JSON, nullable=True)
-    marketing_channels = Column(JSON, nullable=True)
 
     is_favorite = Column(Boolean, nullable=False, default=False, server_default="0")
 
@@ -71,13 +60,9 @@ class TargetAudience(Base, JSONSerializable):
 
     __table_args__ = (
         Index(
-            "ix_target_audience_offer_source_fact_status",
-            "offer_source_id",
+            "ix_target_audience_offer_profile_fact_status",
+            "offer_profile_id",
             "fact_status"
-        ),
-        Index(
-            "ix_target_audience_score",
-            "score"
         ),
         Index(
             "ix_target_audience_gender",

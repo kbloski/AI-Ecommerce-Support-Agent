@@ -23,6 +23,9 @@ def init_db():
     _add_missing_page_blueprint_columns()
     _rename_page_section_requirement_column()
     _migrate_offer_facts_optional_evidence()
+    _migrate_target_audiences_to_offer_profiles()
+    _remove_obsolete_target_audience_columns()
+    _add_target_audience_desires()
     Base.metadata.create_all(bind=engine)
 
 def _migrate_ad_execution_to_ad_setup():
@@ -669,3 +672,77 @@ def _repair_offer_profile_additional_contexts_key():
             'ALTER TABLE "offer_profile_additional_contexts" '
             'RENAME COLUMN "offer_source_id" TO "offer_profile_id"'
         ))
+
+
+def _migrate_target_audiences_to_offer_profiles():
+    """Preserve source audiences while moving ownership to offer profiles."""
+    from sqlalchemy import MetaData
+    from domain.models.audience.target_audience import TargetAudience
+    from domain.models.offer.offer_profile import OfferProfile
+
+    with engine.begin() as conn:
+        inspector = inspect(conn)
+        if "target_audiences" not in inspector.get_table_names():
+            return
+        columns = {column["name"] for column in inspector.get_columns("target_audiences")}
+        if "offer_source_id" not in columns:
+            return
+        if "offer_profile_id" in columns:
+            raise RuntimeError("Both source and profile audience columns exist; manual resolution required")
+        if conn.dialect.name != "sqlite":
+            raise RuntimeError("Audience ownership migration currently supports SQLite")
+        OfferProfile.__table__.create(conn, checkfirst=True)
+        source_ids = conn.execute(text("SELECT DISTINCT offer_source_id FROM target_audiences WHERE offer_source_id IS NOT NULL")).scalars().all()
+        mapping = {}
+        for source_id in source_ids:
+            profiles = conn.execute(text("SELECT id FROM offer_profiles WHERE offer_source_id = :source_id ORDER BY id"), {"source_id": source_id}).scalars().all()
+            if len(profiles) == 1:
+                mapping[source_id] = profiles[0]
+            else:
+                result = conn.execute(OfferProfile.__table__.insert().values(offer_source_id=source_id, name="Przeniesione grupy docelowe"))
+                mapping[source_id] = result.inserted_primary_key[0]
+        metadata = MetaData()
+        for table in Base.metadata.sorted_tables:
+            table.to_metadata(metadata)
+        temporary = TargetAudience.__table__.to_metadata(metadata, name="target_audiences_migrated")
+        temporary.indexes.clear()
+        if "target_audiences_migrated" in inspect(conn).get_table_names():
+            raise RuntimeError("Temporary audience migration table already exists")
+        temporary.create(conn)
+        common = [column.name for column in TargetAudience.__table__.columns if column.name in columns]
+        expressions = [f'"{name}"' for name in common]
+        common.append("offer_profile_id")
+        cases = " ".join(f"WHEN {int(source_id)} THEN {int(profile_id)}" for source_id, profile_id in mapping.items())
+        expressions.append(f'CASE "offer_source_id" {cases} ELSE NULL END' if cases else "NULL")
+        names = ", ".join(f'"{name}"' for name in common)
+        conn.execute(text(f'INSERT INTO target_audiences_migrated ({names}) SELECT {", ".join(expressions)} FROM target_audiences'))
+        conn.execute(text('DROP TABLE "target_audiences"'))
+        conn.execute(text('ALTER TABLE "target_audiences_migrated" RENAME TO "target_audiences"'))
+        for index in TargetAudience.__table__.indexes:
+            index.create(conn, checkfirst=True)
+
+
+def _remove_obsolete_target_audience_columns():
+    """Remove obsolete audience evaluation and marketing fields."""
+    removed = {"message_angles", "marketing_channels", "score", "confidence", "awareness_level", "reason", "decision_time", "research_level", "price_sensitivity", "location", "objections", "purchasing_power"}
+    with engine.begin() as conn:
+        inspector = inspect(conn)
+        if "target_audiences" not in inspector.get_table_names():
+            return
+        columns = {column["name"] for column in inspector.get_columns("target_audiences")}
+        quote = conn.dialect.identifier_preparer.quote
+        for index in inspector.get_indexes("target_audiences"):
+            if removed.intersection(index["column_names"]):
+                conn.execute(text(f'DROP INDEX {quote(index["name"])}'))
+        for column in sorted(removed.intersection(columns)):
+            conn.execute(text(f'ALTER TABLE "target_audiences" DROP COLUMN {quote(column)}'))
+
+
+def _add_target_audience_desires():
+    with engine.begin() as conn:
+        inspector = inspect(conn)
+        if "target_audiences" not in inspector.get_table_names():
+            return
+        columns = {column["name"] for column in inspector.get_columns("target_audiences")}
+        if "desires" not in columns:
+            conn.execute(text("ALTER TABLE target_audiences ADD COLUMN desires JSON DEFAULT '[]'"))

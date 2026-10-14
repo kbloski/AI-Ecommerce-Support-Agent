@@ -3,7 +3,7 @@ from di.container import Container
 from application.mappers.target_audience_mapper import TargetAudienceMapper
 
 def get_target_audience_handler(
-    offer_source_id: int,
+    offer_profile_id: int,
     page: int = 1,
     page_size: int = 20,
     is_reviewed: bool | None = None,
@@ -11,10 +11,13 @@ def get_target_audience_handler(
 ) -> dict:
     container = Container()
 
+    if container.offer_profiles_repository().get_by_id(offer_profile_id) is None:
+        from fastapi import HTTPException
+        raise HTTPException(404, "Offer profile not found")
     target_audiences_repository = container.target_audiences_repository()
 
-    result = target_audiences_repository.search_for_offer_source(
-        offer_source_id=offer_source_id,
+    result = target_audiences_repository.search_for_offer_profile(
+        offer_profile_id=offer_profile_id,
         page=page,
         page_size=page_size,
         is_reviewed=is_reviewed,

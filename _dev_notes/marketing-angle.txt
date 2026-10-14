@@ -1,0 +1,14 @@
+1. Co powinien zawierać MarketingAngle?
+
+Proponuję 10 pól, z czego pierwszych 6 stanowiłoby podstawę.
+Pole	Znaczenie	Wymagane
+name	Krótka nazwa kierunku marketingowego	Tak
+description	Wyjaśnienie idei angle	Tak
+target_audience	Do kogo kierujemy komunikat	Tak
+pain_point	Problem, frustracja lub niezaspokojona potrzeba	Opcjonalne
+desire	Co odbiorca chce osiągnąć lub poczuć	Tak
+core_message	Najważniejszy przekaz marketingowy	Tak
+value_proposition	Jaką wartość oferuje produkt w tym kontekście	Tak
+emotional_driver	Emocja motywująca odbiorcę	Opcjonalne
+proof_points	Fakty potwierdzające argument	Opcjonalne
+objections	Potencjalne zastrzeżenia odbiorcy	Opcjonalne

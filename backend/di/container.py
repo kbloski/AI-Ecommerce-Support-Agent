@@ -1,6 +1,8 @@
 from dependency_injector import containers, providers
 from application.services.offer_source_service import OfferSourceService
 from application.services.offer_facts_service import OfferFactsService
+from application.services.offer_profile_service import OfferProfileService
+from application.assemblers.offer_profile_assembler import OfferProfileAssembler
 from application.services.ai_service import AiService
 from application.services.ollama_service import OllamaService
 from application.services.product_service import ProductService
@@ -515,6 +517,15 @@ class Container(containers.DeclarativeContainer):
         logger=logger,
         offers_repository=offers_repository,
         offer_assembler=offer_assembler,
+    )
+
+    offer_profile_assembler = providers.Singleton(
+        OfferProfileAssembler, additional_contexts_repository=additional_contexts_repository
+    )
+
+    offer_profile_service = providers.Singleton(
+        OfferProfileService, offer_profiles_repository=offer_profiles_repository,
+        offer_profile_assembler=offer_profile_assembler
     )
 
     brand_marketing_service = providers.Singleton(

@@ -8,7 +8,7 @@ export default function OfferProfileDetailPage() {
   const { data, isLoading, error } = useGetOfferProfileQuery(id)
   const [update, updateState] = useUpdateOfferProfileMutation()
   const offerSourceId = Number(data?.offer_source_id)
-  return <DetailShell title={String(data?.name ?? 'Profil oferty')} data={data} isLoading={isLoading} error={error}
+  return <DetailShell title={String(data?.name ?? 'Profil oferty')} data={data} isLoading={isLoading} error={error} exclude={['additional_contexts']}
     editable={data ? { onSave: (fields) => update({ id, offerSourceId, name: String(fields.name) }).unwrap(), isSaving: updateState.isLoading, content: (onSaved) => <OfferProfileForm offerSourceId={offerSourceId} profile={data} onCreated={onSaved} /> } : undefined}
   />
 }
