@@ -260,7 +260,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
         {'attached' in section.config && section.config.attached.length > 0 && (
           <section className="mb-6">
             <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
-              Dołącz do zasobu
+              Powiązane dane z zasobem
             </h2>
             <nav className="ml-2 space-y-1 border-l pl-2">
               {section.config.attached.map(([slug, label]) => (
