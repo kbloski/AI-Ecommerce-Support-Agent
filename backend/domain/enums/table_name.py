@@ -3,6 +3,7 @@ from enum import Enum
 
 class TableName(str, Enum):
     OFFERS_RAW = "offers_raw"
+    OFFER_FACTS = "offer_facts"
     OFFER_SOURCES = "offer_sources"
     OFFER_SOURCE_ELEMENTS = "offer_source_elements"
     TARGET_AUDIENCES = "target_audiences"

@@ -42,27 +42,38 @@ class OfferSourceService:
 
 
 
-    def build_llm_context(self, offer_source_id: int) -> str:
+    def get_offer_source_content(self, offer_source_id: int) -> dict[str, str]:
+        source = self.offer_source_repository.get_by_id(id=offer_source_id)
+        if source is None:
+            raise LookupError(f"Offer source {offer_source_id} not found")
+        return {"offer_summary": source.offer_summary or ""}
+
+    def build_llm_context(self, offer_source_id: int, *, include_related: bool = True) -> str:
+        if not include_related:
+            content = json.dumps(
+                self.get_offer_source_content(offer_source_id),
+                ensure_ascii=False,
+                indent=2,
+            )
+            return build_llm_section(
+                "offer_source", content, purpose=ContextSectionPurpose.OFFER_SOURCE.value
+            )
         assembled_offer_source = self.get_offer_source_details_by_id(offer_source_id=offer_source_id)
 
-        # Nieprzejrzane dane pozostają dostępne w API, ale nie mogą wpływać na
-        # generowanie kolejnych elementów przez LLM.
-        assembled_offer_source.target_audiences = [
-            target_audience
-            for target_audience in assembled_offer_source.target_audiences
-            if target_audience.is_reviewed
-        ]
-        assembled_offer_source.offer_source_elements = [
-            offer_source_element
-            for offer_source_element in assembled_offer_source.offer_source_elements
-            if offer_source_element.is_reviewed
-        ]
-
+        content = {
+            "offer_summary": assembled_offer_source.offer_summary,
+            "offer_facts": [
+                {
+                    key: value
+                    for key, value in fact.items()
+                    if key not in {"id", "offer_source_id", "created_at", "updated_at", "is_reviewed"}
+                }
+                for fact in assembled_offer_source.offer_facts
+                if fact["is_reviewed"]
+            ],
+        }
         offer_source_json = json.dumps(
-            assembled_offer_source.to_content_dict(),
-            ensure_ascii=False,
-            indent=2,
-            default=str
+            content, ensure_ascii=False, indent=2, default=str
         )
 
         return build_llm_section("offer_source", offer_source_json, purpose=ContextSectionPurpose.OFFER_SOURCE.value)

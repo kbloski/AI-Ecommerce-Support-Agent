@@ -2,6 +2,7 @@ export const TAG_TYPES = [
   'Offer',
   'OfferSource',
   'OfferSourceElement',
+  'OfferFact',
   'TargetAudience',
   'Analysis',
   'AnalysisQuestion',

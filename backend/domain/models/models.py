@@ -9,6 +9,7 @@ from domain.models.llm.llm_message import LlmMessage
 # --------------------
 
 from domain.models.offer.offer_raw import OfferRaw
+from domain.models.offer.offer_fact import OfferFact
 
 # OfferSource
 from domain.models.offer.offer_source import OfferSource

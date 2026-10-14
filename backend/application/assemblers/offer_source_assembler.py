@@ -5,6 +5,8 @@ from infrastructure.logging.logger import Logger
 from infrastructure.repositories.offer_source_repository import OfferSourceRepository
 from infrastructure.repositories.target_audiences_repository import TargetAudiencesRepository
 from infrastructure.repositories.offer_source_elements_repository import OfferSourceElementsRepository
+from infrastructure.repositories.offer_facts_repository import OfferFactsRepository
+from application.mappers.offer_fact_mapper import offer_fact_to_dict
 
 class OfferSourceAssembler:
     def __init__(
@@ -12,8 +14,10 @@ class OfferSourceAssembler:
         logger : Logger,
         offer_source_repository : OfferSourceRepository,
         target_audiences_repository : TargetAudiencesRepository,
+        offer_facts_repository: OfferFactsRepository,
         offer_source_elements_repository : OfferSourceElementsRepository
     ):
+        self.offer_facts_repository = offer_facts_repository
         self.offer_source_repository = offer_source_repository
         self.target_audiences_repository = target_audiences_repository
         self.offer_source_elements_repository = offer_source_elements_repository
@@ -34,4 +38,5 @@ class OfferSourceAssembler:
             for element in offer_source_elements
         ]
 
+        item.offer_facts = [offer_fact_to_dict(fact) for fact in self.offer_facts_repository.find_for_offer_source(item.id)]
         return item

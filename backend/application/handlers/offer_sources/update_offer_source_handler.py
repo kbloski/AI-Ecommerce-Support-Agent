@@ -3,7 +3,7 @@ from typing import Any, Dict
 from di.container import Container
 from application.mappers.offer_source_mapper import OfferSourceMapper
 
-DENYLIST = {"id", "offer_id", "created_at", "updated_at"}
+ALLOWED_FIELDS = {"offer_summary", "is_favorite"}
 
 
 def update_offer_source_handler(id: int, fields: Dict[str, Any]):
@@ -14,7 +14,7 @@ def update_offer_source_handler(id: int, fields: Dict[str, Any]):
     item = offer_source_repository.get_by_id(id)
 
     for key, value in fields.items():
-        if key not in DENYLIST:
+        if key in ALLOWED_FIELDS:
             setattr(item, key, value)
 
     updated = offer_source_repository.update(item)

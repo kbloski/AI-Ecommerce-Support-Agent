@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from api.routes.general_routes import register_general_routes
 from core.settings import Settings
+from api.routes.offer_facts_routes import router as offer_facts_router
 from application.services.llm_result_validation import LlmGenerationError
 
 # Handlers behind /generate routes parse raw LLM JSON and index into it
@@ -66,3 +67,4 @@ class Routes:
             }
 
         register_general_routes( self.router )
+        self.router.include_router(offer_facts_router)

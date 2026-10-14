@@ -13,14 +13,11 @@ class OfferSourceDto(JSONSerializable):
         id: int,
         offer_id: int,
         offer_summary: Optional[str] = None,
-        category: Optional[str] = None,
-        value_proposition: Optional[str] = None,
     ):
+        self.offer_facts = []
         self.id = id
         self.offer_id = offer_id
         self.offer_summary = offer_summary
-        self.category = category
-        self.value_proposition = value_proposition
 
     def _sorted_offer_source_elements(self) -> List[OfferSourceElementDto]:
         """Group elements by type (grouping = stable sort by type, then name)."""
@@ -36,8 +33,7 @@ class OfferSourceDto(JSONSerializable):
             "id": self.id,
             "offer_id": self.offer_id,
             "offer_summary": self.offer_summary,
-            "category": self.category,
-            "value_proposition": self.value_proposition,
+            "offer_facts": self.offer_facts,
             "target_audiences" : [t.to_dict() for t in self.target_audiences],
             "offer_source_elements": [e.to_dict() for e in self._sorted_offer_source_elements()],
         }
@@ -48,4 +44,5 @@ class OfferSourceDto(JSONSerializable):
         data = self.to_dict(exclude=["id", "offer_id"])
         data["target_audiences"] = [t.to_content_dict() for t in self.target_audiences]
         data["offer_source_elements"] = [e.to_content_dict() for e in self._sorted_offer_source_elements()]
+        data["offer_facts"] = [{key: value for key, value in fact.items() if key not in {"id", "offer_source_id", "created_at", "updated_at", "is_reviewed"}} for fact in self.offer_facts]
         return data

@@ -1,5 +1,6 @@
 from dependency_injector import containers, providers
 from application.services.offer_source_service import OfferSourceService
+from application.services.offer_facts_service import OfferFactsService
 from application.services.ai_service import AiService
 from application.services.ollama_service import OllamaService
 from application.services.product_service import ProductService
@@ -24,6 +25,7 @@ from infrastructure.database.db import SessionLocal
 from application.assemblers.offer_assembler import OfferAssembler
 from infrastructure.repositories.offer_source_repository import OfferSourceRepository
 from infrastructure.repositories.offer_source_elements_repository import OfferSourceElementsRepository
+from infrastructure.repositories.offer_facts_repository import OfferFactsRepository
 from application.assemblers.offer_source_assembler import OfferSourceAssembler
 from infrastructure.repositories.target_audiences_repository import TargetAudiencesRepository
 from application.assemblers.target_audience_assembler import TargetAudienceAssembler
@@ -126,6 +128,8 @@ class Container(containers.DeclarativeContainer):
         logger=logger,
         db=db
     )
+
+    offer_facts_repository = providers.Singleton(OfferFactsRepository, logger=logger, db=db)
 
     offer_source_elements_repository = providers.Singleton(
         OfferSourceElementsRepository,
@@ -287,7 +291,8 @@ class Container(containers.DeclarativeContainer):
         logger=logger,
         offer_source_repository=offer_source_repository,
         target_audiences_repository=target_audiences_repository,
-        offer_source_elements_repository=offer_source_elements_repository
+        offer_source_elements_repository=offer_source_elements_repository,
+        offer_facts_repository=offer_facts_repository
     )
 
     target_audience_assembler =  providers.Singleton(
@@ -474,6 +479,10 @@ class Container(containers.DeclarativeContainer):
         logger=logger,
         path_service=path_service,
         ollama_service=ollama_service,
+    )
+
+    offer_facts_service = providers.Singleton(
+        OfferFactsService, offer_facts_repository=offer_facts_repository
     )
 
     offer_source_service = providers.Singleton(

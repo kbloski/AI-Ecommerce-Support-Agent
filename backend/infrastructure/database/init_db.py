@@ -8,6 +8,7 @@ def init_db():
     _rename_offer_raw_details_column()
     _migrate_offer_profile_to_offer_profiles()
     _migrate_offer_profiles_to_offer_sources()
+    _remove_obsolete_offer_source_columns()
     _migrate_checklists_to_offer_sources()
     _migrate_ad_execution_to_ad_setup()
     _migrate_creative_execution_to_generate_ad()
@@ -20,6 +21,7 @@ def init_db():
     _add_missing_page_content_plan_name_column()
     _add_missing_page_blueprint_columns()
     _rename_page_section_requirement_column()
+    _migrate_offer_facts_optional_evidence()
     Base.metadata.create_all(bind=engine)
 
 def _migrate_ad_execution_to_ad_setup():
@@ -585,3 +587,51 @@ def _migrate_offer_profiles_to_offer_sources():
                 conn.execute(text(
                     f'ALTER TABLE "{table}" RENAME COLUMN "offer_profile_id" TO "offer_source_id"'
                 ))
+
+
+def _remove_obsolete_offer_source_columns():
+    """Remove category and value proposition from existing offer sources."""
+    with engine.begin() as conn:
+        if "offer_sources" not in inspect(conn).get_table_names():
+            return
+        columns = {column["name"] for column in inspect(conn).get_columns("offer_sources")}
+        for column in ("category", "value_proposition"):
+            if column in columns:
+                conn.execute(text(f'ALTER TABLE "offer_sources" DROP COLUMN "{column}"'))
+
+
+def _migrate_offer_facts_optional_evidence():
+    """Drop source_field and allow facts without evidence, preserving existing rows."""
+    from domain.models.offer.offer_fact import OfferFact
+
+    with engine.begin() as conn:
+        if "offer_facts" not in inspect(conn).get_table_names():
+            return
+        columns = {column["name"]: column for column in inspect(conn).get_columns("offer_facts")}
+        if "source_field" not in columns and columns["evidence"]["nullable"]:
+            return
+        if conn.dialect.name != "sqlite":
+            if "source_field" in columns:
+                conn.execute(text('ALTER TABLE "offer_facts" DROP COLUMN "source_field"'))
+            conn.execute(text('ALTER TABLE "offer_facts" ALTER COLUMN "evidence" DROP NOT NULL'))
+            return
+        if "offer_facts_migrated" in inspect(conn).get_table_names():
+            raise RuntimeError("Temporary offer_facts_migrated table already exists")
+        conn.execute(text("""
+            CREATE TABLE offer_facts_migrated (
+                id INTEGER PRIMARY KEY,
+                offer_source_id INTEGER NOT NULL REFERENCES offer_sources(id) ON DELETE CASCADE,
+                name VARCHAR(255) NOT NULL,
+                description TEXT NOT NULL,
+                evidence TEXT,
+                is_reviewed BOOLEAN NOT NULL DEFAULT 0,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        """))
+        fields = "id, offer_source_id, name, description, evidence, is_reviewed, created_at, updated_at"
+        conn.execute(text(f"INSERT INTO offer_facts_migrated ({fields}) SELECT {fields} FROM offer_facts"))
+        conn.execute(text('DROP TABLE "offer_facts"'))
+        conn.execute(text('ALTER TABLE "offer_facts_migrated" RENAME TO "offer_facts"'))
+        for index in OfferFact.__table__.indexes:
+            index.create(conn, checkfirst=True)

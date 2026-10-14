@@ -4,6 +4,7 @@ import DashboardPage from '@/pages/DashboardPage'
 import OffersPage from '@/pages/OffersPage'
 import GeneratedAdsPage from '@/pages/GeneratedAdsPage'
 import OfferDetailPage from '@/pages/OfferDetailPage'
+import OfferFactsPage from '@/pages/OfferFactsPage'
 import OfferSourcesPage from '@/pages/OfferSourcesPage'
 import OfferSourceDetailPage from '@/pages/OfferSourceDetailPage'
 import AnalysisDetailPage from '@/pages/AnalysisDetailPage'
@@ -45,6 +46,7 @@ function App() {
         <Route path="/offers/:offerId/offer_sources" element={<OfferSourcesPage />} />
         <Route path="/offer-sources/:offerSourceId" element={<OfferSourceDetailPage />} />
         <Route path="/offer-sources/:offerSourceId/target-audiences" element={<OfferSourceTargetAudiencesPage />} />
+        <Route path="/offer-sources/:offerSourceId/facts" element={<OfferFactsPage />} />
         <Route path="/offer-sources/:offerSourceId/elements" element={<OfferSourceElementsPage />} />
         <Route path="/offer-sources/:offerSourceId/analyses" element={<OfferSourceAnalysesPage />} />
         <Route path="/offer-sources/:offerSourceId/checklists" element={<OfferSourceChecklistsPage />} />

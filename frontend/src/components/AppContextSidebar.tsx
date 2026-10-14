@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useSidePanel } from '@/lib/sidePanel'
 import type { useResizablePanel } from '@/lib/useResizablePanel'
+import { useListOfferFactsQuery } from '@/features/offerFacts/offerFactsApi'
 import { useListOfferSourceElementsQuery, useListOfferSourceForOfferQuery } from '@/features/offerSources/offerSourceApi'
 import { useListTargetAudiencesForOfferSourceQuery } from '@/features/targetAudiences/targetAudiencesApi'
 import { useGetAnalysisQuery, useListAnalysisForOfferSourceQuery } from '@/features/analysis/analysisApi'
@@ -80,7 +81,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   const showBackButton = pathname !== '/' && pathname !== '/offers'
   const sections = [
     { pattern: '/offers/:id/*', current: 'Oferta', entityType: 'offer', process: [['offer-sources', 'Źródła oferty']], resources: [] },
-    { pattern: '/offer-sources/:id/*', current: 'Offer source', entityType: 'offer_source', process: [['brand-marketing', 'Brand marketing']], offer_source: [['analyses', 'Analizy produktu'], ['checklists', 'Checklisty']], resources: [['target-audiences', 'Grupy docelowe'], ['elements', 'Elementy oferty']] },
+    { pattern: '/offer-sources/:id/*', current: 'Offer source', entityType: 'offer_source', process: [['brand-marketing', 'Marketing marki (przestarzały)']], offer_source: [['analyses', 'Analizy produktu (przestarzały)'], ['checklists', 'Checklisty (przestarzały)']], resources: [['facts', 'Fakty o produkcie'], ['target-audiences', 'Grupy docelowe (przestarzały)'], ['elements', 'Elementy oferty (przestarzały)']] },
     { pattern: '/offer-sources/:offerSourceId/analysis/:id/*', current: 'Analiza', process: [], resources: [['questions', 'Pytania']] },
     { pattern: '/offer-sources/:offerSourceId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },
     { pattern: '/brand-marketing/:id/*', current: 'Brand marketing', entityType: 'brand_marketing', process: [['marketing-strategies', 'Marketing strategy']], resources: [] },
@@ -146,9 +147,11 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   const pageBlueprints = useListPageBlueprintForPageRequirementsQuery(currentEntityId, { skip: !isCurrentStage('Page requirements') })
   const pageContentPlans = useListPageContentPlanForPageBlueprintQuery(currentEntityId, { skip: !isCurrentStage('Page blueprint') })
   const pageCopies = useListPageCopyForPageContentPlanQuery(currentEntityId, { skip: !isCurrentStage('Content plan') })
+  const offerFacts = useListOfferFactsQuery({ offerSourceId: currentEntityId, pageSize: 1 }, { skip: !isOfferSourceSection })
   const resourceCounts: Record<string, number | undefined> = {
     'offer-sources': offerSources.data?.length,
     'target-audiences': targetAudiences.data?.total_items,
+    facts: offerFacts.data?.total_items,
     elements: offerSourceElements.data?.total_items,
     'brand-marketing': brandMarketing.data?.length,
     analyses: analyses.data?.length,
@@ -250,7 +253,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
         {section.config.process.length > 0 && (
           <section>
             <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
-              Proces (deprecated)
+              Proces
             </h2>
             <nav className="ml-2 space-y-1 border-l pl-2">
               {section.config.process.map(([slug, label]) => (

@@ -76,14 +76,6 @@ def offer_source_generate_handler(offer_id: int):
                     "offer_summary",
                     ""
                 ),
-                category=json_data.get(
-                    "category",
-                    ""
-                ),
-                value_proposition=json_data.get(
-                    "value_proposition",
-                    ""
-                ),
             )
 
             session.add(offer_source)
@@ -346,8 +338,6 @@ def get_output_schema() -> str:
         content=json.dumps(
             {
                 "offer_summary": "",
-                "category": "",
-                "value_proposition": "",
                 "offer_elements": [
                     {
                         "type": "",
