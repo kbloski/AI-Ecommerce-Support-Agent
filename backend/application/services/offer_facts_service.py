@@ -16,7 +16,7 @@ class OfferFactsService:
             if not include_unreviewed and not fact.is_reviewed:
                 continue
             data = offer_fact_to_dict(fact)
-            content.append({key: data[key] for key in ("name", "description", "evidence")})
+            content.append({key: data[key] for key in ("name", "description")})
         purpose = (
             "Previously extracted facts for duplicate detection only; unreviewed facts are not evidence."
             if include_unreviewed else

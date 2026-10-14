@@ -10,6 +10,7 @@ from domain.models.llm.llm_message import LlmMessage
 
 from domain.models.offer.offer_raw import OfferRaw
 from domain.models.offer.offer_fact import OfferFact
+from domain.models.offer.offer_profile import OfferProfile
 
 # OfferSource
 from domain.models.offer.offer_source import OfferSource
@@ -58,3 +59,6 @@ from domain.models.page.page_copy import PageCopy
 
 # App settings
 from domain.models.settings.app_properties import AppProperties
+
+from domain.models.context.additional_context import AdditionalContext
+from domain.models.offer.offer_profile_additional_context import OfferProfileAdditionalContext

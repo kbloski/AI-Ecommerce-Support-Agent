@@ -44,5 +44,5 @@ class OfferSourceDto(JSONSerializable):
         data = self.to_dict(exclude=["id", "offer_id"])
         data["target_audiences"] = [t.to_content_dict() for t in self.target_audiences]
         data["offer_source_elements"] = [e.to_content_dict() for e in self._sorted_offer_source_elements()]
-        data["offer_facts"] = [{key: value for key, value in fact.items() if key not in {"id", "offer_source_id", "created_at", "updated_at", "is_reviewed"}} for fact in self.offer_facts]
+        data["offer_facts"] = [{key: value for key, value in fact.items() if key not in {"id", "offer_source_id", "created_at", "updated_at", "is_reviewed", "evidence"}} for fact in self.offer_facts]
         return data

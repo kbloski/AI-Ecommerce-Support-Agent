@@ -66,7 +66,7 @@ class OfferSourceService:
                 {
                     key: value
                     for key, value in fact.items()
-                    if key not in {"id", "offer_source_id", "created_at", "updated_at", "is_reviewed"}
+                    if key not in {"id", "offer_source_id", "created_at", "updated_at", "is_reviewed", "evidence"}
                 }
                 for fact in assembled_offer_source.offer_facts
                 if fact["is_reviewed"]

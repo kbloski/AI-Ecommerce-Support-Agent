@@ -145,6 +145,36 @@ class OfferFactsTests(unittest.TestCase):
         self.assertEqual(self.client.delete(f"/offer-facts/{id}/delete").status_code, 200)
         self.assertEqual(self.client.delete(f"/offer-facts/{id}/delete").status_code, 404)
 
+    def test_update_accepts_old_or_manually_edited_evidence(self):
+        fact = self.create()
+        id = fact["id"]
+        source = self.db.get(OfferSource, 1)
+        source.offer_summary = "Updated source without the old quote."
+        self.db.commit()
+        checked = self.client.post(f"/offer-facts/{id}/update", json={"fields": {"is_reviewed": True}})
+        self.assertEqual(checked.status_code, 200, checked.text)
+        self.assertTrue(checked.json()["is_reviewed"])
+        edited = self.client.post(f"/offer-facts/{id}/update", json={"fields": {"description": "Manually corrected fact.", "evidence": "Manually corrected reference."}})
+        self.assertEqual(edited.status_code, 200, edited.text)
+        self.assertEqual(edited.json()["evidence"], "Manually corrected reference.")
+        self.assertEqual(self.repo.get_by_id(id).evidence, "Manually corrected reference.")
+        self.assertFalse(edited.json()["is_reviewed"])
+        cleared = self.client.post(f"/offer-facts/{id}/update", json={"fields": {"evidence": None}})
+        self.assertEqual(cleared.status_code, 200, cleared.text)
+        self.assertIsNone(cleared.json()["evidence"])
+
+    def test_evidence_is_returned_for_ui_but_excluded_from_contexts(self):
+        fact = self.create()
+        self.assertEqual(fact["evidence"], "Weight: 2 kg.")
+        self.assertEqual(self.repo.get_by_id(fact["id"]).evidence, "Weight: 2 kg.")
+        listing = self.client.get("/offer-sources/1/facts").json()
+        self.assertEqual(listing["items"][0]["evidence"], "Weight: 2 kg.")
+        changed = self.client.post(f"/offer-facts/{fact['id']}/update", json={"fields": {"name": "Updated weight"}})
+        self.assertEqual(changed.json()["evidence"], "Weight: 2 kg.")
+        self.assertEqual(self.repo.get_by_id(fact["id"]).evidence, "Weight: 2 kg.")
+        context = self.container.offer_facts_service().build_llm_context(1, include_unreviewed=True)
+        self.assertNotIn('"evidence"', context)
+
     def test_validation_and_missing_source(self):
         for fields in ({**self.fields, "name": " "}, {**self.fields, "evidence": "not in source"}, {**self.fields, "source_field": "description"}):
             self.assertEqual(self.client.post("/offer-sources/1/facts", json=fields).status_code, 422)
@@ -230,6 +260,7 @@ class OfferFactsTests(unittest.TestCase):
         self.assertIn("A USB cable is included.", context)
         self.assertNotIn("The product weighs 2 kg.", context)
         self.assertNotIn('"is_reviewed"', context)
+        self.assertNotIn('"evidence"', context)
 
 
 if __name__ == "__main__":

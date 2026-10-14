@@ -7,6 +7,7 @@ def init_db():
     _migrate_offers_to_offers_raw()
     _rename_offer_raw_details_column()
     _migrate_offer_profile_to_offer_profiles()
+    _repair_offer_profile_additional_contexts_key()
     _migrate_offer_profiles_to_offer_sources()
     _remove_obsolete_offer_source_columns()
     _migrate_checklists_to_offer_sources()
@@ -562,6 +563,10 @@ def _migrate_offer_profiles_to_offer_sources():
     )
     with engine.begin() as conn:
         tables = set(inspect(conn).get_table_names())
+        if "offer_profiles" in tables:
+            profile_columns = {column["name"] for column in inspect(conn).get_columns("offer_profiles")}
+            if "offer_source_id" in profile_columns and "offer_id" not in profile_columns:
+                renames = tuple(pair for pair in renames if pair[0] != "offer_profiles")
         # Check all collisions before changing any table.
         for old, new in renames:
             if old in tables and new in tables:
@@ -580,6 +585,13 @@ def _migrate_offer_profiles_to_offer_sources():
         for table in inspect(conn).get_table_names():
             columns = {column["name"] for column in inspect(conn).get_columns(table)}
             if "offer_profile_id" in columns:
+                profile_reference = any(
+                    foreign_key["referred_table"] == "offer_profiles"
+                    and "offer_profile_id" in foreign_key["constrained_columns"]
+                    for foreign_key in inspect(conn).get_foreign_keys(table)
+                )
+                if profile_reference:
+                    continue
                 if "offer_source_id" in columns:
                     raise RuntimeError(
                         f"Both offer_profile_id and offer_source_id exist in '{table}'."
@@ -635,3 +647,25 @@ def _migrate_offer_facts_optional_evidence():
         conn.execute(text('ALTER TABLE "offer_facts_migrated" RENAME TO "offer_facts"'))
         for index in OfferFact.__table__.indexes:
             index.create(conn, checkfirst=True)
+
+
+def _repair_offer_profile_additional_contexts_key():
+    """Restore the profile relation mistakenly renamed by the legacy migration."""
+    table = "offer_profile_additional_contexts"
+    with engine.begin() as conn:
+        inspector = inspect(conn)
+        if table not in inspector.get_table_names():
+            return
+        columns = {column["name"] for column in inspector.get_columns(table)}
+        if "offer_profile_id" in columns or "offer_source_id" not in columns:
+            return
+        if not any(
+            foreign_key["referred_table"] == "offer_profiles"
+            and "offer_source_id" in foreign_key["constrained_columns"]
+            for foreign_key in inspector.get_foreign_keys(table)
+        ):
+            raise RuntimeError("Unexpected additional context relation; cannot restore profile key")
+        conn.execute(text(
+            'ALTER TABLE "offer_profile_additional_contexts" '
+            'RENAME COLUMN "offer_source_id" TO "offer_profile_id"'
+        ))

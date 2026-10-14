@@ -11,7 +11,7 @@ import type { Entity } from '@/types'
 
 function errorMessage(error: unknown): string {
   const detail = (error as { data?: { detail?: unknown } })?.data?.detail
-  return typeof detail === 'string' ? detail : 'Nie udaÃ…â€šo siÃ„â„¢ zapisaÃ„â€¡ zmian. SprawdÃ…Âº dane i sprÃƒÂ³buj ponownie.'
+  return typeof detail === 'string' ? detail : 'Nie udało się zapisać zmian. Sprawdź dane i spróbuj ponownie.'
 }
 
 export default function OfferFactsPage() {
@@ -36,18 +36,18 @@ export default function OfferFactsPage() {
     setMessage('')
     const response = await generate(offerSourceId).unwrap()
     setPage(1)
-    setMessage(response.created_count ? `Dodano ${response.created_count} faktÃƒÂ³w do sprawdzenia.` : 'Nie znaleziono nowych faktÃƒÂ³w potwierdzonych w źródle oferty.')
+    setMessage(response.created_count ? `Dodano ${response.created_count} faktów do sprawdzenia.` : 'Nie znaleziono nowych faktów potwierdzonych w źródle oferty.')
   })
   return <div className="w-full p-6 lg:p-10">
     <EntityList title="Fakty o produkcie" items={result?.items} totalItems={result?.total_items} attentionItems={unreviewed?.total_items} isLoading={isLoading} error={error}
-      emptyTitle="Brak faktÃƒÂ³w" emptyDescription="Wygeneruj fakty ze źródła oferty lub dodaj je z cytatem ze Ã…ÂºrÃƒÂ³dÃ…â€ša."
+      emptyTitle="Brak faktów" emptyDescription="Wygeneruj fakty ze źródła oferty lub dodaj je z cytatem ze źródła."
       itemDescription={(fact) => String(fact.description)}
       itemDetails={(fact) => fact.evidence ? <blockquote className="border-l-2 pl-3 text-sm text-muted-foreground"><span className="block text-xs">Cytat ze źródła oferty</span>{String(fact.evidence)}</blockquote> : null}
-      contentBeforeList={<><p className="mb-4 text-sm text-muted-foreground">Tylko informacje potwierdzone w źródle oferty. Zatwierdzone fakty sÃ„â€¦ dostÃ„â„¢pne w kontekÃ…â€ºcie dalszego generowania.</p>
+      contentBeforeList={<><p className="mb-4 text-sm text-muted-foreground">Tylko informacje potwierdzone w źródle oferty. Zatwierdzone fakty są dostępne w kontekście dalszego generowania.</p>
         <ListFilters>
-          <Input aria-label="Szukaj faktÃƒÂ³w" placeholder="Szukaj faktÃƒÂ³w..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1) }} className="max-w-md" />
+          <Input aria-label="Szukaj faktów" placeholder="Szukaj faktów..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1) }} className="max-w-md" />
           <ReviewStatusFilter value={review} onChange={(value) => { setReview(value); setPage(1) }} />
-          <select aria-label="Sortowanie faktÃƒÂ³w" value={sort} onChange={(e) => { setSort(e.target.value as FactSort); setPage(1) }} className="h-9 rounded-lg border px-2.5 text-sm">
+          <select aria-label="Sortowanie faktów" value={sort} onChange={(e) => { setSort(e.target.value as FactSort); setPage(1) }} className="h-9 rounded-lg border px-2.5 text-sm">
             <option value="created_at_desc">Najnowsze</option><option value="created_at_asc">Najstarsze</option><option value="name_asc">Nazwa: A-Z</option><option value="name_desc">Nazwa: Z-A</option>
           </select>
         </ListFilters>
@@ -56,8 +56,8 @@ export default function OfferFactsPage() {
       actions={<><Button variant="outline" disabled={generation.isLoading} onClick={generateFacts}>{generation.isLoading ? 'Generowanie...' : 'Generuj fakty'}</Button><Button onClick={() => openPanel({ title: 'Dodaj fakt', content: <FactForm offerSourceId={offerSourceId} onSaved={closePanel} /> })}>Dodaj fakt</Button></>}
       onEdit={(fact) => openPanel({ title: 'Edytuj fakt', content: <FactForm offerSourceId={offerSourceId} fact={fact} onSaved={closePanel} /> })}
       onDelete={(fact) => run(async () => { await remove({ offerSourceId, id: fact.id as number }).unwrap(); if (result?.items.length === 1 && page > 1) setPage(page - 1) })}
-      itemActions={(fact) => <Button size="sm" variant={fact.is_reviewed ? 'ghost' : 'default'} onClick={() => run(() => update({ offerSourceId, id: fact.id as number, fields: { is_reviewed: !fact.is_reviewed } }).unwrap())}>{fact.is_reviewed ? 'Oznacz jako niesprawdzone' : 'ZatwierdÃ…Âº'}</Button>}
-      footer={result && result.total_pages > 1 ? <div className="flex items-center justify-between border-t pt-4"><span>Strona {page} z {result.total_pages}</span><div className="flex gap-2"><Button variant="outline" disabled={page <= 1} onClick={() => setPage(page - 1)}>Poprzednia</Button><Button variant="outline" disabled={page >= result.total_pages} onClick={() => setPage(page + 1)}>NastÃ„â„¢pna</Button></div></div> : undefined}
+      itemActions={(fact) => <Button size="sm" variant={fact.is_reviewed ? 'ghost' : 'default'} onClick={() => run(() => update({ offerSourceId, id: fact.id as number, fields: { is_reviewed: !fact.is_reviewed } }).unwrap())}>{fact.is_reviewed ? 'Oznacz jako niesprawdzone' : 'Zatwierdź'}</Button>}
+      footer={result && result.total_pages > 1 ? <div className="flex items-center justify-between border-t pt-4"><span>Strona {page} z {result.total_pages}</span><div className="flex gap-2"><Button variant="outline" disabled={page <= 1} onClick={() => setPage(page - 1)}>Poprzednia</Button><Button variant="outline" disabled={page >= result.total_pages} onClick={() => setPage(page + 1)}>Następna</Button></div></div> : undefined}
     />
   </div>
 }
@@ -79,8 +79,8 @@ function FactForm({ offerSourceId, fact, onSaved }: { offerSourceId: number; fac
   return <form onSubmit={submit} className="space-y-4">
     <label className="block space-y-2"><span>Nazwa faktu</span><Input name="name" required maxLength={255} defaultValue={String(fact?.name ?? '')} /></label>
     <label className="block space-y-2"><span>Fakt</span><Textarea name="description" required defaultValue={String(fact?.description ?? '')} /></label>
-    <label className="block space-y-2"><span>Cytat potwierdzajÃ„â€¦cy fakt</span><Textarea name="evidence" defaultValue={String(fact?.evidence ?? '')} /><span className="text-xs text-muted-foreground">Wklej dokÃ…â€šadny fragment oryginalnych danych produktu.</span></label>
-    <p className="text-sm text-muted-foreground">Nowy lub zmieniony fakt wymaga zatwierdzenia na liÃ…â€ºcie.</p>
+    <label className="block space-y-2"><span>Cytat potwierdzający fakt (opcjonalny)</span><Textarea name="evidence" defaultValue={String(fact?.evidence ?? '')} /></label>
+    <p className="text-sm text-muted-foreground">Nowy lub zmieniony fakt wymaga zatwierdzenia na liście.</p>
     {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
     <Button type="submit" disabled={createState.isLoading || updateState.isLoading}>Zapisz fakt</Button>
   </form>
