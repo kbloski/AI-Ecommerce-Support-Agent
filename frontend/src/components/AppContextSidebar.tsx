@@ -207,7 +207,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
         {contextualPanel && (
           <section className="mt-6">
             <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
-              Narzędzia
+              Akcje
             </h2>
             <nav className="ml-2 space-y-1 border-l pl-2">
               <Button type="button" variant="ghost" size="sm" className={sidebarActionClassName} onClick={() => openPanel(contextualPanel)}>
@@ -243,14 +243,14 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
           aria-label={`Przejdź do: ${section.config.current}`}
         >
           <p className="text-[0.68rem] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
-            Aktualny etap
+            Aktualny zasób
           </p>
           <p className="mt-1 text-sm font-semibold text-foreground">{section.config.current}</p>
         </Link>
         {section.config.process.length > 0 && (
           <section>
             <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
-              Proces
+              Proces (deprecated)
             </h2>
             <nav className="ml-2 space-y-1 border-l pl-2">
               {section.config.process.map(([slug, label]) => (
@@ -287,7 +287,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
         {('entityType' in section.config || contextualPanel) && (
           <section className={section.config.process.length > 0 || 'offer_source' in section.config || section.config.resources.length > 0 ? 'mt-6' : undefined}>
             <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
-              Narzędzia
+              Akcje
             </h2>
             <nav className="ml-2 space-y-1 border-l pl-2">
               {'entityType' in section.config && (
