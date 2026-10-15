@@ -10,6 +10,10 @@ from infrastructure.repositories.offer_profiles_repository import OfferProfilesR
 from infrastructure.repositories.target_audiences_repository import TargetAudiencesRepository
 from infrastructure.repositories.additional_contexts_repository import AdditionalContextsRepository
 from application.services.offer_profile_service import OfferProfileService
+from application.services.llm_context_composer import LlmContextComposer, ContextRef
+from application.services.target_audience_service import TargetAudienceService
+from domain.enums.context_type import ContextType
+from domain.enums.llm_rule_set import LlmRuleSet
 from application.assemblers.offer_profile_assembler import OfferProfileAssembler
 import xml.etree.ElementTree as ET
 from application.handlers.target_audience import generate_target_audience_handler as generation
@@ -96,19 +100,29 @@ class ProfileAudienceTests(unittest.TestCase):
         sample.update(name="Procurement teams")
         self.assertFalse({"message_angles", "marketing_channels", "score", "confidence", "awareness_level", "reason", "decision_time", "research_level", "price_sensitivity", "location", "objections", "purchasing_power"} & set(sample))
         calls = []
-        def chat(messages):
+        rule_set_calls = []
+        def chat(messages, *, rule_sets=()):
             calls.extend(messages)
+            rule_set_calls.append(rule_sets)
             return SimpleNamespace(content=json.dumps({"audiences": [sample]}))
-        container = SimpleNamespace(target_audiences_repository=lambda: self.repo, offer_profile_service=lambda: service, ai_service=lambda: SimpleNamespace(chat_llm=chat), offer_profiles_repository=lambda: profiles)
+        composer = LlmContextComposer(
+            service,
+            TargetAudienceService(self.repo),
+            SimpleNamespace(),
+            SimpleNamespace(build_llm_context=lambda source_id: f'<offer_source>{source_id}: Source</offer_source>'),
+        )
+        container = SimpleNamespace(target_audiences_repository=lambda: self.repo, llm_context_composer=lambda: composer, ai_service=lambda: SimpleNamespace(chat_llm=chat), offer_profiles_repository=lambda: profiles)
         with patch.object(generation, "Container", lambda: container):
             audiences = generation.generate_target_audience_handler(1, count=1, generation_instructions="Focus on procurement decision makers")
         self.assertEqual(audiences[0].offer_profile_id, 1)
+        self.assertEqual(rule_set_calls[0], (LlmRuleSet.JSON_OUTPUT, LlmRuleSet.ENGLISH_OUTPUT))
         self.assertIn("exactly 1 target audience", calls[1].content)
         self.assertIn("Business buyers", calls[1].content)
         self.assertIn("Focus on procurement teams", calls[1].content)
+        self.assertIn("<offer_source>1: Source</offer_source>", calls[1].content)
         self.assertIn("USER GENERATION INSTRUCTIONS:\nFocus on procurement decision makers", calls[1].content)
-        self.assertNotIn("offer_source", calls[1].content)
         self.assertNotIn("Confirmed", calls[1].content)
+        self.assertEqual(composer.compose(ContextRef(ContextType.OFFER_PROFILE, 1)), service.build_llm_context(1))
         context = ET.fromstring(service.build_llm_context(1))
         self.assertEqual(context.tag, "offer_profile")
         self.assertEqual(json.loads(context.text), {"name": "Business buyers", "additional_contexts": [{"name": "Guidance", "content": "Focus on procurement teams"}]})

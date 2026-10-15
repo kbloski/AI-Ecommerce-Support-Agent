@@ -10,6 +10,7 @@ class TableName(str, Enum):
     OFFER_SOURCES = "offer_sources"
     OFFER_SOURCE_ELEMENTS = "offer_source_elements"
     TARGET_AUDIENCES = "target_audiences"
+    MARKETING_ANGLES = "marketing_angles"
     ANALYSIS = "analysis"
     OFFER_SOURCE_ANALYSIS = "offer_source_analysis"
     ANALYSIS_QUESTIONS= "analysis_questions"

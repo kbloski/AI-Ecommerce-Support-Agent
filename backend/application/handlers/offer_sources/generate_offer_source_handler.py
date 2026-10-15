@@ -2,6 +2,7 @@ import json
 
 from application.mappers.offer_source_mapper import OfferSourceMapper
 from application.services.llm_context_builder import build_llm_section
+from application.services.llm_context_composer import ContextRef
 
 from di.container import Container
 
@@ -10,6 +11,8 @@ from domain.models.offer.offer_source import OfferSource
 from domain.models.offer.offer_source_element import OfferSourceElement
 
 from domain.enums.llm_message_role import LlmMessageRole
+from domain.enums.llm_rule_set import LlmRuleSet
+from domain.enums.context_type import ContextType
 from domain.enums.offer_source_element_type import (
     OfferSourceElementType,
     get_offer_source_element_type_values,
@@ -22,19 +25,18 @@ from infrastructure.database.db import SessionLocal
 # MAIN HANDLER
 # =====================================================
 
-def offer_source_generate_handler(offer_id: int):
+def generate_offer_source_handler(offer_id: int):
 
     container = Container()
 
-    offer_service = container.offer_service()
     ai_service = container.ai_service()
 
     # ----------------------------
     # LOAD OFFER
     # ----------------------------
 
-    offer_context = offer_service.build_llm_context(
-        offer_id=offer_id
+    offer_context = container.llm_context_composer().compose(
+        root=ContextRef(ContextType.OFFER_RAW, offer_id)
     )
 
     # ----------------------------
@@ -58,7 +60,10 @@ def offer_source_generate_handler(offer_id: int):
         ),
     ]
 
-    response = ai_service.chat_llm(chat).content
+    response = ai_service.chat_llm(
+        chat,
+        rule_sets=(LlmRuleSet.JSON_OUTPUT, LlmRuleSet.ENGLISH_OUTPUT),
+    ).content
 
     json_data = json.loads(response)
 

@@ -22,6 +22,8 @@ class OfferService:
 
     def build_llm_context(self, offer_id: int) -> str:
         offer = self.offers_repository.get_by_id(offer_id)
+        if offer is None:
+            raise LookupError(f"Offer {offer_id} not found")
         offer_dto = OfferMapper.to_dto(item=offer)
         offer_assembled = self.offer_assembler.assemble_dto(item=offer_dto)
 

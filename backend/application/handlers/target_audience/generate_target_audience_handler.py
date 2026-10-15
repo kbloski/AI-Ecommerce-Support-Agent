@@ -4,14 +4,16 @@ from typing import Dict, Any
 from fastapi import HTTPException
 
 from di.container import Container
-from application.mappers.target_audience_mapper import TargetAudienceMapper
+from application.services.llm_context_composer import ContextRef, ContextSelection
 
 from domain.models.llm.llm_message import LlmMessage
 from domain.models.audience.target_audience import TargetAudience
 
 from domain.enums.llm_message_role import LlmMessageRole
+from domain.enums.llm_rule_set import LlmRuleSet
 from domain.enums.genders import Genders
 from domain.enums.fact_status import FactStatus
+from domain.enums.context_type import ContextType
 
 def generate_target_audience_handler(
     offer_profile_id: int,
@@ -25,9 +27,11 @@ def generate_target_audience_handler(
     target_audience_repo = container.target_audiences_repository()
 
     ai_service = container.ai_service()
-    offer_profile_service = container.offer_profile_service()
     try:
-        offer_profile_context = offer_profile_service.build_llm_context(offer_profile_id=offer_profile_id)
+        offer_profile_context = container.llm_context_composer().compose(
+            root=ContextRef(ContextType.OFFER_PROFILE, offer_profile_id),
+            include=[ContextSelection(ContextType.OFFER_SOURCE)],
+        )
     except LookupError as error:
         raise HTTPException(404, str(error)) from error
 
@@ -45,7 +49,8 @@ def generate_target_audience_handler(
                     generation_instructions=generation_instructions,
                 )
             )
-        ]
+        ],
+        rule_sets=(LlmRuleSet.JSON_OUTPUT, LlmRuleSet.ENGLISH_OUTPUT),
     )
 
     response_json = json.loads(response.content )
@@ -164,7 +169,7 @@ def get_target_audience_prompt(
         if user_guidance else ""
     )
     return f"""
-Analyze the offer profile and its attached additional information.
+Analyze the offer profile, related offer source, and attached additional information.
 
 OFFER PROFILE CONTEXT:
 
@@ -174,10 +179,9 @@ OFFER PROFILE CONTEXT:
 
 Generate exactly {count} target audience segments for this specific offer profile.
 Use its name and attached additional information to define its perspective.
-Use only information included in the profile context; do not invent product capabilities.
+Use only information included in the supplied context; do not invent product capabilities.
 Apply the user's generation instructions where they fit the profile and required response format.
 Give each segment a distinct buying situation, need, or motivation. Avoid overlapping names and repeated list entries.
-Write the segments in the language of the profile context.
 
 
 Response format:

@@ -1,5 +1,6 @@
 from pathlib import Path
 from infrastructure.logging.logger import Logger
+from domain.enums.llm_rule_set import LlmRuleSet
 
 class PathService:
     def __init__(self,
@@ -14,7 +15,10 @@ class PathService:
         self.PROMPTS_DIR = self.BASE_DIR / "infrastructure" / "ai" / "prompts"
 
         self.RULES_DIR = self.BASE_DIR / "infrastructure" / "ai" / "rules"
-        self.OUTPUT_RULES_PROMPT = self.RULES_DIR / "output.rules.md"
+        self.RULE_SET_PATHS = {
+            LlmRuleSet.JSON_OUTPUT: self.RULES_DIR / "json_output.rules.md",
+            LlmRuleSet.ENGLISH_OUTPUT: self.RULES_DIR / "english_output.rules.md",
+        }
 
         self.FRAMEWORKS_DIR = self.BASE_DIR / "infrastructure" / "ai" / "frameworks"
 
@@ -30,4 +34,7 @@ class PathService:
         # self.DATA_DIR = self.BASE_DIR / "data"
         # self.RAW_ECOMMERCE_OFFER_SOURCE = self.DATA_DIR / "raw" / "ecommerce_offer_source"
         # self.ECOMMERCE_OFFER_SOURCE = self.DATA_DIR / "offer_source" / "ecommerce"
+
+    def rule_set_path(self, rule_set: LlmRuleSet) -> Path:
+        return self.RULE_SET_PATHS[rule_set]
 

@@ -14,7 +14,7 @@ from application.handlers.offers.get_offers import get_offers
 from application.handlers.offers.create_offer import create_offer
 from application.handlers.offers.get_offer import get_offer_handler
 from application.handlers.offers.delete_offer import delete_offer_handler
-from application.handlers.offer_sources.offer_source_generate import offer_source_generate_handler
+from application.handlers.offer_sources.generate_offer_source_handler import generate_offer_source_handler
 from application.handlers.offer_sources.get_offer_source_handler import get_offer_source_handler
 from application.handlers.offer_sources.get_offer_sources_handler import get_offer_sources_handler
 from application.handlers.offer_sources.delete_offer_source_handler import delete_offer_source_handler
@@ -127,8 +127,9 @@ from application.handlers.page_copy.generate_page_copy_handler import generate_p
 from application.handlers.page_copy.get_page_copy_handler import get_page_copy_handler
 from application.handlers.page_copy.get_page_content_plan_page_copies_handler import get_page_content_plan_page_copies_handler
 from application.handlers.page_copy.delete_page_copy_handler import delete_page_copy_handler
-from application.handlers.settings.get_output_prompt_handler import get_output_prompt_handler
-from application.handlers.settings.save_output_prompt_handler import save_output_prompt_handler
+from application.handlers.settings.get_rule_set_handler import get_rule_set_handler
+from application.handlers.settings.save_rule_set_handler import save_rule_set_handler
+from domain.enums.llm_rule_set import LlmRuleSet
 from application.handlers.settings.get_ollama_settings_handler import get_ollama_settings_handler
 from application.handlers.settings.save_ollama_settings_handler import save_ollama_settings_handler
 from application.handlers.settings.list_ollama_models_handler import list_ollama_models_handler
@@ -138,7 +139,7 @@ from domain.enums.offer_source_element_type import OfferSourceElementType
 from domain.enums.offer_source_element_type import OfferSourceElementType
 
 
-class SaveOutputPromptRequest(BaseModel):
+class SaveRuleSetRequest(BaseModel):
     content: str
 
 
@@ -342,8 +343,8 @@ def register_general_routes(router: APIRouter):
 
     # POST in future
     @router.post("/offers/{id}/offer-sources/generate")
-    def offer_source_generate(id: int):
-        return offer_source_generate_handler(offer_id=id)
+    def generate_offer_source(id: int):
+        return generate_offer_source_handler(offer_id=id)
 
     #  POST in future
     @router.get("/offers/{offer_id}/offer-sources")
@@ -1104,13 +1105,13 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     # Settings
     # -----------------------------
-    @router.get("/settings/output-prompt")
-    def get_output_prompt():
-        return get_output_prompt_handler()
+    @router.get("/settings/rules/{rule_set}")
+    def get_rule_set_route(rule_set: LlmRuleSet):
+        return get_rule_set_handler(rule_set)
 
-    @router.post("/settings/output-prompt")
-    def save_output_prompt_route( payload: SaveOutputPromptRequest ):
-        return save_output_prompt_handler( content=payload.content )
+    @router.post("/settings/rules/{rule_set}")
+    def save_rule_set_route(rule_set: LlmRuleSet, payload: SaveRuleSetRequest):
+        return save_rule_set_handler(rule_set, payload.content)
 
     @router.get("/settings/ollama")
     def get_ollama_settings_route():

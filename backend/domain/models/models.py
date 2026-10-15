@@ -11,6 +11,7 @@ from domain.models.llm.llm_message import LlmMessage
 from domain.models.offer.offer_raw import OfferRaw
 from domain.models.offer.offer_fact import OfferFact
 from domain.models.offer.offer_profile import OfferProfile
+from domain.models.offer.marketing_angle import MarketingAngle
 
 # OfferSource
 from domain.models.offer.offer_source import OfferSource

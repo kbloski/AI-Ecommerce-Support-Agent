@@ -26,7 +26,21 @@ def init_db():
     _migrate_target_audiences_to_offer_profiles()
     _remove_obsolete_target_audience_columns()
     _add_target_audience_desires()
+    _add_marketing_angle_fields()
     Base.metadata.create_all(bind=engine)
+
+
+def _add_marketing_angle_fields():
+    with engine.begin() as conn:
+        if "marketing_angles" not in inspect(conn).get_table_names():
+            return
+        existing = {column["name"] for column in inspect(conn).get_columns("marketing_angles")}
+        for column in ("core_message", "value_proposition", "pain_point", "desire", "emotional_driver"):
+            if column not in existing:
+                conn.execute(text(f'ALTER TABLE marketing_angles ADD COLUMN "{column}" TEXT NOT NULL DEFAULT \'\''))
+        for column in ("supporting_arguments", "proof_points"):
+            if column not in existing:
+                conn.execute(text(f'ALTER TABLE marketing_angles ADD COLUMN "{column}" JSON NOT NULL DEFAULT \'[]\''))
 
 def _migrate_ad_execution_to_ad_setup():
     """Rename the Ad Execution aggregate without losing existing setup data."""

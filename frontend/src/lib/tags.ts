@@ -6,6 +6,7 @@ export const TAG_TYPES = [
   'OfferSourceElement',
   'OfferFact',
   'TargetAudience',
+  'MarketingAngle',
   'Analysis',
   'AnalysisQuestion',
   'Checklist',
@@ -25,7 +26,7 @@ export const TAG_TYPES = [
   'PageContentPlan',
   'PageCopy',
   'OllamaSettings',
-  'OutputPrompt',
+  'RuleSet',
 ] as const
 
 export type Tag = (typeof TAG_TYPES)[number]

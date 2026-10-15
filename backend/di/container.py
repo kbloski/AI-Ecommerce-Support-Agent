@@ -2,6 +2,8 @@ from dependency_injector import containers, providers
 from application.services.offer_source_service import OfferSourceService
 from application.services.offer_facts_service import OfferFactsService
 from application.services.offer_profile_service import OfferProfileService
+from application.services.target_audience_service import TargetAudienceService
+from application.services.llm_context_composer import LlmContextComposer
 from application.assemblers.offer_profile_assembler import OfferProfileAssembler
 from application.services.ai_service import AiService
 from application.services.ollama_service import OllamaService
@@ -32,6 +34,7 @@ from infrastructure.repositories.offer_profiles_repository import OfferProfilesR
 from infrastructure.repositories.additional_contexts_repository import AdditionalContextsRepository
 from application.assemblers.offer_source_assembler import OfferSourceAssembler
 from infrastructure.repositories.target_audiences_repository import TargetAudiencesRepository
+from infrastructure.repositories.marketing_angles_repository import MarketingAnglesRepository
 from application.assemblers.target_audience_assembler import TargetAudienceAssembler
 from infrastructure.repositories.analysis_repository import AnalysisRepository
 from infrastructure.repositories.offer_source_analysis_repository import OfferSourceAnalysisRepository
@@ -150,6 +153,13 @@ class Container(containers.DeclarativeContainer):
         logger=logger,
         db=db
     )
+
+    target_audience_service = providers.Factory(
+        TargetAudienceService,
+        target_audiences_repository=target_audiences_repository,
+    )
+
+    marketing_angles_repository = providers.Singleton(MarketingAnglesRepository, logger=logger, db=db)
 
     checklist_repository = providers.Singleton(
         ChecklistRepository,
@@ -525,6 +535,14 @@ class Container(containers.DeclarativeContainer):
     offer_profile_service = providers.Singleton(
         OfferProfileService, offer_profiles_repository=offer_profiles_repository,
         offer_profile_assembler=offer_profile_assembler
+    )
+
+    llm_context_composer = providers.Factory(
+        LlmContextComposer,
+        offer_profile_service=offer_profile_service,
+        target_audience_service=target_audience_service,
+        offer_service=offer_service,
+        offer_source_service=offer_source_service,
     )
 
     brand_marketing_service = providers.Singleton(

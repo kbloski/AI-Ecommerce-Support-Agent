@@ -1,6 +1,9 @@
 import { api } from '@/store/api'
 
-interface OutputPrompt {
+export type RuleSet = 'json_output' | 'english_output'
+
+interface RuleSetContent {
+  rule_set: RuleSet
   content: string
 }
 
@@ -32,17 +35,17 @@ interface OllamaModelsResponse {
 
 export const settingsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getOutputPrompt: builder.query<OutputPrompt, void>({
-      query: () => '/settings/output-prompt',
-      providesTags: ['OutputPrompt'],
+    getRuleSet: builder.query<RuleSetContent, RuleSet>({
+      query: (ruleSet) => `/settings/rules/${ruleSet}`,
+      providesTags: (_result, _error, ruleSet) => [{ type: 'RuleSet', id: ruleSet }],
     }),
-    saveOutputPrompt: builder.mutation<OutputPrompt, string>({
-      query: (content) => ({
-        url: '/settings/output-prompt',
+    saveRuleSet: builder.mutation<RuleSetContent, { ruleSet: RuleSet; content: string }>({
+      query: ({ ruleSet, content }) => ({
+        url: `/settings/rules/${ruleSet}`,
         method: 'POST',
         body: { content },
       }),
-      invalidatesTags: ['OutputPrompt'],
+      invalidatesTags: (_result, _error, { ruleSet }) => [{ type: 'RuleSet', id: ruleSet }],
     }),
     getOllamaSettings: builder.query<OllamaSettings, void>({
       query: () => '/settings/ollama',
@@ -66,8 +69,8 @@ export const settingsApi = api.injectEndpoints({
 })
 
 export const {
-  useGetOutputPromptQuery,
-  useSaveOutputPromptMutation,
+  useGetRuleSetQuery,
+  useSaveRuleSetMutation,
   useGetOllamaSettingsQuery,
   useSaveOllamaSettingsMutation,
   useListOllamaModelsQuery,
