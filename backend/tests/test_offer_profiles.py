@@ -52,6 +52,14 @@ class OfferProfileTests(unittest.TestCase):
         self.assertEqual(len(self.client.get("/offer-sources/1/profiles").json()), 1)
         self.assertEqual(self.client.get("/offer-sources/2/profiles").json(), [])
 
+    def test_global_list_contains_profiles_from_all_sources(self):
+        first = self.client.post("/offer-sources/1/profiles", json={"name": "First"}).json()
+        second = self.client.post("/offer-sources/2/profiles", json={"name": "Second"}).json()
+        response = self.client.get("/offer-profiles")
+        self.assertEqual(response.status_code, 200, response.text)
+        self.assertEqual([profile["id"] for profile in response.json()], [second["id"], first["id"]])
+        self.assertEqual([profile["offer_source_id"] for profile in response.json()], [2, 1])
+
     def test_name_validation_and_missing_source(self):
         for name in ("", "   ", "x" * 256):
             self.assertEqual(self.client.post("/offer-sources/1/profiles", json={"name": name}).status_code, 422)

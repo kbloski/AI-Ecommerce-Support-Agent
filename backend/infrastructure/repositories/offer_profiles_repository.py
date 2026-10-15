@@ -5,6 +5,9 @@ class OfferProfilesRepository:
     def __init__(self, logger, db):
         self.db = db
 
+    def find_all(self):
+        return self.db.query(OfferProfile).order_by(OfferProfile.id.desc()).all()
+
     def find_for_offer_source(self, offer_source_id):
         return self.db.query(OfferProfile).filter(OfferProfile.offer_source_id == offer_source_id).order_by(OfferProfile.id.desc()).all()
 

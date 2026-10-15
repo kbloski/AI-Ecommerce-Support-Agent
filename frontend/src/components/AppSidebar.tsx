@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, LayoutDashboard, Megaphone, Package, Settings } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LayoutDashboard, Megaphone, Package, Settings, UsersRound } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
@@ -12,7 +12,8 @@ interface SidebarSection {
 /** Top-level sections the user has access to. Add new entries here as new root-level sections appear. */
 const SECTIONS: SidebarSection[] = [
   { label: 'Dashboard', to: '/', icon: LayoutDashboard },
-  { label: 'Oferty', to: '/offers', icon: Package },
+  { label: 'Tworzenie oferty', to: '/offers', icon: Package },
+  { label: 'Istniejące profile ofert', to: '/offer-profiles', icon: UsersRound },
   { label: 'Wygenerowane reklamy', to: '/generated-ads', icon: Megaphone },
   { label: 'Ustawienia', to: '/settings', icon: Settings },
 ]

@@ -7,6 +7,7 @@ import OfferDetailPage from '@/pages/OfferDetailPage'
 import OfferProfileAdditionalContextsPage from '@/pages/OfferProfileAdditionalContextsPage'
 import OfferProfileDetailPage from '@/pages/OfferProfileDetailPage'
 import OfferProfilesPage from '@/pages/OfferProfilesPage'
+import ExistingOfferProfilesPage from '@/pages/ExistingOfferProfilesPage'
 import OfferFactsPage from '@/pages/OfferFactsPage'
 import MarketingAnglesPage from '@/pages/MarketingAnglesPage'
 import AdConceptsPage from '@/pages/AdConceptsPage'
@@ -45,6 +46,7 @@ function App() {
       <Route element={<AppShell />}>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/offers" element={<OffersPage />} />
+        <Route path="/offer-profiles" element={<ExistingOfferProfilesPage />} />
         <Route path="/generated-ads" element={<GeneratedAdsPage />} />
         <Route path="/offers/:offerId" element={<OfferDetailPage />} />
         <Route path="/offers/:offerId/offer-sources" element={<OfferSourcesPage />} />
