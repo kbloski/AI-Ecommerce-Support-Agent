@@ -4,6 +4,7 @@ from application.services.offer_facts_service import OfferFactsService
 from application.services.offer_profile_service import OfferProfileService
 from application.services.target_audience_service import TargetAudienceService
 from application.services.llm_context_composer import LlmContextComposer
+from application.services.marketing_angle_service import MarketingAngleService
 from application.assemblers.offer_profile_assembler import OfferProfileAssembler
 from application.services.ai_service import AiService
 from application.services.ollama_service import OllamaService
@@ -35,6 +36,7 @@ from infrastructure.repositories.additional_contexts_repository import Additiona
 from application.assemblers.offer_source_assembler import OfferSourceAssembler
 from infrastructure.repositories.target_audiences_repository import TargetAudiencesRepository
 from infrastructure.repositories.marketing_angles_repository import MarketingAnglesRepository
+from infrastructure.repositories.ad_concepts_repository import AdConceptsRepository
 from application.assemblers.target_audience_assembler import TargetAudienceAssembler
 from infrastructure.repositories.analysis_repository import AnalysisRepository
 from infrastructure.repositories.offer_source_analysis_repository import OfferSourceAnalysisRepository
@@ -160,6 +162,8 @@ class Container(containers.DeclarativeContainer):
     )
 
     marketing_angles_repository = providers.Singleton(MarketingAnglesRepository, logger=logger, db=db)
+    marketing_angle_service = providers.Factory(MarketingAngleService, marketing_angles_repository=marketing_angles_repository)
+    ad_concepts_repository = providers.Singleton(AdConceptsRepository, logger=logger, db=db)
 
     checklist_repository = providers.Singleton(
         ChecklistRepository,
@@ -543,6 +547,7 @@ class Container(containers.DeclarativeContainer):
         target_audience_service=target_audience_service,
         offer_service=offer_service,
         offer_source_service=offer_source_service,
+        marketing_angle_service=marketing_angle_service,
     )
 
     brand_marketing_service = providers.Singleton(

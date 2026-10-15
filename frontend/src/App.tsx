@@ -9,6 +9,7 @@ import OfferProfileDetailPage from '@/pages/OfferProfileDetailPage'
 import OfferProfilesPage from '@/pages/OfferProfilesPage'
 import OfferFactsPage from '@/pages/OfferFactsPage'
 import MarketingAnglesPage from '@/pages/MarketingAnglesPage'
+import AdConceptsPage from '@/pages/AdConceptsPage'
 import OfferSourcesPage from '@/pages/OfferSourcesPage'
 import OfferSourceDetailPage from '@/pages/OfferSourceDetailPage'
 import AnalysisDetailPage from '@/pages/AnalysisDetailPage'
@@ -51,6 +52,7 @@ function App() {
         <Route path="/offer-sources/:offerSourceId" element={<OfferSourceDetailPage />} />
         <Route path="/offer-profiles/:offerProfileId/target-audiences" element={<OfferProfileTargetAudiencesPage />} />
         <Route path="/offer-profiles/:offerProfileId/marketing-angles" element={<MarketingAnglesPage />} />
+        <Route path="/offer-profiles/:offerProfileId/ad-concepts" element={<AdConceptsPage />} />
         <Route path="/offer-profiles/:offerProfileId/additional-contexts" element={<OfferProfileAdditionalContextsPage />} />
         <Route path="/offer-profiles/:offerProfileId" element={<OfferProfileDetailPage />} />
         <Route path="/offer-sources/:offerSourceId/profiles" element={<OfferProfilesPage />} />

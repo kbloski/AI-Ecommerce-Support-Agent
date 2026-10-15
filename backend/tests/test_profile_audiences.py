@@ -110,6 +110,7 @@ class ProfileAudienceTests(unittest.TestCase):
             TargetAudienceService(self.repo),
             SimpleNamespace(),
             SimpleNamespace(build_llm_context=lambda source_id: f'<offer_source>{source_id}: Source</offer_source>'),
+            SimpleNamespace(),
         )
         container = SimpleNamespace(target_audiences_repository=lambda: self.repo, llm_context_composer=lambda: composer, ai_service=lambda: SimpleNamespace(chat_llm=chat), offer_profiles_repository=lambda: profiles)
         with patch.object(generation, "Container", lambda: container):

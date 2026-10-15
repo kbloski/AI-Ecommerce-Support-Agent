@@ -5,6 +5,7 @@ from application.services.offer_profile_service import OfferProfileService
 from application.services.offer_service import OfferService
 from application.services.offer_source_service import OfferSourceService
 from application.services.target_audience_service import TargetAudienceService
+from application.services.marketing_angle_service import MarketingAngleService
 
 
 @dataclass(frozen=True)
@@ -27,11 +28,13 @@ class LlmContextComposer:
         target_audience_service: TargetAudienceService,
         offer_service: OfferService,
         offer_source_service: OfferSourceService,
+        marketing_angle_service: MarketingAngleService,
     ):
         self.offer_profile_service = offer_profile_service
         self.target_audience_service = target_audience_service
         self.offer_service = offer_service
         self.offer_source_service = offer_source_service
+        self.marketing_angle_service = marketing_angle_service
 
     def compose(self, root: ContextRef, include: list[ContextSelection] | None = None) -> str:
         if root.type == ContextType.OFFER_RAW:
@@ -52,6 +55,11 @@ class LlmContextComposer:
                     raise ValueError("Offer source selection does not support ID filters")
                 profile = self.offer_profile_service.get_offer_profile_details_by_id(root.id)
                 sections.append(self.offer_source_service.build_llm_context(profile.offer_source_id))
+                continue
+            if selection.type == ContextType.MARKETING_ANGLE:
+                if selection.include_ids is None or len(selection.include_ids) != 1 or selection.exclude_ids:
+                    raise ValueError("Select exactly one marketing angle")
+                sections.append(self.marketing_angle_service.build_llm_context(root.id, selection.include_ids[0]))
                 continue
             if selection.type != ContextType.TARGET_AUDIENCES:
                 raise ValueError(f"Unsupported context selection: {selection.type}")

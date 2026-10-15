@@ -27,7 +27,24 @@ def init_db():
     _remove_obsolete_target_audience_columns()
     _add_target_audience_desires()
     _add_marketing_angle_fields()
+    _add_ad_concept_marketing_angle()
     Base.metadata.create_all(bind=engine)
+
+
+def _add_ad_concept_marketing_angle():
+    with engine.begin() as conn:
+        if "ad_concepts" not in inspect(conn).get_table_names():
+            return
+        columns = {column["name"] for column in inspect(conn).get_columns("ad_concepts")}
+        if "marketing_angle_id" not in columns:
+            conn.execute(text(
+                "ALTER TABLE ad_concepts ADD COLUMN marketing_angle_id INTEGER "
+                "REFERENCES marketing_angles(id) ON DELETE SET NULL"
+            ))
+        conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_ad_concepts_marketing_angle_id "
+            "ON ad_concepts(marketing_angle_id)"
+        ))
 
 
 def _add_marketing_angle_fields():

@@ -12,6 +12,7 @@ import { useListOfferFactsQuery } from '@/features/offerFacts/offerFactsApi'
 import { useListOfferSourceElementsQuery, useListOfferSourceForOfferQuery } from '@/features/offerSources/offerSourceApi'
 import { useListTargetAudiencesForOfferProfileQuery } from '@/features/targetAudiences/targetAudiencesApi'
 import { useListMarketingAnglesQuery } from '@/features/marketingAngles/marketingAnglesApi'
+import { useListAdConceptsQuery } from '@/features/adConcepts/adConceptsApi'
 import { useGetAnalysisQuery, useListAnalysisForOfferSourceQuery } from '@/features/analysis/analysisApi'
 import { useListBrandMarketingForOfferSourceQuery } from '@/features/brandMarketing/brandMarketingApi'
 import { useGetChecklistQuery, useListChecklistsForOfferSourceQuery } from '@/features/checklists/checklistsApi'
@@ -87,7 +88,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     { pattern: '/offer-sources/:id/*', current: 'Offer source', entityType: 'offer_source', process: [['profiles', 'Profile oferty'], ['brand-marketing', 'Marketing marki (przestarzały)']], offer_source: [['analyses', 'Analizy produktu (przestarzały)'], ['checklists', 'Checklisty (przestarzały)']], resources: [['facts', 'Fakty o produkcie'], ['elements', 'Elementy oferty (przestarzały)']] },
     { pattern: '/offer-sources/:offerSourceId/analysis/:id/*', current: 'Analiza', process: [], resources: [['questions', 'Pytania']] },
     { pattern: '/offer-sources/:offerSourceId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },
-    { pattern: '/offer-profiles/:id/*', current: 'Profil oferty', attached: [['additional-contexts', 'Dodatkowe informacje']], process: [], resources: [['target-audiences', 'Grupy docelowe'], ['marketing-angles', 'Marketing angle']] },
+    { pattern: '/offer-profiles/:id/*', current: 'Profil oferty', attached: [['additional-contexts', 'Dodatkowe informacje']], process: [], resources: [['target-audiences', 'Grupy docelowe'], ['marketing-angles', 'Marketing angle'], ['ad-concepts', 'Ad concepts']] },
     { pattern: '/brand-marketing/:id/*', current: 'Brand marketing', entityType: 'brand_marketing', process: [['marketing-strategies', 'Marketing strategy']], resources: [] },
     { pattern: '/marketing-strategy/:id/*', current: 'Marketing strategy', entityType: 'marketing_strategy', process: [['offer-strategies', 'Offer strategy']], resources: [] },
     { pattern: '/offer-strategy/:id/*', current: 'Offer strategy', entityType: 'offer_strategy', process: [['message-strategies', 'Message strategy']], resources: [] },
@@ -124,6 +125,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     { skip: !isCurrentStage('Profil oferty') },
   )
   const marketingAngles = useListMarketingAnglesQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
+  const adConcepts = useListAdConceptsQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const offerSourceElements = useListOfferSourceElementsQuery(
     { offerSourceId },
     { skip: skipOfferSourceResources },
@@ -159,6 +161,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     'offer-sources': offerSources.data?.length,
     'target-audiences': targetAudiences.data?.total_items,
     'marketing-angles': marketingAngles.data?.length,
+    'ad-concepts': adConcepts.data?.length,
     'additional-contexts': profileContexts.data?.length,
     profiles: offerProfiles.data?.length,
     facts: offerFacts.data?.total_items,
@@ -186,6 +189,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   const attentionCounts: Record<string, number | undefined> = {
     'target-audiences': unreviewedTargetAudiences.data?.total_items,
     'marketing-angles': marketingAngles.data?.filter((angle) => !angle.is_reviewed).length,
+    'ad-concepts': adConcepts.data?.filter((concept) => !concept.is_reviewed).length,
     elements: unreviewedOfferSourceElements.data?.total_items,
     questions: (analysis.data?.analysis_questions as Array<{ is_reviewed?: unknown }> | undefined)
       ?.filter((item) => item.is_reviewed !== true).length,

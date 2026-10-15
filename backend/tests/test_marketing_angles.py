@@ -26,6 +26,7 @@ from application.assemblers.offer_assembler import OfferAssembler
 from infrastructure.repositories.offers_repository import OffersRepository
 from application.handlers.offer_sources import generate_offer_source_handler as source_generation
 from application.services.llm_context_composer import LlmContextComposer, ContextRef, ContextSelection
+from application.services.marketing_angle_service import MarketingAngleService
 from domain.enums.context_type import ContextType
 from domain.enums.llm_rule_set import LlmRuleSet
 
@@ -81,6 +82,7 @@ class MarketingAnglesTests(unittest.TestCase):
             self.audiences,
             OfferService(None, offers_repository, OfferAssembler(None, offers_repository)),
             SimpleNamespace(build_llm_context=lambda source_id: f'<offer_source>{source_id}: Source</offer_source>'),
+            MarketingAngleService(self.repo),
         )
         self.messages = []
         self.response = {"angles": [self.ANGLE_FIELDS.copy()]}
@@ -185,6 +187,21 @@ class MarketingAnglesTests(unittest.TestCase):
         with self.assertRaises(HTTPException) as missing:
             routes.generate_marketing_angles(999, routes.GenerateMarketingAnglesRequest(count=1))
         self.assertEqual(missing.exception.status_code, 404)
+
+    def test_composer_includes_only_selected_profile_marketing_angle(self):
+        self.db.add_all([
+            MarketingAngle(id=10, offer_profile_id=1, name="Selected", description="Buyer perspective"),
+            MarketingAngle(id=11, offer_profile_id=2, name="Foreign", description="Other perspective"),
+        ])
+        self.db.commit()
+        root = ContextRef(ContextType.OFFER_PROFILE, 1)
+        context = self.composer.compose(root, [ContextSelection(ContextType.MARKETING_ANGLE, include_ids=(10,))])
+        self.assertIn('"name": "Selected"', context)
+        self.assertNotIn("Foreign", context)
+        with self.assertRaises(ValueError):
+            self.composer.compose(root, [ContextSelection(ContextType.MARKETING_ANGLE, include_ids=(11,))])
+        with self.assertRaises(LookupError):
+            self.composer.compose(root, [ContextSelection(ContextType.MARKETING_ANGLE, include_ids=(999,))])
 
     def test_offer_source_generator_uses_raw_offer_context(self):
         raw_context = self.composer.compose(ContextRef(ContextType.OFFER_RAW, 1))
