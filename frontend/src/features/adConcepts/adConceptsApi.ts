@@ -20,10 +20,10 @@ export const adConceptsApi = api.injectEndpoints({
       query: (offerProfileId) => `/offer-profiles/${offerProfileId}/ad-concepts`,
       providesTags: (_result, _error, offerProfileId) => [listTag('AdConcept', offerProfileId)],
     }),
-    generateAdConcepts: builder.mutation<Entity[], { offerProfileId: number; count: number; generationMode: 'standard' | 'experimental'; marketingAngleIds: number[]; generationInstructions: string }>({
-      query: ({ offerProfileId, count, generationMode, marketingAngleIds, generationInstructions }) => ({
+    generateAdConcepts: builder.mutation<Entity[], { offerProfileId: number; count: number; generationMode: 'standard' | 'experimental'; marketingAngleIds: number[]; preferredFormat: 'image' | 'video' | null; generationInstructions: string }>({
+      query: ({ offerProfileId, count, generationMode, marketingAngleIds, preferredFormat, generationInstructions }) => ({
         url: `/offer-profiles/${offerProfileId}/ad-concepts/generate`, method: 'POST',
-        body: { count, generation_mode: generationMode, marketing_angle_ids: marketingAngleIds, generation_instructions: generationInstructions },
+        body: { count, generation_mode: generationMode, marketing_angle_ids: marketingAngleIds, preferred_format: preferredFormat, generation_instructions: generationInstructions },
       }),
       invalidatesTags: (_result, _error, { offerProfileId }) => [listTag('AdConcept', offerProfileId)],
     }),

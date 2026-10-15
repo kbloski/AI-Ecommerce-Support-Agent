@@ -4,6 +4,7 @@ from domain.enums.ollama_message_role import OllamaMessageRole
 from domain.enums.llm_message_role import LlmMessageRole
 from domain.enums.llm_rule_set import LlmRuleSet
 from domain.enums.ad_concept_mode import AdConceptMode
+from domain.enums.ad_formats import AdFormats
 from domain.enums.context_section_purpose import ContextSectionPurpose
 from domain.enums.context_type import ContextType
 from domain.enums.table_name import TableName

@@ -22,6 +22,6 @@ def create_ad_concept_handler(offer_profile_id: int, fields: CreateAdConceptRequ
         offer_profile_id=offer_profile_id,
         generation_mode=fields.generation_mode.value,
         marketing_angles=angles,
-        **fields.model_dump(exclude={"generation_mode", "marketing_angle_ids"}),
+        **fields.model_dump(mode="json", exclude={"generation_mode", "marketing_angle_ids"}),
     )
     return ad_concept_to_dict(container.ad_concepts_repository().create_many([item])[0])

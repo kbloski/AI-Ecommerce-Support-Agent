@@ -11,7 +11,9 @@ from api.routes import ad_concepts_routes as routes
 from application.dtos.ad_concepts.ad_concept_fields import AdConceptFields, GenerateAdConceptsRequest
 from application.services.llm_context_composer import ContextRef, ContextSelection
 from application.services.marketing_angle_service import MarketingAngleService
+from application.handlers.ad_concepts import generate_ad_concepts_handler as generation
 from domain.enums.context_type import ContextType
+from domain.enums.ad_formats import AdFormats
 from domain.models import models
 from domain.models.ad.ad_concept import AdConcept
 from domain.models.offer.offer_profile import OfferProfile
@@ -52,6 +54,7 @@ class AdConceptTests(unittest.TestCase):
             "format": "video", "core_idea": "Reveal the product",
             "key_message": "See what is included",
         }]}
+        self.responses = []
         self.messages = []
         self.options = []
         self.context_calls = []
@@ -63,7 +66,7 @@ class AdConceptTests(unittest.TestCase):
         def chat(*, messages, **kwargs):
             self.messages.extend(messages)
             self.options.append(kwargs)
-            return self.response
+            return self.responses.pop(0) if self.responses else self.response
 
         container = SimpleNamespace(
             offer_profiles_repository=lambda: OfferProfilesRepository(None, self.db),
@@ -107,6 +110,25 @@ class AdConceptTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             AdConceptFields(**self.response["concepts"][0])
 
+    def test_ai_chooses_format_from_instructions_without_explicit_preference(self):
+        image = {**self.response["concepts"][0], "format": "image"}
+        self.responses = [{"concepts": [image]}]
+        result = routes.generate_ad_concepts(1, GenerateAdConceptsRequest(count=1, generation_instructions="Daj img"))
+        self.assertEqual(result[0]["format"], "image")
+        self.assertEqual(len(self.options), 1)
+        self.assertIn("Daj img", self.messages[1].content)
+        self.assertIn("Choose image or video according to the user's instructions", self.messages[1].content)
+        self.assertNotIn("FORMAT REQUIREMENT", self.messages[1].content)
+        self.assertNotIn('"format": "video"', generation.SYSTEM_PROMPT)
+
+    def test_rejects_repeated_wrong_format_without_saving(self):
+        with self.assertRaises(HTTPException) as error:
+            routes.generate_ad_concepts(1, GenerateAdConceptsRequest(count=1, preferred_format="image"))
+        self.assertEqual(error.exception.status_code, 502)
+        self.assertEqual(len(self.options), 2)
+        self.assertEqual(self.db.query(AdConcept).count(), 0)
+        self.assertIn('FORMAT REQUIREMENT: Every concept must have format "image"', self.messages[1].content)
+
     def test_generation_with_selected_marketing_angle_persists_relation(self):
         result = routes.generate_ad_concepts(1, GenerateAdConceptsRequest(count=1, marketing_angle_id=1))
         self.assertEqual(result[0]["marketing_angle_ids"], [1])
@@ -147,6 +169,11 @@ class AdConceptTests(unittest.TestCase):
         self.assertEqual(foreign.exception.status_code, 422)
 
     def test_mode_selection_validation(self):
+        self.assertEqual(AdConceptFields(**self.response["concepts"][0]).format, AdFormats.VIDEO)
+        self.assertEqual(
+            GenerateAdConceptsRequest(preferred_format="image").preferred_format,
+            AdFormats.IMAGE,
+        )
         for payload in (
             {"generation_mode": "standard", "marketing_angle_ids": [1, 3]},
             {"generation_mode": "experimental", "marketing_angle_ids": []},

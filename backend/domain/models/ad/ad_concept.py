@@ -4,12 +4,16 @@ from sqlalchemy.orm import relationship
 
 from infrastructure.database.db import Base
 from domain.enums.table_name import TableName
+from domain.enums.ad_formats import AdFormats
 
 
 class AdConcept(Base):
     __tablename__ = TableName.AD_CONCEPTS.value
     __table_args__ = (
-        CheckConstraint("format IN ('video', 'image')", name="ck_ad_concepts_format"),
+        CheckConstraint(
+            f"format IN ('{AdFormats.VIDEO.value}', '{AdFormats.IMAGE.value}')",
+            name="ck_ad_concepts_format",
+        ),
         CheckConstraint("generation_mode IN ('standard', 'experimental')", name="ck_ad_concepts_generation_mode"),
     )
 

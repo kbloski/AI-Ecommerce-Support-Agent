@@ -1,14 +1,13 @@
-from typing import Literal
-
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from domain.enums.ad_concept_mode import AdConceptMode
+from domain.enums.ad_formats import AdFormats
 
 
 class AdConceptFields(BaseModel):
     name: str = Field(min_length=1, max_length=255)
     description: str = Field(min_length=1)
-    format: Literal["video", "image"]
+    format: AdFormats
     core_idea: str = Field(min_length=1)
     key_message: str = Field(min_length=1)
 
@@ -55,6 +54,7 @@ class AdConceptSelection(BaseModel):
 
 class GenerateAdConceptsRequest(AdConceptSelection):
     count: int = Field(default=3, ge=1, le=10)
+    preferred_format: AdFormats | None = None
     generation_instructions: str = Field(default="", max_length=4000)
 
 

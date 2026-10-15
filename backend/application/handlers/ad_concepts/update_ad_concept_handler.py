@@ -24,7 +24,7 @@ def update_ad_concept_handler(id: int, fields: UpdateAdConceptRequest):
     else:
         angles = item.marketing_angles
     mode = fields.generation_mode.value if selection_provided else item.generation_mode
-    values = fields.model_dump(exclude={"is_reviewed", "generation_mode", "marketing_angle_ids"})
+    values = fields.model_dump(mode="json", exclude={"is_reviewed", "generation_mode", "marketing_angle_ids"})
     changed = (
         any(getattr(item, key) != value for key, value in values.items())
         or item.generation_mode != mode

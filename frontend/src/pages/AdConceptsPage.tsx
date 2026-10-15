@@ -73,15 +73,18 @@ function GenerateConceptsForm({ offerProfileId, onSaved }: { offerProfileId: num
     const form = new FormData(event.currentTarget)
     const count = Number(form.get('count'))
     const marketingAngleIds = form.getAll('marketing_angle_ids').filter(Boolean).map(Number)
+    const formatValue = String(form.get('preferred_format') ?? '')
+    const preferredFormat = formatValue === 'image' || formatValue === 'video' ? formatValue : null
     const generationInstructions = String(form.get('generation_instructions') ?? '').trim()
     if (!Number.isInteger(count) || count < 1 || count > 10) { setError('Podaj liczbę od 1 do 10.'); return }
     if (mode === 'experimental' && marketingAngleIds.length === 0) { setError('Wybierz co najmniej jeden marketing angle.'); return }
     setError('')
-    try { await generate({ offerProfileId, count, generationMode: mode, marketingAngleIds, generationInstructions }).unwrap(); onSaved() }
+    try { await generate({ offerProfileId, count, generationMode: mode, marketingAngleIds, preferredFormat, generationInstructions }).unwrap(); onSaved() }
     catch { setError('Nie udało się wygenerować koncepcji. Sprawdź odpowiedź modelu i spróbuj ponownie.') }
   }
   return <form onSubmit={(event) => void submit(event)} className="space-y-5">
     <label className="block space-y-2"><span className="text-sm font-medium">Liczba ad concepts</span><Input name="count" type="number" min={1} max={10} step={1} defaultValue={3} required /></label>
+    <label className="block space-y-2"><span className="text-sm font-medium">Format</span><select name="preferred_format" defaultValue="" className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="">Według wskazówek</option><option value="image">Obraz</option><option value="video">Wideo</option></select></label>
     <label className="block space-y-2"><span className="text-sm font-medium">Tryb generowania</span><select value={mode} onChange={(event) => setMode(event.target.value as 'standard' | 'experimental')} className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="standard">Standard</option><option value="experimental">Experimental</option></select></label>
     <MarketingAngleSelection mode={mode} angles={marketingAngles} />
     {anglesError && <p role="alert" className="text-sm text-destructive">Nie udało się pobrać marketing angles.</p>}
