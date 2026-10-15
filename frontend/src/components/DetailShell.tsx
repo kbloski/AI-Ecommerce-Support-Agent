@@ -12,6 +12,7 @@ interface DetailShellProps {
   data: Entity | undefined
   isLoading: boolean
   error?: unknown
+  jsonPanelContent?: ReactNode
   children?: ReactNode
   actions?: ReactNode
   overview?: ReactNode
@@ -40,6 +41,7 @@ export function DetailShell({
   data,
   isLoading,
   error,
+  jsonPanelContent,
   actions,
   overview,
   fields,
@@ -83,7 +85,7 @@ export function DetailShell({
     <div className="w-full space-y-6 p-6 lg:p-10">
 
       {data && (
-        <JsonPanelRegistration data={data} title={`JSON: ${title}`} />
+        <JsonPanelRegistration data={data} title={`JSON: ${title}`} content={jsonPanelContent} />
       )}
 
       <div className="space-y-6">

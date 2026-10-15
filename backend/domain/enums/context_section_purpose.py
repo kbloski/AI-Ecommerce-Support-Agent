@@ -5,6 +5,7 @@ class ContextSectionPurpose(str, Enum):
     OFFER_PROFILE = "Profile information and attached additional contexts defining the offer perspective."
     TARGET_AUDIENCES = "Selected target audience segments whose needs and buying motivations guide generation."
     MARKETING_ANGLE = "Selected persuasive perspectives that should guide the advertising concept."
+    AD_CONCEPT = "Selected advertising concepts defining the creative idea, format, and key message."
 
     # Core business context
     OFFER_SOURCE = (

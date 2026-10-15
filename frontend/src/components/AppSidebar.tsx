@@ -1,11 +1,13 @@
 import { NavLink } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, LayoutDashboard, Megaphone, Package, Settings, UsersRound } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Download, LayoutDashboard, Megaphone, Package, Settings, UsersRound } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { useSidePanel } from '@/lib/sidePanel'
+import { ResourceExportPanel } from '@/features/resources/ResourceExportPanel'
 
 interface SidebarSection {
   label: string
-  to: string
+  to?: string
   icon: typeof Package
 }
 
@@ -14,6 +16,7 @@ const SECTIONS: SidebarSection[] = [
   { label: 'Dashboard', to: '/', icon: LayoutDashboard },
   { label: 'Tworzenie oferty', to: '/offers', icon: Package },
   { label: 'Istniejące profile ofert', to: '/offer-profiles', icon: UsersRound },
+  { label: 'Export zasobów', icon: Download },
   { label: 'Wygenerowane reklamy', to: '/generated-ads', icon: Megaphone },
   { label: 'Ustawienia', to: '/settings', icon: Settings },
 ]
@@ -31,10 +34,12 @@ interface AppSidebarProps {
   variant?: 'sidebar' | 'mobile'
   collapsed?: boolean
   onToggle?: () => void
+  onAction?: () => void
 }
 
-export function AppSidebar({ variant = 'sidebar', collapsed = false, onToggle }: AppSidebarProps) {
+export function AppSidebar({ variant = 'sidebar', collapsed = false, onToggle, onAction }: AppSidebarProps) {
   const isCollapsed = variant === 'sidebar' && collapsed
+  const { openPanel } = useSidePanel()
 
   return (
     <aside
@@ -61,9 +66,9 @@ export function AppSidebar({ variant = 'sidebar', collapsed = false, onToggle }:
         )}
       </div>
       <nav className="space-y-1">
-        {SECTIONS.map(({ label, to, icon: Icon }) => (
+        {SECTIONS.map(({ label, to, icon: Icon }) => to ? (
           <NavLink
-            key={to}
+            key={label}
             to={to}
             end={to === '/'}
             className={(state) => cn(navLinkClassName(state), isCollapsed && 'justify-center px-0')}
@@ -73,6 +78,13 @@ export function AppSidebar({ variant = 'sidebar', collapsed = false, onToggle }:
             <Icon className="size-4 shrink-0" />
             {!isCollapsed && label}
           </NavLink>
+        ) : (
+          <button key={label} type="button" className={cn(navLinkClassName({ isActive: false }), 'w-full text-left', isCollapsed && 'justify-center px-0')}
+            aria-label={isCollapsed ? label : undefined} title={isCollapsed ? label : undefined}
+            onClick={() => { onAction?.(); openPanel({ title: 'Export zasobów', content: <ResourceExportPanel /> }) }}>
+            <Icon className="size-4 shrink-0" />
+            {!isCollapsed && label}
+          </button>
         ))}
       </nav>
 

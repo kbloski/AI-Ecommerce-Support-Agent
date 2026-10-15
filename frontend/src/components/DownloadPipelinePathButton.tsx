@@ -2,6 +2,7 @@ import { Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useGetPipelinePathMutation, type PipelinePathResponse } from '@/features/pipeline/pipelineApi'
 import { cn } from '@/lib/utils'
+import { downloadTextFile } from '@/lib/downloadTextFile'
 
 function formatPipelinePathAsText(response: PipelinePathResponse): string {
   return response.path
@@ -11,16 +12,6 @@ function formatPipelinePathAsText(response: PipelinePathResponse): string {
       return `${header}\n${body}`
     })
     .join('\n\n')
-}
-
-function downloadTextFile(filename: string, content: string) {
-  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = filename
-  link.click()
-  URL.revokeObjectURL(url)
 }
 
 export function DownloadPipelinePathButton({

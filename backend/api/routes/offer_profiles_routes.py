@@ -1,11 +1,13 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from pydantic import BaseModel, ConfigDict, Field
 from application.handlers.offer_profiles.create_offer_profile_handler import create_offer_profile_handler
 from application.handlers.offer_profiles.list_offer_profiles_handler import list_all_offer_profiles_handler, list_offer_profiles_handler
 
 from application.handlers.offer_profiles.get_offer_profile_handler import get_offer_profile_handler
+from application.handlers.offer_profiles.get_offer_profile_context_handler import get_offer_profile_context_handler
 from application.handlers.offer_profiles.update_offer_profile_handler import update_offer_profile_handler
 from application.handlers.offer_profiles.delete_offer_profile_handler import delete_offer_profile_handler
+from domain.enums.context_type import ContextType
 
 router = APIRouter()
 
@@ -30,6 +32,15 @@ def create_profile(offer_source_id: int, payload: CreateOfferProfileRequest):
 @router.get("/offer-profiles/{id}")
 def get_profile(id: int):
     return get_offer_profile_handler(id)
+
+@router.get("/offer-profiles/{id}/llm-context")
+def get_profile_llm_context(
+    id: int,
+    include: list[ContextType] = Query(default=[]),
+    marketing_angle_ids: list[int] = Query(default=[]),
+    ad_concept_ids: list[int] = Query(default=[]),
+):
+    return get_offer_profile_context_handler(id, include, marketing_angle_ids, ad_concept_ids)
 
 @router.post("/offer-profiles/{id}/update")
 def update_profile(id: int, payload: CreateOfferProfileRequest):

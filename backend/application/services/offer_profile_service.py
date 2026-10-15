@@ -16,9 +16,12 @@ class OfferProfileService:
             raise LookupError(f"Offer profile {offer_profile_id} not found")
         return self.offer_profile_assembler.assemble_dto(OfferProfileMapper.to_dto(profile))
 
-    def build_llm_context(self, offer_profile_id: int) -> str:
+    def build_llm_context(self, offer_profile_id: int, *, include_additional_contexts: bool = True) -> str:
+        content_data = self.get_offer_profile_details_by_id(offer_profile_id).to_content_dict()
+        if not include_additional_contexts:
+            content_data.pop("additional_contexts", None)
         content = json.dumps(
-            self.get_offer_profile_details_by_id(offer_profile_id).to_content_dict(),
+            content_data,
             ensure_ascii=False, indent=2, default=str,
         )
         return build_llm_section("offer_profile", content, purpose=ContextSectionPurpose.OFFER_PROFILE.value)

@@ -1,4 +1,5 @@
-import { ArrowLeft, CodeXml } from 'lucide-react'
+import { useId, useState, type ReactNode } from 'react'
+import { ArrowLeft, ChevronDown, CodeXml } from 'lucide-react'
 import { Link, NavLink, matchPath, useLocation, useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { DownloadPipelinePathButton } from '@/components/DownloadPipelinePathButton'
@@ -40,6 +41,20 @@ const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
   )
 
 const sidebarActionClassName = 'h-auto min-h-7 w-full min-w-0 max-w-full shrink justify-start py-1.5 text-left leading-snug whitespace-normal'
+
+function SidebarGroup({ title, children, className }: { title: string; children: ReactNode; className?: string }) {
+  const [expanded, setExpanded] = useState(true)
+  const contentId = useId()
+
+  return <section className={className}>
+    <button type="button" aria-expanded={expanded} aria-controls={contentId} onClick={() => setExpanded((value) => !value)}
+      className="mb-2 flex w-full items-center justify-between border-b border-foreground/30 px-2 pb-2 text-left text-xs font-semibold tracking-wide text-foreground uppercase hover:text-primary">
+      <span>{title}</span>
+      <ChevronDown className={cn('size-3.5 shrink-0 transition-transform', !expanded && '-rotate-90')} />
+    </button>
+    <div id={contentId} hidden={!expanded}>{children}</div>
+  </section>
+}
 
 interface AppContextSidebarProps {
   variant?: 'sidebar' | 'mobile'
@@ -88,7 +103,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     { pattern: '/offer-sources/:id/*', current: 'Offer source', entityType: 'offer_source', process: [['profiles', 'Profile oferty'], ['brand-marketing', 'Marketing marki (przestarzały)']], offer_source: [['analyses', 'Analizy produktu (przestarzały)'], ['checklists', 'Checklisty (przestarzały)']], resources: [['facts', 'Fakty o produkcie'], ['elements', 'Elementy oferty (przestarzały)']] },
     { pattern: '/offer-sources/:offerSourceId/analysis/:id/*', current: 'Analiza', process: [], resources: [['questions', 'Pytania']] },
     { pattern: '/offer-sources/:offerSourceId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },
-    { pattern: '/offer-profiles/:id/*', current: 'Profil oferty', attached: [['additional-contexts', 'Dodatkowe informacje']], process: [], resources: [['target-audiences', 'Grupy docelowe'], ['marketing-angles', 'Marketing angle'], ['ad-concepts', 'Ad concepts']] },
+    { pattern: '/offer-profiles/:id/*', current: 'Profil oferty', attached: [['additional-contexts', 'Dodatkowe informacje']], process: [], resources: [] },
     { pattern: '/brand-marketing/:id/*', current: 'Brand marketing', entityType: 'brand_marketing', process: [['marketing-strategies', 'Marketing strategy']], resources: [] },
     { pattern: '/marketing-strategy/:id/*', current: 'Marketing strategy', entityType: 'marketing_strategy', process: [['offer-strategies', 'Offer strategy']], resources: [] },
     { pattern: '/offer-strategy/:id/*', current: 'Offer strategy', entityType: 'offer_strategy', process: [['message-strategies', 'Message strategy']], resources: [] },
@@ -214,26 +229,22 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   if (pathname.startsWith('/settings')) {
     return renderSidebar(
       <>
-        <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
-          Ustawienia
-        </h2>
-        <nav className="ml-2 space-y-1 border-l pl-2">
-          <NavLink to="/settings/general" className={navLinkClassName}>
-            General
-          </NavLink>
-        </nav>
+        <SidebarGroup title="Ustawienia">
+          <nav className="ml-2 space-y-1 border-l pl-2">
+            <NavLink to="/settings/general" className={navLinkClassName}>
+              General
+            </NavLink>
+          </nav>
+        </SidebarGroup>
         {contextualPanel && (
-          <section className="mt-6">
-            <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
-              Akcje
-            </h2>
+          <SidebarGroup title="Akcje" className="mt-6">
             <nav className="ml-2 space-y-1 border-l pl-2">
               <Button type="button" variant="ghost" size="sm" className={sidebarActionClassName} onClick={() => openPanel(contextualPanel)}>
                 <CodeXml />
                 Zobacz JSON obiektu
               </Button>
             </nav>
-          </section>
+          </SidebarGroup>
         )}
       </>,
     )
@@ -266,59 +277,84 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
           <p className="mt-1 text-sm font-semibold text-foreground">{section.config.current}</p>
         </Link>
         {'attached' in section.config && section.config.attached.length > 0 && (
-          <section className="mb-6">
-            <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
-              Powiązane dane z zasobem
-            </h2>
+          <SidebarGroup title="Powiązane dane z zasobem" className="mb-6">
             <nav className="ml-2 space-y-1 border-l pl-2">
               {section.config.attached.map(([slug, label]) => (
                 navigationLink(slug, label, `${detailPath}/${slug}`)
               ))}
             </nav>
-          </section>
+          </SidebarGroup>
         )}
         {section.config.process.length > 0 && (
-          <section>
-            <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
-              Proces
-            </h2>
+          <SidebarGroup title="Proces">
             <nav className="ml-2 space-y-1 border-l pl-2">
               {section.config.process.map(([slug, label]) => (
                 navigationLink(slug, label, `${detailPath}/${slug}`)
               ))}
             </nav>
-          </section>
+          </SidebarGroup>
         )}
 
         {section.config.resources.length > 0 && (
-          <section className={section.config.process.length > 0 ? 'mt-6' : undefined}>
-            <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
-              Zasoby
-            </h2>
+          <SidebarGroup title="Zasoby" className={section.config.process.length > 0 ? 'mt-6' : undefined}>
             <nav className="ml-2 space-y-1 border-l pl-2">
               {section.config.resources.map(([slug, label]) => (
                 navigationLink(slug, label, `${detailPath}/${slug}`)
               ))}
             </nav>
-          </section>
+          </SidebarGroup>
+        )}
+        {section.config.current === 'Profil oferty' && (
+          <SidebarGroup title="Targets">
+            <nav className="ml-2 space-y-1 border-l pl-2">
+              {navigationLink('target-audiences', 'Target audiences', `${detailPath}/target-audiences`)}
+              <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">Buyer personas</span>
+            </nav>
+          </SidebarGroup>
+        )}
+        {section.config.current === 'Profil oferty' && (
+          <SidebarGroup title="Marketing" className="mt-6">
+            <nav className="ml-2 space-y-1 border-l pl-2">
+              {navigationLink('marketing-angles', 'Marketing angles', `${detailPath}/marketing-angles`)}
+              {navigationLink('ad-concepts', 'Ad concepts', `${detailPath}/ad-concepts`)}
+              <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">Creative plans</span>
+            </nav>
+          </SidebarGroup>
+        )}
+        {section.config.current === 'Profil oferty' && (
+          <SidebarGroup title="Pages" className="mt-6">
+            <div className="ml-2 border-l pl-2">
+              <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">Landing pages</span>
+              <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">Sales pages</span>
+            </div>
+          </SidebarGroup>
+        )}
+        {section.config.current === 'Profil oferty' && (
+          <SidebarGroup title="Social" className="mt-6">
+            <div className="ml-2 border-l pl-2">
+              <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">UGC</span>
+              <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">Social posts</span>
+            </div>
+          </SidebarGroup>
+        )}
+        {section.config.current === 'Profil oferty' && (
+          <SidebarGroup title="Ads" className="mt-6">
+            <div className="ml-2 border-l pl-2">
+              <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">Ad creatives</span>
+            </div>
+          </SidebarGroup>
         )}
         {'offer_source' in section.config && section.config.offer_source.length > 0 && (
-          <section className={section.config.process.length > 0 || section.config.resources.length > 0 ? 'mt-6' : undefined}>
-            <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
-              Audyt
-            </h2>
+          <SidebarGroup title="Audyt" className={section.config.process.length > 0 || section.config.resources.length > 0 ? 'mt-6' : undefined}>
             <nav className="ml-2 space-y-1 border-l pl-2">
               {section.config.offer_source.map(([slug, label]) => (
                 navigationLink(slug, label, `${detailPath}/${slug}`)
               ))}
             </nav>
-          </section>
+          </SidebarGroup>
         )}
         {('entityType' in section.config || contextualPanel) && (
-          <section className={section.config.process.length > 0 || 'offer_source' in section.config || section.config.resources.length > 0 ? 'mt-6' : undefined}>
-            <h2 className="mb-2 border-b border-foreground/30 px-2 pb-2 text-xs font-semibold tracking-wide text-foreground uppercase">
-              Akcje
-            </h2>
+          <SidebarGroup title="Akcje" className={section.config.process.length > 0 || 'offer_source' in section.config || section.config.resources.length > 0 || section.config.current === 'Profil oferty' ? 'mt-6' : undefined}>
             <nav className="ml-2 space-y-1 border-l pl-2">
               {'entityType' in section.config && (
                 <DownloadPipelinePathButton className={sidebarActionClassName} entityType={section.config.entityType} entityId={Number(section.match?.params.id)} />
@@ -330,7 +366,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
                 </Button>
               )}
             </nav>
-          </section>
+          </SidebarGroup>
         )}
       </>,
     )

@@ -5,6 +5,7 @@ from application.services.offer_profile_service import OfferProfileService
 from application.services.target_audience_service import TargetAudienceService
 from application.services.llm_context_composer import LlmContextComposer
 from application.services.marketing_angle_service import MarketingAngleService
+from application.services.ad_concept_service import AdConceptService
 from application.assemblers.offer_profile_assembler import OfferProfileAssembler
 from application.services.ai_service import AiService
 from application.services.ollama_service import OllamaService
@@ -164,6 +165,7 @@ class Container(containers.DeclarativeContainer):
     marketing_angles_repository = providers.Singleton(MarketingAnglesRepository, logger=logger, db=db)
     marketing_angle_service = providers.Factory(MarketingAngleService, marketing_angles_repository=marketing_angles_repository)
     ad_concepts_repository = providers.Singleton(AdConceptsRepository, logger=logger, db=db)
+    ad_concept_service = providers.Factory(AdConceptService, ad_concepts_repository=ad_concepts_repository)
 
     checklist_repository = providers.Singleton(
         ChecklistRepository,
@@ -548,6 +550,7 @@ class Container(containers.DeclarativeContainer):
         offer_service=offer_service,
         offer_source_service=offer_source_service,
         marketing_angle_service=marketing_angle_service,
+        ad_concept_service=ad_concept_service,
     )
 
     brand_marketing_service = providers.Singleton(

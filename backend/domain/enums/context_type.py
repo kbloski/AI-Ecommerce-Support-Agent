@@ -7,3 +7,4 @@ class ContextType(str, Enum):
     OFFER_PROFILE = "offer_profile"
     TARGET_AUDIENCES = "target_audiences"
     MARKETING_ANGLE = "marketing_angle"
+    AD_CONCEPT = "ad_concept"

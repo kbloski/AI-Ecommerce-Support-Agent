@@ -50,7 +50,7 @@ export function AppShell() {
               <Menu className="size-5" />
             </SheetTrigger>
             <SheetContent>
-              <AppSidebar variant="mobile" />
+              <AppSidebar variant="mobile" onAction={() => setMobileNavOpen(false)} />
               <div className="my-2 border-t" />
               <AppContextSidebar variant="mobile" />
             </SheetContent>
