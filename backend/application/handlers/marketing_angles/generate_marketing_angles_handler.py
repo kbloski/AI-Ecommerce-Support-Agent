@@ -18,7 +18,6 @@ from application.services.llm_context_composer import (
 from di.container import Container
 from domain.enums.context_type import ContextType
 from domain.enums.llm_message_role import LlmMessageRole
-from domain.enums.llm_rule_set import LlmRuleSet
 from domain.models.llm.llm_message import LlmMessage
 from domain.models.offer.marketing_angle import MarketingAngle
 
@@ -195,17 +194,13 @@ JSON structure. Do not include additional fields.
         ),
     ]
 
-    response = container.ai_service().chat_llm(
+    payload = container.ai_service().chat_json(
         messages=messages,
-        json_response=True,
-        rule_sets=(LlmRuleSet.JSON_OUTPUT, LlmRuleSet.ENGLISH_OUTPUT),
     )
 
     # Validate the LLM response before saving anything.
     try:
-        output = MarketingAnglesResponse.model_validate_json(
-            response.content
-        )
+        output = MarketingAnglesResponse.model_validate(payload)
     except (ValidationError, ValueError, TypeError) as error:
         raise HTTPException(
             502,

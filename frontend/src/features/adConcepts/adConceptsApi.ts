@@ -8,8 +8,11 @@ export interface AdConceptFields {
   format: 'video' | 'image'
   core_idea: string
   key_message: string
-  marketing_angle_id?: number | null
+  generation_mode: 'standard' | 'experimental'
+  marketing_angle_ids: number[]
 }
+
+export type AdConceptContentFields = Omit<AdConceptFields, 'generation_mode' | 'marketing_angle_ids'>
 
 export const adConceptsApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -17,10 +20,10 @@ export const adConceptsApi = api.injectEndpoints({
       query: (offerProfileId) => `/offer-profiles/${offerProfileId}/ad-concepts`,
       providesTags: (_result, _error, offerProfileId) => [listTag('AdConcept', offerProfileId)],
     }),
-    generateAdConcepts: builder.mutation<Entity[], { offerProfileId: number; count: number; marketingAngleId: number | null; generationInstructions: string }>({
-      query: ({ offerProfileId, count, marketingAngleId, generationInstructions }) => ({
+    generateAdConcepts: builder.mutation<Entity[], { offerProfileId: number; count: number; generationMode: 'standard' | 'experimental'; marketingAngleIds: number[]; generationInstructions: string }>({
+      query: ({ offerProfileId, count, generationMode, marketingAngleIds, generationInstructions }) => ({
         url: `/offer-profiles/${offerProfileId}/ad-concepts/generate`, method: 'POST',
-        body: { count, marketing_angle_id: marketingAngleId, generation_instructions: generationInstructions },
+        body: { count, generation_mode: generationMode, marketing_angle_ids: marketingAngleIds, generation_instructions: generationInstructions },
       }),
       invalidatesTags: (_result, _error, { offerProfileId }) => [listTag('AdConcept', offerProfileId)],
     }),
@@ -28,7 +31,7 @@ export const adConceptsApi = api.injectEndpoints({
       query: ({ offerProfileId, fields }) => ({ url: `/offer-profiles/${offerProfileId}/ad-concepts`, method: 'POST', body: fields }),
       invalidatesTags: (_result, _error, { offerProfileId }) => [listTag('AdConcept', offerProfileId)],
     }),
-    updateAdConcept: builder.mutation<Entity, { id: number; offerProfileId: number; fields: AdConceptFields; isReviewed: boolean }>({
+    updateAdConcept: builder.mutation<Entity, { id: number; offerProfileId: number; fields: AdConceptFields | AdConceptContentFields; isReviewed: boolean }>({
       query: ({ id, fields, isReviewed }) => ({ url: `/ad-concepts/${id}/update`, method: 'POST', body: { ...fields, is_reviewed: isReviewed } }),
       invalidatesTags: (_result, _error, { offerProfileId, id }) => [listTag('AdConcept', offerProfileId), itemTag('AdConcept', id)],
     }),

@@ -57,9 +57,9 @@ class LlmContextComposer:
                 sections.append(self.offer_source_service.build_llm_context(profile.offer_source_id))
                 continue
             if selection.type == ContextType.MARKETING_ANGLE:
-                if selection.include_ids is None or len(selection.include_ids) != 1 or selection.exclude_ids:
-                    raise ValueError("Select exactly one marketing angle")
-                sections.append(self.marketing_angle_service.build_llm_context(root.id, selection.include_ids[0]))
+                if not selection.include_ids or selection.exclude_ids:
+                    raise ValueError("Select at least one marketing angle without exclusions")
+                sections.append(self.marketing_angle_service.build_llm_context(root.id, list(selection.include_ids)))
                 continue
             if selection.type != ContextType.TARGET_AUDIENCES:
                 raise ValueError(f"Unsupported context selection: {selection.type}")

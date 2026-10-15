@@ -1,5 +1,7 @@
 from collections.abc import Sequence
 
+from application.services.llm_result_validation import parse_llm_json
+
 from infrastructure.logging.logger import Logger
 from infrastructure.services.path_service import PathService
 from application.services.ollama_service import OllamaService
@@ -47,3 +49,21 @@ class AiService:
             role=LlmMessageRole(response.role.value),
             content=response.content,
         )
+
+    def chat_json(
+        self,
+        messages: list[LlmMessage],
+        *,
+        think: bool | None = None,
+        num_predict: int | None = None,
+        rule_sets: Sequence[LlmRuleSet] = (LlmRuleSet.ENGLISH_OUTPUT,),
+    ) -> dict:
+        """Request JSON from the model and return a parsed JSON object."""
+        response = self.chat_llm(
+            messages,
+            json_response=True,
+            think=think,
+            num_predict=num_predict,
+            rule_sets=(LlmRuleSet.JSON_OUTPUT, *rule_sets),
+        )
+        return parse_llm_json(response.content)

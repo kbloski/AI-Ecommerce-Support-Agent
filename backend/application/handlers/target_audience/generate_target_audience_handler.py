@@ -10,7 +10,6 @@ from domain.models.llm.llm_message import LlmMessage
 from domain.models.audience.target_audience import TargetAudience
 
 from domain.enums.llm_message_role import LlmMessageRole
-from domain.enums.llm_rule_set import LlmRuleSet
 from domain.enums.genders import Genders
 from domain.enums.fact_status import FactStatus
 from domain.enums.context_type import ContextType
@@ -35,7 +34,7 @@ def generate_target_audience_handler(
     except LookupError as error:
         raise HTTPException(404, str(error)) from error
 
-    response = ai_service.chat_llm(
+    response_json = ai_service.chat_json(
         messages=[
             LlmMessage(
                 role=LlmMessageRole.SYSTEM,
@@ -50,10 +49,8 @@ def generate_target_audience_handler(
                 )
             )
         ],
-        rule_sets=(LlmRuleSet.JSON_OUTPUT, LlmRuleSet.ENGLISH_OUTPUT),
     )
 
-    response_json = json.loads(response.content )
     audiences_arr = response_json["audiences"]
     if len(audiences_arr) != count:
         raise HTTPException(502, f"Expected {count} target audiences, received {len(audiences_arr)}")

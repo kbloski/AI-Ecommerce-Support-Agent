@@ -5,7 +5,8 @@ def ad_concept_to_dict(concept: AdConcept) -> dict:
     return {
         "id": concept.id,
         "offer_profile_id": concept.offer_profile_id,
-        "marketing_angle_id": concept.marketing_angle_id,
+        "marketing_angle_ids": sorted(angle.id for angle in concept.marketing_angles),
+        "generation_mode": concept.generation_mode,
         "name": concept.name,
         "description": concept.description,
         "format": concept.format,

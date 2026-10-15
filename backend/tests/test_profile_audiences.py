@@ -13,7 +13,6 @@ from application.services.offer_profile_service import OfferProfileService
 from application.services.llm_context_composer import LlmContextComposer, ContextRef
 from application.services.target_audience_service import TargetAudienceService
 from domain.enums.context_type import ContextType
-from domain.enums.llm_rule_set import LlmRuleSet
 from application.assemblers.offer_profile_assembler import OfferProfileAssembler
 import xml.etree.ElementTree as ET
 from application.handlers.target_audience import generate_target_audience_handler as generation
@@ -104,7 +103,7 @@ class ProfileAudienceTests(unittest.TestCase):
         def chat(messages, *, rule_sets=()):
             calls.extend(messages)
             rule_set_calls.append(rule_sets)
-            return SimpleNamespace(content=json.dumps({"audiences": [sample]}))
+            return {"audiences": [sample]}
         composer = LlmContextComposer(
             service,
             TargetAudienceService(self.repo),
@@ -112,11 +111,11 @@ class ProfileAudienceTests(unittest.TestCase):
             SimpleNamespace(build_llm_context=lambda source_id: f'<offer_source>{source_id}: Source</offer_source>'),
             SimpleNamespace(),
         )
-        container = SimpleNamespace(target_audiences_repository=lambda: self.repo, llm_context_composer=lambda: composer, ai_service=lambda: SimpleNamespace(chat_llm=chat), offer_profiles_repository=lambda: profiles)
+        container = SimpleNamespace(target_audiences_repository=lambda: self.repo, llm_context_composer=lambda: composer, ai_service=lambda: SimpleNamespace(chat_json=chat), offer_profiles_repository=lambda: profiles)
         with patch.object(generation, "Container", lambda: container):
             audiences = generation.generate_target_audience_handler(1, count=1, generation_instructions="Focus on procurement decision makers")
         self.assertEqual(audiences[0].offer_profile_id, 1)
-        self.assertEqual(rule_set_calls[0], (LlmRuleSet.JSON_OUTPUT, LlmRuleSet.ENGLISH_OUTPUT))
+        self.assertEqual(rule_set_calls[0], ())
         self.assertIn("exactly 1 target audience", calls[1].content)
         self.assertIn("Business buyers", calls[1].content)
         self.assertIn("Focus on procurement teams", calls[1].content)

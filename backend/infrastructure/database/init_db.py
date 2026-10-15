@@ -27,24 +27,38 @@ def init_db():
     _remove_obsolete_target_audience_columns()
     _add_target_audience_desires()
     _add_marketing_angle_fields()
-    _add_ad_concept_marketing_angle()
+    _migrate_ad_concept_modes_and_angles()
     Base.metadata.create_all(bind=engine)
 
 
-def _add_ad_concept_marketing_angle():
+def _migrate_ad_concept_modes_and_angles():
     with engine.begin() as conn:
         if "ad_concepts" not in inspect(conn).get_table_names():
             return
         columns = {column["name"] for column in inspect(conn).get_columns("ad_concepts")}
-        if "marketing_angle_id" not in columns:
+        if "generation_mode" not in columns:
             conn.execute(text(
-                "ALTER TABLE ad_concepts ADD COLUMN marketing_angle_id INTEGER "
-                "REFERENCES marketing_angles(id) ON DELETE SET NULL"
+                "ALTER TABLE ad_concepts ADD COLUMN generation_mode VARCHAR(16) "
+                "NOT NULL DEFAULT 'standard'"
             ))
         conn.execute(text(
-            "CREATE INDEX IF NOT EXISTS ix_ad_concepts_marketing_angle_id "
-            "ON ad_concepts(marketing_angle_id)"
+            "CREATE TABLE IF NOT EXISTS ad_concept_marketing_angles ("
+            "ad_concept_id INTEGER NOT NULL REFERENCES ad_concepts(id) ON DELETE CASCADE, "
+            "marketing_angle_id INTEGER NOT NULL REFERENCES marketing_angles(id) ON DELETE CASCADE, "
+            "PRIMARY KEY (ad_concept_id, marketing_angle_id))"
         ))
+        if "marketing_angle_id" in columns:
+            conn.execute(text(
+                "INSERT INTO ad_concept_marketing_angles (ad_concept_id, marketing_angle_id) "
+                "SELECT c.id, c.marketing_angle_id FROM ad_concepts AS c "
+                "WHERE c.marketing_angle_id IS NOT NULL "
+                "AND EXISTS (SELECT 1 FROM marketing_angles AS m WHERE m.id = c.marketing_angle_id) "
+                "AND NOT EXISTS (SELECT 1 FROM ad_concept_marketing_angles AS link "
+                "WHERE link.ad_concept_id = c.id AND link.marketing_angle_id = c.marketing_angle_id)"
+            ))
+            if conn.dialect.name == "sqlite":
+                conn.execute(text("DROP INDEX IF EXISTS ix_ad_concepts_marketing_angle_id"))
+            conn.execute(text("ALTER TABLE ad_concepts DROP COLUMN marketing_angle_id"))
 
 
 def _add_marketing_angle_fields():

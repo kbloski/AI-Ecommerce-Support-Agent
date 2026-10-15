@@ -11,7 +11,6 @@ from domain.models.offer.offer_source import OfferSource
 from domain.models.offer.offer_source_element import OfferSourceElement
 
 from domain.enums.llm_message_role import LlmMessageRole
-from domain.enums.llm_rule_set import LlmRuleSet
 from domain.enums.context_type import ContextType
 from domain.enums.offer_source_element_type import (
     OfferSourceElementType,
@@ -60,12 +59,7 @@ def generate_offer_source_handler(offer_id: int):
         ),
     ]
 
-    response = ai_service.chat_llm(
-        chat,
-        rule_sets=(LlmRuleSet.JSON_OUTPUT, LlmRuleSet.ENGLISH_OUTPUT),
-    ).content
-
-    json_data = json.loads(response)
+    json_data = ai_service.chat_json(chat)
 
     # ----------------------------
     # SAVE TO DATABASE

@@ -28,7 +28,6 @@ from application.handlers.offer_sources import generate_offer_source_handler as 
 from application.services.llm_context_composer import LlmContextComposer, ContextRef, ContextSelection
 from application.services.marketing_angle_service import MarketingAngleService
 from domain.enums.context_type import ContextType
-from domain.enums.llm_rule_set import LlmRuleSet
 
 
 class MarketingAnglesTests(unittest.TestCase):
@@ -90,7 +89,7 @@ class MarketingAnglesTests(unittest.TestCase):
         def chat(messages, **kwargs):
             self.messages.extend(messages)
             self.chat_options.append(kwargs)
-            return SimpleNamespace(content=json.dumps(self.response))
+            return self.response
         self.container = SimpleNamespace(
             offer_profiles_repository=lambda: OfferProfilesRepository(None, self.db),
             marketing_angles_repository=lambda: self.repo,
@@ -98,7 +97,7 @@ class MarketingAnglesTests(unittest.TestCase):
             target_audience_service=lambda: self.audiences,
             offer_profile_service=lambda: self.profile_service,
             llm_context_composer=lambda: self.composer,
-            ai_service=lambda: SimpleNamespace(chat_llm=chat),
+            ai_service=lambda: SimpleNamespace(chat_json=chat),
         )
         for name in ("list_marketing_angles_handler", "generate_marketing_angles_handler", "create_marketing_angle_handler", "update_marketing_angle_handler", "delete_marketing_angle_handler"):
             patcher = patch(f"application.handlers.marketing_angles.{name}.Container", lambda: self.container)
@@ -126,7 +125,7 @@ class MarketingAnglesTests(unittest.TestCase):
         self.assertNotIn("Other audience", prompt)
         self.assertIn("Focus on emotional value", prompt)
         self.assertIn("exactly 1", prompt)
-        self.assertEqual(self.chat_options[0]["rule_sets"], (LlmRuleSet.JSON_OUTPUT, LlmRuleSet.ENGLISH_OUTPUT))
+        self.assertNotIn("rule_sets", self.chat_options[0])
         combined = self.composer.compose(
             ContextRef(ContextType.OFFER_PROFILE, 1),
             [ContextSelection(ContextType.TARGET_AUDIENCES, include_ids=(1,))],
@@ -191,13 +190,19 @@ class MarketingAnglesTests(unittest.TestCase):
     def test_composer_includes_only_selected_profile_marketing_angle(self):
         self.db.add_all([
             MarketingAngle(id=10, offer_profile_id=1, name="Selected", description="Buyer perspective"),
+            MarketingAngle(id=12, offer_profile_id=1, name="Second", description="Another perspective"),
             MarketingAngle(id=11, offer_profile_id=2, name="Foreign", description="Other perspective"),
         ])
         self.db.commit()
         root = ContextRef(ContextType.OFFER_PROFILE, 1)
         context = self.composer.compose(root, [ContextSelection(ContextType.MARKETING_ANGLE, include_ids=(10,))])
         self.assertIn('"name": "Selected"', context)
+        combined = self.composer.compose(root, [ContextSelection(ContextType.MARKETING_ANGLE, include_ids=(10, 12))])
+        self.assertIn('"id": 10', combined)
+        self.assertIn('"id": 12', combined)
         self.assertNotIn("Foreign", context)
+        with self.assertRaises(ValueError):
+            self.composer.compose(root, [ContextSelection(ContextType.MARKETING_ANGLE, include_ids=(10, 10))])
         with self.assertRaises(ValueError):
             self.composer.compose(root, [ContextSelection(ContextType.MARKETING_ANGLE, include_ids=(11,))])
         with self.assertRaises(LookupError):
