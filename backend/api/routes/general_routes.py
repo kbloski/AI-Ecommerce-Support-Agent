@@ -189,6 +189,11 @@ class UpdateTargetAudienceRequest(BaseModel):
     desires: Optional[List[Any]] = None
 
 
+class GenerateTargetAudiencesRequest(BaseModel):
+    count: int = Field(ge=1, le=10)
+    generation_instructions: str = Field(default="", max_length=4000)
+
+
 
 class CreateOfferSourceElementRequest(BaseModel):
     type: OfferSourceElementType
@@ -215,10 +220,6 @@ def register_general_routes(router: APIRouter):
     @router.get("/offers/{id}/offer-sources/generate")
     def _legacy_get_0(id: str):
         raise HTTPException(status_code=410, detail="This endpoint now requires POST /offers/{id}/offer-sources/generate")
-
-    @router.get("/offer-sources/{offer_source_id}/target-audiences/generate")
-    def _legacy_get_1(offer_source_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-sources/{offer_source_id}/target-audiences/generate")
 
     @router.get("/offer-sources/{offer_source_id}/analysis/{analyse_id}/answers/generate")
     def _legacy_get_2(offer_source_id: str, analyse_id: str):
@@ -441,8 +442,12 @@ def register_general_routes(router: APIRouter):
 
     #  POST in future
     @router.post("/offer-profiles/{offer_profile_id}/target-audiences/generate")
-    def generate_target_audience(offer_profile_id: int):
-        return generate_target_audience_handler( offer_profile_id=offer_profile_id)
+    def generate_target_audience(offer_profile_id: int, payload: GenerateTargetAudiencesRequest):
+        return generate_target_audience_handler(
+            offer_profile_id=offer_profile_id,
+            count=payload.count,
+            generation_instructions=payload.generation_instructions,
+        )
 
     # #  GET in future
     @router.get("/offer-profiles/{offer_profile_id}/target-audiences")

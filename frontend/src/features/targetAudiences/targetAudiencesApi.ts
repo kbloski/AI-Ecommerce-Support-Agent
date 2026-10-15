@@ -39,7 +39,7 @@ export const targetAudiencesApi = api.injectEndpoints({
       sort?: TargetAudienceSort
     }>({
       query: ({ offerProfileId, page = 1, pageSize = 20, isReviewed, sort = 'unreviewed_first' }) => ({
-        url: `/offer-sources/${offerProfileId}/target-audiences`,
+        url: `/offer-profiles/${offerProfileId}/target-audiences`,
         params: { page, page_size: pageSize, is_reviewed: isReviewed, sort },
       }),
       providesTags: (result, _err, { offerProfileId }) => [
@@ -47,8 +47,8 @@ export const targetAudiencesApi = api.injectEndpoints({
         listTag('TargetAudience', offerProfileId),
       ],
     }),
-    generateTargetAudiences: builder.mutation<Entity[], { offerProfileId: number }>({
-      query: ({ offerProfileId }) => ({ url: `/offer-sources/${offerProfileId}/target-audiences/generate`, method: 'POST' }),
+    generateTargetAudiences: builder.mutation<Entity[], { offerProfileId: number; count: number; generationInstructions: string }>({
+      query: ({ offerProfileId, count, generationInstructions }) => ({ url: `/offer-profiles/${offerProfileId}/target-audiences/generate`, method: 'POST', body: { count, generation_instructions: generationInstructions } }),
       invalidatesTags: (_result, _err, { offerProfileId }) => [
         listTag('TargetAudience', offerProfileId),
         itemTag('OfferProfile', offerProfileId),

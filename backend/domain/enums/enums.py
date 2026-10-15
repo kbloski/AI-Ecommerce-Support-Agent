@@ -1,4 +1,4 @@
-from domain.enums.audience_gender import AudienceGender
+from domain.enums.genders import Genders
 from domain.enums.fact_status import FactStatus
 from domain.enums.ollama_message_role import OllamaMessageRole
 from domain.enums.llm_message_role import LlmMessageRole

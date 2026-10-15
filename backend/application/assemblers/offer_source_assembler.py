@@ -2,7 +2,6 @@ from application.dtos.offer_sources.offer_source_dto import OfferSourceDto
 from application.mappers.offer_source_element_mapper import OfferSourceElementMapper
 from infrastructure.logging.logger import Logger
 from infrastructure.repositories.offer_source_repository import OfferSourceRepository
-from infrastructure.repositories.target_audiences_repository import TargetAudiencesRepository
 from infrastructure.repositories.offer_source_elements_repository import OfferSourceElementsRepository
 from infrastructure.repositories.offer_facts_repository import OfferFactsRepository
 from application.mappers.offer_fact_mapper import offer_fact_to_dict
@@ -12,18 +11,15 @@ class OfferSourceAssembler:
         self,
         logger : Logger,
         offer_source_repository : OfferSourceRepository,
-        target_audiences_repository : TargetAudiencesRepository,
         offer_facts_repository: OfferFactsRepository,
         offer_source_elements_repository : OfferSourceElementsRepository
     ):
         self.offer_facts_repository = offer_facts_repository
         self.offer_source_repository = offer_source_repository
-        self.target_audiences_repository = target_audiences_repository
         self.offer_source_elements_repository = offer_source_elements_repository
 
     def assemble_dto(self, item : OfferSourceDto) -> OfferSourceDto:
         # item
-        item.target_audiences = []
 
         offer_source_elements = self.offer_source_elements_repository.find_for_offer_source(
             offer_source_id=item.id

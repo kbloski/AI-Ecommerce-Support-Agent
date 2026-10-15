@@ -101,10 +101,12 @@ class ProfileAudienceTests(unittest.TestCase):
             return SimpleNamespace(content=json.dumps({"audiences": [sample]}))
         container = SimpleNamespace(target_audiences_repository=lambda: self.repo, offer_profile_service=lambda: service, ai_service=lambda: SimpleNamespace(chat_llm=chat), offer_profiles_repository=lambda: profiles)
         with patch.object(generation, "Container", lambda: container):
-            audiences = generation.generate_target_audience_handler(1)
+            audiences = generation.generate_target_audience_handler(1, count=1, generation_instructions="Focus on procurement decision makers")
         self.assertEqual(audiences[0].offer_profile_id, 1)
+        self.assertIn("exactly 1 target audience", calls[1].content)
         self.assertIn("Business buyers", calls[1].content)
         self.assertIn("Focus on procurement teams", calls[1].content)
+        self.assertIn("USER GENERATION INSTRUCTIONS:\nFocus on procurement decision makers", calls[1].content)
         self.assertNotIn("offer_source", calls[1].content)
         self.assertNotIn("Confirmed", calls[1].content)
         context = ET.fromstring(service.build_llm_context(1))
@@ -112,6 +114,10 @@ class ProfileAudienceTests(unittest.TestCase):
         self.assertEqual(json.loads(context.text), {"name": "Business buyers", "additional_contexts": [{"name": "Guidance", "content": "Focus on procurement teams"}]})
         details = service.get_offer_profile_details_by_id(1).to_dict()
         self.assertEqual(details["additional_contexts"][0]["name"], "Guidance")
+        with patch.object(generation, "Container", lambda: container):
+            with self.assertRaisesRegex(Exception, "Expected 2 target audiences"):
+                generation.generate_target_audience_handler(1, count=2)
+        self.assertEqual(self.db.query(TargetAudience).count(), 1)
         with patch.object(listing, "Container", lambda: container):
             self.assertEqual(listing.get_target_audience_handler(1)["total_items"], 1)
             self.assertEqual(listing.get_target_audience_handler(2)["total_items"], 0)

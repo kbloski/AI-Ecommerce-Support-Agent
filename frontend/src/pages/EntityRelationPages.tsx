@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useSidePanel } from '@/lib/sidePanel'
 import { EditTargetAudienceForm } from '@/features/targetAudiences/TargetAudienceForm'
+import { GenerateTargetAudiencesForm } from '@/features/targetAudiences/GenerateTargetAudiencesForm'
 import {
   useCreateOfferSourceElementMutation,
   useDeleteOfferSourceElementMutation,
@@ -19,7 +20,7 @@ import {
   useUpdateOfferSourceElementMutation,
   type OfferSourceElementSort,
 } from '@/features/offerSources/offerSourceApi'
-import { useDeleteTargetAudienceMutation, useGenerateTargetAudiencesMutation, useListTargetAudiencesForOfferProfileQuery, useUpdateTargetAudienceMutation } from '@/features/targetAudiences/targetAudiencesApi'
+import { useDeleteTargetAudienceMutation, useListTargetAudiencesForOfferProfileQuery, useUpdateTargetAudienceMutation } from '@/features/targetAudiences/targetAudiencesApi'
 import type { Entity } from '@/types'
 
 export function OfferProfileTargetAudiencesPage() {
@@ -39,7 +40,6 @@ export function OfferProfileTargetAudiencesPage() {
     pageSize: 1,
     isReviewed: false,
   })
-  const [generate, generateState] = useGenerateTargetAudiencesMutation()
   const [remove] = useDeleteTargetAudienceMutation()
   const [updateTargetAudience] = useUpdateTargetAudienceMutation()
   const { openPanel, closePanel } = useSidePanel()
@@ -65,8 +65,7 @@ export function OfferProfileTargetAudiencesPage() {
         isLoading={isLoading}
         error={error}
         itemLabel={(item) => (item.name as string) ?? `#${item.id}`}
-        onGenerate={() => generate({ offerProfileId })}
-        isGenerating={generateState.isLoading}
+        onGenerate={() => openPanel({ title: 'Generuj grupy docelowe', content: <GenerateTargetAudiencesForm offerProfileId={offerProfileId} onSaved={closePanel} /> })}
         generateLabel="Generuj grupy docelowe"
         contentBeforeList={
           <ListFilters>

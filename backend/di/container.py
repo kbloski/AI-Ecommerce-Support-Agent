@@ -298,7 +298,6 @@ class Container(containers.DeclarativeContainer):
         OfferSourceAssembler,
         logger=logger,
         offer_source_repository=offer_source_repository,
-        target_audiences_repository=target_audiences_repository,
         offer_source_elements_repository=offer_source_elements_repository,
         offer_facts_repository=offer_facts_repository
     )

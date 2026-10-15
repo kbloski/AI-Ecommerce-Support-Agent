@@ -1,11 +1,9 @@
 from typing import Optional, List
-from ..audience.target_audience_dto import TargetAudienceDto
 from .offer_source_element_dto import OfferSourceElementDto
 from common.mixins.json_serializable import JSONSerializable
 
 class OfferSourceDto(JSONSerializable):
 
-    target_audiences: List[TargetAudienceDto] = []
     offer_source_elements: List[OfferSourceElementDto] = []
 
     def __init__(
@@ -34,7 +32,6 @@ class OfferSourceDto(JSONSerializable):
             "offer_id": self.offer_id,
             "offer_summary": self.offer_summary,
             "offer_facts": self.offer_facts,
-            "target_audiences" : [t.to_dict() for t in self.target_audiences],
             "offer_source_elements": [e.to_dict() for e in self._sorted_offer_source_elements()],
         }
 
@@ -42,7 +39,6 @@ class OfferSourceDto(JSONSerializable):
 
     def to_content_dict(self):
         data = self.to_dict(exclude=["id", "offer_id"])
-        data["target_audiences"] = [t.to_content_dict() for t in self.target_audiences]
         data["offer_source_elements"] = [e.to_content_dict() for e in self._sorted_offer_source_elements()]
         data["offer_facts"] = [{key: value for key, value in fact.items() if key not in {"id", "offer_source_id", "created_at", "updated_at", "is_reviewed", "evidence"}} for fact in self.offer_facts]
         return data
