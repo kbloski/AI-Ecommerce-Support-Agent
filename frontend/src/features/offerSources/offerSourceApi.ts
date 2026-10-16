@@ -113,8 +113,12 @@ export const offerSourceApi = api.injectEndpoints({
       }),
       invalidatesTags: (_result, _err, { id }) => [itemTag('OfferSource', id)],
     }),
-    generateOfferSource: builder.mutation<Entity, { offerId: number }>({
-      query: ({ offerId }) => ({ url: `/offers/${offerId}/offer-sources/generate`, method: 'POST' }),
+    generateOfferSource: builder.mutation<Entity, { offerId: number; generationInstructions?: string }>({
+      query: ({ offerId, generationInstructions }) => ({
+        url: `/offers/${offerId}/offer-sources/generate`,
+        method: 'POST',
+        body: { generation_instructions: generationInstructions },
+      }),
       invalidatesTags: (_result, _err, { offerId }) => [listTag('OfferSource', offerId)],
     }),
     deleteOfferSource: builder.mutation<void, { id: number; offerId: number }>({

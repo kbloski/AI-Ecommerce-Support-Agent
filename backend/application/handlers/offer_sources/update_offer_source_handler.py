@@ -3,7 +3,7 @@ from typing import Any, Dict
 from di.container import Container
 from application.mappers.offer_source_mapper import OfferSourceMapper
 
-ALLOWED_FIELDS = {"offer_summary", "is_favorite"}
+ALLOWED_FIELDS = {"offer_details", "is_favorite"}
 
 
 def update_offer_source_handler(id: int, fields: Dict[str, Any]):

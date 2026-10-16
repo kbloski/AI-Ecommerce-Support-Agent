@@ -8,5 +8,5 @@ class OfferSourceMapper:
         return OfferSourceDto(
             id = item.id,
             offer_id = item.offer_id,
-            offer_summary = item.offer_summary,
+            offer_details = item.offer_details,
         )

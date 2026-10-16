@@ -19,8 +19,8 @@ class OfferSource(Base, JSONSerializable):
         nullable=False,
     )
 
-    # AI-generated offer_source
-    offer_summary = Column(Text, nullable=True)
+    # AI-extracted, complete factual record of the offer
+    offer_details = Column(Text, nullable=True)
 
 
     is_favorite = Column(Boolean, nullable=False, default=False, server_default="0")

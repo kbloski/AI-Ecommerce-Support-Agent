@@ -52,7 +52,7 @@ class MarketingAnglesTests(unittest.TestCase):
         self.db = Session(self.engine)
         self.db.add(OfferRaw(id=1, name="Product"))
         self.db.flush()
-        self.db.add(OfferSource(id=1, offer_id=1, offer_summary="Source"))
+        self.db.add(OfferSource(id=1, offer_id=1, offer_details="Source"))
         self.db.flush()
         self.db.add_all([
             OfferProfile(id=1, offer_source_id=1, name="Profile"),
@@ -219,12 +219,25 @@ class MarketingAnglesTests(unittest.TestCase):
                 ContextRef(ContextType.OFFER_RAW, 1),
                 [ContextSelection(ContextType.TARGET_AUDIENCES)],
             )
-        self.response = {"offer_summary": "Generated source", "offer_elements": []}
+        self.response = {"offer_details": "Generated source", "offer_elements": []}
         with patch.object(source_generation, "Container", lambda: self.container), patch.object(source_generation, "SessionLocal", lambda: Session(self.engine)):
             result = source_generation.generate_offer_source_handler(1)
-        self.assertEqual(result.offer_summary, "Generated source")
+        self.assertEqual(result.offer_details, "Generated source")
         self.assertIn('"name": "Product"', self.messages[1].content)
         self.assertNotIn("target_audiences", self.messages[1].content)
+
+    def test_offer_source_generator_passes_instructions_to_both_stages(self):
+        self.response = {"offer_details": "Generated source", "offer_elements": []}
+        with patch.object(source_generation, "Container", lambda: self.container), patch.object(source_generation, "SessionLocal", lambda: Session(self.engine)):
+            result = source_generation.generate_offer_source_handler(
+                1, generation_instructions="  Focus on technical specifications  "
+            )
+        self.assertEqual(result.offer_details, "Generated source")
+        instructions = [message for message in self.messages if "<generation_instructions>" in message.content]
+        self.assertEqual(len(instructions), 2)
+        for message in instructions:
+            self.assertIn("\nFocus on technical specifications\n", message.content)
+            self.assertIn("do not invent offer facts", message.content)
 
     def test_create_update_delete_and_profile_cascade(self):
         created = routes.create_marketing_angle(1, routes.MarketingAngleFields(**{**self.ANGLE_FIELDS, "name": "Angle"}))

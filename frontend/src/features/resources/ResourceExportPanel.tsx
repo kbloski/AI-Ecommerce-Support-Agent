@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useListOffersQuery } from '@/features/offers/offersApi'
 import { useListOfferSourceForOfferQuery } from '@/features/offerSources/offerSourceApi'
+import { offerSourceLabel } from '@/features/offerSources/offerSourceLabel'
 import { useListOfferProfilesQuery } from '@/features/offerProfiles/offerProfilesApi'
 import { ResourceContextExportPanel } from '@/features/resources/ResourceContextExportPanel'
 import type { ResourceContextRequest } from '@/features/resources/resourceContextApi'
@@ -63,7 +64,7 @@ export function ResourceExportPanel() {
           setProfileId(null)
         }} disabled={sourcesLoading || !!sourcesError}>
           <option value="">Bez źródła oferty</option>
-          {sources?.map((source) => <option key={source.id} value={Number(source.id)}>#{source.id} — {String(source.offer_summary || 'Źródło oferty').slice(0, 100)}</option>)}
+          {sources?.map((source) => <option key={source.id} value={Number(source.id)}>#{source.id} — {offerSourceLabel({ offer_details: source.offer_details }, 'Źródło oferty')}</option>)}
         </select>
         {sourcesError && <p role="alert" className="mt-2 text-sm text-destructive">Nie udało się pobrać źródeł oferty.</p>}
       </div>}

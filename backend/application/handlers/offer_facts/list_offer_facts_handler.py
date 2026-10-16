@@ -14,4 +14,4 @@ def source_material(container, offer_source_id):
     source = container.offer_source_repository().get_by_id(offer_source_id)
     if source is None:
         raise HTTPException(404, "Offer source not found")
-    return {"offer_summary": source.offer_summary or ""}
+    return {"offer_details": source.offer_details or ""}

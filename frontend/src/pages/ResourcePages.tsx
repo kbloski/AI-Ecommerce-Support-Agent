@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { SegmentedControl } from '@/components/SegmentedControl'
 import type { Entity } from '@/types'
 import { useGetOfferSourceQuery } from '@/features/offerSources/offerSourceApi'
+import { offerSourceLabel } from '@/features/offerSources/offerSourceLabel'
 import { useEditEntityPanel } from '@/lib/useEditEntityPanel'
 import { useSidePanel } from '@/lib/sidePanel'
 import { useCreateAnalysisMutation, useDeleteAnalysisMutation, useDeleteAnalysisQuestionMutation, useGenerateAnalysisAnswersMutation, useListAnalysisForOfferSourceQuery, useListAnalysisQuestionsQuery, useUpdateAnalysisQuestionMutation } from '@/features/analysis/analysisApi'
@@ -67,7 +68,7 @@ export function OfferSourceBrandMarketingPage() {
   const [remove] = useDeleteBrandMarketingMutation()
   const [update] = useUpdateBrandMarketingMutation()
   const editEntity = useEditEntityPanel()
-  return <ResourcePage backTo={`/offer-sources/${offerSourceId}`} backLabel={(data?.offer_summary as string) ?? 'OfferSource'} title="Brand marketing">
+  return <ResourcePage backTo={`/offer-sources/${offerSourceId}`} backLabel={offerSourceLabel(data)} title="Brand marketing">
     <ResourceList title="Brand marketing" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/brand-marketing/${item.id}`} itemLabel={(item) => (item.brand_name as string) ?? `#${item.id}`} onGenerate={() => generate({ offerSourceId })} isGenerating={state.isLoading} generateLabel="Generuj brand marketing" onEdit={(item) => editEntity('Brand marketing', item, (fields) => update({ id: item.id as number, fields }).unwrap())} onDelete={(item) => remove({ id: item.id as number, offerSourceId })} />
   </ResourcePage>
 }

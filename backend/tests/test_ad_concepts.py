@@ -37,7 +37,7 @@ class AdConceptTests(unittest.TestCase):
         self.db = Session(self.engine)
         self.db.add(OfferRaw(id=1, name="Product"))
         self.db.flush()
-        self.db.add(OfferSource(id=1, offer_id=1, offer_summary="Source"))
+        self.db.add(OfferSource(id=1, offer_id=1, offer_details="Source"))
         self.db.flush()
         self.db.add(OfferProfile(id=1, offer_source_id=1, name="Profile"))
         self.db.add(OfferProfile(id=2, offer_source_id=1, name="Other profile"))

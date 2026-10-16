@@ -33,7 +33,7 @@ class ProfileAudienceTests(unittest.TestCase):
         Base.metadata.create_all(self.engine)
         self.db = Session(self.engine)
         self.db.add(OfferRaw(id=1, name="Product")); self.db.flush()
-        self.db.add_all([OfferSource(id=id, offer_id=1, offer_summary="Source") for id in (1, 2, 3)]); self.db.flush()
+        self.db.add_all([OfferSource(id=id, offer_id=1, offer_details="Source") for id in (1, 2, 3)]); self.db.flush()
         self.db.add_all([OfferProfile(id=1, offer_source_id=1, name="Business buyers"), OfferProfile(id=2, offer_source_id=2, name="A"), OfferProfile(id=3, offer_source_id=2, name="B")]); self.db.commit()
         self.repo = TargetAudiencesRepository(None, self.db)
 

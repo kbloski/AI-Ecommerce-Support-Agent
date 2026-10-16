@@ -10,12 +10,12 @@ class OfferSourceDto(JSONSerializable):
         self,
         id: int,
         offer_id: int,
-        offer_summary: Optional[str] = None,
+        offer_details: Optional[str] = None,
     ):
         self.offer_facts = []
         self.id = id
         self.offer_id = offer_id
-        self.offer_summary = offer_summary
+        self.offer_details = offer_details
 
     def _sorted_offer_source_elements(self) -> List[OfferSourceElementDto]:
         """Group elements by type (grouping = stable sort by type, then name)."""
@@ -30,7 +30,7 @@ class OfferSourceDto(JSONSerializable):
         data = {
             "id": self.id,
             "offer_id": self.offer_id,
-            "offer_summary": self.offer_summary,
+            "offer_details": self.offer_details,
             "offer_facts": self.offer_facts,
             "offer_source_elements": [e.to_dict() for e in self._sorted_offer_source_elements()],
         }

@@ -190,6 +190,10 @@ class UpdateTargetAudienceRequest(BaseModel):
     desires: Optional[List[Any]] = None
 
 
+class GenerateOfferSourceRequest(BaseModel):
+    generation_instructions: str = Field(default="", max_length=4000)
+
+
 class GenerateTargetAudiencesRequest(BaseModel):
     count: int = Field(ge=1, le=10)
     generation_instructions: str = Field(default="", max_length=4000)
@@ -343,8 +347,11 @@ def register_general_routes(router: APIRouter):
 
     # POST in future
     @router.post("/offers/{id}/offer-sources/generate")
-    def generate_offer_source(id: int):
-        return generate_offer_source_handler(offer_id=id)
+    def generate_offer_source(id: int, payload: GenerateOfferSourceRequest | None = None):
+        return generate_offer_source_handler(
+            offer_id=id,
+            generation_instructions=payload.generation_instructions if payload else "",
+        )
 
     #  POST in future
     @router.get("/offers/{offer_id}/offer-sources")

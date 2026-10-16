@@ -34,7 +34,7 @@ class OfferFactsTests(unittest.TestCase):
         self.db = Session(self.engine)
         self.db.add(OfferRaw(id=1, name="Raw product", description="Weight: 99 kg. Raw offer only."))
         self.db.flush()
-        self.db.add_all([OfferSource(id=1, offer_id=1, offer_summary="Weight: 2 kg. Includes a USB cable."), OfferSource(id=2, offer_id=1)])
+        self.db.add_all([OfferSource(id=1, offer_id=1, offer_details="Weight: 2 kg. Includes a USB cable."), OfferSource(id=2, offer_id=1)])
         self.db.commit()
         self.repo = OfferFactsRepository(None, self.db)
         self.ai = SimpleNamespace(content=json.dumps({"offer_facts": []}))
@@ -84,7 +84,7 @@ class OfferFactsTests(unittest.TestCase):
         user_context = self.calls[0][0][1].content
         section = user_context[user_context.index('<offer_source '):user_context.index('</offer_source>') + len('</offer_source>')]
         source_context = ET.fromstring(section)
-        self.assertEqual(json.loads(source_context.text), {"offer_summary": "Weight: 2 kg. Includes a USB cable."})
+        self.assertEqual(json.loads(source_context.text), {"offer_details": "Weight: 2 kg. Includes a USB cable."})
         self.assertTrue(source_context.attrib["purpose"])
         self.assertIn('<offer_facts purpose=', user_context)
         self.assertNotIn("original_offer", user_context)
@@ -119,7 +119,7 @@ class OfferFactsTests(unittest.TestCase):
         self.assertNotIn("id", content[0])
         self.assertIn("duplicate detection only", all_facts.attrib["purpose"])
         source = ET.fromstring(self.container.offer_source_service().build_llm_context(1, include_related=False))
-        self.assertEqual(set(json.loads(source.text)), {"offer_summary"})
+        self.assertEqual(set(json.loads(source.text)), {"offer_details"})
         self.assertNotIn("offer_facts", source.text)
         self.assertNotIn("99 kg", source.text)
 
@@ -149,7 +149,7 @@ class OfferFactsTests(unittest.TestCase):
         fact = self.create()
         id = fact["id"]
         source = self.db.get(OfferSource, 1)
-        source.offer_summary = "Updated source without the old quote."
+        source.offer_details = "Updated source without the old quote."
         self.db.commit()
         checked = self.client.post(f"/offer-facts/{id}/update", json={"fields": {"is_reviewed": True}})
         self.assertEqual(checked.status_code, 200, checked.text)
@@ -251,7 +251,7 @@ class OfferFactsTests(unittest.TestCase):
         dto.brand_marketing = {"name": "Brand to exclude"}
         context = service.build_llm_context(1)
         content = json.loads(ET.fromstring(context).text)
-        self.assertEqual(set(content), {"offer_summary", "offer_facts"})
+        self.assertEqual(set(content), {"offer_details", "offer_facts"})
         self.assertNotIn("Element to exclude", context)
         self.assertNotIn("Brand to exclude", context)
         self.assertEqual(len(dto.offer_facts), 2)

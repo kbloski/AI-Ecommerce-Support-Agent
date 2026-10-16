@@ -10,6 +10,7 @@ def init_db():
     _repair_offer_profile_additional_contexts_key()
     _migrate_offer_profiles_to_offer_sources()
     _remove_obsolete_offer_source_columns()
+    _rename_offer_source_summary_column()
     _migrate_checklists_to_offer_sources()
     _migrate_ad_execution_to_ad_setup()
     _migrate_creative_execution_to_generate_ad()
@@ -658,6 +659,21 @@ def _remove_obsolete_offer_source_columns():
         for column in ("category", "value_proposition"):
             if column in columns:
                 conn.execute(text(f'ALTER TABLE "offer_sources" DROP COLUMN "{column}"'))
+
+
+def _rename_offer_source_summary_column():
+    """Rename offer_summary to offer_details, preserving existing content."""
+    with engine.begin() as conn:
+        if "offer_sources" not in inspect(conn).get_table_names():
+            return
+        columns = {column["name"] for column in inspect(conn).get_columns("offer_sources")}
+        if "offer_summary" not in columns:
+            return
+        if "offer_details" in columns:
+            raise RuntimeError("Both offer_summary and offer_details exist in 'offer_sources'.")
+        conn.execute(text(
+            'ALTER TABLE "offer_sources" RENAME COLUMN "offer_summary" TO "offer_details"'
+        ))
 
 
 def _migrate_offer_facts_optional_evidence():

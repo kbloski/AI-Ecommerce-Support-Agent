@@ -46,7 +46,7 @@ class OfferSourceService:
         source = self.offer_source_repository.get_by_id(id=offer_source_id)
         if source is None:
             raise LookupError(f"Offer source {offer_source_id} not found")
-        return {"offer_summary": source.offer_summary or ""}
+        return {"offer_details": source.offer_details or ""}
 
     def build_llm_context(self, offer_source_id: int, *, include_related: bool = True) -> str:
         if not include_related:
@@ -61,7 +61,7 @@ class OfferSourceService:
         assembled_offer_source = self.get_offer_source_details_by_id(offer_source_id=offer_source_id)
 
         content = {
-            "offer_summary": assembled_offer_source.offer_summary,
+            "offer_details": assembled_offer_source.offer_details,
             "offer_facts": [
                 {
                     key: value
