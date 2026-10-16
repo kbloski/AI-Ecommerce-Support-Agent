@@ -6,13 +6,14 @@ import type { Entity } from '@/types'
 export function useEditEntityPanel() {
   const { openPanel, closePanel } = useSidePanel()
 
-  return (title: string, item: Entity, onSave: (fields: Record<string, unknown>) => Promise<unknown>) => {
+  return (title: string, item: Entity, onSave: (fields: Record<string, unknown>) => Promise<unknown>, exclude: string[] = []) => {
     openPanel({
       title: `Edytuj: ${title}`,
       content: (
         <EditableFields
           key={String(item.id)}
           data={item}
+          exclude={exclude}
           onSave={async (fields) => {
             const result = await onSave(fields)
             closePanel()

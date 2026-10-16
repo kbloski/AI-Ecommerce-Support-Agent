@@ -37,7 +37,7 @@ export const adConceptsApi = api.injectEndpoints({
     }),
     deleteAdConcept: builder.mutation<void, { id: number; offerProfileId: number }>({
       query: ({ id }) => ({ url: `/ad-concepts/${id}/delete`, method: 'DELETE' }),
-      invalidatesTags: (_result, _error, { offerProfileId }) => [listTag('AdConcept', offerProfileId)],
+      invalidatesTags: (_result, _error, { offerProfileId }) => [listTag('AdConcept', offerProfileId), listTag('CreativePlan', offerProfileId)],
     }),
   }),
 })

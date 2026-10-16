@@ -11,6 +11,7 @@ import { RelationCards } from '@/components/RelationCards'
 import { SegmentedControl } from '@/components/SegmentedControl'
 import { isPrimitive, isRelationArray, label } from '@/lib/entityFields'
 import { useListFactStatusesQuery } from '@/features/factStatus/factStatusApi'
+import { usePersistentBoolean } from '@/lib/usePersistentBoolean'
 
 const SKIP_KEYS = new Set(['id', 'created_at', 'updated_at'])
 
@@ -128,6 +129,7 @@ export function RelationList({
   addition?: ReactNode
   showHeading?: boolean
 }) {
+  const [expanded, setExpanded] = usePersistentBoolean(`ai-ec-agent:relation-group:${fieldKey}`, false)
   if (items.length === 0 && !addition) return null
 
   const content = (
@@ -148,7 +150,7 @@ export function RelationList({
   if (!showHeading) return content
 
   return (
-    <Collapsible>
+    <Collapsible open={expanded} onOpenChange={setExpanded}>
       <CollapsibleTrigger className="group flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase hover:text-foreground">
         <ChevronDown className="size-3.5 shrink-0 transition-transform group-data-[panel-open]:rotate-180" />
         {label(fieldKey)} ({items.length})

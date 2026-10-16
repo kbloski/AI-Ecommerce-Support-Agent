@@ -4,30 +4,30 @@ import type { Entity } from '@/types'
 
 export const checklistsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    listChecklistsForOfferSource: builder.query<Entity[], number>({
-      query: (offerSourceId) => `/offer-sources/${offerSourceId}/checklists`,
-      providesTags: (result, _err, offerSourceId) => [
+    listChecklistsForOfferProfile: builder.query<Entity[], number>({
+      query: (offerProfileId) => `/offer-profiles/${offerProfileId}/checklists`,
+      providesTags: (result, _err, offerProfileId) => [
         ...(result ?? []).map((item) => itemTag('Checklist', item.id)),
-        listTag('Checklist', offerSourceId),
+        listTag('Checklist', offerProfileId),
       ],
     }),
     getChecklist: builder.query<Entity, number>({
       query: (id) => `/checklists/${id}`,
       providesTags: (_result, _err, id) => [itemTag('Checklist', id)],
     }),
-    createChecklist: builder.mutation<Entity, { offerSourceId: number }>({
-      query: ({ offerSourceId }) => ({
-        url: `/offer-sources/${offerSourceId}/checklists/create`,
+    createChecklist: builder.mutation<Entity, { offerProfileId: number }>({
+      query: ({ offerProfileId }) => ({
+        url: `/offer-profiles/${offerProfileId}/checklists/create`,
         method: 'POST',
       }),
-      invalidatesTags: (_result, _err, { offerSourceId }) => [listTag('Checklist', offerSourceId)],
+      invalidatesTags: (_result, _err, { offerProfileId }) => [listTag('Checklist', offerProfileId)],
     }),
     generateChecklist: builder.mutation<
       Entity,
-      { offerSourceId: number; checklistId: number }
+      { offerProfileId: number; checklistId: number }
     >({
-      query: ({ offerSourceId, checklistId }) => ({
-        url: `/offer-sources/${offerSourceId}/checklists/${checklistId}/generate`,
+      query: ({ offerProfileId, checklistId }) => ({
+        url: `/offer-profiles/${offerProfileId}/checklists/${checklistId}/generate`,
         method: 'POST',
       }),
       invalidatesTags: (_result, _err, { checklistId }) => [itemTag('Checklist', checklistId)],
@@ -40,10 +40,10 @@ export const checklistsApi = api.injectEndpoints({
       query: ({ id, fields }) => ({ url: `/checklist-items/${id}/update`, method: 'POST', body: { fields } }),
       invalidatesTags: (_result, _err, { checklistId }) => [itemTag('Checklist', checklistId)],
     }),
-    deleteChecklist: builder.mutation<void, { id: number; offerSourceId: number }>({
+    deleteChecklist: builder.mutation<void, { id: number; offerProfileId: number }>({
       query: ({ id }) => ({ url: `/checklists/${id}/delete`, method: 'DELETE' }),
-      invalidatesTags: (_result, _err, { id, offerSourceId }) => [
-        listTag('Checklist', offerSourceId),
+      invalidatesTags: (_result, _err, { id, offerProfileId }) => [
+        listTag('Checklist', offerProfileId),
         itemTag('Checklist', id),
       ],
     }),
@@ -51,7 +51,7 @@ export const checklistsApi = api.injectEndpoints({
 })
 
 export const {
-  useListChecklistsForOfferSourceQuery,
+  useListChecklistsForOfferProfileQuery,
   useGetChecklistQuery,
   useCreateChecklistMutation,
   useGenerateChecklistMutation,

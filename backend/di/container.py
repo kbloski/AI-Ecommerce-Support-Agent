@@ -30,7 +30,6 @@ from core.settings import Settings
 from infrastructure.database.db import SessionLocal
 from application.assemblers.offer_assembler import OfferAssembler
 from infrastructure.repositories.offer_source_repository import OfferSourceRepository
-from infrastructure.repositories.offer_source_elements_repository import OfferSourceElementsRepository
 from infrastructure.repositories.offer_facts_repository import OfferFactsRepository
 from infrastructure.repositories.offer_profiles_repository import OfferProfilesRepository
 from infrastructure.repositories.additional_contexts_repository import AdditionalContextsRepository
@@ -38,9 +37,10 @@ from application.assemblers.offer_source_assembler import OfferSourceAssembler
 from infrastructure.repositories.target_audiences_repository import TargetAudiencesRepository
 from infrastructure.repositories.marketing_angles_repository import MarketingAnglesRepository
 from infrastructure.repositories.ad_concepts_repository import AdConceptsRepository
+from infrastructure.repositories.ad_creative_plans_repository import AdCreativePlansRepository
 from application.assemblers.target_audience_assembler import TargetAudienceAssembler
 from infrastructure.repositories.analysis_repository import AnalysisRepository
-from infrastructure.repositories.offer_source_analysis_repository import OfferSourceAnalysisRepository
+from infrastructure.repositories.offer_profile_analysis_repository import OfferProfileAnalysisRepository
 from application.assemblers.analysis_assembler import AnalysisAssembler
 from infrastructure.repositories.analysis_questions_repository import AnalysisQuestionsRepository
 from infrastructure.repositories.question_answer_repository import QuestionAnswerRepository
@@ -145,11 +145,6 @@ class Container(containers.DeclarativeContainer):
 
     offer_facts_repository = providers.Singleton(OfferFactsRepository, logger=logger, db=db)
 
-    offer_source_elements_repository = providers.Singleton(
-        OfferSourceElementsRepository,
-        logger=logger,
-        db=db
-    )
 
     target_audiences_repository = providers.Singleton(
         TargetAudiencesRepository,
@@ -165,6 +160,7 @@ class Container(containers.DeclarativeContainer):
     marketing_angles_repository = providers.Singleton(MarketingAnglesRepository, logger=logger, db=db)
     marketing_angle_service = providers.Factory(MarketingAngleService, marketing_angles_repository=marketing_angles_repository)
     ad_concepts_repository = providers.Singleton(AdConceptsRepository, logger=logger, db=db)
+    ad_creative_plans_repository = providers.Singleton(AdCreativePlansRepository, logger=logger, db=db)
     ad_concept_service = providers.Factory(AdConceptService, ad_concepts_repository=ad_concepts_repository)
 
     checklist_repository = providers.Singleton(
@@ -197,8 +193,8 @@ class Container(containers.DeclarativeContainer):
         db=db
     )
 
-    offer_source_analysis_repository = providers.Singleton(
-        OfferSourceAnalysisRepository,
+    offer_profile_analysis_repository = providers.Singleton(
+        OfferProfileAnalysisRepository,
         logger=logger,
         db=db
     )
@@ -314,7 +310,6 @@ class Container(containers.DeclarativeContainer):
         OfferSourceAssembler,
         logger=logger,
         offer_source_repository=offer_source_repository,
-        offer_source_elements_repository=offer_source_elements_repository,
         offer_facts_repository=offer_facts_repository
     )
 

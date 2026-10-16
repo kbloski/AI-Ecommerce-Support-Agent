@@ -31,6 +31,7 @@ interface DetailShellProps {
   editable?: {
     onSave: (fields: Record<string, unknown>) => Promise<unknown>
     isSaving?: boolean
+    exclude?: string[]
     content?: (onSaved: () => void) => ReactNode
   }
 }
@@ -67,7 +68,7 @@ export function DetailShell({
           <EditableFields
             key={String(data.id)}
             data={data}
-            exclude={exclude}
+            exclude={editable.exclude ?? exclude}
             includeRelationIds={includeRelationIds}
             isSaving={editable.isSaving}
             onSave={async (fields) => {

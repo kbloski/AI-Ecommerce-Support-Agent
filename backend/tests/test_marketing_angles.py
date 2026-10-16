@@ -219,22 +219,23 @@ class MarketingAnglesTests(unittest.TestCase):
                 ContextRef(ContextType.OFFER_RAW, 1),
                 [ContextSelection(ContextType.TARGET_AUDIENCES)],
             )
-        self.response = {"offer_details": "Generated source", "offer_elements": []}
+        self.response = {"offer_details": "Generated source"}
         with patch.object(source_generation, "Container", lambda: self.container), patch.object(source_generation, "SessionLocal", lambda: Session(self.engine)):
             result = source_generation.generate_offer_source_handler(1)
         self.assertEqual(result.offer_details, "Generated source")
         self.assertIn('"name": "Product"', self.messages[1].content)
         self.assertNotIn("target_audiences", self.messages[1].content)
 
-    def test_offer_source_generator_passes_instructions_to_both_stages(self):
-        self.response = {"offer_details": "Generated source", "offer_elements": []}
+    def test_offer_source_generator_passes_instructions_to_extraction(self):
+        self.response = {"offer_details": "Generated source"}
         with patch.object(source_generation, "Container", lambda: self.container), patch.object(source_generation, "SessionLocal", lambda: Session(self.engine)):
             result = source_generation.generate_offer_source_handler(
                 1, generation_instructions="  Focus on technical specifications  "
             )
         self.assertEqual(result.offer_details, "Generated source")
         instructions = [message for message in self.messages if "<generation_instructions>" in message.content]
-        self.assertEqual(len(instructions), 2)
+        self.assertEqual(len(instructions), 1)
+        self.assertEqual(len(self.chat_options), 1)
         for message in instructions:
             self.assertIn("\nFocus on technical specifications\n", message.content)
             self.assertIn("do not invent offer facts", message.content)

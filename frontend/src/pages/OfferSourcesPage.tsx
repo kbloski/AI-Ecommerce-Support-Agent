@@ -34,7 +34,7 @@ export default function OfferSourcesPage() {
         itemLabel={(item) => offerSourceLabel(item)}
         emptyTitle="Brak bazy wiedzy"
         emptyDescription="Wygeneruj pierwszy element, aby rozpocząć pracę."
-        onEdit={(item) => editEntity('OfferSource', item, (fields) => updateOfferSource({ id: item.id as number, fields }).unwrap())}
+        onEdit={(item) => editEntity('OfferSource', item, (fields) => updateOfferSource({ id: item.id as number, fields }).unwrap(), ['offer_facts'])}
         onDelete={(item) => deleteOfferSource({ id: item.id as number, offerId })}
         actions={
           <Button

@@ -12,11 +12,11 @@ interface PaginatedAnalysisQuestions {
 
 export const analysisApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    listAnalysisForOfferSource: builder.query<Entity[], number>({
-      query: (offerSourceId) => `/offer-sources/${offerSourceId}/analysis`,
-      providesTags: (result, _err, offerSourceId) => [
+    listAnalysisForOfferProfile: builder.query<Entity[], number>({
+      query: (offerProfileId) => `/offer-profiles/${offerProfileId}/analysis`,
+      providesTags: (result, _err, offerProfileId) => [
         ...(result ?? []).map((item) => itemTag('Analysis', item.id)),
-        listTag('Analysis', offerSourceId),
+        listTag('Analysis', offerProfileId),
       ],
     }),
     getAnalysis: builder.query<Entity, number>({
@@ -27,19 +27,19 @@ export const analysisApi = api.injectEndpoints({
       query: ({ analysisId, page = 1, pageSize = 20, isReviewed, sort = 'unreviewed_first' }) => ({ url: `/analysis/${analysisId}/questions`, params: { page, page_size: pageSize, is_reviewed: isReviewed, sort } }),
       providesTags: (result, _err, { analysisId }) => [...(result?.items ?? []).map((item) => itemTag('AnalysisQuestion', item.id)), listTag('AnalysisQuestion', analysisId)],
     }),
-    createAnalysis: builder.mutation<Entity, { offerSourceId: number }>({
-      query: ({ offerSourceId }) => ({ url: `/offer-sources/${offerSourceId}/analysis/create`, method: 'POST' }),
-      invalidatesTags: (_result, _err, { offerSourceId }) => [listTag('Analysis', offerSourceId)],
+    createAnalysis: builder.mutation<Entity, { offerProfileId: number }>({
+      query: ({ offerProfileId }) => ({ url: `/offer-profiles/${offerProfileId}/analysis/create`, method: 'POST' }),
+      invalidatesTags: (_result, _err, { offerProfileId }) => [listTag('Analysis', offerProfileId)],
     }),
-    generateAnalysisAnswers: builder.mutation<Entity, { offerSourceId: number; analysisId: number }>({
-      query: ({ offerSourceId, analysisId }) =>
-        ({ url: `/offer-sources/${offerSourceId}/analysis/${analysisId}/answers/generate`, method: 'POST' }),
+    generateAnalysisAnswers: builder.mutation<Entity, { offerProfileId: number; analysisId: number }>({
+      query: ({ offerProfileId, analysisId }) =>
+        ({ url: `/offer-profiles/${offerProfileId}/analysis/${analysisId}/answers/generate`, method: 'POST' }),
       invalidatesTags: (_result, _err, { analysisId }) => [itemTag('Analysis', analysisId)],
     }),
-    deleteAnalysis: builder.mutation<void, { id: number; offerSourceId: number }>({
+    deleteAnalysis: builder.mutation<void, { id: number; offerProfileId: number }>({
       query: ({ id }) => ({ url: `/analysis/${id}/delete`, method: 'DELETE' }),
-      invalidatesTags: (_result, _err, { id, offerSourceId }) => [
-        listTag('Analysis', offerSourceId),
+      invalidatesTags: (_result, _err, { id, offerProfileId }) => [
+        listTag('Analysis', offerProfileId),
         itemTag('Analysis', id),
       ],
     }),
@@ -55,7 +55,7 @@ export const analysisApi = api.injectEndpoints({
 })
 
 export const {
-  useListAnalysisForOfferSourceQuery,
+  useListAnalysisForOfferProfileQuery,
   useGetAnalysisQuery,
   useListAnalysisQuestionsQuery,
   useCreateAnalysisMutation,

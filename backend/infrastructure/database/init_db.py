@@ -3,6 +3,7 @@ from .db import Base, engine
 from domain.models import models
 
 def init_db():
+    _remove_retired_offer_elements()
     _migrate_app_ollama_settings_to_app_properties()
     _migrate_offers_to_offers_raw()
     _rename_offer_raw_details_column()
@@ -12,6 +13,8 @@ def init_db():
     _remove_obsolete_offer_source_columns()
     _rename_offer_source_summary_column()
     _migrate_checklists_to_offer_sources()
+    from .research_migration import migrate_research_to_offer_profiles
+    migrate_research_to_offer_profiles(engine)
     _migrate_ad_execution_to_ad_setup()
     _migrate_creative_execution_to_generate_ad()
     _migrate_creative_execution_setups()
@@ -29,7 +32,18 @@ def init_db():
     _add_target_audience_desires()
     _add_marketing_angle_fields()
     _migrate_ad_concept_modes_and_angles()
+    from .creative_plans_migration import migrate_creative_plan_content
+    migrate_creative_plan_content(engine)
     Base.metadata.create_all(bind=engine)
+
+
+def _remove_retired_offer_elements():
+    """Remove storage for the retired offer elements feature, including its old name."""
+    with engine.begin() as conn:
+        tables = set(inspect(conn).get_table_names())
+        for table in ("offer_source_elements", "offer_profile_elements"):
+            if table in tables:
+                conn.execute(text(f'DROP TABLE "{table}"'))
 
 
 def _migrate_ad_concept_modes_and_angles():
@@ -417,7 +431,7 @@ def _add_missing_is_reviewed_columns():
     inspector = inspect(engine)
     existing_tables = set(inspector.get_table_names())
 
-    for table in ("offer_source_elements", "target_audiences", "checklist_item", "analysis_questions", "ugc_creatives"):
+    for table in ("target_audiences", "checklist_item", "analysis_questions", "ugc_creatives"):
         if table not in existing_tables:
             continue
 
@@ -554,6 +568,8 @@ def _migrate_checklists_to_offer_sources():
         return
 
     columns = {column["name"] for column in inspector.get_columns("checklist")}
+    if "offer_profile_id" in columns:
+        return
     with engine.begin() as conn:
         if "offer_source_id" not in columns:
             conn.execute(text('ALTER TABLE "checklist" ADD COLUMN offer_source_id INTEGER'))
@@ -607,7 +623,6 @@ def _migrate_offer_profiles_to_offer_sources():
     """Rename source tables and relation columns without losing the offer graph."""
     renames = (
         ("offer_profiles", "offer_sources"),
-        ("offer_profile_elements", "offer_source_elements"),
         ("offer_profile_analysis", "offer_source_analysis"),
     )
     with engine.begin() as conn:
@@ -615,7 +630,7 @@ def _migrate_offer_profiles_to_offer_sources():
         if "offer_profiles" in tables:
             profile_columns = {column["name"] for column in inspect(conn).get_columns("offer_profiles")}
             if "offer_source_id" in profile_columns and "offer_id" not in profile_columns:
-                renames = tuple(pair for pair in renames if pair[0] != "offer_profiles")
+                renames = tuple(pair for pair in renames if pair[0] not in {"offer_profiles", "offer_profile_analysis"})
         # Check all collisions before changing any table.
         for old, new in renames:
             if old in tables and new in tables:

@@ -13,11 +13,11 @@ from domain.models.offer.offer_fact import OfferFact
 from domain.models.offer.offer_profile import OfferProfile
 from domain.models.offer.marketing_angle import MarketingAngle
 from domain.models.ad.ad_concept import AdConcept
+from domain.models.ad.ad_creative_plan import AdCreativePlan
 from domain.models.ad.ad_concept_marketing_angle import AdConceptMarketingAngle
 
 # OfferSource
 from domain.models.offer.offer_source import OfferSource
-from domain.models.offer.offer_source_element import OfferSourceElement
 
 # Target Audience
 from domain.models.audience.target_audience import TargetAudience
@@ -31,7 +31,7 @@ from domain.models.analysis.analysis import Analysis
 from domain.models.analysis.analysis_questions import AnalysisQuestion
 from domain.models.analysis.question_answer import QuestionAnswer
 
-from domain.models.analysis.offer_source_analysis import OfferSourceAnalysis
+from domain.models.analysis.offer_profile_analysis import OfferProfileAnalysis
 
 # Brand marketing
 from domain.models.brand_marketing.brand_marketing import BrandMarketing

@@ -6,14 +6,15 @@ from typing import Dict, Any, List
 
 from di.container import Container
 
-from application.mappers.offer_source_mapper import OfferSourceMapper
 from application.mappers.analysis_question_mapper import AnalysisQuestionMapper
 
 from domain.models.analysis.analysis_questions import AnalysisQuestion
 from domain.models.analysis.question_answer import QuestionAnswer
 from domain.models.llm.llm_message import LlmMessage
 from domain.enums.llm_message_role import LlmMessageRole
-from domain.analysis.offer_source_analysis_questions import OFFER_SOURCE_ANALYSIS_QUESTIONS
+from domain.analysis.offer_source_analysis_questions import OFFER_SOURCE_ANALYSIS_QUESTIONS as OFFER_PROFILE_ANALYSIS_QUESTIONS
+from application.services.llm_context_composer import ContextRef, ContextSelection
+from domain.enums.context_type import ContextType
 
 BASE_SYSTEM_PROMPT = """
 You are an expert in e-commerce product analysis.
@@ -43,13 +44,13 @@ def chunk_list(
 
 
 def build_product_context_prompt(
-    offer_source_context: str
+    offer_profile_context: str
 ) -> str:
 
     return f"""
 PRODUCT DATA:
 
-{offer_source_context}
+{offer_profile_context}
 
 Analyze the product based on the data provided above.
 Do not draw conclusions based on information that is not present in the data.
@@ -112,32 +113,34 @@ def parse_answers_response(content: str) -> list[dict[str, Any]]:
     return parsed
 
 
-def offer_source_analysis_answers_generate_handler(
-    offer_source_id: int,
+def offer_profile_analysis_answers_generate_handler(
+    offer_profile_id: int,
     analyse_id: int
 ) -> Dict[str, Any]:
 
     container = Container()
     logger = container.logger()
-    offer_source_service = container.offer_source_service()
     ai_service = container.ai_service()
-    offer_source_analysis_repository = container.offer_source_analysis_repository()
+    offer_profile_analysis_repository = container.offer_profile_analysis_repository()
     analysis_repository = container.analysis_repository()
     analysis_questions_repository = container.analysis_questions_repository()
     question_answer_repository = container.question_answer_repository()
 
     # Get analysis
-    offer_source_analysis_db = offer_source_analysis_repository.find_relation(offer_source_id=offer_source_id,analysis_id=analyse_id)
-    analyse_db = analysis_repository.get_by_id(id=offer_source_analysis_db.analysis_id)
+    offer_profile_analysis_db = offer_profile_analysis_repository.find_relation(offer_profile_id=offer_profile_id,analysis_id=analyse_id)
+    if offer_profile_analysis_db is None:
+        raise LookupError("Analysis does not belong to the requested offer profile")
+    analyse_db = analysis_repository.get_by_id(id=offer_profile_analysis_db.analysis_id)
 
-    logger.info(f"Generating offer_source analysis for offer_source_id={offer_source_id}")
-    offer_source_context = offer_source_service.build_llm_context(
-        offer_source_id=offer_source_id
+    logger.info(f"Generating offer_profile analysis for offer_profile_id={offer_profile_id}")
+    offer_profile_context = container.llm_context_composer().compose(
+        root=ContextRef(ContextType.OFFER_PROFILE, offer_profile_id),
+        include=[ContextSelection(ContextType.OFFER_SOURCE)],
     )
 
-    question_batches = chunk_list(items=OFFER_SOURCE_ANALYSIS_QUESTIONS,size=10)
+    question_batches = chunk_list(items=OFFER_PROFILE_ANALYSIS_QUESTIONS,size=10)
 
-    logger.info(f"Split {len(OFFER_SOURCE_ANALYSIS_QUESTIONS)} questions into {len(question_batches)} batches")
+    logger.info(f"Split {len(OFFER_PROFILE_ANALYSIS_QUESTIONS)} questions into {len(question_batches)} batches")
 
 
     final_analysis_questions_dicts = []
@@ -153,7 +156,7 @@ def offer_source_analysis_answers_generate_handler(
             LlmMessage(
                 role=LlmMessageRole.USER,
                 content=build_product_context_prompt(
-                    offer_source_context
+                    offer_profile_context
                 )
             ),
             LlmMessage(
@@ -173,7 +176,7 @@ def offer_source_analysis_answers_generate_handler(
         logger.info(f"Batch {batch_index}/{len(question_batches)} returned {len(batch_result)} answers")
         final_analysis_questions_dicts.extend( batch_result  )
 
-    logger.info(f"OfferSource analysis completed for offer_source_id={offer_source_id}, total_answers={len(final_analysis_questions_dicts)}")
+    logger.info(f"OfferProfile analysis completed for offer_profile_id={offer_profile_id}, total_answers={len(final_analysis_questions_dicts)}")
 
 
     # QuestionAnswer insert to db

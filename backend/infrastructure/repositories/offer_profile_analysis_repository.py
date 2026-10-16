@@ -2,23 +2,23 @@ from sqlalchemy import and_
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from domain.models.analysis.offer_source_analysis import OfferSourceAnalysis
+from domain.models.analysis.offer_profile_analysis import OfferProfileAnalysis
 from infrastructure.logging.logger import Logger
 
 
-class OfferSourceAnalysisRepository:
+class OfferProfileAnalysisRepository:
     def __init__(self, logger: Logger, db: Session):
         self.db = db
         self.logger = logger
 
     # ➕ UPSERT
-    def upsert(self, analysis: OfferSourceAnalysis) -> OfferSourceAnalysis:
+    def upsert(self, analysis: OfferProfileAnalysis) -> OfferProfileAnalysis:
         existing = (
-            self.db.query(OfferSourceAnalysis)
+            self.db.query(OfferProfileAnalysis)
             .filter(
                 and_(
-                    OfferSourceAnalysis.offer_source_id == analysis.offer_source_id,
-                    OfferSourceAnalysis.analysis_id == analysis.analysis_id
+                    OfferProfileAnalysis.offer_profile_id == analysis.offer_profile_id,
+                    OfferProfileAnalysis.analysis_id == analysis.analysis_id
                 )
             )
             .first()
@@ -33,24 +33,24 @@ class OfferSourceAnalysisRepository:
         return analysis
 
     # 🔍 GET BY OFFER_SOURCE ID
-    def find_by_offer_source_id(self, offer_source_id: int) -> List[OfferSourceAnalysis]:
+    def find_by_offer_profile_id(self, offer_profile_id: int) -> List[OfferProfileAnalysis]:
         return (
-            self.db.query(OfferSourceAnalysis)
-            .filter(OfferSourceAnalysis.offer_source_id == offer_source_id)
+            self.db.query(OfferProfileAnalysis)
+            .filter(OfferProfileAnalysis.offer_profile_id == offer_profile_id)
             .all()
         )
 
     def find_relation(
         self,
-        offer_source_id: int,
+        offer_profile_id: int,
         analysis_id: int
-    ) -> Optional[OfferSourceAnalysis]:
+    ) -> Optional[OfferProfileAnalysis]:
         return (
-            self.db.query(OfferSourceAnalysis)
+            self.db.query(OfferProfileAnalysis)
             .filter(
                 and_(
-                    OfferSourceAnalysis.offer_source_id == offer_source_id,
-                    OfferSourceAnalysis.analysis_id == analysis_id
+                    OfferProfileAnalysis.offer_profile_id == offer_profile_id,
+                    OfferProfileAnalysis.analysis_id == analysis_id
                 )
             )
             .first()
@@ -59,8 +59,8 @@ class OfferSourceAnalysisRepository:
     # ❌ DELETE BY ANALYSIS ID
     def delete_by_analysis_id(self, analysis_id: int) -> int:
         deleted = (
-            self.db.query(OfferSourceAnalysis)
-            .filter(OfferSourceAnalysis.analysis_id == analysis_id)
+            self.db.query(OfferProfileAnalysis)
+            .filter(OfferProfileAnalysis.analysis_id == analysis_id)
             .delete()
         )
         self.db.commit()

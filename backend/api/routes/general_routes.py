@@ -18,12 +18,6 @@ from application.handlers.offer_sources.generate_offer_source_handler import gen
 from application.handlers.offer_sources.get_offer_source_handler import get_offer_source_handler
 from application.handlers.offer_sources.get_offer_sources_handler import get_offer_sources_handler
 from application.handlers.offer_sources.delete_offer_source_handler import delete_offer_source_handler
-from application.handlers.offer_sources.list_offer_source_elements_handler import list_offer_source_elements_handler
-from application.handlers.offer_sources.create_offer_source_element_handler import create_offer_source_element_handler
-from application.handlers.offer_sources.generate_offer_source_elements_handler import generate_offer_source_elements_handler
-from application.handlers.offer_sources.update_offer_source_element_handler import update_offer_source_element_handler
-from application.handlers.offer_sources.delete_offer_source_element_handler import delete_offer_source_element_handler
-from application.handlers.offer_sources.list_offer_source_element_types_handler import list_offer_source_element_types_handler
 from application.handlers.offers.update_offer_handler import update_offer_handler
 from application.handlers.offer_sources.update_offer_source_handler import update_offer_source_handler
 from application.handlers.brand_marketing.update_brand_marketing_handler import update_brand_marketing_handler
@@ -49,17 +43,17 @@ from application.handlers.target_audience.get_target_audience_preview_handler im
 from application.handlers.target_audience.delete_target_audience_handler import delete_target_audience_handler
 from application.handlers.target_audience.update_target_audience_handler import update_target_audience_handler
 # from application.handlers.offers.suggest_offer_source_data_handler import suggest_offer_source_data_handler
-from application.handlers.analysis.offer_source_analysis_answers_generate_handler import offer_source_analysis_answers_generate_handler
-from application.handlers.analysis.create_analysis_for_offer_source_handler import create_analysis_for_offer_source_handler
+from application.handlers.analysis.offer_profile_analysis_answers_generate_handler import offer_profile_analysis_answers_generate_handler
+from application.handlers.analysis.create_analysis_for_offer_profile_handler import create_analysis_for_offer_profile_handler
 from application.handlers.analysis.get_analysis_by_id_hanlder import get_analysis_by_id_handler
-from application.handlers.analysis.get_analysis_for_offer_source_hanlder import get_analysis_for_offer_source_handler
+from application.handlers.analysis.get_analysis_for_offer_profile_hanlder import get_analysis_for_offer_profile_handler
 from application.handlers.analysis.analyse_checklist_generate_handler import analyse_checklist_generate_handler
 from application.handlers.analysis.delete_analysis_handler import delete_analysis_handler
 from application.handlers.analysis.delete_analysis_question_handler import delete_analysis_question_handler
 from application.handlers.analysis.update_analysis_question_handler import update_analysis_question_handler
 from application.handlers.analysis.list_analysis_questions_handler import list_analysis_questions_handler
-from application.handlers.checklist.create_checklist_for_offer_source_handler import create_checklist_for_offer_source_handler
-from application.handlers.checklist.get_offer_source_checklists_handler import get_offer_source_checklists_handler
+from application.handlers.checklist.create_checklist_for_offer_profile_handler import create_checklist_for_offer_profile_handler
+from application.handlers.checklist.get_offer_profile_checklists_handler import get_offer_profile_checklists_handler
 from application.handlers.checklist.get_checklist_by_id_handler import get_checklist_by_id_handler
 from application.handlers.checklist.delete_checklist_item_handler import delete_checklist_item_handler
 from application.handlers.checklist.delete_checklist_handler import delete_checklist_handler
@@ -135,8 +129,6 @@ from application.handlers.settings.save_ollama_settings_handler import save_olla
 from application.handlers.settings.list_ollama_models_handler import list_ollama_models_handler
 from application.handlers.pipeline.get_pipeline_path_handler import get_pipeline_path_handler
 from domain.enums.pipeline_entity_type import PipelineEntityType
-from domain.enums.offer_source_element_type import OfferSourceElementType
-from domain.enums.offer_source_element_type import OfferSourceElementType
 
 
 class SaveRuleSetRequest(BaseModel):
@@ -200,16 +192,8 @@ class GenerateTargetAudiencesRequest(BaseModel):
 
 
 
-class CreateOfferSourceElementRequest(BaseModel):
-    type: OfferSourceElementType
-    name: str = Field(min_length=1, max_length=255)
-    description: Optional[str] = None
-    is_reviewed: bool = False
 
 
-class GenerateOfferSourceElementsRequest(BaseModel):
-    element_types: List[OfferSourceElementType] = Field(min_length=1)
-    examples_per_type: int = 3
 
 
 class GenerateCreativeExecutionSetupsRequest(BaseModel):
@@ -226,13 +210,13 @@ def register_general_routes(router: APIRouter):
     def _legacy_get_0(id: str):
         raise HTTPException(status_code=410, detail="This endpoint now requires POST /offers/{id}/offer-sources/generate")
 
-    @router.get("/offer-sources/{offer_source_id}/analysis/{analyse_id}/answers/generate")
-    def _legacy_get_2(offer_source_id: str, analyse_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-sources/{offer_source_id}/analysis/{analyse_id}/answers/generate")
+    @router.get("/offer-profiles/{offer_profile_id}/analysis/{analyse_id}/answers/generate")
+    def _legacy_get_2(offer_profile_id: str, analyse_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/analysis/{analyse_id}/answers/generate")
 
-    @router.get("/offer-sources/{offer_source_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
-    def _legacy_get_3(offer_source_id: str, analyse_id: str, checklist_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-sources/{offer_source_id}/checklists/{checklist_id}/generate")
+    @router.get("/offer-profiles/{offer_profile_id}/analysis/{analyse_id}/checklists/{checklist_id}/generate")
+    def _legacy_get_3(offer_profile_id: str, analyse_id: str, checklist_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/checklists/{checklist_id}/generate")
 
     @router.get("/offer-sources/{offer_source_id}/brand-marketing/generate")
     def _legacy_get_4(offer_source_id: str):
@@ -278,13 +262,13 @@ def register_general_routes(router: APIRouter):
     def _legacy_get_14(page_content_plan_id: str):
         raise HTTPException(status_code=410, detail="This endpoint now requires POST /page-content-plan/{page_content_plan_id}/page-copy/generate")
 
-    @router.get("/offer-sources/{offer_source_id}/analysis/create")
-    def _legacy_get_15(offer_source_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-sources/{offer_source_id}/analysis/create")
+    @router.get("/offer-profiles/{offer_profile_id}/analysis/create")
+    def _legacy_get_15(offer_profile_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/analysis/create")
 
-    @router.get("/offer-sources/{offer_source_id}/analysis/{analysis_id}/checklists/create")
-    def _legacy_get_16(offer_source_id: str, analysis_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-sources/{offer_source_id}/checklists/create")
+    @router.get("/offer-profiles/{offer_profile_id}/analysis/{analysis_id}/checklists/create")
+    def _legacy_get_16(offer_profile_id: str, analysis_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/checklists/create")
 
     @router.get("/page-strategy/{page_strategy_id}/page-requirements/create")
     def _legacy_get_17(page_strategy_id: str):
@@ -380,69 +364,11 @@ def register_general_routes(router: APIRouter):
     def delete_offer_source_route_legacy_get(id: int):
         raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /offer-sources/{id}/delete")
 
-    @router.get("/offer-sources/{offer_source_id}/elements")
-    def get_offer_source_elements(
-        offer_source_id: int,
-        page: int = Query(default=1, ge=1),
-        page_size: int = Query(default=20, ge=1, le=100),
-        search: str | None = None,
-        element_type: OfferSourceElementType | None = None,
-        is_reviewed: bool | None = None,
-        sort: Literal["created_at_desc", "created_at_asc", "name_asc", "name_desc"] = "created_at_desc",
-    ):
-        return list_offer_source_elements_handler(
-            offer_source_id=offer_source_id,
-            page=page,
-            page_size=page_size,
-            search=search,
-            element_type=element_type,
-            is_reviewed=is_reviewed,
-            sort=sort,
-        )
 
-    @router.get("/offer-source-elements/types")
-    def get_offer_source_element_types():
-        return list_offer_source_element_types_handler()
 
-    @router.post("/offer-sources/{offer_source_id}/elements/generate")
-    def generate_offer_source_elements_route(
-        offer_source_id: int,
-        payload: GenerateOfferSourceElementsRequest,
-    ):
-        return generate_offer_source_elements_handler(
-            offer_source_id=offer_source_id,
-            element_types=payload.element_types,
-            examples_per_type=payload.examples_per_type,
-        )
 
-    @router.post("/offer-sources/{offer_source_id}/elements")
-    def create_offer_source_element(
-        offer_source_id: int,
-        payload: CreateOfferSourceElementRequest,
-    ):
-        try:
-            return create_offer_source_element_handler(
-                offer_source_id=offer_source_id,
-                element_type=payload.type,
-                name=payload.name.strip(),
-                description=payload.description.strip() if payload.description else None,
-                is_reviewed=payload.is_reviewed,
-            )
-        except LookupError as error:
-            raise HTTPException(status_code=404, detail=str(error)) from error
 
-    @router.post("/offer-source-elements/{id}/update")
-    def update_offer_source_element_route(id: int, payload: UpdateFieldsRequest):
-        try:
-            return update_offer_source_element_handler(id=id, fields=payload.fields)
-        except LookupError as error:
-            raise HTTPException(status_code=404, detail=str(error)) from error
-        except ValueError as error:
-            raise HTTPException(status_code=422, detail=str(error)) from error
 
-    @router.delete("/offer-source-elements/{id}/delete")
-    def delete_offer_source_element_route(id: int):
-        return delete_offer_source_element_handler(id=id)
 
     # -----------------------------
     # Target audience
@@ -504,18 +430,18 @@ def register_general_routes(router: APIRouter):
     def get_anlysis_by_id(analyse_id: int):
         return get_analysis_by_id_handler( analyse_id=analyse_id)
 
-    @router.post("/offer-sources/{offer_source_id}/analysis/create")
-    def create_analysis_for_offer_source(offer_source_id: int):
-        return create_analysis_for_offer_source_handler(offer_source_id=offer_source_id)
+    @router.post("/offer-profiles/{offer_profile_id}/analysis/create")
+    def create_analysis_for_offer_profile(offer_profile_id: int):
+        return create_analysis_for_offer_profile_handler(offer_profile_id=offer_profile_id)
 
-    @router.get("/offer-sources/{offer_source_id}/analysis")
-    def get_analysis_for_offer_source(offer_source_id: int):
-        return get_analysis_for_offer_source_handler(offer_source_id=offer_source_id)
+    @router.get("/offer-profiles/{offer_profile_id}/analysis")
+    def get_analysis_for_offer_profile(offer_profile_id: int):
+        return get_analysis_for_offer_profile_handler(offer_profile_id=offer_profile_id)
 
     # POST in future
-    @router.post("/offer-sources/{offer_source_id}/analysis/{analyse_id}/answers/generate")
-    def offer_source_analysis_answers_generate(offer_source_id: int, analyse_id: int):
-        return offer_source_analysis_answers_generate_handler( offer_source_id=offer_source_id, analyse_id=analyse_id)
+    @router.post("/offer-profiles/{offer_profile_id}/analysis/{analyse_id}/answers/generate")
+    def offer_profile_analysis_answers_generate(offer_profile_id: int, analyse_id: int):
+        return offer_profile_analysis_answers_generate_handler( offer_profile_id=offer_profile_id, analyse_id=analyse_id)
 
     @router.delete("/analysis/{id}/delete")
     def delete_analysis_route(id: int):
@@ -564,18 +490,18 @@ def register_general_routes(router: APIRouter):
     def delete_checklist_route_legacy_get(id: int):
         raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /checklists/{id}/delete")
 
-    @router.post("/offer-sources/{offer_source_id}/checklists/create")
-    def create_offer_source_checklist(offer_source_id: int):
-        return create_checklist_for_offer_source_handler(offer_source_id=offer_source_id)
+    @router.post("/offer-profiles/{offer_profile_id}/checklists/create")
+    def create_offer_profile_checklist(offer_profile_id: int):
+        return create_checklist_for_offer_profile_handler(offer_profile_id=offer_profile_id)
 
     # POST in future
-    @router.post("/offer-sources/{offer_source_id}/checklists/{checklist_id}/generate")
-    def offer_source_checklist_generate(offer_source_id: int, checklist_id: int):
-        return analyse_checklist_generate_handler(offer_source_id=offer_source_id, checklist_id=checklist_id)
+    @router.post("/offer-profiles/{offer_profile_id}/checklists/{checklist_id}/generate")
+    def offer_profile_checklist_generate(offer_profile_id: int, checklist_id: int):
+        return analyse_checklist_generate_handler(offer_profile_id=offer_profile_id, checklist_id=checklist_id)
 
-    @router.get("/offer-sources/{offer_source_id}/checklists")
-    def get_offer_source_checklists(offer_source_id: int):
-        return get_offer_source_checklists_handler(offer_source_id=offer_source_id)
+    @router.get("/offer-profiles/{offer_profile_id}/checklists")
+    def get_offer_profile_checklists(offer_profile_id: int):
+        return get_offer_profile_checklists_handler(offer_profile_id=offer_profile_id)
 
     @router.delete("/checklist-items/{id}/delete")
     def delete_checklist_item_route(id: int):

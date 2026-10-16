@@ -1,4 +1,4 @@
-import { useId, useState, type ReactNode } from 'react'
+import { useId, type ReactNode } from 'react'
 import { ArrowLeft, ChevronDown, CodeXml } from 'lucide-react'
 import { Link, NavLink, matchPath, useLocation, useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
@@ -6,17 +6,19 @@ import { DownloadPipelinePathButton } from '@/components/DownloadPipelinePathBut
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useSidePanel } from '@/lib/sidePanel'
+import { usePersistentBoolean } from '@/lib/usePersistentBoolean'
 import type { useResizablePanel } from '@/lib/useResizablePanel'
 import { useListProfileContextsQuery } from '@/features/additionalContexts/additionalContextsApi'
 import { useListOfferProfilesQuery } from '@/features/offerProfiles/offerProfilesApi'
 import { useListOfferFactsQuery } from '@/features/offerFacts/offerFactsApi'
-import { useListOfferSourceElementsQuery, useListOfferSourceForOfferQuery } from '@/features/offerSources/offerSourceApi'
+import { useListOfferSourceForOfferQuery } from '@/features/offerSources/offerSourceApi'
 import { useListTargetAudiencesForOfferProfileQuery } from '@/features/targetAudiences/targetAudiencesApi'
 import { useListMarketingAnglesQuery } from '@/features/marketingAngles/marketingAnglesApi'
 import { useListAdConceptsQuery } from '@/features/adConcepts/adConceptsApi'
-import { useGetAnalysisQuery, useListAnalysisForOfferSourceQuery } from '@/features/analysis/analysisApi'
+import { useListCreativePlansQuery } from '@/features/creativePlans/creativePlansApi'
+import { useGetAnalysisQuery, useListAnalysisForOfferProfileQuery } from '@/features/analysis/analysisApi'
 import { useListBrandMarketingForOfferSourceQuery } from '@/features/brandMarketing/brandMarketingApi'
-import { useGetChecklistQuery, useListChecklistsForOfferSourceQuery } from '@/features/checklists/checklistsApi'
+import { useGetChecklistQuery, useListChecklistsForOfferProfileQuery } from '@/features/checklists/checklistsApi'
 import { useListMarketingStrategyForBrandMarketingQuery } from '@/features/marketingStrategy/marketingStrategyApi'
 import { useListOfferStrategyForMarketingStrategyQuery } from '@/features/offerStrategy/offerStrategyApi'
 import { useListMessageStrategyForOfferStrategyQuery } from '@/features/messageStrategy/messageStrategyApi'
@@ -43,7 +45,7 @@ const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
 const sidebarActionClassName = 'h-auto min-h-7 w-full min-w-0 max-w-full shrink justify-start py-1.5 text-left leading-snug whitespace-normal'
 
 function SidebarGroup({ title, children, className }: { title: string; children: ReactNode; className?: string }) {
-  const [expanded, setExpanded] = useState(true)
+  const [expanded, setExpanded] = usePersistentBoolean(`ai-ec-agent:sidebar-group:${title}`, true)
   const contentId = useId()
 
   return <section className={className}>
@@ -100,9 +102,9 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   const showBackButton = pathname !== '/' && pathname !== '/offers'
   const sections = [
     { pattern: '/offers/:id/*', current: 'Oferta', entityType: 'offer', process: [['offer-sources', 'Źródła oferty']], resources: [] },
-    { pattern: '/offer-sources/:id/*', current: 'Offer source', entityType: 'offer_source', process: [['profiles', 'Profile oferty'], ['brand-marketing', 'Marketing marki (przestarzały)']], offer_source: [['analyses', 'Analizy produktu (przestarzały)'], ['checklists', 'Checklisty (przestarzały)']], resources: [['facts', 'Fakty o produkcie'], ['elements', 'Elementy oferty (przestarzały)']] },
-    { pattern: '/offer-sources/:offerSourceId/analysis/:id/*', current: 'Analiza', process: [], resources: [['questions', 'Pytania']] },
-    { pattern: '/offer-sources/:offerSourceId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },
+    { pattern: '/offer-sources/:id/*', current: 'Offer source', entityType: 'offer_source', attached: [['facts', 'Fakty o produkcie']], process: [['profiles', 'Profile oferty'], ['brand-marketing', 'Marketing marki (przestarzały)']], resources: [] },
+    { pattern: '/offer-profiles/:offerProfileId/analysis/:id/*', current: 'Analiza', process: [], resources: [['questions', 'Pytania']] },
+    { pattern: '/offer-profiles/:offerProfileId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },
     { pattern: '/offer-profiles/:id/*', current: 'Profil oferty', attached: [['additional-contexts', 'Dodatkowe informacje']], process: [], resources: [] },
     { pattern: '/brand-marketing/:id/*', current: 'Brand marketing', entityType: 'brand_marketing', process: [['marketing-strategies', 'Marketing strategy']], resources: [] },
     { pattern: '/marketing-strategy/:id/*', current: 'Marketing strategy', entityType: 'marketing_strategy', process: [['offer-strategies', 'Offer strategy']], resources: [] },
@@ -141,20 +143,13 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   )
   const marketingAngles = useListMarketingAnglesQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const adConcepts = useListAdConceptsQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
-  const offerSourceElements = useListOfferSourceElementsQuery(
-    { offerSourceId },
-    { skip: skipOfferSourceResources },
-  )
-  const unreviewedOfferSourceElements = useListOfferSourceElementsQuery(
-    { offerSourceId, pageSize: 1, isReviewed: false },
-    { skip: skipOfferSourceResources },
-  )
+  const creativePlans = useListCreativePlansQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const brandMarketing = useListBrandMarketingForOfferSourceQuery(offerSourceId, { skip: skipOfferSourceResources })
-  const analyses = useListAnalysisForOfferSourceQuery(offerSourceId, { skip: skipOfferSourceResources })
+  const analyses = useListAnalysisForOfferProfileQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const analysis = useGetAnalysisQuery(currentEntityId, { skip: !isAnalysisSection || !Number.isInteger(currentEntityId) })
   const checklist = useGetChecklistQuery(currentEntityId, { skip: !isChecklistSection || !Number.isInteger(currentEntityId) })
   const offerSources = useListOfferSourceForOfferQuery(currentEntityId, { skip: !isCurrentStage('Oferta') })
-  const checklists = useListChecklistsForOfferSourceQuery(offerSourceId, { skip: skipOfferSourceResources })
+  const checklists = useListChecklistsForOfferProfileQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const marketingStrategies = useListMarketingStrategyForBrandMarketingQuery(currentEntityId, { skip: !isCurrentStage('Brand marketing') })
   const offerStrategies = useListOfferStrategyForMarketingStrategyQuery(currentEntityId, { skip: !isCurrentStage('Marketing strategy') })
   const messageStrategies = useListMessageStrategyForOfferStrategyQuery(currentEntityId, { skip: !isCurrentStage('Offer strategy') })
@@ -177,10 +172,10 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     'target-audiences': targetAudiences.data?.total_items,
     'marketing-angles': marketingAngles.data?.length,
     'ad-concepts': adConcepts.data?.length,
+    'creative-plans': creativePlans.data?.length,
     'additional-contexts': profileContexts.data?.length,
     profiles: offerProfiles.data?.length,
     facts: offerFacts.data?.total_items,
-    elements: offerSourceElements.data?.total_items,
     'brand-marketing': brandMarketing.data?.length,
     analyses: analyses.data?.length,
     checklists: checklists.data?.length,
@@ -205,7 +200,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     'target-audiences': unreviewedTargetAudiences.data?.total_items,
     'marketing-angles': marketingAngles.data?.filter((angle) => !angle.is_reviewed).length,
     'ad-concepts': adConcepts.data?.filter((concept) => !concept.is_reviewed).length,
-    elements: unreviewedOfferSourceElements.data?.total_items,
+    'creative-plans': creativePlans.data?.filter((plan) => !plan.is_reviewed).length,
     questions: (analysis.data?.analysis_questions as Array<{ is_reviewed?: unknown }> | undefined)
       ?.filter((item) => item.is_reviewed !== true).length,
     items: (checklist.data?.checklist_items as Array<{ is_reviewed?: unknown }> | undefined)
@@ -305,6 +300,14 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
           </SidebarGroup>
         )}
         {section.config.current === 'Profil oferty' && (
+          <SidebarGroup title="Research" className="mb-6">
+            <nav className="ml-2 space-y-1 border-l pl-2">
+              {navigationLink('analyses', 'Analizy produktu (na razie nie działa poprawnie)', `${detailPath}/analyses`)}
+              {navigationLink('checklists', 'Checklisty (na razie nie działa poprawnie)', `${detailPath}/checklists`)}
+            </nav>
+          </SidebarGroup>
+        )}
+        {section.config.current === 'Profil oferty' && (
           <SidebarGroup title="Targets">
             <nav className="ml-2 space-y-1 border-l pl-2">
               {navigationLink('target-audiences', 'Target audiences', `${detailPath}/target-audiences`)}
@@ -317,7 +320,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
             <nav className="ml-2 space-y-1 border-l pl-2">
               {navigationLink('marketing-angles', 'Marketing angles', `${detailPath}/marketing-angles`)}
               {navigationLink('ad-concepts', 'Ad concepts', `${detailPath}/ad-concepts`)}
-              <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">Creative plans</span>
+              {navigationLink('creative-plans', 'Creative plans', `${detailPath}/creative-plans`)}
             </nav>
           </SidebarGroup>
         )}
@@ -341,20 +344,12 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
           <SidebarGroup title="Ads" className="mt-6">
             <div className="ml-2 border-l pl-2">
               <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">Ad creatives</span>
+              <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">Ad copy</span>
             </div>
           </SidebarGroup>
         )}
-        {'offer_source' in section.config && section.config.offer_source.length > 0 && (
-          <SidebarGroup title="Audyt" className={section.config.process.length > 0 || section.config.resources.length > 0 ? 'mt-6' : undefined}>
-            <nav className="ml-2 space-y-1 border-l pl-2">
-              {section.config.offer_source.map(([slug, label]) => (
-                navigationLink(slug, label, `${detailPath}/${slug}`)
-              ))}
-            </nav>
-          </SidebarGroup>
-        )}
         {('entityType' in section.config || contextualPanel) && (
-          <SidebarGroup title="Akcje" className={section.config.process.length > 0 || 'offer_source' in section.config || section.config.resources.length > 0 || section.config.current === 'Profil oferty' ? 'mt-6' : undefined}>
+          <SidebarGroup title="Akcje" className={section.config.process.length > 0 || section.config.resources.length > 0 || section.config.current === 'Profil oferty' ? 'mt-6' : undefined}>
             <nav className="ml-2 space-y-1 border-l pl-2">
               {'entityType' in section.config && (
                 <DownloadPipelinePathButton className={sidebarActionClassName} entityType={section.config.entityType} entityId={Number(section.match?.params.id)} />

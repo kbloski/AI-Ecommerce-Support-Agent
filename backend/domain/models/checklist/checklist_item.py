@@ -14,7 +14,7 @@ class ChecklistItem(Base, JSONSerializable):
 
     checklist_id = Column(
         Integer,
-        ForeignKey(f"{TableName.CHECKLIST.value}.id"),
+        ForeignKey(f"{TableName.CHECKLIST.value}.id", ondelete="CASCADE"),
         nullable=False
     )
 

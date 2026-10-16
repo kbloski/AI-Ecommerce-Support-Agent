@@ -27,10 +27,10 @@ class ChecklistRepository:
             .all()
         )
 
-    def find_for_offer_source(self, offer_source_id: int) -> List[Checklist]:
+    def find_for_offer_profile(self, offer_profile_id: int) -> List[Checklist]:
         return (
             self.db.query(Checklist)
-            .filter(Checklist.offer_source_id == offer_source_id)
+            .filter(Checklist.offer_profile_id == offer_profile_id)
             .order_by(Checklist.created_at.desc(), Checklist.id.desc())
             .all()
         )

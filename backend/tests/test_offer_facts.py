@@ -242,17 +242,15 @@ class OfferFactsTests(unittest.TestCase):
     def test_only_reviewed_facts_enter_llm_context(self):
         self.create()
         self.repo.create_many([OfferFact(offer_source_id=1, **{**self.fields, "name": "Cable", "description": "A USB cable is included.", "evidence": "Includes a USB cable.", "is_reviewed": True})])
-        assembler = OfferSourceAssembler(None, None, self.repo, SimpleNamespace(find_for_offer_source=lambda **kwargs: []))
+        assembler = OfferSourceAssembler(None, None, self.repo)
         dto = assembler.assemble_dto(OfferSourceDto(1, 1, "Summary"))
         self.assertEqual(len(dto.to_dict()["offer_facts"]), 2)
         service = OfferSourceService(None, None, None, None, None, None, None)
         service.get_offer_source_details_by_id = lambda **kwargs: dto
-        dto.offer_source_elements = [SimpleNamespace(name="Element to exclude", is_reviewed=True)]
         dto.brand_marketing = {"name": "Brand to exclude"}
         context = service.build_llm_context(1)
         content = json.loads(ET.fromstring(context).text)
         self.assertEqual(set(content), {"offer_details", "offer_facts"})
-        self.assertNotIn("Element to exclude", context)
         self.assertNotIn("Brand to exclude", context)
         self.assertEqual(len(dto.offer_facts), 2)
         self.assertIn("A USB cable is included.", context)

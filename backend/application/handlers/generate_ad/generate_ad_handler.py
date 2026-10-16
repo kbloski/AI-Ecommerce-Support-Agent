@@ -697,7 +697,7 @@ Preferuj realne:
 - kontrasty,
 - potwierdzone efekty,
 - dowody,
-- elementy oferty.
+- informacje o ofercie.
 
 Nie rób z ogólnych emocji głównego mechanizmu sprzedaży.
 

@@ -7,7 +7,7 @@ class ChecklistMapper:
     def to_dto(item : Checklist) -> ChecklistDto:
         return ChecklistDto(
             id = item.id,
-            offer_source_id=item.offer_source_id,
+            offer_profile_id=item.offer_profile_id,
             name=item.name,
         )
 

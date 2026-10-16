@@ -6,12 +6,12 @@ from infrastructure.database.db import Base
 from domain.enums.table_name import TableName
 
 
-class OfferSourceAnalysis(Base, JSONSerializable):
-    __tablename__ = TableName.OFFER_SOURCE_ANALYSIS.value
+class OfferProfileAnalysis(Base, JSONSerializable):
+    __tablename__ = TableName.OFFER_PROFILE_ANALYSIS.value
 
-    offer_source_id = Column(
+    offer_profile_id = Column(
         Integer,
-        ForeignKey(TableName.OFFER_SOURCES + ".id", ondelete="CASCADE"),
+        ForeignKey(TableName.OFFER_PROFILES + ".id", ondelete="CASCADE"),
         nullable=False,
         primary_key=True
     )

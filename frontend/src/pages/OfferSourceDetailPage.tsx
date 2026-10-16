@@ -21,7 +21,9 @@ export default function OfferSourceDetailPage() {
       data={offer_source}
       isLoading={isLoading}
       error={error}
+      exclude={['offer_facts']}
       editable={{
+        exclude: ['offer_facts'],
         onSave: (fields) => updateOfferSource({ id: offerSourceId, fields }).unwrap(),
         isSaving: updateOfferSourceState.isLoading,
       }}

@@ -3,8 +3,8 @@ import { DetailShell } from '@/components/DetailShell'
 import { useGetAnalysisQuery } from '@/features/analysis/analysisApi'
 
 export default function AnalysisDetailPage() {
-  const { offerSourceId: offerSourceIdParam, analysisId: analysisIdParam } = useParams()
-  const offerSourceId = Number(offerSourceIdParam)
+  const { offerProfileId: offerProfileIdParam, analysisId: analysisIdParam } = useParams()
+  const offerProfileId = Number(offerProfileIdParam)
   const analysisId = Number(analysisIdParam)
 
   const { data: analysis, isLoading, error } = useGetAnalysisQuery(analysisId)
@@ -12,8 +12,8 @@ export default function AnalysisDetailPage() {
   return (
     <DetailShell
       title={`Analiza #${analysisId}`}
-      backTo={`/offer-sources/${offerSourceId}`}
-      backLabel="← OfferSource"
+      backTo={`/offer-profiles/${offerProfileId}`}
+      backLabel="← OfferProfile"
       data={analysis}
       isLoading={isLoading}
       error={error}

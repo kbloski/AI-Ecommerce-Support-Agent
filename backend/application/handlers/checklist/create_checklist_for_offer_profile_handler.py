@@ -4,12 +4,13 @@ from application.mappers.checklist_mapper import ChecklistMapper
 from infrastructure.database.unit_of_work import unit_of_work
 
 
-def create_checklist_for_offer_source_handler(offer_source_id: int):
+def create_checklist_for_offer_profile_handler(offer_profile_id: int):
     container = Container()
+    container.offer_profile_service().get_offer_profile_details_by_id(offer_profile_id)
     checklist_repository = container.checklist_repository()
 
     with unit_of_work(container.db()):
-        checklist = Checklist(offer_source_id=offer_source_id, name="checklist")
+        checklist = Checklist(offer_profile_id=offer_profile_id, name="checklist")
         checklist_db = checklist_repository.create(checklist)
 
     return ChecklistMapper.to_dto(item=checklist_db)
