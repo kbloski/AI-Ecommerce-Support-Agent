@@ -28,7 +28,17 @@ from application.handlers.page_copy.get_page_copy_handler import get_page_copy_h
 # oraz przez które pole i do jakiego etapu prowadzi rodzic. W górę łańcuch
 # nigdy się nie rozgałęzia, więc (entity_type, entity_id) zawsze wyznacza
 # dokładnie jedną ścieżkę z powrotem do Offer.
+def _get_profile_dto(id):
+    return Container().offer_profile_service().get_offer_profile_details_by_id(id)
+
+
 STAGE_CONFIG: Dict[PipelineEntityType, Dict[str, Any]] = {
+    PipelineEntityType.OFFER_PROFILE: {
+        "get_handler": _get_profile_dto,
+        "context_service": "offer_profile_service",
+        "parent_field": "offer_source_id",
+        "parent_stage": PipelineEntityType.OFFER_SOURCE,
+    },
     PipelineEntityType.OFFER: {
         "get_handler": get_offer_handler,
         "context_service": "offer_service",
@@ -98,8 +108,8 @@ STAGE_CONFIG: Dict[PipelineEntityType, Dict[str, Any]] = {
     PipelineEntityType.UGC_CREATIVE: {
         "get_handler": get_ugc_creative_handler,
         "context_service": None,  # liść gałęzi UGC
-        "parent_field": "message_strategy_id",
-        "parent_stage": PipelineEntityType.MESSAGE_STRATEGY,
+        "parent_field": "offer_profile_id",
+        "parent_stage": PipelineEntityType.OFFER_PROFILE,
     },
     PipelineEntityType.PAGE_STRATEGY: {
         "get_handler": get_page_strategy_handler,

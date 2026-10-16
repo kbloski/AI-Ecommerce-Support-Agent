@@ -72,8 +72,9 @@ def generate_ad_creative_plans_handler(offer_profile_id, request):
     if concept is not None:
         selections.append(ContextSelection(ContextType.AD_CONCEPT, include_ids=(concept.id,)))
     try:
-        context = container.llm_context_composer().compose(
-            root=ContextRef(ContextType.OFFER_PROFILE, offer_profile_id), include=selections,
+        llm_context = container.llm_context_composer().compose(
+            root=ContextRef(ContextType.OFFER_PROFILE, offer_profile_id),
+            include=selections,
         )
     except LookupError as error:
         raise HTTPException(404, str(error)) from error
@@ -87,7 +88,7 @@ def generate_ad_creative_plans_handler(offer_profile_id, request):
     messages = [
         LlmMessage(role=LlmMessageRole.SYSTEM, content=SYSTEM_PROMPT),
         LlmMessage(role=LlmMessageRole.USER, content=(
-            f"CONTEXT:\n{context}\n\nGENERATION REQUEST:\n" + json.dumps({
+            f"LLM CONTEXT:\n{llm_context}\n\nGENERATION DATA:\n" + json.dumps({
                 "requested_count": request.count,
                 "selected_ad_concept_id": request.ad_concept_id,
                 "required_format": required_format,

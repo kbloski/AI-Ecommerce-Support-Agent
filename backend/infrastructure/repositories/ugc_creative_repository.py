@@ -23,10 +23,10 @@ class UgcCreativeRepository:
         return self.db.query(UgcCreative).filter(UgcCreative.id == id).first()
 
     # 🔍 GET BY MESSAGE STRATEGY ID
-    def get_by_message_strategy_id(self, message_strategy_id: int) -> List[UgcCreative]:
+    def get_by_offer_profile_id(self, offer_profile_id: int) -> List[UgcCreative]:
         return (
             self.db.query(UgcCreative)
-            .filter(UgcCreative.message_strategy_id == message_strategy_id)
+            .filter(UgcCreative.offer_profile_id == offer_profile_id)
             .all()
         )
 
@@ -45,3 +45,14 @@ class UgcCreativeRepository:
         self.db.delete(item)
         self.db.commit()
         return True
+
+    def create_many(self, items):
+        try:
+            self.db.add_all(items)
+            self.db.commit()
+            for item in items:
+                self.db.refresh(item)
+            return items
+        except Exception:
+            self.db.rollback()
+            raise

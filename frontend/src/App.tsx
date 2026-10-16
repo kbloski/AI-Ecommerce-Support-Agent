@@ -37,7 +37,7 @@ import {
   AdSetupCreativeExecutionSetupsPage, AdCreativeStrategiesPage, AnalysisQuestionsPage,
   BrandMarketingStrategiesPage, ChecklistItemsPage, OfferProfileAnalysesPage,
   OfferSourceBrandMarketingPage, MarketingOfferStrategiesPage, MessageAdStrategiesPage,
-  MessagePageStrategiesPage, MessageUgcCreativesPage, OfferMessageStrategiesPage,
+  MessagePageStrategiesPage, OfferProfileUgcCreativesPage, OfferMessageStrategiesPage,
   PageRequirementsPage, PageBlueprintsPage, PageContentPlansPage, PageCopiesPage, CreativeAdSetupsPage, CreativeExecutionSetupGenerateAdsPage, OfferProfileChecklistsPage,
 } from '@/pages/ResourcePages'
 
@@ -79,7 +79,7 @@ function App() {
         <Route path="/offer-strategy/:id/message-strategies" element={<OfferMessageStrategiesPage />} />
         <Route path="/message-strategy/:id" element={<MessageStrategyDetailPage />} />
         <Route path="/message-strategy/:id/ad-strategies" element={<MessageAdStrategiesPage />} />
-        <Route path="/message-strategy/:id/ugc-creatives" element={<MessageUgcCreativesPage />} />
+        <Route path="/offer-profiles/:offerProfileId/ugc-creatives" element={<OfferProfileUgcCreativesPage />} />
         <Route path="/message-strategy/:id/page-strategies" element={<MessagePageStrategiesPage />} />
         <Route path="/ad-strategy/:id" element={<AdStrategyDetailPage />} />
         <Route path="/ad-strategy/:id/creative-strategies" element={<AdCreativeStrategiesPage />} />

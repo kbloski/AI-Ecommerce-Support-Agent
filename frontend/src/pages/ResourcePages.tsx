@@ -20,7 +20,8 @@ import { useGetOfferStrategyQuery } from '@/features/offerStrategy/offerStrategy
 import { useDeleteMessageStrategyMutation, useGenerateMessageStrategyMutation, useListMessageStrategyForOfferStrategyQuery, useUpdateMessageStrategyMutation } from '@/features/messageStrategy/messageStrategyApi'
 import { useGetMessageStrategyQuery } from '@/features/messageStrategy/messageStrategyApi'
 import { useDeleteAdStrategyMutation, useGenerateAdStrategyMutation, useListAdStrategyForMessageStrategyQuery, useUpdateAdStrategyMutation } from '@/features/adStrategy/adStrategyApi'
-import { useDeleteUgcCreativeMutation, useGenerateUgcCreativesMutation, useListUgcCreativesForMessageStrategyQuery, useUpdateUgcCreativeMutation } from '@/features/ugcCreatives/ugcCreativesApi'
+import { useDeleteUgcCreativeMutation, useListUgcCreativesForOfferProfileQuery, useUpdateUgcCreativeMutation } from '@/features/ugcCreatives/ugcCreativesApi'
+import { GenerateUgcCreativesForm } from '@/features/ugcCreatives/GenerateUgcCreativesForm'
 import { useDeletePageStrategyMutation, useGeneratePageStrategyMutation, useListPageStrategyForMessageStrategyQuery, useUpdatePageStrategyMutation } from '@/features/pageStrategy/pageStrategyApi'
 import { useGetAdStrategyQuery } from '@/features/adStrategy/adStrategyApi'
 import { useDeleteCreativeStrategyMutation, useGenerateCreativeStrategyMutation, useListCreativeStrategyForAdStrategyQuery, useUpdateCreativeStrategyMutation } from '@/features/creativeStrategy/creativeStrategyApi'
@@ -176,18 +177,18 @@ export function MarketingOfferStrategiesPage() { const id=Number(useParams().id)
 export function OfferMessageStrategiesPage() { const id=Number(useParams().id); const {data}=useGetOfferStrategyQuery(id); const list=useListMessageStrategyForOfferStrategyQuery(id); const [generate,state]=useGenerateMessageStrategyMutation(); const [remove]=useDeleteMessageStrategyMutation(); const [update]=useUpdateMessageStrategyMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/offer-strategy/${id}`} backLabel={(data?.offer_name as string)??'Offer strategy'} title="Message strategy"><ResourceList title="Message strategy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/message-strategy/${x.id}`} itemLabel={(x)=>(x.core_message as string)??`#${x.id}`} onGenerate={()=>data&&generate(data)} isGenerating={state.isLoading} generateLabel="Generuj message strategy" onEdit={(x)=>editEntity('Message strategy',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,offerStrategyId:id})}/></ResourcePage> }
 
 export function MessageAdStrategiesPage() { const id=Number(useParams().id); const {data}=useGetMessageStrategyQuery(id); const list=useListAdStrategyForMessageStrategyQuery(id); const [generate,state]=useGenerateAdStrategyMutation(); const [remove]=useDeleteAdStrategyMutation(); const [update]=useUpdateAdStrategyMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/message-strategy/${id}`} backLabel="Message strategy" title="Ad strategy"><ResourceList title="Ad strategy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/ad-strategy/${x.id}`} itemLabel={(x)=>(x.name as string)??`#${x.id}`} onGenerate={()=>data&&generate(data)} isGenerating={state.isLoading} generateLabel="Generuj ad strategy" onEdit={(x)=>editEntity('Ad strategy',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,messageStrategyId:id})}/></ResourcePage> }
-export function MessageUgcCreativesPage() {
-  const id = Number(useParams().id)
-  const { data } = useGetMessageStrategyQuery(id)
-  const list = useListUgcCreativesForMessageStrategyQuery(id)
-  const [generate, state] = useGenerateUgcCreativesMutation()
+export function OfferProfileUgcCreativesPage() {
+  const id = Number(useParams().offerProfileId)
+  const list = useListUgcCreativesForOfferProfileQuery(id)
+  const { openPanel, closePanel } = useSidePanel()
+  const editEntity = useEditEntityPanel()
   const [remove] = useDeleteUgcCreativeMutation()
   const [update] = useUpdateUgcCreativeMutation()
   const [isReviewedFilter, setIsReviewedFilter] = useState<ReviewStatusFilterValue>('')
   const [reviewStatusSort, setReviewStatusSort] = useState<ReviewStatusSort>('unreviewed_first')
   const creatives = reviewableItems(list.data ?? [], isReviewedFilter, reviewStatusSort)
 
-  return <ResourcePage backTo={`/message-strategy/${id}`} backLabel="Message strategy" title="UGC creatives">
+  return <ResourcePage backTo={`/offer-profiles/${id}`} backLabel="Profil oferty" title="UGC creatives">
     <ResourceList
       title="UGC creatives"
       items={creatives}
@@ -197,12 +198,12 @@ export function MessageUgcCreativesPage() {
       error={list.error}
       linkTo={(item) => `/ugc-creatives/${item.id}`}
       itemLabel={(item) => (item.name as string) ?? `#${item.id}`}
-      onGenerate={() => data && generate(data)}
-      isGenerating={state.isLoading}
+      onGenerate={() => openPanel({ title: 'Generuj UGC creatives', content: <GenerateUgcCreativesForm offerProfileId={id} onSaved={closePanel} /> })}
       generateLabel="Generuj UGC creatives"
+      onEdit={(item) => editEntity('UGC creative', item, (fields) => update({ id: Number(item.id), offerProfileId: id, fields }).unwrap(), ['is_reviewed'])}
       contentBeforeList={<ReviewFilters value={isReviewedFilter} sort={reviewStatusSort} onValueChange={setIsReviewedFilter} onSortChange={setReviewStatusSort} />}
-      onDelete={(item) => remove({ id: item.id as number, messageStrategyId: id })}
-      itemActions={(item) => <ReviewButton item={item} onToggle={() => update({ id: item.id as number, messageStrategyId: id, fields: { is_reviewed: item.is_reviewed !== true } })} />}
+      onDelete={(item) => remove({ id: item.id as number, offerProfileId: id })}
+      itemActions={(item) => <ReviewButton item={item} onToggle={() => update({ id: item.id as number, offerProfileId: id, fields: { is_reviewed: item.is_reviewed !== true } })} />}
     />
   </ResourcePage>
 }

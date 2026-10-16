@@ -8,7 +8,7 @@ class UgcCreativeDto(JSONSerializable):
     def __init__(
         self,
         id: int,
-        message_strategy_id: int,
+        offer_profile_id: int,
         name: Optional[str],
         customer_persona: Optional[dict],
         content_format: Optional[str],
@@ -22,7 +22,7 @@ class UgcCreativeDto(JSONSerializable):
         is_reviewed: bool,
     ):
         self.id = id
-        self.message_strategy_id = message_strategy_id
+        self.offer_profile_id = offer_profile_id
         self.name = name
         self.customer_persona = customer_persona
         self.content_format = content_format
@@ -40,7 +40,7 @@ class UgcCreativeDto(JSONSerializable):
 
         data = {
             "id": self.id,
-            "message_strategy_id": self.message_strategy_id,
+            "offer_profile_id": self.offer_profile_id,
             "name": self.name,
             "customer_persona": self.customer_persona,
             "content_format": self.content_format,

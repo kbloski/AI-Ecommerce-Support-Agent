@@ -23,7 +23,7 @@ import { useListMarketingStrategyForBrandMarketingQuery } from '@/features/marke
 import { useListOfferStrategyForMarketingStrategyQuery } from '@/features/offerStrategy/offerStrategyApi'
 import { useListMessageStrategyForOfferStrategyQuery } from '@/features/messageStrategy/messageStrategyApi'
 import { useListAdStrategyForMessageStrategyQuery } from '@/features/adStrategy/adStrategyApi'
-import { useListUgcCreativesForMessageStrategyQuery } from '@/features/ugcCreatives/ugcCreativesApi'
+import { useListUgcCreativesForOfferProfileQuery } from '@/features/ugcCreatives/ugcCreativesApi'
 import { useListPageStrategyForMessageStrategyQuery } from '@/features/pageStrategy/pageStrategyApi'
 import { useListCreativeStrategyForAdStrategyQuery } from '@/features/creativeStrategy/creativeStrategyApi'
 import { useListAdSetupForCreativeStrategyQuery } from '@/features/adSetup/adSetupApi'
@@ -109,7 +109,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     { pattern: '/brand-marketing/:id/*', current: 'Brand marketing', entityType: 'brand_marketing', process: [['marketing-strategies', 'Marketing strategy']], resources: [] },
     { pattern: '/marketing-strategy/:id/*', current: 'Marketing strategy', entityType: 'marketing_strategy', process: [['offer-strategies', 'Offer strategy']], resources: [] },
     { pattern: '/offer-strategy/:id/*', current: 'Offer strategy', entityType: 'offer_strategy', process: [['message-strategies', 'Message strategy']], resources: [] },
-    { pattern: '/message-strategy/:id/*', current: 'Message strategy', entityType: 'message_strategy', process: [['ad-strategies', 'Ad strategy'], ['ugc-creatives', 'UGC creatives'], ['page-strategies', 'Page strategy']], resources: [] },
+    { pattern: '/message-strategy/:id/*', current: 'Message strategy', entityType: 'message_strategy', process: [['ad-strategies', 'Ad strategy'], ['page-strategies', 'Page strategy']], resources: [] },
     { pattern: '/ad-strategy/:id/*', current: 'Ad strategy', entityType: 'ad_strategy', process: [['creative-strategies', 'Creative strategy']], resources: [] },
     { pattern: '/creative-strategy/:id/*', current: 'Creative strategy', entityType: 'creative_strategy', process: [['ad-setups', 'Ad Setup']], resources: [] },
     { pattern: '/ad-setup/:id/*', current: 'Ad Setup', entityType: 'ad_setup', process: [['creative-execution-setups', 'Creative Execution Setup']], resources: [] },
@@ -154,7 +154,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   const offerStrategies = useListOfferStrategyForMarketingStrategyQuery(currentEntityId, { skip: !isCurrentStage('Marketing strategy') })
   const messageStrategies = useListMessageStrategyForOfferStrategyQuery(currentEntityId, { skip: !isCurrentStage('Offer strategy') })
   const adStrategies = useListAdStrategyForMessageStrategyQuery(currentEntityId, { skip: !isCurrentStage('Message strategy') })
-  const ugcCreatives = useListUgcCreativesForMessageStrategyQuery(currentEntityId, { skip: !isCurrentStage('Message strategy') })
+  const ugcCreatives = useListUgcCreativesForOfferProfileQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const pageStrategies = useListPageStrategyForMessageStrategyQuery(currentEntityId, { skip: !isCurrentStage('Message strategy') })
   const creativeStrategies = useListCreativeStrategyForAdStrategyQuery(currentEntityId, { skip: !isCurrentStage('Ad strategy') })
   const adSetups = useListAdSetupForCreativeStrategyQuery(currentEntityId, { skip: !isCurrentStage('Creative strategy') })
@@ -335,7 +335,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
         {section.config.current === 'Profil oferty' && (
           <SidebarGroup title="Social" className="mt-6">
             <div className="ml-2 border-l pl-2">
-              <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">UGC</span>
+              {navigationLink('ugc-creatives', 'UGC', `${detailPath}/ugc-creatives`)}
               <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">Social posts</span>
             </div>
           </SidebarGroup>

@@ -33,7 +33,7 @@ class UgcCreativeService:
         ugc_creative_dto = UgcCreativeMapper.to_dto(ugc_creative_db)
         return self.ugc_creative_assembler.assemble_dto(ugc_creative_dto)
 
-    def get_ugc_creatives_by_message_strategy(self, message_strategy_id: int) -> List[UgcCreativeDto]:
-        items = self.ugc_creative_repository.get_by_message_strategy_id(message_strategy_id)
+    def get_ugc_creatives_by_offer_profile(self, offer_profile_id: int) -> List[UgcCreativeDto]:
+        items = self.ugc_creative_repository.get_by_offer_profile_id(offer_profile_id)
         dtos = [UgcCreativeMapper.to_dto(item) for item in items]
         return [self.ugc_creative_assembler.assemble_dto(dto) for dto in dtos]

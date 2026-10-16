@@ -34,6 +34,8 @@ def init_db():
     _migrate_ad_concept_modes_and_angles()
     from .creative_plans_migration import migrate_creative_plan_content
     migrate_creative_plan_content(engine)
+    from .ugc_profile_migration import migrate_ugc_to_offer_profiles
+    migrate_ugc_to_offer_profiles(engine)
     Base.metadata.create_all(bind=engine)
 
 

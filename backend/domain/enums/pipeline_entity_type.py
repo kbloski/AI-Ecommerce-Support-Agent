@@ -8,6 +8,7 @@ class PipelineEntityType(str, Enum):
 
     OFFER = "offer"
     OFFER_SOURCE = "offer_source"
+    OFFER_PROFILE = "offer_profile"
     BRAND_MARKETING = "brand_marketing"
     MARKETING_STRATEGY = "marketing_strategy"
     OFFER_STRATEGY = "offer_strategy"

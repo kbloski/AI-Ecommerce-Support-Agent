@@ -95,8 +95,9 @@ from application.handlers.creative_strategy.get_creative_strategy_handler import
 from application.handlers.creative_strategy.get_ad_strategy_creative_strategies_handler import get_ad_strategy_creative_strategies_handler
 from application.handlers.creative_strategy.delete_creative_strategy_handler import delete_creative_strategy_handler
 from application.handlers.ugc_creatives.generate_ugc_creatives_handler import generate_ugc_creatives_handler
+from application.dtos.ugc_creatives.ugc_generation_fields import GenerateUgcRequest
 from application.handlers.ugc_creatives.get_ugc_creative_handler import get_ugc_creative_handler
-from application.handlers.ugc_creatives.get_message_strategy_ugc_creatives_handler import get_message_strategy_ugc_creatives_handler
+from application.handlers.ugc_creatives.get_offer_profile_ugc_creatives_handler import get_offer_profile_ugc_creatives_handler
 from application.handlers.ugc_creatives.delete_ugc_creative_handler import delete_ugc_creative_handler
 from application.handlers.ugc_creatives.update_ugc_creative_handler import update_ugc_creative_handler
 from application.handlers.page_strategy.get_page_strategy_handler import get_page_strategy_handler
@@ -234,9 +235,9 @@ def register_general_routes(router: APIRouter):
     def _legacy_get_7(offer_strategy_id: str):
         raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-strategy/{offer_strategy_id}/message-strategy/generate")
 
-    @router.get("/message-strategy/{message_strategy_id}/ugc-creatives/generate")
-    def _legacy_get_8(message_strategy_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /message-strategy/{message_strategy_id}/ugc-creatives/generate")
+    @router.get("/offer-profiles/{offer_profile_id}/ugc-creatives/generate")
+    def _legacy_get_8(offer_profile_id: str):
+        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/ugc-creatives/generate")
 
     @router.get("/message-strategy/{message_strategy_id}/ad-strategy/generate")
     def _legacy_get_9(message_strategy_id: str):
@@ -643,15 +644,13 @@ def register_general_routes(router: APIRouter):
     # -----------------------------
     # UGC creatives
     # -----------------------------
-    @router.post("/message-strategy/{message_strategy_id}/ugc-creatives/generate")
-    def offer_source_ugc_creatives_generate( message_strategy_id: int ):
-        return generate_ugc_creatives_handler(
-            message_strategy_id=message_strategy_id
-        )
+    @router.post("/offer-profiles/{offer_profile_id}/ugc-creatives/generate")
+    def offer_profile_ugc_creatives_generate(offer_profile_id: int, payload: GenerateUgcRequest | None = None):
+        return generate_ugc_creatives_handler(offer_profile_id=offer_profile_id, request=payload)
 
-    @router.get("/message-strategy/{message_strategy_id}/ugc-creatives")
-    def get_message_strategy_ugc_creatives( message_strategy_id: int ):
-        return get_message_strategy_ugc_creatives_handler( message_strategy_id=message_strategy_id )
+    @router.get("/offer-profiles/{offer_profile_id}/ugc-creatives")
+    def get_offer_profile_ugc_creatives(offer_profile_id: int):
+        return get_offer_profile_ugc_creatives_handler(offer_profile_id=offer_profile_id)
 
     @router.get("/ugc-creatives/{id}")
     def get_ugc_creative( id: int ):

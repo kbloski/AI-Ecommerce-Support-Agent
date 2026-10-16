@@ -14,9 +14,9 @@ class UgcCreative(Base, JSONSerializable):
     id = Column(Integer, primary_key=True, autoincrement=True)
 
     # relations
-    message_strategy_id = Column(
+    offer_profile_id = Column(
         Integer,
-        ForeignKey(TableName.MESSAGE_STRATEGY + ".id", ondelete="CASCADE"),
+        ForeignKey(TableName.OFFER_PROFILES + ".id", ondelete="CASCADE"),
         nullable=False
     )
 
