@@ -1,0 +1,158 @@
+[
+  {
+    "id": "S01", "name": "Problem / rozwiązanie", "description": "Gdy oferta odpowiada na łatwo rozpoznawalny problem.",
+    "rules": ["Use a real audience problem.", "Include up to three supported offer details with audience benefits.", "Use trust proof only when verified; otherwise close with the CTA."],
+    "structure": [
+      {"step": 1, "name": "Problem hook", "purpose": "Name a concrete everyday problem in an engaging first line."},
+      {"step": 2, "name": "Solution", "purpose": "Introduce the offer as a relevant solution."},
+      {"step": 3, "name": "Offer details and benefits", "purpose": "Show up to three verified features, service elements or terms and what each gives the audience."},
+      {"step": 4, "name": "Offer", "purpose": "Present the actual offer without inventing a promotion."},
+      {"step": 5, "name": "Trust or CTA", "purpose": "Add verified proof if available, then invite the reader to act."}
+    ]
+  },
+  {
+    "id": "S02", "name": "Klasyczne ad copy", "description": "Dla oferty z konkretnym sposobem działania lub realizacji.",
+    "rules": ["Promise only a plausible, supported result.", "Explain how the offer works or is delivered when known rather than relying on generic slogans."],
+    "structure": [
+      {"step": 1, "name": "Result", "purpose": "Open with a concrete, credible desired result."},
+      {"step": 2, "name": "Offer and mechanism", "purpose": "Introduce the offer and explain how it works or is delivered when known."},
+      {"step": 3, "name": "Main benefits", "purpose": "Show the strongest customer benefits."},
+      {"step": 4, "name": "Convenience", "purpose": "Add a supported convenience benefit if relevant."},
+      {"step": 5, "name": "CTA", "purpose": "Invite the reader to take the next step appropriate to the offer."}
+    ]
+  },
+  {
+    "id": "S03", "name": "Benefity w punktach (master)", "description": "Krótki tekst do szybkiego skanowania.",
+    "rules": ["Write up to three distinct, supported USP or benefits, each on its own line starting with '- '.", "Do not list offer details without explaining audience value."],
+    "structure": [
+      {"step": 1, "name": "Hook", "purpose": "Use a short, engaging first line."},
+      {"step": 2, "name": "Benefits", "purpose": "Write up to three strongest supported benefits as separate bullet points."},
+      {"step": 3, "name": "Positive result", "purpose": "Show a realistic customer outcome supported by those benefits."},
+      {"step": 4, "name": "Offer or CTA", "purpose": "Present a real offer if available; otherwise use a neutral CTA."}
+    ]
+  },
+  {
+    "id": "S04", "name": "Storytelling / opinia", "description": "Historia klienta albo uczciwa narracja marki.",
+    "rules": ["Never invent a customer, quote, testimonial or personal experience.", "Without an authentic customer story, use a brand narrative without pretending it is a review."],
+    "structure": [
+      {"step": 1, "name": "Story", "purpose": "Begin with a real customer story or a clearly brand-led scene."},
+      {"step": 2, "name": "Difficulty", "purpose": "Show the earlier difficulty without exaggeration."},
+      {"step": 3, "name": "Discovery", "purpose": "Introduce the offer as a relevant option."},
+      {"step": 4, "name": "Experience", "purpose": "Describe only documented experience or a factual offer benefit."},
+      {"step": 5, "name": "CTA", "purpose": "Invite the reader to learn more."}
+    ]
+  },
+  {
+    "id": "S05", "name": "Pytanie-zaczepka", "description": "Otwiera reklamę pytaniem dotyczącym sytuacji.",
+    "rules": ["Ask about a situation, not the reader's sensitive attributes or medical condition.", "Use up to three distinct, supported benefits."],
+    "structure": [
+      {"step": 1, "name": "Question", "purpose": "Ask an intriguing, relevant question."},
+      {"step": 2, "name": "Situation", "purpose": "Describe a familiar situation."},
+      {"step": 3, "name": "Solution", "purpose": "Introduce the offer as a relevant answer."},
+      {"step": 4, "name": "Benefits", "purpose": "Present up to three supported practical customer benefits."},
+      {"step": 5, "name": "Offer", "purpose": "Present the actual offer without invented urgency."},
+      {"step": 6, "name": "CTA", "purpose": "Invite the reader to take the next step."}
+    ]
+  },
+  {
+    "id": "S06", "name": "Idealny świat vs rzeczywistość", "description": "Kontrast dla codziennej wygody i stylu życia.",
+    "rules": ["Keep the ideal scenario plausible.", "Describe only problems and benefits grounded in the supplied data."],
+    "structure": [
+      {"step": 1, "name": "Ideal scene", "purpose": "Describe a desirable everyday situation."},
+      {"step": 2, "name": "Reality", "purpose": "Contrast it with a real friction point."},
+      {"step": 3, "name": "Bridge", "purpose": "Show how the offer helps bridge the gap."},
+      {"step": 4, "name": "Benefits", "purpose": "Name the most relevant practical benefits."},
+      {"step": 5, "name": "Offer", "purpose": "Present the actual offer."},
+      {"step": 6, "name": "CTA", "purpose": "Invite the reader to take the next step appropriate to the offer."}
+    ]
+  },
+  {
+    "id": "S07", "name": "Przeszłość vs przyszłość", "description": "Pokazuje zmianę codziennej sytuacji.",
+    "rules": ["Do not promise guaranteed transformation or an unsupported result."],
+    "structure": [
+      {"step": 1, "name": "Before", "purpose": "Describe the present or previous situation."},
+      {"step": 2, "name": "After", "purpose": "Show a credible improved situation."},
+      {"step": 3, "name": "Bridge", "purpose": "Introduce the offer as a way to help make that change."},
+      {"step": 4, "name": "Benefits", "purpose": "Show the supported benefits that explain the change."},
+      {"step": 5, "name": "CTA", "purpose": "Invite the reader to take action."}
+    ]
+  },
+  {
+    "id": "S08", "name": "AIDA", "description": "Attention → Interest → Desire → Action.",
+    "rules": ["Build interest and desire from real offer value, not hype."],
+    "structure": [
+      {"step": 1, "name": "Attention", "purpose": "Catch attention with a specific hook."},
+      {"step": 2, "name": "Interest", "purpose": "Explain why this offer is relevant."},
+      {"step": 3, "name": "Desire", "purpose": "Show a credible customer benefit."},
+      {"step": 4, "name": "Action", "purpose": "Give a clear next step."}
+    ]
+  },
+  {
+    "id": "S09", "name": "PAS", "description": "Problem → Agitation → Solution.",
+    "rules": ["Do not use fear, shame or exaggerated consequences.", "End the solution with a natural next step when allowed by the instructions."],
+    "structure": [
+      {"step": 1, "name": "Problem", "purpose": "Name a concrete customer problem."},
+      {"step": 2, "name": "Agitation", "purpose": "Explain the ordinary inconvenience it causes without dramatizing."},
+      {"step": 3, "name": "Solution", "purpose": "Show how the offer helps and invite the reader to learn more."}
+    ]
+  },
+  {
+    "id": "S10", "name": "BAB", "description": "Before → After → Bridge.",
+    "rules": ["Describe the after state as a plausible benefit, not a guaranteed result."],
+    "structure": [
+      {"step": 1, "name": "Before", "purpose": "Describe the initial situation."},
+      {"step": 2, "name": "After", "purpose": "Show the credible desired situation."},
+      {"step": 3, "name": "Bridge", "purpose": "Explain how the offer helps connect the two and suggest an appropriate next step."}
+    ]
+  },
+  {
+    "id": "S11", "name": "FAB", "description": "Feature → Advantage → Benefit.",
+    "rules": ["Connect one real offer feature, service element or term to its practical advantage and audience benefit."],
+    "structure": [
+      {"step": 1, "name": "Feature", "purpose": "Introduce a verified feature, service element or offer term."},
+      {"step": 2, "name": "Advantage", "purpose": "Explain what that feature makes easier or different."},
+      {"step": 3, "name": "Benefit", "purpose": "Show what the customer gains and a natural next step."}
+    ]
+  },
+  {
+    "id": "S12", "name": "4P", "description": "Picture → Promise → Prove → Push.",
+    "rules": ["Use only a credible, supported promise.", "Use a real proof point when available; otherwise ground this step in a verifiable offer fact. Never invent evidence."],
+    "structure": [
+      {"step": 1, "name": "Picture", "purpose": "Show a relevant positive vision."},
+      {"step": 2, "name": "Promise", "purpose": "Describe a supported offer benefit."},
+      {"step": 3, "name": "Prove", "purpose": "Use a real fact, demonstration or verified evidence."},
+      {"step": 4, "name": "Push", "purpose": "Invite the reader to act."}
+    ]
+  },
+  {
+    "id": "S13", "name": "Offer first", "description": "Otwiera reklamę rzeczywistą ofertą.",
+    "rules": ["Use a special promotion only if it really exists; otherwise lead with the ordinary offer."],
+    "structure": [
+      {"step": 1, "name": "Offer hook", "purpose": "Open with the actual offer or value proposition."},
+      {"step": 2, "name": "Value", "purpose": "Explain what the offer includes and why it matters."},
+      {"step": 3, "name": "Benefits", "purpose": "Give two or three supported customer benefits."},
+      {"step": 4, "name": "CTA", "purpose": "Invite the reader to take the next step appropriate to the offer."}
+    ]
+  },
+  {
+    "id": "S14", "name": "Objection handling", "description": "Odpowiada na konkretną wątpliwość odbiorcy oferty.",
+    "rules": ["Use only an objection supported by the supplied context or a clearly framed common question.", "Answer factually; do not invent guarantees or policy terms."],
+    "structure": [
+      {"step": 1, "name": "Objection", "purpose": "State a relevant customer question or doubt."},
+      {"step": 2, "name": "Answer", "purpose": "Give a specific, factual answer."},
+      {"step": 3, "name": "Confirmation", "purpose": "Support the answer with a real feature or evidence."},
+      {"step": 4, "name": "CTA", "purpose": "Invite the reader to learn more."}
+    ]
+  },
+  {
+    "id": "S15", "name": "Comparison", "description": "Kontrastuje ofertę z udokumentowaną alternatywą.",
+    "rules": ["Use only a documented, specific difference.", "Do not make unsupported claims about competitors or name them without reliable evidence."],
+    "structure": [
+      {"step": 1, "name": "Typical option", "purpose": "Describe a common alternative without disparagement."},
+      {"step": 2, "name": "Offer", "purpose": "Introduce what is actually offered."},
+      {"step": 3, "name": "Difference", "purpose": "Explain a documented difference."},
+      {"step": 4, "name": "Benefit", "purpose": "Show what that difference means for the customer."},
+      {"step": 5, "name": "CTA", "purpose": "Invite the reader to compare or learn more."}
+    ]
+  }
+]

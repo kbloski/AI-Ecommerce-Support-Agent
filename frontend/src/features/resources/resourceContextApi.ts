@@ -1,7 +1,7 @@
 import { api } from '@/store/api'
 
 export type ResourceContextType = 'offer_raw' | 'offer_source' | 'offer_profile'
-export type ResourceContextInclude = 'offer_raw' | 'offer_source' | 'target_audiences' | 'marketing_angle' | 'ad_concept'
+export type ResourceContextInclude = 'offer_raw' | 'offer_source' | 'target_audiences' | 'marketing_angle' | 'ad_concept' | 'creative_plan' | 'ugc_creative' | 'ad_copy'
 
 export interface ResourceContextRequest {
   type: ResourceContextType
@@ -9,15 +9,21 @@ export interface ResourceContextRequest {
   include?: ResourceContextInclude[]
   marketingAngleIds?: number[]
   adConceptIds?: number[]
+  creativePlanIds?: number[]
+  ugcCreativeIds?: number[]
+  adCopyIds?: number[]
   includeOfferFacts?: boolean
   includeAdditionalContexts?: boolean
 }
 
-function contextUrl({ type, id, include = [], marketingAngleIds = [], adConceptIds = [], includeOfferFacts, includeAdditionalContexts }: ResourceContextRequest, download = false) {
+function contextUrl({ type, id, include = [], marketingAngleIds = [], adConceptIds = [], creativePlanIds = [], ugcCreativeIds = [], adCopyIds = [], includeOfferFacts, includeAdditionalContexts }: ResourceContextRequest, download = false) {
   const params = new URLSearchParams()
   include.forEach((item) => params.append('include', item))
   marketingAngleIds.forEach((angleId) => params.append('marketing_angle_ids', String(angleId)))
   adConceptIds.forEach((conceptId) => params.append('ad_concept_ids', String(conceptId)))
+  creativePlanIds.forEach((planId) => params.append('creative_plan_ids', String(planId)))
+  ugcCreativeIds.forEach((creativeId) => params.append('ugc_creative_ids', String(creativeId)))
+  adCopyIds.forEach((copyId) => params.append('ad_copy_ids', String(copyId)))
   if (includeOfferFacts !== undefined) params.set('include_offer_facts', String(includeOfferFacts))
   if (includeAdditionalContexts !== undefined) params.set('include_additional_contexts', String(includeAdditionalContexts))
   const query = params.toString()

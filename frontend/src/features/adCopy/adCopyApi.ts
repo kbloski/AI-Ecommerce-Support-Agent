@@ -10,18 +10,29 @@ export interface AdCopyFields {
   cta: string | null
 }
 
+export interface AdCopyStructure {
+  id: string
+  name: string
+  description: string
+  rules: string[]
+  structure: { step: number; name: string; purpose: string }[]
+}
+
 export const adCopyApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    listAdCopyStructures: builder.query<AdCopyStructure[], void>({
+      query: () => '/ad-copy-structures',
+    }),
     listAdCopies: builder.query<Entity[], number>({
       query: (offerProfileId) => `/offer-profiles/${offerProfileId}/ad-copies`,
       providesTags: (result, _error, offerProfileId) => [
         listTag('AdCopy', offerProfileId), ...(result ?? []).map((item) => itemTag('AdCopy', item.id)),
       ],
     }),
-    generateAdCopies: builder.mutation<Entity[], { offerProfileId: number; count: number; generationInstructions: string }>({
-      query: ({ offerProfileId, count, generationInstructions }) => ({
+    generateAdCopies: builder.mutation<Entity[], { offerProfileId: number; count: number; structureId: string | null; generationInstructions: string }>({
+      query: ({ offerProfileId, count, structureId, generationInstructions }) => ({
         url: `/offer-profiles/${offerProfileId}/ad-copies/generate`, method: 'POST',
-        body: { count, generation_instructions: generationInstructions },
+        body: { count, structure_id: structureId, generation_instructions: generationInstructions },
       }),
       invalidatesTags: (_result, _error, { offerProfileId }) => [listTag('AdCopy', offerProfileId)],
     }),
@@ -29,8 +40,8 @@ export const adCopyApi = api.injectEndpoints({
       query: ({ offerProfileId, fields }) => ({ url: `/offer-profiles/${offerProfileId}/ad-copies`, method: 'POST', body: fields }),
       invalidatesTags: (_result, _error, { offerProfileId }) => [listTag('AdCopy', offerProfileId)],
     }),
-    updateAdCopy: builder.mutation<Entity, { id: number; offerProfileId: number; fields: AdCopyFields }>({
-      query: ({ id, fields }) => ({ url: `/ad-copies/${id}/update`, method: 'POST', body: fields }),
+    updateAdCopy: builder.mutation<Entity, { id: number; offerProfileId: number; fields: AdCopyFields; isReviewed?: boolean }>({
+      query: ({ id, fields, isReviewed }) => ({ url: `/ad-copies/${id}/update`, method: 'POST', body: { ...fields, ...(isReviewed === undefined ? {} : { is_reviewed: isReviewed }) } }),
       invalidatesTags: (_result, _error, { id, offerProfileId }) => [itemTag('AdCopy', id), listTag('AdCopy', offerProfileId)],
     }),
     deleteAdCopy: builder.mutation<void, { id: number; offerProfileId: number }>({
@@ -41,6 +52,7 @@ export const adCopyApi = api.injectEndpoints({
 })
 
 export const {
+  useListAdCopyStructuresQuery,
   useListAdCopiesQuery, useGenerateAdCopiesMutation, useCreateAdCopyMutation,
   useUpdateAdCopyMutation, useDeleteAdCopyMutation,
 } = adCopyApi

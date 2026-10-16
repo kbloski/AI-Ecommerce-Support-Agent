@@ -28,7 +28,13 @@ def update_ad_copy_handler(id, request):
     item = repo.get_by_id(id)
     if item is None:
         raise HTTPException(404, "Ad copy not found")
-    for key, value in request.model_dump().items():
+    values = request.model_dump(exclude={"is_reviewed"})
+    changed = any(getattr(item, key) != value for key, value in values.items())
+    if changed:
+        item.is_reviewed = False
+    elif request.is_reviewed is not None:
+        item.is_reviewed = request.is_reviewed
+    for key, value in values.items():
         setattr(item, key, value)
     return ad_copy_to_dict(repo.update(item))
 

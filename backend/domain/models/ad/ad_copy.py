@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text
 
 from infrastructure.database.db import Base
 from domain.enums.table_name import TableName
@@ -14,3 +14,4 @@ class AdCopy(Base):
     headline = Column(Text, nullable=False)
     description = Column(Text, nullable=False)
     cta = Column(Text, nullable=True)
+    is_reviewed = Column(Boolean, nullable=False, default=False, server_default="0", index=True)

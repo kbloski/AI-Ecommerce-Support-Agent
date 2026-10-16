@@ -203,6 +203,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     'target-audiences': unreviewedTargetAudiences.data?.total_items,
     'marketing-angles': marketingAngles.data?.filter((angle) => !angle.is_reviewed).length,
     'ad-concepts': adConcepts.data?.filter((concept) => !concept.is_reviewed).length,
+    'ad-copy': adCopies.data?.filter((copy) => !copy.is_reviewed).length,
     'creative-plans': creativePlans.data?.filter((plan) => !plan.is_reviewed).length,
     questions: (analysis.data?.analysis_questions as Array<{ is_reviewed?: unknown }> | undefined)
       ?.filter((item) => item.is_reviewed !== true).length,

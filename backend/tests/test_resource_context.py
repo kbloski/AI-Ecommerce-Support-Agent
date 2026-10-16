@@ -84,6 +84,27 @@ class ResourceContextTests(unittest.TestCase):
         self.assertEqual(self.client.get("/resources/offer_profile/3/context", params={"ad_concept_ids": 4}).status_code, 422)
         self.assertEqual(self.client.get("/resources/offer_source/3/context", params={"include": "ad_concept"}).status_code, 422)
 
+    def test_profile_can_select_remaining_resources_except_research(self):
+        params = [
+            ("include", "creative_plan"), ("creative_plan_ids", "11"),
+            ("include", "ugc_creative"), ("ugc_creative_ids", "12"),
+            ("include", "ad_copy"), ("ad_copy_ids", "13"),
+        ]
+        expected = [
+            ContextSelection(ContextType.CREATIVE_PLAN, include_ids=(11,)),
+            ContextSelection(ContextType.UGC_CREATIVE, include_ids=(12,)),
+            ContextSelection(ContextType.AD_COPY, include_ids=(13,)),
+        ]
+        for suffix in ("", "/download"):
+            response = self.client.get(f"/resources/offer_profile/3/context{suffix}", params=params)
+            self.assertEqual(response.status_code, 200, response.text)
+            self.assertEqual(self.calls[-1][1], expected)
+        for kind, key in (("creative_plan", "creative_plan_ids"), ("ugc_creative", "ugc_creative_ids"), ("ad_copy", "ad_copy_ids")):
+            self.assertEqual(self.client.get("/resources/offer_profile/3/context", params={"include": kind}).status_code, 422)
+            self.assertEqual(self.client.get("/resources/offer_profile/3/context", params={key: 11}).status_code, 422)
+            self.assertEqual(self.client.get("/resources/offer_source/3/context", params=[("include", kind), (key, "11")]).status_code, 422)
+            self.assertEqual(self.client.get("/resources/offer_profile/3/context", params=[("include", kind), (key, "11"), (key, "11")]).status_code, 422)
+
     def test_fact_selection_is_used_for_preview_and_download(self):
         for suffix in ("", "/download"):
             response = self.client.get(
@@ -199,6 +220,35 @@ class ResourceContextTests(unittest.TestCase):
             service.build_llm_context(3, [4, 5])
         with self.assertRaises(LookupError):
             service.build_llm_context(3, [999])
+
+    def test_new_profile_sections_contain_only_selected_items(self):
+        def repository(items):
+            return SimpleNamespace(get_by_id=lambda id: items.get(id))
+
+        plan = SimpleNamespace(id=11, offer_profile_id=3, name="Plan", description="Description", format="video", plan="Scene", ad_concept_id=None, is_reviewed=True)
+        ugc = SimpleNamespace(id=12, offer_profile_id=3, name="UGC", customer_persona={"age": 30}, content_format="video", angle="Angle", hook_idea="Hook", video_flow=["Start"], recording_style="Phone", platform_fit=["TikTok"], cta="Buy", why_it_should_work="Reason", is_reviewed=False)
+        copy = SimpleNamespace(id=13, offer_profile_id=3, name="Copy", primary_text="Main", headline="Headline", description="Description", cta=None, is_reviewed=True)
+        other = SimpleNamespace(**{**vars(copy), "id": 14, "offer_profile_id": 4})
+        composer = LlmContextComposer(
+            SimpleNamespace(build_llm_context=lambda id: f"profile:{id}"), None, None, None, None,
+            ad_copies_repository=repository({13: copy, 14: other}),
+            ad_creative_plans_repository=repository({11: plan}),
+            ugc_creative_repository=repository({12: ugc}),
+        )
+        selections = [
+            ContextSelection(ContextType.AD_COPY, include_ids=(13,)),
+            ContextSelection(ContextType.UGC_CREATIVE, include_ids=(12,)),
+            ContextSelection(ContextType.CREATIVE_PLAN, include_ids=(11,)),
+        ]
+        result = composer.compose(ContextRef(ContextType.OFFER_PROFILE, 3), selections, order_by_path=True)
+        self.assertLess(result.index("<creative_plans>"), result.index("<ugc_creatives>"))
+        self.assertLess(result.index("<ugc_creatives>"), result.index("<ad_copies>"))
+        for content in ('"plan": "Scene"', '"customer_persona": {', '"primary_text": "Main"', '"is_reviewed": true'):
+            self.assertIn(content, result)
+        with self.assertRaises(ValueError):
+            composer.compose(ContextRef(ContextType.OFFER_PROFILE, 3), [ContextSelection(ContextType.AD_COPY, include_ids=(14,))])
+        with self.assertRaises(LookupError):
+            composer.compose(ContextRef(ContextType.OFFER_PROFILE, 3), [ContextSelection(ContextType.AD_COPY, include_ids=(999,))])
 
 
 if __name__ == "__main__":

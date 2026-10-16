@@ -17,33 +17,40 @@ def compose_resource_context(
     include_additional_contexts: bool = True,
     order_by_path: bool = False,
     ad_concept_ids: list[int] | None = None,
+    creative_plan_ids: list[int] | None = None,
+    ugc_creative_ids: list[int] | None = None,
+    ad_copy_ids: list[int] | None = None,
 ) -> str:
     ad_concept_ids = ad_concept_ids or []
+    selected_ids = {
+        ContextType.MARKETING_ANGLE: marketing_angle_ids,
+        ContextType.AD_CONCEPT: ad_concept_ids,
+        ContextType.CREATIVE_PLAN: creative_plan_ids or [],
+        ContextType.UGC_CREATIVE: ugc_creative_ids or [],
+        ContextType.AD_COPY: ad_copy_ids or [],
+    }
     if resource_type not in RESOURCE_TYPES:
         raise HTTPException(422, f"Unsupported resource type: {resource_type.value}")
     if len(include) != len(set(include)):
         raise HTTPException(422, "Context selections must be unique")
-    if resource_type == ContextType.OFFER_RAW and (include or marketing_angle_ids or ad_concept_ids):
+    if resource_type == ContextType.OFFER_RAW and (include or any(selected_ids.values())):
         raise HTTPException(422, "Raw offer does not support related context")
     if resource_type != ContextType.OFFER_PROFILE and not include_additional_contexts:
         raise HTTPException(422, "Additional contexts can only be selected for an offer profile")
-    if resource_type == ContextType.OFFER_SOURCE and (set(include) - {ContextType.OFFER_RAW} or marketing_angle_ids or ad_concept_ids):
+    if resource_type == ContextType.OFFER_SOURCE and (set(include) - {ContextType.OFFER_RAW} or any(selected_ids.values())):
         raise HTTPException(422, "Offer source can only include its raw offer")
-    if marketing_angle_ids and ContextType.MARKETING_ANGLE not in include:
-        raise HTTPException(422, "Select marketing angles in include")
-    if ContextType.MARKETING_ANGLE in include and not marketing_angle_ids:
-        raise HTTPException(422, "Select at least one marketing angle")
-    if ad_concept_ids and ContextType.AD_CONCEPT not in include:
-        raise HTTPException(422, "Select ad concepts in include")
-    if ContextType.AD_CONCEPT in include and not ad_concept_ids:
-        raise HTTPException(422, "Select at least one ad concept")
+    for kind, ids in selected_ids.items():
+        if ids and kind not in include:
+            raise HTTPException(422, f"Select {kind.value} in include")
+        if kind in include and not ids:
+            raise HTTPException(422, f"Select at least one {kind.value}")
+        if len(ids) != len(set(ids)):
+            raise HTTPException(422, f"Select unique {kind.value} IDs")
 
     selections = []
     for type in include:
-        if type == ContextType.MARKETING_ANGLE:
-            selections.append(ContextSelection(type, include_ids=tuple(marketing_angle_ids)))
-        elif type == ContextType.AD_CONCEPT:
-            selections.append(ContextSelection(type, include_ids=tuple(ad_concept_ids)))
+        if type in selected_ids:
+            selections.append(ContextSelection(type, include_ids=tuple(selected_ids[type])))
         elif type in (ContextType.OFFER_RAW, ContextType.OFFER_SOURCE, ContextType.TARGET_AUDIENCES):
             selections.append(ContextSelection(type))
         else:

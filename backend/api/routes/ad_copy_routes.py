@@ -1,12 +1,18 @@
 from fastapi import APIRouter
+from di.container import Container
 
-from application.dtos.ad_copy.ad_copy_fields import AdCopyFields, GenerateAdCopyRequest
+from application.dtos.ad_copy.ad_copy_fields import AdCopyFields, GenerateAdCopyRequest, UpdateAdCopyRequest
 from application.handlers.ad_copy.ad_copy_handlers import (
     list_ad_copies_handler, create_ad_copy_handler, update_ad_copy_handler, delete_ad_copy_handler,
 )
 from application.handlers.ad_copy.generate_ad_copy_handler import generate_ad_copy_handler
 
 router = APIRouter()
+
+
+@router.get("/ad-copy-structures")
+def list_ad_copy_structures():
+    return Container().ad_copy_structures_repository().get_all()
 
 
 @router.get("/offer-profiles/{offer_profile_id}/ad-copies")
@@ -25,7 +31,7 @@ def create_ad_copy(offer_profile_id: int, payload: AdCopyFields):
 
 
 @router.post("/ad-copies/{id}/update")
-def update_ad_copy(id: int, payload: AdCopyFields):
+def update_ad_copy(id: int, payload: UpdateAdCopyRequest):
     return update_ad_copy_handler(id, payload)
 
 

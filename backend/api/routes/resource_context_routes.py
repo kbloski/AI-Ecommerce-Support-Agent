@@ -16,6 +16,9 @@ def preview_resource_context(
     include: list[ContextType] = Query(default=[]),
     marketing_angle_ids: list[int] = Query(default=[]),
     ad_concept_ids: list[int] = Query(default=[]),
+    creative_plan_ids: list[int] = Query(default=[]),
+    ugc_creative_ids: list[int] = Query(default=[]),
+    ad_copy_ids: list[int] = Query(default=[]),
     include_offer_facts: bool = Query(default=True),
     include_additional_contexts: bool = Query(default=True),
 ):
@@ -23,6 +26,9 @@ def preview_resource_context(
         Container(), resource_type, resource_id, include, marketing_angle_ids,
         include_offer_facts, include_additional_contexts, order_by_path=True,
         ad_concept_ids=ad_concept_ids,
+        creative_plan_ids=creative_plan_ids,
+        ugc_creative_ids=ugc_creative_ids,
+        ad_copy_ids=ad_copy_ids,
     )
     return Response(content=content, media_type="text/plain; charset=utf-8")
 
@@ -34,6 +40,9 @@ def download_resource_context(
     include: list[ContextType] = Query(default=[]),
     marketing_angle_ids: list[int] = Query(default=[]),
     ad_concept_ids: list[int] = Query(default=[]),
+    creative_plan_ids: list[int] = Query(default=[]),
+    ugc_creative_ids: list[int] = Query(default=[]),
+    ad_copy_ids: list[int] = Query(default=[]),
     include_offer_facts: bool = Query(default=True),
     include_additional_contexts: bool = Query(default=True),
 ):
@@ -41,6 +50,9 @@ def download_resource_context(
         Container(), resource_type, resource_id, include, marketing_angle_ids,
         include_offer_facts, include_additional_contexts, order_by_path=True,
         ad_concept_ids=ad_concept_ids,
+        creative_plan_ids=creative_plan_ids,
+        ugc_creative_ids=ugc_creative_ids,
+        ad_copy_ids=ad_copy_ids,
     )
     return Response(
         content=content,

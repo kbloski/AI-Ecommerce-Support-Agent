@@ -25,7 +25,12 @@ class AdCopyFields(BaseModel):
 
 class GenerateAdCopyRequest(BaseModel):
     count: int = Field(default=3, ge=1, le=10)
+    structure_id: str | None = None
     generation_instructions: str = Field(default="", max_length=4000)
+
+
+class UpdateAdCopyRequest(AdCopyFields):
+    is_reviewed: bool | None = None
 
 
 class AdCopiesResponse(BaseModel):

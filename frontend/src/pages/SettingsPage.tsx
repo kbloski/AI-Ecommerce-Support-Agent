@@ -52,6 +52,11 @@ function OllamaSettingsSection() {
     error: modelsError,
   } = useListOllamaModelsQuery(urlValue || undefined, { skip: !urlValue })
 
+  // Keep the selected model available before the remote options or popup mount.
+  const modelOptions = Array.from(new Set([modelValue, ...(modelsData?.models ?? [])]))
+    .filter(Boolean)
+    .map((model) => ({ value: model, label: model }))
+
   const buildChangedFields = (): OllamaSettingsFields => {
     if (!data) return {}
     const fields: OllamaSettingsFields = {}
@@ -117,14 +122,18 @@ function OllamaSettingsSection() {
                 <ResetFieldButton onClick={() => handleResetField('ollama_model')} />
               )}
             </div>
-            <Select value={modelValue || undefined} onValueChange={(value) => value && setModelValue(value)}>
+            <Select
+              items={modelOptions}
+              value={modelValue || null}
+              onValueChange={(value) => value && setModelValue(value)}
+            >
               <SelectTrigger id="ollama_model" className="w-full">
-                <SelectValue placeholder={String(data.ollama_model.default)} />
+                <SelectValue>{modelValue || String(data.ollama_model.default)}</SelectValue>
               </SelectTrigger>
               <SelectContent>
-                {(modelsData?.models ?? []).map((model) => (
-                  <SelectItem key={model} value={model}>
-                    {model}
+                {modelOptions.map((model) => (
+                  <SelectItem key={model.value} value={model.value}>
+                    {model.label}
                   </SelectItem>
                 ))}
               </SelectContent>

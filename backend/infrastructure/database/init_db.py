@@ -433,7 +433,7 @@ def _add_missing_is_reviewed_columns():
     inspector = inspect(engine)
     existing_tables = set(inspector.get_table_names())
 
-    for table in ("target_audiences", "checklist_item", "analysis_questions", "ugc_creatives"):
+    for table in ("target_audiences", "checklist_item", "analysis_questions", "ugc_creatives", "ad_copies"):
         if table not in existing_tables:
             continue
 

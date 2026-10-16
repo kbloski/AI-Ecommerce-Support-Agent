@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useState, type Dispatch, type SetStateAction } from 'react'
 import { Button } from '@/components/ui/button'
 import { useListMarketingAnglesQuery } from '@/features/marketingAngles/marketingAnglesApi'
 import { useListAdConceptsQuery } from '@/features/adConcepts/adConceptsApi'
+import { useListCreativePlansQuery } from '@/features/creativePlans/creativePlansApi'
+import { useListUgcCreativesForOfferProfileQuery } from '@/features/ugcCreatives/ugcCreativesApi'
+import { useListAdCopiesQuery } from '@/features/adCopy/adCopyApi'
 import { useListProfileContextsQuery } from '@/features/additionalContexts/additionalContextsApi'
 import { useListOfferFactsQuery } from '@/features/offerFacts/offerFactsApi'
 import { useGetOfferProfileQuery } from '@/features/offerProfiles/offerProfilesApi'
@@ -9,11 +12,31 @@ import { useListTargetAudiencesForOfferProfileQuery } from '@/features/targetAud
 import { useLazyDownloadResourceContextQuery, useLazyGetResourceContextQuery } from './resourceContextApi'
 import type { ResourceContextInclude, ResourceContextRequest, ResourceContextType } from './resourceContextApi'
 import { downloadTextFile } from '@/lib/downloadTextFile'
+import type { Entity } from '@/types'
 
 const resourceNames: Record<ResourceContextType, string> = {
   offer_raw: 'Surowa oferta',
   offer_source: 'Źródło oferty',
   offer_profile: 'Profil oferty',
+}
+
+function SelectableResourceSection({ number, title, items, selectedIds, onChange }: {
+  number: number
+  title: string
+  items?: Entity[]
+  selectedIds: number[]
+  onChange: Dispatch<SetStateAction<number[]>>
+}) {
+  if (!items?.length) return null
+  return <div className="mt-3 rounded-md border bg-muted/30 p-3">
+    <p className="font-medium">3.{number}. {title}</p>
+    <p className="mt-1 text-muted-foreground">Powiązany zasób · {items.length} dostępnych</p>
+    <label className="mt-2 flex items-center gap-2"><input type="checkbox" checked={selectedIds.length > 0} onChange={(event) => onChange(event.target.checked ? items.map((item) => Number(item.id)) : [])} />Dołącz do kontekstu</label>
+    {selectedIds.length > 0 && <div className="mt-2 space-y-2 border-l pl-3">{items.map((item) => {
+      const id = Number(item.id)
+      return <label key={id} className="flex items-center gap-2"><input type="checkbox" checked={selectedIds.includes(id)} onChange={() => onChange((current) => current.includes(id) ? current.filter((selected) => selected !== id) : [...current, id])} />{String(item.name ?? `#${id}`)}</label>
+    })}</div>}
+  </div>
 }
 
 export function ResourceContextExportPanel({ initialRequest }: { initialRequest: ResourceContextRequest }) {
@@ -26,6 +49,9 @@ export function ResourceContextExportPanel({ initialRequest }: { initialRequest:
   const [includeAudiences, setIncludeAudiences] = useState(initialRequest.include?.includes('target_audiences') ?? false)
   const [angleIds, setAngleIds] = useState<number[]>(initialRequest.marketingAngleIds ?? [])
   const [conceptIds, setConceptIds] = useState<number[]>(initialRequest.adConceptIds ?? [])
+  const [planIds, setPlanIds] = useState<number[]>(initialRequest.creativePlanIds ?? [])
+  const [ugcIds, setUgcIds] = useState<number[]>(initialRequest.ugcCreativeIds ?? [])
+  const [copyIds, setCopyIds] = useState<number[]>(initialRequest.adCopyIds ?? [])
   const [step, setStep] = useState<'select' | 'preview'>('select')
   const [preview, setPreview] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -33,6 +59,9 @@ export function ResourceContextExportPanel({ initialRequest }: { initialRequest:
   const [downloadContext, { isFetching: isDownloading }] = useLazyDownloadResourceContextQuery()
   const { data: angles, isLoading: anglesLoading, error: anglesError } = useListMarketingAnglesQuery(initialRequest.id, { skip: !isProfile })
   const { data: concepts, isLoading: conceptsLoading, error: conceptsError } = useListAdConceptsQuery(initialRequest.id, { skip: !isProfile })
+  const { data: plans, isLoading: plansLoading, error: plansError } = useListCreativePlansQuery(initialRequest.id, { skip: !isProfile })
+  const { data: ugcCreatives, isLoading: ugcLoading, error: ugcError } = useListUgcCreativesForOfferProfileQuery(initialRequest.id, { skip: !isProfile })
+  const { data: adCopies, isLoading: copiesLoading, error: copiesError } = useListAdCopiesQuery(initialRequest.id, { skip: !isProfile })
   const { data: additionalContexts, error: additionalContextsError } = useListProfileContextsQuery(initialRequest.id, { skip: !isProfile })
   const { data: audiences, error: audiencesError } = useListTargetAudiencesForOfferProfileQuery(
     { offerProfileId: initialRequest.id, pageSize: 1 }, { skip: !isProfile },
@@ -56,6 +85,9 @@ export function ResourceContextExportPanel({ initialRequest }: { initialRequest:
   const audienceSectionNumber = 1 + Number(hasAdditionalContexts)
   const angleSectionNumber = audienceSectionNumber + Number(hasAudiences)
   const conceptSectionNumber = angleSectionNumber + Number(hasAngles)
+  const planSectionNumber = conceptSectionNumber + Number(hasConcepts)
+  const ugcSectionNumber = planSectionNumber + Number((plans?.length ?? 0) > 0)
+  const copySectionNumber = ugcSectionNumber + Number((ugcCreatives?.length ?? 0) > 0)
 
   const request = (): ResourceContextRequest => {
     const include: ResourceContextInclude[] = []
@@ -64,10 +96,16 @@ export function ResourceContextExportPanel({ initialRequest }: { initialRequest:
     if (isProfile && includeAudiences) include.push('target_audiences')
     if (isProfile && angleIds.length) include.push('marketing_angle')
     if (isProfile && conceptIds.length) include.push('ad_concept')
+    if (isProfile && planIds.length) include.push('creative_plan')
+    if (isProfile && ugcIds.length) include.push('ugc_creative')
+    if (isProfile && copyIds.length) include.push('ad_copy')
     return {
       type: initialRequest.type, id: initialRequest.id, include,
       marketingAngleIds: isProfile ? angleIds : [],
       adConceptIds: isProfile ? conceptIds : [],
+      creativePlanIds: isProfile ? planIds : [],
+      ugcCreativeIds: isProfile ? ugcIds : [],
+      adCopyIds: isProfile ? copyIds : [],
       includeOfferFacts: hasEarlierResource && (!isProfile || includeSource) && includeFacts,
       includeAdditionalContexts: isProfile ? includeAdditionalContexts : undefined,
     }
@@ -146,12 +184,15 @@ export function ResourceContextExportPanel({ initialRequest }: { initialRequest:
             return <label key={id} className="flex items-center gap-2"><input type="checkbox" checked={conceptIds.includes(id)} onChange={() => setConceptIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id])} />{String(concept.name)}</label>
           })}</div>}
         </div>}
-        {(additionalContextsError || audiencesError || anglesError || conceptsError) && <p role="alert" className="mt-2 text-destructive">Nie udało się pobrać części powiązanych danych profilu.</p>}
+        <SelectableResourceSection number={planSectionNumber} title="Creative plans" items={plans} selectedIds={planIds} onChange={setPlanIds} />
+        <SelectableResourceSection number={ugcSectionNumber} title="UGC" items={ugcCreatives} selectedIds={ugcIds} onChange={setUgcIds} />
+        <SelectableResourceSection number={copySectionNumber} title="Ad copy" items={adCopies} selectedIds={copyIds} onChange={setCopyIds} />
+        {(additionalContextsError || audiencesError || anglesError || conceptsError || plansError || ugcError || copiesError) && <p role="alert" className="mt-2 text-destructive">Nie udało się pobrać części powiązanych danych profilu.</p>}
       </div>}
     </div> : <pre className="min-h-0 flex-1 overflow-auto whitespace-pre-wrap break-words rounded-md border bg-muted/30 p-3 text-xs">{preview}</pre>}
     {error && <p role="alert" className="text-destructive">{error}</p>}
     <div className="flex flex-wrap gap-2 border-t pt-4">
-      {step === 'select' ? <Button type="button" onClick={() => void showPreview()} disabled={isPreviewing || (isProfile && (anglesLoading || conceptsLoading))}>{isPreviewing ? 'Składanie kontekstu…' : 'Złóż i zobacz kontekst'}</Button> : <>
+      {step === 'select' ? <Button type="button" onClick={() => void showPreview()} disabled={isPreviewing || (isProfile && (anglesLoading || conceptsLoading || plansLoading || ugcLoading || copiesLoading))}>{isPreviewing ? 'Składanie kontekstu…' : 'Złóż i zobacz kontekst'}</Button> : <>
         <Button type="button" variant="outline" onClick={() => { setStep('select'); setError(null) }}>Zmień wybór</Button>
         <Button type="button" onClick={() => void download()} disabled={isDownloading}>{isDownloading ? 'Pobieranie…' : 'Pobierz TXT'}</Button>
       </>}

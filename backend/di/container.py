@@ -95,6 +95,7 @@ from infrastructure.repositories.page_copy_repository import PageCopyRepository
 from application.assemblers.page_copy_assembler import PageCopyAssembler
 from application.services.page_copy_service import PageCopyService
 from infrastructure.repositories.app_properties_repository import AppPropertiesRepository
+from infrastructure.repositories.ad_copy_structures_repository import AdCopyStructuresRepository
 
 class Container(containers.DeclarativeContainer):
     db = providers.Singleton(
@@ -487,6 +488,10 @@ class Container(containers.DeclarativeContainer):
         db=db
     )
 
+    ad_copy_structures_repository = providers.Singleton(
+        AdCopyStructuresRepository, path_service=path_service,
+    )
+
     ollama_service = providers.Singleton(
         OllamaService,
         logger=logger,
@@ -548,6 +553,9 @@ class Container(containers.DeclarativeContainer):
         offer_source_service=offer_source_service,
         marketing_angle_service=marketing_angle_service,
         ad_concept_service=ad_concept_service,
+        ad_copies_repository=ad_copies_repository,
+        ad_creative_plans_repository=ad_creative_plans_repository,
+        ugc_creative_repository=ugc_creative_repository,
     )
 
     brand_marketing_service = providers.Singleton(
