@@ -15,6 +15,7 @@ import { useListOfferSourceForOfferQuery } from '@/features/offerSources/offerSo
 import { useListTargetAudiencesForOfferProfileQuery } from '@/features/targetAudiences/targetAudiencesApi'
 import { useListMarketingAnglesQuery } from '@/features/marketingAngles/marketingAnglesApi'
 import { useListAdConceptsQuery } from '@/features/adConcepts/adConceptsApi'
+import { useListAdCopiesQuery } from '@/features/adCopy/adCopyApi'
 import { useListCreativePlansQuery } from '@/features/creativePlans/creativePlansApi'
 import { useGetAnalysisQuery, useListAnalysisForOfferProfileQuery } from '@/features/analysis/analysisApi'
 import { useListBrandMarketingForOfferSourceQuery } from '@/features/brandMarketing/brandMarketingApi'
@@ -143,6 +144,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   )
   const marketingAngles = useListMarketingAnglesQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const adConcepts = useListAdConceptsQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
+  const adCopies = useListAdCopiesQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const creativePlans = useListCreativePlansQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const brandMarketing = useListBrandMarketingForOfferSourceQuery(offerSourceId, { skip: skipOfferSourceResources })
   const analyses = useListAnalysisForOfferProfileQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
@@ -172,6 +174,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     'target-audiences': targetAudiences.data?.total_items,
     'marketing-angles': marketingAngles.data?.length,
     'ad-concepts': adConcepts.data?.length,
+    'ad-copy': adCopies.data?.length,
     'creative-plans': creativePlans.data?.length,
     'additional-contexts': profileContexts.data?.length,
     profiles: offerProfiles.data?.length,
@@ -344,7 +347,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
           <SidebarGroup title="Ads" className="mt-6">
             <div className="ml-2 border-l pl-2">
               <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">Ad creatives</span>
-              <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">Ad copy</span>
+              {navigationLink('ad-copy', 'Ad copy', `${detailPath}/ad-copy`)}
             </div>
           </SidebarGroup>
         )}

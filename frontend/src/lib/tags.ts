@@ -7,6 +7,7 @@ export const TAG_TYPES = [
   'TargetAudience',
   'MarketingAngle',
   'AdConcept',
+  'AdCopy',
   'CreativePlan',
   'Analysis',
   'AnalysisQuestion',

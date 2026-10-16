@@ -13,6 +13,7 @@ from domain.models.offer.offer_fact import OfferFact
 from domain.models.offer.offer_profile import OfferProfile
 from domain.models.offer.marketing_angle import MarketingAngle
 from domain.models.ad.ad_concept import AdConcept
+from domain.models.ad.ad_copy import AdCopy
 from domain.models.ad.ad_creative_plan import AdCreativePlan
 from domain.models.ad.ad_concept_marketing_angle import AdConceptMarketingAngle
 

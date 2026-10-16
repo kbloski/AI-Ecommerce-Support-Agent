@@ -37,6 +37,7 @@ from application.assemblers.offer_source_assembler import OfferSourceAssembler
 from infrastructure.repositories.target_audiences_repository import TargetAudiencesRepository
 from infrastructure.repositories.marketing_angles_repository import MarketingAnglesRepository
 from infrastructure.repositories.ad_concepts_repository import AdConceptsRepository
+from infrastructure.repositories.ad_copies_repository import AdCopiesRepository
 from infrastructure.repositories.ad_creative_plans_repository import AdCreativePlansRepository
 from application.assemblers.target_audience_assembler import TargetAudienceAssembler
 from infrastructure.repositories.analysis_repository import AnalysisRepository
@@ -160,6 +161,7 @@ class Container(containers.DeclarativeContainer):
     marketing_angles_repository = providers.Singleton(MarketingAnglesRepository, logger=logger, db=db)
     marketing_angle_service = providers.Factory(MarketingAngleService, marketing_angles_repository=marketing_angles_repository)
     ad_concepts_repository = providers.Singleton(AdConceptsRepository, logger=logger, db=db)
+    ad_copies_repository = providers.Singleton(AdCopiesRepository, logger=logger, db=db)
     ad_creative_plans_repository = providers.Singleton(AdCreativePlansRepository, logger=logger, db=db)
     ad_concept_service = providers.Factory(AdConceptService, ad_concepts_repository=ad_concepts_repository)
 
