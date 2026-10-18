@@ -8,6 +8,7 @@ from core.settings import Settings
 from api.routes.offer_facts_routes import router as offer_facts_router
 from api.routes.offer_profiles_routes import router as offer_profiles_router
 from api.routes.additional_contexts_routes import router as additional_contexts_router
+from api.routes.notes_routes import router as notes_router
 from api.routes.marketing_angles_routes import router as marketing_angles_router
 from api.routes.ad_concepts_routes import router as ad_concepts_router
 from api.routes.ad_copy_routes import router as ad_copy_router
@@ -77,6 +78,7 @@ class Routes:
         self.router.include_router(offer_facts_router)
         self.router.include_router(offer_profiles_router)
         self.router.include_router(additional_contexts_router)
+        self.router.include_router(notes_router)
         self.router.include_router(marketing_angles_router)
         self.router.include_router(ad_concepts_router)
         self.router.include_router(ad_copy_router)

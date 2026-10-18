@@ -7,6 +7,7 @@ export interface ResourceContextRequest {
   type: ResourceContextType
   id: number
   include?: ResourceContextInclude[]
+  targetAudienceIds?: number[]
   marketingAngleIds?: number[]
   adConceptIds?: number[]
   creativePlanIds?: number[]
@@ -16,9 +17,10 @@ export interface ResourceContextRequest {
   includeAdditionalContexts?: boolean
 }
 
-function contextUrl({ type, id, include = [], marketingAngleIds = [], adConceptIds = [], creativePlanIds = [], ugcCreativeIds = [], adCopyIds = [], includeOfferFacts, includeAdditionalContexts }: ResourceContextRequest, download = false) {
+function contextUrl({ type, id, include = [], targetAudienceIds = [], marketingAngleIds = [], adConceptIds = [], creativePlanIds = [], ugcCreativeIds = [], adCopyIds = [], includeOfferFacts, includeAdditionalContexts }: ResourceContextRequest, download = false) {
   const params = new URLSearchParams()
   include.forEach((item) => params.append('include', item))
+  targetAudienceIds.forEach((audienceId) => params.append('target_audience_ids', String(audienceId)))
   marketingAngleIds.forEach((angleId) => params.append('marketing_angle_ids', String(angleId)))
   adConceptIds.forEach((conceptId) => params.append('ad_concept_ids', String(conceptId)))
   creativePlanIds.forEach((planId) => params.append('creative_plan_ids', String(planId)))

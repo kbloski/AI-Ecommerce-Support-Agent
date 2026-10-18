@@ -84,6 +84,17 @@ class ResourceContextTests(unittest.TestCase):
         self.assertEqual(self.client.get("/resources/offer_profile/3/context", params={"ad_concept_ids": 4}).status_code, 422)
         self.assertEqual(self.client.get("/resources/offer_source/3/context", params={"include": "ad_concept"}).status_code, 422)
 
+    def test_profile_can_select_target_audiences_for_preview_and_download(self):
+        for suffix in ("", "/download"):
+            response = self.client.get(f"/resources/offer_profile/3/context{suffix}", params=[
+                ("include", "target_audiences"), ("target_audience_ids", "4"), ("target_audience_ids", "5"),
+            ])
+            self.assertEqual(response.status_code, 200, response.text)
+            self.assertEqual(self.calls[-1][1], [ContextSelection(ContextType.TARGET_AUDIENCES, include_ids=(4, 5))])
+        self.assertEqual(self.client.get("/resources/offer_profile/3/context", params={"target_audience_ids": 4}).status_code, 422)
+        self.assertEqual(self.client.get("/resources/offer_source/3/context", params=[("include", "target_audiences"), ("target_audience_ids", "4")]).status_code, 422)
+        self.assertEqual(self.client.get("/resources/offer_profile/3/context", params=[("include", "target_audiences"), ("target_audience_ids", "4"), ("target_audience_ids", "4")]).status_code, 422)
+
     def test_profile_can_select_remaining_resources_except_research(self):
         params = [
             ("include", "creative_plan"), ("creative_plan_ids", "11"),

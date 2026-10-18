@@ -3,6 +3,7 @@ export const TAG_TYPES = [
   'OfferSource',
   'OfferProfile',
   'AdditionalContext',
+  'Note',
   'OfferFact',
   'TargetAudience',
   'MarketingAngle',

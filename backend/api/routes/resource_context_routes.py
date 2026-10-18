@@ -14,6 +14,7 @@ def preview_resource_context(
     resource_type: ContextType,
     resource_id: int = Path(gt=0),
     include: list[ContextType] = Query(default=[]),
+    target_audience_ids: list[int] = Query(default=[]),
     marketing_angle_ids: list[int] = Query(default=[]),
     ad_concept_ids: list[int] = Query(default=[]),
     creative_plan_ids: list[int] = Query(default=[]),
@@ -29,6 +30,7 @@ def preview_resource_context(
         creative_plan_ids=creative_plan_ids,
         ugc_creative_ids=ugc_creative_ids,
         ad_copy_ids=ad_copy_ids,
+        target_audience_ids=target_audience_ids,
     )
     return Response(content=content, media_type="text/plain; charset=utf-8")
 
@@ -38,6 +40,7 @@ def download_resource_context(
     resource_type: ContextType,
     resource_id: int = Path(gt=0),
     include: list[ContextType] = Query(default=[]),
+    target_audience_ids: list[int] = Query(default=[]),
     marketing_angle_ids: list[int] = Query(default=[]),
     ad_concept_ids: list[int] = Query(default=[]),
     creative_plan_ids: list[int] = Query(default=[]),
@@ -53,6 +56,7 @@ def download_resource_context(
         creative_plan_ids=creative_plan_ids,
         ugc_creative_ids=ugc_creative_ids,
         ad_copy_ids=ad_copy_ids,
+        target_audience_ids=target_audience_ids,
     )
     return Response(
         content=content,

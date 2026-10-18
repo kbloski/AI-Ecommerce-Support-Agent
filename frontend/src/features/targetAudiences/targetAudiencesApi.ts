@@ -31,6 +31,29 @@ export interface UpdateTargetAudienceArgs {
 
 export const targetAudiencesApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    listAllTargetAudiencesForOfferProfile: builder.query<Entity[], number>({
+      async queryFn(offerProfileId, _api, _extraOptions, baseQuery) {
+        const items: Entity[] = []
+        let page = 1
+        let totalPages = 1
+        while (page <= totalPages) {
+          const result = await baseQuery({
+            url: `/offer-profiles/${offerProfileId}/target-audiences`,
+            params: { page, page_size: 100 },
+          })
+          if (result.error) return { error: result.error }
+          const data = result.data as PaginatedTargetAudiencesResult
+          items.push(...data.items)
+          totalPages = data.total_pages
+          page += 1
+        }
+        return { data: items }
+      },
+      providesTags: (result, _err, offerProfileId) => [
+        ...(result ?? []).map((item) => itemTag('TargetAudience', item.id)),
+        listTag('TargetAudience', offerProfileId),
+      ],
+    }),
     listTargetAudiencesForOfferProfile: builder.query<PaginatedTargetAudiencesResult, {
       offerProfileId: number
       page?: number
@@ -78,6 +101,7 @@ export const targetAudiencesApi = api.injectEndpoints({
 })
 
 export const {
+  useListAllTargetAudiencesForOfferProfileQuery,
   useListTargetAudiencesForOfferProfileQuery,
   useGenerateTargetAudiencesMutation,
   useDeleteTargetAudienceMutation,

@@ -33,6 +33,7 @@ from infrastructure.repositories.offer_source_repository import OfferSourceRepos
 from infrastructure.repositories.offer_facts_repository import OfferFactsRepository
 from infrastructure.repositories.offer_profiles_repository import OfferProfilesRepository
 from infrastructure.repositories.additional_contexts_repository import AdditionalContextsRepository
+from infrastructure.repositories.notes_repository import NotesRepository
 from application.assemblers.offer_source_assembler import OfferSourceAssembler
 from infrastructure.repositories.target_audiences_repository import TargetAudiencesRepository
 from infrastructure.repositories.marketing_angles_repository import MarketingAnglesRepository
@@ -142,6 +143,7 @@ class Container(containers.DeclarativeContainer):
     )
 
     additional_contexts_repository = providers.Singleton(AdditionalContextsRepository, logger=logger, db=db)
+    notes_repository = providers.Singleton(NotesRepository, logger=logger, db=db)
 
     offer_profiles_repository = providers.Singleton(OfferProfilesRepository, logger=logger, db=db)
 

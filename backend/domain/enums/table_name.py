@@ -5,6 +5,8 @@ class TableName(str, Enum):
     OFFERS_RAW = "offers_raw"
     ADDITIONAL_CONTEXTS = "additional_contexts"
     OFFER_PROFILE_ADDITIONAL_CONTEXTS = "offer_profile_additional_contexts"
+    NOTES = "notes"
+    OFFER_PROFILE_NOTES = "offer_profile_notes"
     OFFER_PROFILES = "offer_profiles"
     OFFER_FACTS = "offer_facts"
     OFFER_SOURCES = "offer_sources"

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, Download, LayoutDashboard, Megaphone, Package, Settings, UsersRound } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Download, LayoutDashboard, Megaphone, NotebookPen, Package, Settings, UsersRound } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useSidePanel } from '@/lib/sidePanel'
@@ -16,6 +16,7 @@ const SECTIONS: SidebarSection[] = [
   { label: 'Dashboard', to: '/', icon: LayoutDashboard },
   { label: 'Tworzenie oferty', to: '/offers', icon: Package },
   { label: 'Istniejące profile ofert', to: '/offer-profiles', icon: UsersRound },
+  { label: 'Notatki', to: '/notes', icon: NotebookPen },
   { label: 'Export zasobów', icon: Download },
   { label: 'Wygenerowane reklamy', to: '/generated-ads', icon: Megaphone },
   { label: 'Ustawienia', to: '/settings', icon: Settings },

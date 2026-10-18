@@ -8,7 +8,7 @@ import { useListAdCopiesQuery } from '@/features/adCopy/adCopyApi'
 import { useListProfileContextsQuery } from '@/features/additionalContexts/additionalContextsApi'
 import { useListOfferFactsQuery } from '@/features/offerFacts/offerFactsApi'
 import { useGetOfferProfileQuery } from '@/features/offerProfiles/offerProfilesApi'
-import { useListTargetAudiencesForOfferProfileQuery } from '@/features/targetAudiences/targetAudiencesApi'
+import { useListAllTargetAudiencesForOfferProfileQuery } from '@/features/targetAudiences/targetAudiencesApi'
 import { useLazyDownloadResourceContextQuery, useLazyGetResourceContextQuery } from './resourceContextApi'
 import type { ResourceContextInclude, ResourceContextRequest, ResourceContextType } from './resourceContextApi'
 import { downloadTextFile } from '@/lib/downloadTextFile'
@@ -46,7 +46,7 @@ export function ResourceContextExportPanel({ initialRequest }: { initialRequest:
   const [includeSource, setIncludeSource] = useState(initialRequest.include?.includes('offer_source') ?? true)
   const [includeFacts, setIncludeFacts] = useState(initialRequest.includeOfferFacts ?? true)
   const [includeAdditionalContexts, setIncludeAdditionalContexts] = useState(initialRequest.includeAdditionalContexts ?? true)
-  const [includeAudiences, setIncludeAudiences] = useState(initialRequest.include?.includes('target_audiences') ?? false)
+  const [audienceIds, setAudienceIds] = useState<number[]>(initialRequest.targetAudienceIds ?? [])
   const [angleIds, setAngleIds] = useState<number[]>(initialRequest.marketingAngleIds ?? [])
   const [conceptIds, setConceptIds] = useState<number[]>(initialRequest.adConceptIds ?? [])
   const [planIds, setPlanIds] = useState<number[]>(initialRequest.creativePlanIds ?? [])
@@ -63,9 +63,7 @@ export function ResourceContextExportPanel({ initialRequest }: { initialRequest:
   const { data: ugcCreatives, isLoading: ugcLoading, error: ugcError } = useListUgcCreativesForOfferProfileQuery(initialRequest.id, { skip: !isProfile })
   const { data: adCopies, isLoading: copiesLoading, error: copiesError } = useListAdCopiesQuery(initialRequest.id, { skip: !isProfile })
   const { data: additionalContexts, error: additionalContextsError } = useListProfileContextsQuery(initialRequest.id, { skip: !isProfile })
-  const { data: audiences, error: audiencesError } = useListTargetAudiencesForOfferProfileQuery(
-    { offerProfileId: initialRequest.id, pageSize: 1 }, { skip: !isProfile },
-  )
+  const { data: audiences, isLoading: audiencesLoading, error: audiencesError } = useListAllTargetAudiencesForOfferProfileQuery(initialRequest.id, { skip: !isProfile })
   const { data: profile } = useGetOfferProfileQuery(initialRequest.id, { skip: !isProfile })
   const sourceId = initialRequest.type === 'offer_source' ? initialRequest.id : Number(profile?.offer_source_id)
   const factsQuery = { offerSourceId: sourceId, pageSize: 1 }
@@ -79,7 +77,7 @@ export function ResourceContextExportPanel({ initialRequest }: { initialRequest:
     { skip: skipFacts },
   )
   const hasAdditionalContexts = (additionalContexts?.length ?? 0) > 0
-  const hasAudiences = (audiences?.total_items ?? 0) > 0
+  const hasAudiences = (audiences?.length ?? 0) > 0
   const hasAngles = (angles?.length ?? 0) > 0
   const hasConcepts = (concepts?.length ?? 0) > 0
   const audienceSectionNumber = 1 + Number(hasAdditionalContexts)
@@ -93,7 +91,7 @@ export function ResourceContextExportPanel({ initialRequest }: { initialRequest:
     const include: ResourceContextInclude[] = []
     if (isProfile && includeSource) include.push('offer_source')
     if (hasEarlierResource && includeRaw) include.push('offer_raw')
-    if (isProfile && includeAudiences) include.push('target_audiences')
+    if (isProfile && audienceIds.length) include.push('target_audiences')
     if (isProfile && angleIds.length) include.push('marketing_angle')
     if (isProfile && conceptIds.length) include.push('ad_concept')
     if (isProfile && planIds.length) include.push('creative_plan')
@@ -101,6 +99,7 @@ export function ResourceContextExportPanel({ initialRequest }: { initialRequest:
     if (isProfile && copyIds.length) include.push('ad_copy')
     return {
       type: initialRequest.type, id: initialRequest.id, include,
+      targetAudienceIds: isProfile ? audienceIds : [],
       marketingAngleIds: isProfile ? angleIds : [],
       adConceptIds: isProfile ? conceptIds : [],
       creativePlanIds: isProfile ? planIds : [],
@@ -163,8 +162,12 @@ export function ResourceContextExportPanel({ initialRequest }: { initialRequest:
         </div>}
         {hasAudiences && <div className="mt-3 rounded-md border bg-muted/30 p-3">
           <p className="font-medium">3.{audienceSectionNumber}. Grupy docelowe</p>
-          <p className="mt-1 text-muted-foreground">Powiązany zasób · {audiences?.total_items} grup</p>
-          <label className="mt-2 flex items-center gap-2"><input type="checkbox" checked={includeAudiences} onChange={(event) => setIncludeAudiences(event.target.checked)} />Dołącz wszystkie grupy do kontekstu</label>
+          <p className="mt-1 text-muted-foreground">Powiązany zasób · {audiences?.length} grup</p>
+          <label className="mt-2 flex items-center gap-2"><input type="checkbox" checked={audienceIds.length > 0} onChange={(event) => setAudienceIds(event.target.checked ? (audiences ?? []).map((audience) => Number(audience.id)) : [])} />Dołącz do kontekstu</label>
+          {audienceIds.length > 0 && <div className="mt-2 space-y-2 border-l pl-3">{audiences?.map((audience) => {
+            const id = Number(audience.id)
+            return <label key={id} className="flex items-center gap-2"><input type="checkbox" checked={audienceIds.includes(id)} onChange={() => setAudienceIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id])} />{String(audience.name ?? `#${id}`)}</label>
+          })}</div>}
         </div>}
         {hasAngles && <div className="mt-3 rounded-md border bg-muted/30 p-3">
           <p className="font-medium">3.{angleSectionNumber}. Marketing angles</p>
@@ -192,7 +195,7 @@ export function ResourceContextExportPanel({ initialRequest }: { initialRequest:
     </div> : <pre className="min-h-0 flex-1 overflow-auto whitespace-pre-wrap break-words rounded-md border bg-muted/30 p-3 text-xs">{preview}</pre>}
     {error && <p role="alert" className="text-destructive">{error}</p>}
     <div className="flex flex-wrap gap-2 border-t pt-4">
-      {step === 'select' ? <Button type="button" onClick={() => void showPreview()} disabled={isPreviewing || (isProfile && (anglesLoading || conceptsLoading || plansLoading || ugcLoading || copiesLoading))}>{isPreviewing ? 'Składanie kontekstu…' : 'Złóż i zobacz kontekst'}</Button> : <>
+      {step === 'select' ? <Button type="button" onClick={() => void showPreview()} disabled={isPreviewing || (isProfile && (audiencesLoading || anglesLoading || conceptsLoading || plansLoading || ugcLoading || copiesLoading))}>{isPreviewing ? 'Składanie kontekstu…' : 'Złóż i zobacz kontekst'}</Button> : <>
         <Button type="button" variant="outline" onClick={() => { setStep('select'); setError(null) }}>Zmień wybór</Button>
         <Button type="button" onClick={() => void download()} disabled={isDownloading}>{isDownloading ? 'Pobieranie…' : 'Pobierz TXT'}</Button>
       </>}

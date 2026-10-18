@@ -3,8 +3,10 @@ import { AppShell } from '@/components/AppShell'
 import DashboardPage from '@/pages/DashboardPage'
 import OffersPage from '@/pages/OffersPage'
 import GeneratedAdsPage from '@/pages/GeneratedAdsPage'
+import NotesPage from '@/pages/NotesPage'
 import OfferDetailPage from '@/pages/OfferDetailPage'
 import OfferProfileAdditionalContextsPage from '@/pages/OfferProfileAdditionalContextsPage'
+import OfferProfileNotesPage from '@/pages/OfferProfileNotesPage'
 import OfferProfileDetailPage from '@/pages/OfferProfileDetailPage'
 import OfferProfilesPage from '@/pages/OfferProfilesPage'
 import ExistingOfferProfilesPage from '@/pages/ExistingOfferProfilesPage'
@@ -49,6 +51,7 @@ function App() {
         <Route path="/" element={<DashboardPage />} />
         <Route path="/offers" element={<OffersPage />} />
         <Route path="/offer-profiles" element={<ExistingOfferProfilesPage />} />
+        <Route path="/notes" element={<NotesPage />} />
         <Route path="/generated-ads" element={<GeneratedAdsPage />} />
         <Route path="/offers/:offerId" element={<OfferDetailPage />} />
         <Route path="/offers/:offerId/offer-sources" element={<OfferSourcesPage />} />
@@ -60,6 +63,7 @@ function App() {
         <Route path="/offer-profiles/:offerProfileId/ad-copy" element={<AdCopyPage />} />
         <Route path="/offer-profiles/:offerProfileId/creative-plans" element={<CreativePlansPage />} />
         <Route path="/offer-profiles/:offerProfileId/additional-contexts" element={<OfferProfileAdditionalContextsPage />} />
+        <Route path="/offer-profiles/:offerProfileId/notes" element={<OfferProfileNotesPage />} />
         <Route path="/offer-profiles/:offerProfileId" element={<OfferProfileDetailPage />} />
         <Route path="/offer-sources/:offerSourceId/profiles" element={<OfferProfilesPage />} />
         <Route path="/offer-sources/:offerSourceId/facts" element={<OfferFactsPage />} />
