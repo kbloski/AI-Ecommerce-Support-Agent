@@ -11,13 +11,11 @@ from application.handlers.ugc_creatives import update_ugc_creative_handler as ed
 from application.dtos.ugc_creatives.ugc_generation_fields import GenerateUgcRequest
 from application.services.llm_context_composer import ContextRef, ContextSelection
 from domain.enums.context_type import ContextType
-from domain.enums.pipeline_entity_type import PipelineEntityType
 from domain.models import models
 from domain.models.creative.ugc_creative import UgcCreative
 from infrastructure.database.db import Base
 from infrastructure.database.ugc_profile_migration import migrate_ugc_to_offer_profiles
 from infrastructure.repositories.ugc_creative_repository import UgcCreativeRepository
-from application.handlers.pipeline.get_pipeline_path_handler import STAGE_CONFIG
 
 
 class ProfileUgcTests(unittest.TestCase):
@@ -118,9 +116,6 @@ class ProfileUgcTests(unittest.TestCase):
             self.assertEqual(conn.exec_driver_sql("PRAGMA foreign_keys").scalar(), 1)
             self.assertEqual(conn.execute(text("SELECT name FROM ugc_creatives WHERE id=7")).scalar(), "Existing UGC")
 
-    def test_pipeline_uses_profile_parent(self):
-        self.assertEqual(STAGE_CONFIG[PipelineEntityType.UGC_CREATIVE]["parent_field"], "offer_profile_id")
-        self.assertEqual(STAGE_CONFIG[PipelineEntityType.UGC_CREATIVE]["parent_stage"], PipelineEntityType.OFFER_PROFILE)
 
     def test_edit_content_and_reset_review(self):
         item = self.repo.create(UgcCreative(offer_profile_id=1, name="Original", video_flow=["Old scene"], is_reviewed=True))

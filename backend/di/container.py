@@ -65,24 +65,9 @@ from application.services.offer_strategy_service import OfferStrategyService
 from infrastructure.repositories.message_strategy_repository import MessageStrategyRepository
 from application.assemblers.message_strategy_assembler import MessageStrategyAssembler
 from application.services.message_strategy_service import MessageStrategyService
-from infrastructure.repositories.ad_strategy_repository import AdStrategyRepository
-from application.assemblers.ad_strategy_assembler import AdStrategyAssembler
-from application.services.ad_strategy_service import AdStrategyService
-from infrastructure.repositories.creative_strategy_repository import CreativeStrategyRepository
-from application.assemblers.creative_strategy_assembler import CreativeStrategyAssembler
-from application.services.creative_strategy_service import CreativeStrategyService
 from infrastructure.repositories.ugc_creative_repository import UgcCreativeRepository
 from application.assemblers.ugc_creative_assembler import UgcCreativeAssembler
 from application.services.ugc_creative_service import UgcCreativeService
-from infrastructure.repositories.ad_setup_repository import AdSetupRepository
-from application.assemblers.ad_setup_assembler import AdSetupAssembler
-from application.services.ad_setup_service import AdSetupService
-from infrastructure.repositories.creative_execution_setup_repository import CreativeExecutionSetupRepository
-from application.assemblers.creative_execution_setup_assembler import CreativeExecutionSetupAssembler
-from application.services.creative_execution_setup_service import CreativeExecutionSetupService
-from infrastructure.repositories.generate_ad_repository import GenerateAdRepository
-from application.assemblers.generate_ad_assembler import GenerateAdAssembler
-from application.services.generate_ad_service import GenerateAdService
 from infrastructure.repositories.page_strategy_repository import PageStrategyRepository
 from application.assemblers.page_strategy_assembler import PageStrategyAssembler
 from application.services.page_strategy_service import PageStrategyService
@@ -152,7 +137,6 @@ class Container(containers.DeclarativeContainer):
     offer_profiles_repository = providers.Singleton(OfferProfilesRepository, logger=logger, db=db)
 
     offer_facts_repository = providers.Singleton(OfferFactsRepository, logger=logger, db=db)
-
 
     target_audiences_repository = providers.Singleton(
         TargetAudiencesRepository,
@@ -234,38 +218,8 @@ class Container(containers.DeclarativeContainer):
         db=db
     )
 
-    ad_strategy_repository = providers.Singleton(
-        AdStrategyRepository,
-        logger=logger,
-        db=db
-    )
-
-    creative_strategy_repository = providers.Singleton(
-        CreativeStrategyRepository,
-        logger=logger,
-        db=db
-    )
-
     ugc_creative_repository = providers.Singleton(
         UgcCreativeRepository,
-        logger=logger,
-        db=db
-    )
-
-    ad_setup_repository = providers.Singleton(
-        AdSetupRepository,
-        logger=logger,
-        db=db
-    )
-
-    creative_execution_setup_repository = providers.Singleton(
-        CreativeExecutionSetupRepository,
-        logger=logger,
-        db=db
-    )
-
-    generate_ad_repository = providers.Singleton(
-        GenerateAdRepository,
         logger=logger,
         db=db
     )
@@ -305,7 +259,6 @@ class Container(containers.DeclarativeContainer):
         logger=logger,
         db=db
     )
-
 
     # --------------------------
     # Assemblery
@@ -362,28 +315,8 @@ class Container(containers.DeclarativeContainer):
         logger=logger,
     )
 
-    ad_strategy_assembler = providers.Singleton(
-        AdStrategyAssembler,
-        logger=logger,
-    )
-
-    creative_strategy_assembler = providers.Singleton(
-        CreativeStrategyAssembler,
-        logger=logger,
-    )
-
     ugc_creative_assembler = providers.Singleton(
         UgcCreativeAssembler,
-        logger=logger,
-    )
-
-    ad_setup_assembler = providers.Singleton(
-        AdSetupAssembler,
-        logger=logger,
-    )
-
-    generate_ad_assembler = providers.Singleton(
-        GenerateAdAssembler,
         logger=logger,
     )
 
@@ -437,14 +370,6 @@ class Container(containers.DeclarativeContainer):
         ExecutionStylesRepository,
         logger=logger,
         path_service=path_service,
-    )
-
-    creative_execution_setup_assembler = providers.Singleton(
-        CreativeExecutionSetupAssembler,
-        logger=logger,
-        ad_frameworks_repository=ad_frameworks_repository,
-        creative_angels_repository=creative_angels_repository,
-        execution_styles_repository=execution_styles_repository,
     )
 
     platforms_repository = providers.Singleton(
@@ -607,46 +532,11 @@ class Container(containers.DeclarativeContainer):
         message_strategy_assembler=message_strategy_assembler
     )
 
-    ad_strategy_service = providers.Singleton(
-        AdStrategyService,
-        logger=logger,
-        ad_strategy_repository=ad_strategy_repository,
-        ad_strategy_assembler=ad_strategy_assembler
-    )
-
-    creative_strategy_service = providers.Singleton(
-        CreativeStrategyService,
-        logger=logger,
-        creative_strategy_repository=creative_strategy_repository,
-        creative_strategy_assembler=creative_strategy_assembler
-    )
-
     ugc_creative_service = providers.Singleton(
         UgcCreativeService,
         logger=logger,
         ugc_creative_repository=ugc_creative_repository,
         ugc_creative_assembler=ugc_creative_assembler
-    )
-
-    ad_setup_service = providers.Singleton(
-        AdSetupService,
-        logger=logger,
-        ad_setup_repository=ad_setup_repository,
-        ad_setup_assembler=ad_setup_assembler
-    )
-
-    creative_execution_setup_service = providers.Singleton(
-        CreativeExecutionSetupService,
-        logger=logger,
-        creative_execution_setup_repository=creative_execution_setup_repository,
-        creative_execution_setup_assembler=creative_execution_setup_assembler
-    )
-
-    generate_ad_service = providers.Singleton(
-        GenerateAdService,
-        logger=logger,
-        generate_ad_repository=generate_ad_repository,
-        generate_ad_assembler=generate_ad_assembler
     )
 
     page_strategy_service = providers.Singleton(

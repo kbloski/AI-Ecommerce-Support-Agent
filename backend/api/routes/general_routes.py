@@ -8,7 +8,6 @@ from application.handlers.ads.list_ad_frameworks_handler import list_ad_framewor
 from application.handlers.ads.list_creative_angels_handler import list_creative_angels_handler
 from application.handlers.ads.list_execution_styles_handler import list_execution_styles_handler
 from application.handlers.ads.list_platforms_handler import list_platforms_handler
-from application.handlers.ads.list_creative_types_handler import list_creative_types_handler
 from application.handlers.ads.list_fact_statuses_handler import list_fact_statuses_handler
 from application.handlers.offers.get_offers import get_offers
 from application.handlers.offers.create_offer import create_offer
@@ -27,16 +26,6 @@ from application.handlers.page_strategy.update_page_strategy_handler import upda
 from application.handlers.page_blueprint.update_page_blueprint_handler import update_page_blueprint_handler
 from application.handlers.page_content_plan.update_page_content_plan_handler import update_page_content_plan_handler
 from application.handlers.page_copy.update_page_copy_handler import update_page_copy_handler
-from application.handlers.ad_strategy.update_ad_strategy_handler import update_ad_strategy_handler
-from application.handlers.creative_strategy.update_creative_strategy_handler import update_creative_strategy_handler
-from application.handlers.ad_setup.update_ad_setup_handler import update_ad_setup_handler
-from application.handlers.generate_ad.update_generate_ad_handler import update_generate_ad_handler
-from application.handlers.creative_execution_setup.create_creative_execution_setup_handler import create_creative_execution_setup_handler
-from application.handlers.creative_execution_setup.generate_creative_execution_setups_handler import generate_creative_execution_setups_handler
-from application.handlers.creative_execution_setup.get_creative_execution_setup_handler import get_creative_execution_setup_handler
-from application.handlers.creative_execution_setup.get_ad_setup_creative_execution_setups_handler import get_ad_setup_creative_execution_setups_handler
-from application.handlers.creative_execution_setup.update_creative_execution_setup_handler import update_creative_execution_setup_handler
-from application.handlers.creative_execution_setup.delete_creative_execution_setup_handler import delete_creative_execution_setup_handler
 from application.handlers.target_audience.generate_target_audience_handler import generate_target_audience_handler
 from application.handlers.target_audience.get_target_audience_handler import get_target_audience_handler
 from application.handlers.target_audience.get_target_audience_preview_handler import get_target_audience_preview_handler
@@ -77,23 +66,6 @@ from application.handlers.message_strategy.get_offer_strategy_message_strategies
 from application.handlers.message_strategy.delete_message_strategy_handler import delete_message_strategy_handler
 from application.handlers.message_strategy.update_message_strategy_handler import update_message_strategy_handler
 from application.handlers.page_strategy.generate_page_strategy_json_handler import generate_page_strategy_json_handler
-from application.handlers.ad_strategy.generate_ad_strategy_handler import generate_ad_strategy_handler
-from application.handlers.ad_strategy.get_ad_strategy_handler import get_ad_strategy_handler
-from application.handlers.ad_strategy.get_message_strategy_ad_strategies_handler import get_message_strategy_ad_strategies_handler
-from application.handlers.ad_strategy.delete_ad_strategy_handler import delete_ad_strategy_handler
-from application.handlers.creative_strategy.generate_creative_strategy_handler import generate_creative_strategy_handler
-from application.handlers.ad_setup.create_ad_setup_handler import create_ad_setup_handler
-from application.handlers.ad_setup.get_ad_setup_handler import get_ad_setup_handler
-from application.handlers.ad_setup.get_creative_strategy_ad_setups_handler import get_creative_strategy_ad_setups_handler
-from application.handlers.ad_setup.delete_ad_setup_handler import delete_ad_setup_handler
-from application.handlers.generate_ad.generate_ad_handler import generate_ad_handler
-from application.handlers.generate_ad.get_generate_ad_handler import get_generate_ad_handler
-from application.handlers.generate_ad.get_all_generate_ads_handler import get_all_generate_ads_handler
-from application.handlers.generate_ad.get_creative_execution_setup_generate_ads_handler import get_creative_execution_setup_generate_ads_handler
-from application.handlers.generate_ad.delete_generate_ad_handler import delete_generate_ad_handler
-from application.handlers.creative_strategy.get_creative_strategy_handler import get_creative_strategy_handler
-from application.handlers.creative_strategy.get_ad_strategy_creative_strategies_handler import get_ad_strategy_creative_strategies_handler
-from application.handlers.creative_strategy.delete_creative_strategy_handler import delete_creative_strategy_handler
 from application.handlers.ugc_creatives.generate_ugc_creatives_handler import generate_ugc_creatives_handler
 from application.dtos.ugc_creatives.ugc_generation_fields import GenerateUgcRequest
 from application.handlers.ugc_creatives.get_ugc_creative_handler import get_ugc_creative_handler
@@ -128,8 +100,6 @@ from domain.enums.llm_rule_set import LlmRuleSet
 from application.handlers.settings.get_ollama_settings_handler import get_ollama_settings_handler
 from application.handlers.settings.save_ollama_settings_handler import save_ollama_settings_handler
 from application.handlers.settings.list_ollama_models_handler import list_ollama_models_handler
-from application.handlers.pipeline.get_pipeline_path_handler import get_pipeline_path_handler
-from domain.enums.pipeline_entity_type import PipelineEntityType
 
 
 class SaveRuleSetRequest(BaseModel):
@@ -150,11 +120,6 @@ class OllamaSettingsFields(BaseModel):
 
 class SaveOllamaSettingsRequest(BaseModel):
     fields: OllamaSettingsFields
-
-
-class PipelinePathRequest(BaseModel):
-    entity_type: PipelineEntityType
-    entity_id: int
 
 
 class PageSectionRequirementInput(BaseModel):
@@ -190,15 +155,6 @@ class GenerateOfferSourceRequest(BaseModel):
 class GenerateTargetAudiencesRequest(BaseModel):
     count: int = Field(ge=1, le=10)
     generation_instructions: str = Field(default="", max_length=4000)
-
-
-
-
-
-
-
-class GenerateCreativeExecutionSetupsRequest(BaseModel):
-    count: int = Field(default=3, ge=1, le=10)
 
 
 def register_general_routes(router: APIRouter):
@@ -239,13 +195,6 @@ def register_general_routes(router: APIRouter):
     def _legacy_get_8(offer_profile_id: str):
         raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/ugc-creatives/generate")
 
-    @router.get("/message-strategy/{message_strategy_id}/ad-strategy/generate")
-    def _legacy_get_9(message_strategy_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /message-strategy/{message_strategy_id}/ad-strategy/generate")
-
-    @router.get("/ad-strategy/{ad_strategy_id}/creative-strategy/generate")
-    def _legacy_get_10(ad_strategy_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /ad-strategy/{ad_strategy_id}/creative-strategy/generate")
 
     @router.get("/message-strategy/{message_strategy_id}/page-strategy/generate")
     def _legacy_get_11(message_strategy_id: str):
@@ -278,16 +227,6 @@ def register_general_routes(router: APIRouter):
     @router.get("/offers/create")
     def _legacy_get_18():
         raise HTTPException(status_code=410, detail="This endpoint now requires POST /offers/create")
-
-    @router.get("/creative-strategy/{creative_strategy_id}/ad-setup/create")
-    def _legacy_get_19(creative_strategy_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /creative-strategy/{creative_strategy_id}/ad-setup/create")
-
-    @router.get("/ad-setup/{ad_setup_id}/generate-ad/generate")
-    def _legacy_get_20(ad_setup_id: str):
-        raise HTTPException(status_code=410, detail="Create a Creative Execution Setup and use POST /creative-execution-setups/{id}/generate-ads/generate")
-
-
 
 
     # -----------------------------
@@ -366,11 +305,6 @@ def register_general_routes(router: APIRouter):
         raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /offer-sources/{id}/delete")
 
 
-
-
-
-
-
     # -----------------------------
     # Target audience
     # -----------------------------
@@ -420,7 +354,6 @@ def register_general_routes(router: APIRouter):
             id=id,
             fields=payload.model_dump(exclude_unset=True, mode="json"),
         )
-
 
 
     # -----------------------------
@@ -475,7 +408,6 @@ def register_general_routes(router: APIRouter):
         raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /analysis-questions/{id}/delete")
 
 
-
     # -----------------------------
     # Checklist
     # -----------------------------
@@ -515,7 +447,6 @@ def register_general_routes(router: APIRouter):
     @router.get("/checklist-items/{id}/delete")
     def delete_checklist_item_route_legacy_get(id: int):
         raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /checklist-items/{id}/delete")
-
 
 
     # -----------------------------
@@ -640,7 +571,6 @@ def register_general_routes(router: APIRouter):
         raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /message-strategy/{id}/delete")
 
 
-
     # -----------------------------
     # UGC creatives
     # -----------------------------
@@ -669,108 +599,6 @@ def register_general_routes(router: APIRouter):
         raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /ugc-creatives/{id}/delete")
 
 
-
-    # -----------------------------
-    # Ad strategy
-    # -----------------------------
-    @router.post("/message-strategy/{message_strategy_id}/ad-strategy/generate")
-    def offer_source_ad_strategy_generate( message_strategy_id: int ):
-        return generate_ad_strategy_handler(
-            message_strategy_id=message_strategy_id
-        )
-
-    @router.get("/message-strategy/{message_strategy_id}/ad-strategy")
-    def get_message_strategy_ad_strategies( message_strategy_id: int ):
-        return get_message_strategy_ad_strategies_handler( message_strategy_id=message_strategy_id )
-
-    @router.get("/ad-strategy/{id}")
-    def get_ad_strategy( id: int ):
-        return get_ad_strategy_handler( id=id )
-
-    @router.post("/ad-strategy/{id}/update")
-    def update_ad_strategy_route(id: int, payload: UpdateFieldsRequest):
-        return update_ad_strategy_handler(id=id, fields=payload.fields)
-
-    @router.delete("/ad-strategy/{id}/delete")
-    def delete_ad_strategy_route(id: int):
-        return delete_ad_strategy_handler(id=id)
-
-    @router.get("/ad-strategy/{id}/delete")
-    def delete_ad_strategy_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /ad-strategy/{id}/delete")
-
-
-
-    # -----------------------------
-    # Creative strategy
-    # -----------------------------
-    @router.post("/ad-strategy/{ad_strategy_id}/creative-strategy/generate")
-    def offer_source_creative_strategy_generate( ad_strategy_id: int ):
-        return generate_creative_strategy_handler(
-            ad_strategy_id=ad_strategy_id
-        )
-
-    @router.get("/ad-strategy/{ad_strategy_id}/creative-strategy")
-    def get_ad_strategy_creative_strategies( ad_strategy_id: int ):
-        return get_ad_strategy_creative_strategies_handler( ad_strategy_id=ad_strategy_id )
-
-    @router.get("/creative-strategy/{id}")
-    def get_creative_strategy( id: int ):
-        return get_creative_strategy_handler( id=id )
-
-    @router.post("/creative-strategy/{id}/update")
-    def update_creative_strategy_route(id: int, payload: UpdateFieldsRequest):
-        return update_creative_strategy_handler(id=id, fields=payload.fields)
-
-    @router.delete("/creative-strategy/{id}/delete")
-    def delete_creative_strategy_route(id: int):
-        return delete_creative_strategy_handler(id=id)
-
-    @router.get("/creative-strategy/{id}/delete")
-    def delete_creative_strategy_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /creative-strategy/{id}/delete")
-
-
-    # -----------------------------
-    # Ad Setup
-    # -----------------------------
-    @router.post("/creative-strategy/{creative_strategy_id}/ad-setup/create")
-    def creative_strategy_ad_setup_create(
-        creative_strategy_id: int,
-        creative_type: str,
-        platform: str,
-        format: str,
-        name: str | None = None
-    ):
-        return create_ad_setup_handler(
-            creative_strategy_id=creative_strategy_id,
-            creative_type=creative_type,
-            platform=platform,
-            format=format,
-            name=name
-        )
-
-    @router.get("/creative-strategy/{creative_strategy_id}/ad-setup")
-    def get_creative_strategy_ad_setups( creative_strategy_id: int ):
-        return get_creative_strategy_ad_setups_handler( creative_strategy_id=creative_strategy_id )
-
-    @router.get("/ad-setup/{id}")
-    def get_ad_setup( id: int ):
-        return get_ad_setup_handler( id=id )
-
-    @router.post("/ad-setup/{id}/update")
-    def update_ad_setup_route(id: int, payload: UpdateFieldsRequest):
-        return update_ad_setup_handler(id=id, fields=payload.fields)
-
-    @router.delete("/ad-setup/{id}/delete")
-    def delete_ad_setup_route(id: int):
-        return delete_ad_setup_handler(id=id)
-
-    @router.get("/ad-setup/{id}/delete")
-    def delete_ad_setup_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /ad-setup/{id}/delete")
-
-
     # -----------------------------
     # Ad frameworks / Creative angels
     # -----------------------------
@@ -790,9 +618,6 @@ def register_general_routes(router: APIRouter):
     def platforms_list():
         return list_platforms_handler()
 
-    @router.get("/creative-types")
-    def creative_types_list():
-        return list_creative_types_handler()
 
     @router.get("/fact-statuses")
     def fact_statuses_list():
@@ -801,74 +626,6 @@ def register_general_routes(router: APIRouter):
     @router.get("/page-sections")
     def page_sections_list():
         return list_page_sections_handler()
-
-    # -----------------------------
-    # Creative Execution Setup
-    # -----------------------------
-    @router.post("/ad-setup/{ad_setup_id}/creative-execution-setups/create")
-    def create_creative_execution_setup(ad_setup_id: int, payload: UpdateFieldsRequest):
-        return create_creative_execution_setup_handler(ad_setup_id=ad_setup_id, fields=payload.fields)
-
-    @router.post("/ad-setup/{ad_setup_id}/creative-execution-setups/generate")
-    def generate_creative_execution_setups(
-        ad_setup_id: int,
-        payload: GenerateCreativeExecutionSetupsRequest,
-    ):
-        return generate_creative_execution_setups_handler(
-            ad_setup_id=ad_setup_id,
-            count=payload.count,
-        )
-
-    @router.get("/ad-setup/{ad_setup_id}/creative-execution-setups")
-    def get_ad_setup_creative_execution_setups(ad_setup_id: int):
-        return get_ad_setup_creative_execution_setups_handler(ad_setup_id=ad_setup_id)
-
-    @router.get("/creative-execution-setups/{id}")
-    def get_creative_execution_setup(id: int):
-        return get_creative_execution_setup_handler(id=id)
-
-    @router.post("/creative-execution-setups/{id}/update")
-    def update_creative_execution_setup(id: int, payload: UpdateFieldsRequest):
-        return update_creative_execution_setup_handler(id=id, fields=payload.fields)
-
-    @router.delete("/creative-execution-setups/{id}/delete")
-    def delete_creative_execution_setup(id: int):
-        return delete_creative_execution_setup_handler(id=id)
-
-    # -----------------------------
-    # Generate Ad
-    # -----------------------------
-    @router.post("/creative-execution-setups/{creative_execution_setup_id}/generate-ads/generate")
-    def creative_execution_setup_generate(creative_execution_setup_id: int):
-        return generate_ad_handler(
-            creative_execution_setup_id=creative_execution_setup_id
-        )
-
-    @router.get("/creative-execution-setups/{creative_execution_setup_id}/generate-ads")
-    def get_creative_execution_setup_generate_ads(creative_execution_setup_id: int):
-        return get_creative_execution_setup_generate_ads_handler(
-            creative_execution_setup_id=creative_execution_setup_id
-        )
-
-    @router.get("/generate-ads")
-    def get_all_generate_ads():
-        return get_all_generate_ads_handler()
-
-    @router.get("/generate-ad/{id}")
-    def get_generate_ad( id: int ):
-        return get_generate_ad_handler( id=id )
-
-    @router.post("/generate-ad/{id}/update")
-    def update_generate_ad_route(id: int, payload: UpdateFieldsRequest):
-        return update_generate_ad_handler(id=id, fields=payload.fields)
-
-    @router.delete("/generate-ad/{id}/delete")
-    def delete_generate_ad_route(id: int):
-        return delete_generate_ad_handler(id=id)
-
-    @router.get("/generate-ad/{id}/delete")
-    def delete_generate_ad_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /generate-ad/{id}/delete")
 
 
     # -----------------------------
@@ -1057,17 +814,6 @@ def register_general_routes(router: APIRouter):
     @router.get("/settings/ollama/models")
     def list_ollama_models_route( url: Optional[str] = None ):
         return list_ollama_models_handler( url=url )
-
-
-    # -----------------------------
-    # Pipeline path
-    # -----------------------------
-    @router.post("/pipeline/path")
-    def get_pipeline_path_route( payload: PipelinePathRequest ):
-        try:
-            return get_pipeline_path_handler( entity_type=payload.entity_type, entity_id=payload.entity_id )
-        except ValueError as e:
-            raise HTTPException(status_code=404, detail=str(e))
 
 
     # -----------------------------

@@ -33,26 +33,9 @@ class ContextSectionPurpose(str, Enum):
         "and claims may be used in marketing communication."
     )
 
-    AD_STRATEGY = (
-        "Information defining which advertising directions, audiences, arguments, "
-        "formats, and testing hypotheses should be prioritized."
-    )
 
     # Advertising & Creative
-    CREATIVE_STRATEGY = (
-        "Information defining how a specific creative concept should work strategically, "
-        "who it is for, and which communication mechanism it should use."
-    )
 
-    AD_SETUP = (
-        "Information defining the platform, format, creative type, and production "
-        "configuration used to prepare a specific advertising execution."
-    )
-
-    CREATIVE_EXECUTION_SETUP = (
-        "Configuration selecting the framework, creative angle, execution style, "
-        "medium-specific parameters, and additional generation instructions."
-    )
 
     AD_FRAMEWORK = (
         "Information defining the required advertising framework, its ordered steps, "
@@ -93,10 +76,6 @@ class ContextSectionPurpose(str, Enum):
         "constraints, conventions, and requirements that the creative must follow."
     )
 
-    GENERATE_AD = (
-        "Information describing a specific final advertising execution prepared "
-        "for generation or production."
-    )
 
     # Design
     COLOR_PHILOSOPHY = (

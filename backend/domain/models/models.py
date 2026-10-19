@@ -53,13 +53,7 @@ from domain.models.offer.offer_strategy import OfferStrategy
 # Message strategy
 from domain.models.message_strategy.message_strategy import MessageStrategy
 
-# Ad strategy
-from domain.models.ad.ad_strategy import AdStrategy
 
-from domain.models.creative.creative_strategy import CreativeStrategy
-from domain.models.ad.ad_setup import AdSetup
-from domain.models.creative.creative_execution_setup import CreativeExecutionSetup
-from domain.models.ad.generate_ad import GenerateAd
 from domain.models.creative.ugc_creative import UgcCreative
 from domain.models.page.page_strategy import PageStrategy
 from domain.models.page.page_requirements import PageRequirements

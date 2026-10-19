@@ -8,4 +8,3 @@ from domain.enums.ad_formats import AdFormats
 from domain.enums.context_section_purpose import ContextSectionPurpose
 from domain.enums.context_type import ContextType
 from domain.enums.table_name import TableName
-from domain.enums.creative_types import CreativeTypes

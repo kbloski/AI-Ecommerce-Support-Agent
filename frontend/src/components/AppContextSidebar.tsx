@@ -2,7 +2,6 @@ import { useId, type ReactNode } from 'react'
 import { ChevronDown, CodeXml } from 'lucide-react'
 import { Link, NavLink, matchPath, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { DownloadPipelinePathButton } from '@/components/DownloadPipelinePathButton'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useSidePanel } from '@/lib/sidePanel'
@@ -24,13 +23,8 @@ import { useGetChecklistQuery, useListChecklistsForOfferProfileQuery } from '@/f
 import { useListMarketingStrategyForBrandMarketingQuery } from '@/features/marketingStrategy/marketingStrategyApi'
 import { useListOfferStrategyForMarketingStrategyQuery } from '@/features/offerStrategy/offerStrategyApi'
 import { useListMessageStrategyForOfferStrategyQuery } from '@/features/messageStrategy/messageStrategyApi'
-import { useListAdStrategyForMessageStrategyQuery } from '@/features/adStrategy/adStrategyApi'
 import { useListUgcCreativesForOfferProfileQuery } from '@/features/ugcCreatives/ugcCreativesApi'
 import { useListPageStrategyForMessageStrategyQuery } from '@/features/pageStrategy/pageStrategyApi'
-import { useListCreativeStrategyForAdStrategyQuery } from '@/features/creativeStrategy/creativeStrategyApi'
-import { useListAdSetupForCreativeStrategyQuery } from '@/features/adSetup/adSetupApi'
-import { useListCreativeExecutionSetupsForAdSetupQuery } from '@/features/creativeExecutionSetup/creativeExecutionSetupApi'
-import { useListGenerateAdsForSetupQuery } from '@/features/generateAd/generateAdApi'
 import { useListPageRequirementsForPageStrategyQuery } from '@/features/pageRequirements/pageRequirementsApi'
 import { useListPageBlueprintForPageRequirementsQuery } from '@/features/pageBlueprint/pageBlueprintApi'
 import { useListPageContentPlanForPageBlueprintQuery } from '@/features/pageContentPlan/pageContentPlanApi'
@@ -101,26 +95,21 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   const { pathname } = useLocation()
   const { contextualPanel, openPanel } = useSidePanel()
   const sections = [
-    { pattern: '/offers/:id/*', current: 'Oferta', entityType: 'offer', process: [['offer-sources', 'Źródła oferty']], resources: [] },
-    { pattern: '/offer-sources/:id/*', current: 'Offer source', entityType: 'offer_source', attached: [['facts', 'Fakty o produkcie']], process: [['profiles', 'Profile oferty'], ['brand-marketing', 'Marketing marki (przestarzały)']], resources: [] },
+    { pattern: '/offers/:id/*', current: 'Oferta', process: [['offer-sources', 'Źródła oferty']], resources: [] },
+    { pattern: '/offer-sources/:id/*', current: 'Offer source', attached: [['facts', 'Fakty o produkcie']], process: [['profiles', 'Profile oferty'], ['brand-marketing', 'Marketing marki (przestarzały)']], resources: [] },
     { pattern: '/offer-profiles/:offerProfileId/analysis/:id/*', current: 'Analiza', process: [], resources: [['questions', 'Pytania']] },
     { pattern: '/offer-profiles/:offerProfileId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },
     { pattern: '/offer-profiles/:id/*', current: 'Profil oferty', attached: [['additional-contexts', 'Dodatkowe informacje']], process: [], resources: [] },
-    { pattern: '/brand-marketing/:id/*', current: 'Brand marketing', entityType: 'brand_marketing', process: [['marketing-strategies', 'Marketing strategy']], resources: [] },
-    { pattern: '/marketing-strategy/:id/*', current: 'Marketing strategy', entityType: 'marketing_strategy', process: [['offer-strategies', 'Offer strategy']], resources: [] },
-    { pattern: '/offer-strategy/:id/*', current: 'Offer strategy', entityType: 'offer_strategy', process: [['message-strategies', 'Message strategy']], resources: [] },
-    { pattern: '/message-strategy/:id/*', current: 'Message strategy', entityType: 'message_strategy', process: [['ad-strategies', 'Ad strategy'], ['page-strategies', 'Page strategy']], resources: [] },
-    { pattern: '/ad-strategy/:id/*', current: 'Ad strategy', entityType: 'ad_strategy', process: [['creative-strategies', 'Creative strategy']], resources: [] },
-    { pattern: '/creative-strategy/:id/*', current: 'Creative strategy', entityType: 'creative_strategy', process: [['ad-setups', 'Ad Setup']], resources: [] },
-    { pattern: '/ad-setup/:id/*', current: 'Ad Setup', entityType: 'ad_setup', process: [['creative-execution-setups', 'Creative Execution Setup']], resources: [] },
-    { pattern: '/creative-execution-setup/:id/*', current: 'Creative Execution Setup', entityType: 'creative_execution_setup', process: [['generate-ads', 'Generate Ad']], resources: [] },
-    { pattern: '/page-strategy/:id/*', current: 'Page strategy', entityType: 'page_strategy', process: [['page-requirements', 'Page requirements']], resources: [] },
-    { pattern: '/page-requirements/:id/*', current: 'Page requirements', entityType: 'page_requirements', process: [['page-blueprints', 'Page blueprint']], resources: [] },
-    { pattern: '/page-blueprint/:id/*', current: 'Page blueprint', entityType: 'page_blueprint', process: [['content-plans', 'Content plan']], resources: [] },
-    { pattern: '/page-content-plan/:id/*', current: 'Content plan', entityType: 'page_content_plan', process: [['page-copies', 'Page copy']], resources: [] },
-    { pattern: '/generate-ad/:id/*', current: 'Generate Ad', entityType: 'generate_ad', process: [], resources: [] },
-    { pattern: '/ugc-creatives/:id/*', current: 'UGC creative', entityType: 'ugc_creative', process: [], resources: [] },
-    { pattern: '/page-copy/:id/*', current: 'Page copy', entityType: 'page_copy', process: [], resources: [] },
+    { pattern: '/brand-marketing/:id/*', current: 'Brand marketing', process: [['marketing-strategies', 'Marketing strategy']], resources: [] },
+    { pattern: '/marketing-strategy/:id/*', current: 'Marketing strategy', process: [['offer-strategies', 'Offer strategy']], resources: [] },
+    { pattern: '/offer-strategy/:id/*', current: 'Offer strategy', process: [['message-strategies', 'Message strategy']], resources: [] },
+    { pattern: '/message-strategy/:id/*', current: 'Message strategy', process: [['page-strategies', 'Page strategy']], resources: [] },
+    { pattern: '/page-strategy/:id/*', current: 'Page strategy', process: [['page-requirements', 'Page requirements']], resources: [] },
+    { pattern: '/page-requirements/:id/*', current: 'Page requirements', process: [['page-blueprints', 'Page blueprint']], resources: [] },
+    { pattern: '/page-blueprint/:id/*', current: 'Page blueprint', process: [['content-plans', 'Content plan']], resources: [] },
+    { pattern: '/page-content-plan/:id/*', current: 'Content plan', process: [['page-copies', 'Page copy']], resources: [] },
+    { pattern: '/ugc-creatives/:id/*', current: 'UGC creative', process: [], resources: [] },
+    { pattern: '/page-copy/:id/*', current: 'Page copy', process: [], resources: [] },
   ] as const
   // Prefer the most specific route, otherwise an analysis URL would match OfferSource first.
   const section = [...sections].sort((a, b) => b.pattern.length - a.pattern.length)
@@ -155,13 +144,8 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   const marketingStrategies = useListMarketingStrategyForBrandMarketingQuery(currentEntityId, { skip: !isCurrentStage('Brand marketing') })
   const offerStrategies = useListOfferStrategyForMarketingStrategyQuery(currentEntityId, { skip: !isCurrentStage('Marketing strategy') })
   const messageStrategies = useListMessageStrategyForOfferStrategyQuery(currentEntityId, { skip: !isCurrentStage('Offer strategy') })
-  const adStrategies = useListAdStrategyForMessageStrategyQuery(currentEntityId, { skip: !isCurrentStage('Message strategy') })
   const ugcCreatives = useListUgcCreativesForOfferProfileQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const pageStrategies = useListPageStrategyForMessageStrategyQuery(currentEntityId, { skip: !isCurrentStage('Message strategy') })
-  const creativeStrategies = useListCreativeStrategyForAdStrategyQuery(currentEntityId, { skip: !isCurrentStage('Ad strategy') })
-  const adSetups = useListAdSetupForCreativeStrategyQuery(currentEntityId, { skip: !isCurrentStage('Creative strategy') })
-  const creativeExecutionSetups = useListCreativeExecutionSetupsForAdSetupQuery(currentEntityId, { skip: !isCurrentStage('Ad Setup') })
-  const generateAds = useListGenerateAdsForSetupQuery(currentEntityId, { skip: !isCurrentStage('Creative Execution Setup') })
   const pageRequirements = useListPageRequirementsForPageStrategyQuery(currentEntityId, { skip: !isCurrentStage('Page strategy') })
   const pageBlueprints = useListPageBlueprintForPageRequirementsQuery(currentEntityId, { skip: !isCurrentStage('Page requirements') })
   const pageContentPlans = useListPageContentPlanForPageBlueprintQuery(currentEntityId, { skip: !isCurrentStage('Page blueprint') })
@@ -188,13 +172,8 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     'marketing-strategies': marketingStrategies.data?.length,
     'offer-strategies': offerStrategies.data?.length,
     'message-strategies': messageStrategies.data?.length,
-    'ad-strategies': adStrategies.data?.length,
     'ugc-creatives': ugcCreatives.data?.length,
     'page-strategies': pageStrategies.data?.length,
-    'creative-strategies': creativeStrategies.data?.length,
-    'ad-setups': adSetups.data?.length,
-    'creative-execution-setups': creativeExecutionSetups.data?.length,
-    'generate-ads': generateAds.data?.length,
     'page-requirements': pageRequirements.data?.length,
     'page-blueprints': pageBlueprints.data?.length,
     'content-plans': pageContentPlans.data?.length,
@@ -350,12 +329,9 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
             </div>
           </SidebarGroup>
         )}
-        {('entityType' in section.config || contextualPanel) && (
+        {contextualPanel && (
           <SidebarGroup title="Akcje" className={section.config.process.length > 0 || section.config.resources.length > 0 || section.config.current === 'Profil oferty' ? 'mt-6' : undefined}>
             <nav className="ml-2 space-y-1 border-l pl-2">
-              {'entityType' in section.config && (
-                <DownloadPipelinePathButton className={sidebarActionClassName} entityType={section.config.entityType} entityId={Number(section.match?.params.id)} />
-              )}
               {contextualPanel && (
                 <Button type="button" variant="ghost" size="sm" className={sidebarActionClassName} onClick={() => openPanel(contextualPanel)}>
                   <CodeXml />
