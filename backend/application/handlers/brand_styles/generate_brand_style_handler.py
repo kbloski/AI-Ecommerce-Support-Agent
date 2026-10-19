@@ -49,10 +49,17 @@ If existing brand styles are supplied, propose a clearly different variant
 that still fits category_conventions and brand_traits.
 
 Return ONLY a JSON object with the fields in this order:
-{"offer_category": "...", "category_conventions": "...",
- "brand_traits": ["..."], "base_color": "...", "shade": "...",
- "typography_style": "...", "font_family": "...",
- "brand_color": "#RRGGBB", "background_color": "#RRGGBB"}
+{
+    "offer_category": "...", 
+    "category_conventions": "...",
+    "brand_traits": ["..."], 
+    "base_color": "...", 
+    "shade": "...",
+    "typography_style": "...", 
+    "font_family": "...",
+    "brand_color": "#RRGGBB", 
+    "background_color": "#RRGGBB"
+}
 Colors must be 6-digit hex values.
 """
 
