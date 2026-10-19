@@ -12,3 +12,8 @@ class ContextType(str, Enum):
     UGC_CREATIVE = "ugc_creative"
     AD_COPY = "ad_copy"
     BRAND_STYLE = "brand_style"
+    ANALYSIS = "analysis"
+    CHECKLIST = "checklist"
+    PAGE_BLUEPRINT = "page_blueprint"
+    PAGE = "page"
+    NOTE = "note"

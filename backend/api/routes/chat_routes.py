@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Path
+from fastapi.responses import Response
 
 from application.dtos.chat.chat_fields import CreateConversationRequest, SendMessageRequest, UpdateConversationRequest
 from application.handlers.chat.chat_handlers import (
     conversation_usage_handler, create_conversation_handler, delete_conversation_handler, get_conversation_handler,
+    get_conversation_context_handler,
     delete_message_handler, edit_message_handler, fork_conversation_handler, regenerate_message_handler,
     update_message_handler,
     list_conversations_handler, send_message_handler, update_conversation_handler,
@@ -29,6 +31,11 @@ def get_conversation(id: int = Path(gt=0)):
 @router.get("/chat/conversations/{id}/usage")
 def conversation_usage(id: int = Path(gt=0)):
     return conversation_usage_handler(id)
+
+
+@router.get("/chat/conversations/{id}/context")
+def conversation_context(id: int = Path(gt=0)):
+    return Response(content=get_conversation_context_handler(id), media_type="text/plain; charset=utf-8")
 
 
 @router.post("/chat/conversations/{id}/update")

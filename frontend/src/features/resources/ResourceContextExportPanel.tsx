@@ -42,7 +42,7 @@ export function ResourceContextExportPanel({ initialRequest }: { initialRequest:
   return <div className="flex h-full min-h-0 flex-col gap-4 text-sm">
     <p className="text-muted-foreground">{step === 'select' ? 'Wybierz dane, które mają znaleźć się w kontekście. Następnie sprawdź wynik przed pobraniem.' : 'Sprawdź złożony kontekst, a następnie pobierz go jako plik TXT.'}</p>
     <div className={step === 'select' ? 'min-h-0 flex-1 overflow-auto' : 'hidden'}>
-      <ResourceContextSelector initialRequest={initialRequest} onChange={onSelectionChange} />
+      <ResourceContextSelector initialRequest={initialRequest} onChange={onSelectionChange} allowNotes={false} />
     </div>
     {step === 'preview' && <pre className="min-h-0 flex-1 overflow-auto whitespace-pre-wrap break-words rounded-md border bg-muted/30 p-3 text-xs">{preview}</pre>}
     {error && <p role="alert" className="text-destructive">{error}</p>}

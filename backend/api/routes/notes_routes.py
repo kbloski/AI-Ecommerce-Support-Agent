@@ -5,6 +5,7 @@ from application.handlers.notes.notes_handlers import (
     create_note_handler,
     delete_note_handler,
     list_notes_handler,
+    set_note_pinned_handler,
     update_note_handler,
 )
 
@@ -16,6 +17,11 @@ class NoteRequest(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True, extra="forbid")
     title: str = Field(min_length=1, max_length=255)
     content: str = Field(min_length=1)
+
+
+class NotePinRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    is_pinned: bool
 
 
 @router.get("/notes")
@@ -31,6 +37,11 @@ def create_note(payload: NoteRequest):
 @router.post("/notes/{note_id}/update")
 def update_note(payload: NoteRequest, note_id: int = Path(gt=0)):
     return update_note_handler(note_id, payload.title, payload.content)
+
+
+@router.post("/notes/{note_id}/pin")
+def set_note_pinned(payload: NotePinRequest, note_id: int = Path(gt=0)):
+    return set_note_pinned_handler(note_id, payload.is_pinned)
 
 
 @router.delete("/notes/{note_id}")

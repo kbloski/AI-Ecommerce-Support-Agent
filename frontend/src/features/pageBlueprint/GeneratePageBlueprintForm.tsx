@@ -7,7 +7,7 @@ import { useGeneratePageBlueprintMutation, type PageBlueprintPageType } from './
 export function GeneratePageBlueprintForm({ offerProfileId, onSaved }: { offerProfileId: number; onSaved: () => void }) {
   const [generate, state] = useGeneratePageBlueprintMutation()
   const [error, setError] = useState('')
-  const [countNotProvided, setCountNotProvided] = useState(false)
+  const [countNotProvided, setCountNotProvided] = useState(true)
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const form = new FormData(event.currentTarget)
@@ -35,14 +35,14 @@ export function GeneratePageBlueprintForm({ offerProfileId, onSaved }: { offerPr
     <fieldset className="space-y-2">
       <legend className="text-sm font-medium">Liczba sekcji</legend>
       <label className="flex items-center gap-2 text-sm">
-        <input type="radio" name="section_count_mode" checked={!countNotProvided} onChange={() => setCountNotProvided(false)} />
-        Podaj liczbę
-      </label>
-      <Input name="section_count" type="number" min={1} max={50} step={1} defaultValue={8} required={!countNotProvided} disabled={countNotProvided} aria-label="Liczba sekcji od 1 do 50" />
-      <label className="flex items-center gap-2 text-sm">
         <input type="radio" name="section_count_mode" checked={countNotProvided} onChange={() => setCountNotProvided(true)} />
         Nie podano — AI dobierze liczbę sekcji
       </label>
+      <label className="flex items-center gap-2 text-sm">
+        <input type="radio" name="section_count_mode" checked={!countNotProvided} onChange={() => setCountNotProvided(false)} />
+        Podaj liczbę
+      </label>
+      {!countNotProvided && <Input name="section_count" type="number" min={1} max={50} step={1} defaultValue={8} required aria-label="Liczba sekcji od 1 do 50" />}
     </fieldset>
     <label className="block space-y-2"><span className="text-sm font-medium">Wskazówki dla AI (opcjonalnie)</span>
       <Textarea name="generation_instructions" rows={5} maxLength={4000} placeholder="Np. krótka strona z naciskiem na zastosowania produktu i odpowiedzi na obiekcje." />

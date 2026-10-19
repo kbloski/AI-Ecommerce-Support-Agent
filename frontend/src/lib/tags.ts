@@ -17,6 +17,7 @@ export const TAG_TYPES = [
   'Checklist',
   'UgcCreative',
   'PageBlueprint',
+  'Page',
   'OllamaSettings',
   'RuleSet',
 ] as const

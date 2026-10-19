@@ -9,6 +9,7 @@ from domain.models.analysis.analysis import Analysis
 from domain.models.checklist.checklist import Checklist
 from domain.models.creative.ugc_creative import UgcCreative
 from domain.models.page.page_blueprint import PageBlueprint
+from domain.models.page.page import Page
 
 # Table name -> model, for the entities that have their own list + detail
 # page in the frontend (and can therefore be marked as favorite).
@@ -20,4 +21,5 @@ FAVORITABLE_MODELS: Dict[str, Type[Base]] = {
     TableName.CHECKLIST.value: Checklist,
     TableName.UGC_CREATIVES.value: UgcCreative,
     TableName.PAGE_BLUEPRINT.value: PageBlueprint,
+    TableName.PAGES.value: Page,
 }

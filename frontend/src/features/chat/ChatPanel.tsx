@@ -6,14 +6,15 @@ import { cn } from '@/lib/utils'
 import { useConfirm } from '@/components/ConfirmDialog'
 import { ResourceContextSelector } from '@/features/resources/ResourceContextSelector'
 import { ResourcePathPicker } from '@/features/resources/ResourcePathPicker'
-import { useGetResourceContextQuery, type ResourceContextRequest } from '@/features/resources/resourceContextApi'
+import type { ResourceContextRequest } from '@/features/resources/resourceContextApi'
 import { useCreateNoteMutation } from '@/features/notes/notesApi'
 import {
   toChatContext, toResourceRequest,
   useCreateConversationMutation, useDeleteConversationMutation, useGetConversationQuery,
+  useGetConversationContextQuery,
   useListConversationsQuery, useSendMessageMutation, useUpdateConversationMutation,
   useDeleteMessageMutation, useEditMessageMutation, useForkFromMessageMutation, useRegenerateMessageMutation,
-  type ChatContext, type ChatConversation,
+  useUpdateMessageMutation, type ChatContext, type ChatConversation, type ChatMessage,
 } from './chatApi'
 import { useActiveChatConversation } from './ChatPanelTitle'
 
@@ -41,6 +42,11 @@ const includeNames: Record<ChatContext['include'][number], string> = {
   ugc_creative: 'UGC',
   ad_copy: 'Ad copy',
   brand_style: 'Brand styles',
+  analysis: 'Analizy',
+  checklist: 'Checklisty',
+  page_blueprint: 'Page blueprints',
+  page: 'Pages',
+  note: 'Notatki',
 }
 
 function contextItems(context: ChatContext) {
@@ -52,6 +58,11 @@ function contextItems(context: ChatContext) {
     ugc_creative: context.ugc_creative_ids.length,
     ad_copy: context.ad_copy_ids.length,
     brand_style: context.brand_style_ids?.length ?? 0,
+    analysis: context.analysis_ids?.length ?? 0,
+    checklist: context.checklist_ids?.length ?? 0,
+    page_blueprint: context.page_blueprint_ids?.length ?? 0,
+    page: context.page_ids?.length ?? 0,
+    note: context.note_ids?.length ?? 0,
   }
   const sourceIncluded = context.type === 'offer_source' || context.include.includes('offer_source')
   return [
@@ -156,7 +167,8 @@ function NewConversation({ onBack, onCreated }: { onBack: () => void; onCreated:
   </div>
 }
 
-type Busy = { kind: 'regenerate'; messageId: number } | { kind: 'edit'; messageId: number; content: string }
+type Busy = { kind: 'regenerate'; messageId: number } | { kind: 'edit'; messageId: number; content: string } | { kind: 'update'; messageId: number }
+type MessageEdit = { messageId: number; content: string; mode: 'update' | 'regenerate' }
 
 const bubbleClass = 'max-w-[85%] whitespace-pre-wrap break-words border bg-muted px-3 py-2'
 const actionsClass = 'mt-1 flex gap-1 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100'
@@ -166,13 +178,14 @@ function Conversation({ id, onBack, onOpen }: { id: number; onBack: () => void; 
   const [send, sendState] = useSendMessageMutation()
   const [regenerate] = useRegenerateMessageMutation()
   const [editMessage] = useEditMessageMutation()
+  const [updateMessage] = useUpdateMessageMutation()
   const [deleteMessage] = useDeleteMessageMutation()
   const [fork, forkState] = useForkFromMessageMutation()
   const [createNote] = useCreateNoteMutation()
   const [draft, setDraft] = useState('')
   const [pending, setPending] = useState<string | null>(null)
   const [busy, setBusy] = useState<Busy | null>(null)
-  const [editing, setEditing] = useState<{ messageId: number; content: string } | null>(null)
+  const [editing, setEditing] = useState<MessageEdit | null>(null)
   const [sendError, setSendError] = useState('')
   const [notice, setNotice] = useState('')
   const [renaming, setRenaming] = useState(false)
@@ -182,7 +195,7 @@ function Conversation({ id, onBack, onOpen }: { id: number; onBack: () => void; 
   const messages = conversation?.messages ?? []
   const isWorking = sendState.isLoading || busy !== null
   // While regenerating or editing, hide what will be replaced so the view matches the result.
-  const visibleMessages = busy ? messages.filter((message) => message.id < busy.messageId) : messages
+  const visibleMessages = busy && busy.kind !== 'update' ? messages.filter((message) => message.id < busy.messageId) : messages
   useActiveChatConversation(id)
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ block: 'end' }) }, [visibleMessages.length, pending, busy])
@@ -226,16 +239,26 @@ function Conversation({ id, onBack, onOpen }: { id: number; onBack: () => void; 
     () => regenerate({ messageId, conversationId: id }).unwrap(),
     'Nie udało się wygenerować nowej odpowiedzi. Poprzednia odpowiedź została zachowana.',
   )
-  const saveEdit = () => {
+  const saveEdit = async () => {
     if (!editing) return
     const content = editing.content.trim()
     if (!content) return
-    setEditing(null)
-    void runBusy(
-      { kind: 'edit', messageId: editing.messageId, content },
-      () => editMessage({ messageId: editing.messageId, conversationId: id, content }).unwrap(),
-      'Nie udało się wysłać zmienionej wiadomości. Rozmowa pozostała bez zmian.',
-    )
+    if (editing.mode === 'update') {
+      setSendError('')
+      setBusy({ kind: 'update', messageId: editing.messageId })
+      try {
+        await updateMessage({ messageId: editing.messageId, conversationId: id, content }).unwrap()
+        setEditing(null)
+      } catch { setSendError('Nie udało się zapisać zmiany wiadomości.') }
+      finally { setBusy(null) }
+    } else {
+      setEditing(null)
+      void runBusy(
+        { kind: 'edit', messageId: editing.messageId, content },
+        () => editMessage({ messageId: editing.messageId, conversationId: id, content }).unwrap(),
+        'Nie udało się wysłać zmienionej wiadomości. Rozmowa pozostała bez zmian.',
+      )
+    }
   }
   const removeMessage = async (messageId: number) => {
     if (!await confirm({ title: 'Usunąć wiadomość?', description: 'Wiadomość zostanie trwale usunięta z tej rozmowy.', confirmLabel: 'Usuń', destructive: true })) return
@@ -268,6 +291,21 @@ function Conversation({ id, onBack, onOpen }: { id: number; onBack: () => void; 
     <Button type="button" variant="ghost" size="icon-sm" disabled={isWorking} onClick={() => void removeMessage(messageId)} aria-label="Usuń wiadomość" title="Usuń wiadomość"><Trash2 /></Button>
   </>
 
+  const messageEditor = (message: ChatMessage) => editing && <div className="w-full space-y-2 border border-input bg-muted/40 p-3">
+    <textarea autoFocus value={editing.content} rows={3} maxLength={20000} aria-label="Edytuj wiadomość"
+      onChange={(event) => setEditing({ ...editing, content: event.target.value })}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') setEditing(null)
+        if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void saveEdit() }
+      }}
+      className="w-full resize-y bg-transparent px-1 outline-none" />
+    <div className="flex justify-end gap-2">
+      <Button type="button" variant="ghost" size="sm" onClick={() => setEditing(null)}>Anuluj</Button>
+      <Button type="button" size="sm" disabled={!editing.content.trim() || isWorking} onClick={() => void saveEdit()}>{editing.mode === 'update' ? 'Zapisz' : 'Wyślij'}</Button>
+    </div>
+    {editing.mode === 'regenerate' && message.role === 'user' && <p className="px-1 text-xs text-muted-foreground">Wiadomości po tej zostaną zastąpione nową odpowiedzią.</p>}
+  </div>
+
   if (isLoading) return <p className="text-sm text-muted-foreground">Wczytywanie rozmowy…</p>
   if (error || !conversation) return <div className="space-y-3 text-sm">
     <Button type="button" variant="ghost" size="sm" onClick={onBack}><ArrowLeft />Rozmowy</Button>
@@ -295,39 +333,28 @@ function Conversation({ id, onBack, onOpen }: { id: number; onBack: () => void; 
         </div>}
         {visibleMessages.map((message) => message.role === 'user'
           ? <div key={message.id} className="group flex flex-col items-end">
-            {editing?.messageId === message.id ? <div className="w-full space-y-2 border border-input bg-muted/40 p-3">
-              <textarea autoFocus value={editing.content} rows={3} maxLength={20000} aria-label="Edytuj wiadomość"
-                onChange={(event) => setEditing({ messageId: message.id, content: event.target.value })}
-                onKeyDown={(event) => {
-                  if (event.key === 'Escape') setEditing(null)
-                  if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); saveEdit() }
-                }}
-                className="w-full resize-y bg-transparent px-1 outline-none" />
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="ghost" size="sm" onClick={() => setEditing(null)}>Anuluj</Button>
-                <Button type="button" size="sm" disabled={!editing.content.trim()} onClick={saveEdit}>Wyślij</Button>
-              </div>
-              <p className="px-1 text-xs text-muted-foreground">Wiadomości po tej zostaną zastąpione nową odpowiedzią.</p>
-            </div> : <>
+            {editing?.messageId === message.id ? messageEditor(message) : <>
               <p className={bubbleClass}>{message.content}</p>
               <div className={actionsClass}>
-                <Button type="button" variant="ghost" size="icon-sm" disabled={isWorking} onClick={() => setEditing({ messageId: message.id, content: message.content })} aria-label="Edytuj" title="Edytuj i wyślij ponownie"><Pencil /></Button>
+                <Button type="button" variant="ghost" size="icon-sm" disabled={isWorking} onClick={() => setEditing({ messageId: message.id, content: message.content, mode: 'update' })} aria-label="Edytuj wiadomość" title="Edytuj wiadomość"><Pencil /></Button>
+                <Button type="button" variant="ghost" size="icon-sm" disabled={isWorking} onClick={() => setEditing({ messageId: message.id, content: message.content, mode: 'regenerate' })} aria-label="Edytuj i wygeneruj odpowiedź ponownie" title="Edytuj i wygeneruj odpowiedź ponownie"><RefreshCw /></Button>
                 {commonActions(message.id, message.content)}
               </div>
             </>}
           </div>
           : <div key={message.id} className="group">
-            <p className="whitespace-pre-wrap break-words leading-relaxed">{message.content}</p>
-            <div className={actionsClass}>
+            {editing?.messageId === message.id ? messageEditor(message) : <p className="whitespace-pre-wrap break-words leading-relaxed">{message.content}</p>}
+            {editing?.messageId !== message.id && <div className={actionsClass}>
+              <Button type="button" variant="ghost" size="icon-sm" disabled={isWorking} onClick={() => setEditing({ messageId: message.id, content: message.content, mode: 'update' })} aria-label="Edytuj odpowiedź AI" title="Edytuj odpowiedź AI"><Pencil /></Button>
               <Button type="button" variant="ghost" size="icon-sm" onClick={() => void saveAsNote(message.content)} aria-label="Zapisz jako notatkę" title="Zapisz jako notatkę"><NotebookPen /></Button>
               <Button type="button" variant="ghost" size="icon-sm" disabled={isWorking} onClick={() => regenerateAnswer(message.id)} aria-label="Wygeneruj ponownie" title="Wygeneruj odpowiedź ponownie"><RefreshCw /></Button>
               {commonActions(message.id, message.content)}
               {message.prompt_tokens != null && <span className="self-center pl-1 text-xs tabular-nums" title="Dokładna liczba tokenów podana przez model: prompt → odpowiedź">{message.prompt_tokens.toLocaleString('pl-PL')} → {(message.completion_tokens ?? 0).toLocaleString('pl-PL')} tok.</span>}
-            </div>
+            </div>}
           </div>)}
         {busy?.kind === 'edit' && <div className="flex justify-end"><p className={bubbleClass}>{busy.content}</p></div>}
         {pending && <div className="flex justify-end"><p className={bubbleClass}>{pending}</p></div>}
-        {(pending || busy) && <p className="animate-pulse text-muted-foreground">AI pisze…</p>}
+        {(pending || (busy && busy.kind !== 'update')) && <p className="animate-pulse text-muted-foreground">AI pisze…</p>}
         <div ref={bottomRef} />
       </div>
     </div>
@@ -354,7 +381,7 @@ function ContextInfo({ conversation }: { conversation: ChatConversation }) {
   const { context } = conversation
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<'text' | 'edit'>('text')
-  const { data: text, isFetching, error } = useGetResourceContextQuery(toResourceRequest(context), { skip: !open || mode !== 'text', refetchOnMountOrArgChange: true })
+  const { data: text, isFetching, error } = useGetConversationContextQuery(conversation.id, { skip: !open || mode !== 'text', refetchOnMountOrArgChange: true })
   return <div className="border text-xs">
     <button type="button" className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left" onClick={() => setOpen((value) => !value)} aria-expanded={open}>
       {open ? <ChevronDown className="size-4 shrink-0" /> : <ChevronRight className="size-4 shrink-0" />}

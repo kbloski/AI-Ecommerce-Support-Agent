@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Path, Query
+from fastapi import APIRouter, HTTPException, Path, Query
 from fastapi.responses import Response
 
 from application.services.resource_context_service import compose_resource_context
@@ -7,6 +7,11 @@ from domain.enums.context_type import ContextType
 
 
 router = APIRouter()
+
+
+def _reject_notes(include: list[ContextType], note_ids: list[int]) -> None:
+    if ContextType.NOTE in include or note_ids:
+        raise HTTPException(422, "Notes are available in chat context, not in resource export")
 
 
 @router.get("/resources/{resource_type}/{resource_id}/context")
@@ -21,9 +26,15 @@ def preview_resource_context(
     ugc_creative_ids: list[int] = Query(default=[]),
     ad_copy_ids: list[int] = Query(default=[]),
     brand_style_ids: list[int] = Query(default=[]),
+    analysis_ids: list[int] = Query(default=[]),
+    checklist_ids: list[int] = Query(default=[]),
+    page_blueprint_ids: list[int] = Query(default=[]),
+    page_ids: list[int] = Query(default=[]),
+    note_ids: list[int] = Query(default=[]),
     include_offer_facts: bool = Query(default=True),
     include_additional_contexts: bool = Query(default=True),
 ):
+    _reject_notes(include, note_ids)
     content = compose_resource_context(
         Container(), resource_type, resource_id, include, marketing_angle_ids,
         include_offer_facts, include_additional_contexts, order_by_path=True,
@@ -33,6 +44,11 @@ def preview_resource_context(
         ad_copy_ids=ad_copy_ids,
         target_audience_ids=target_audience_ids,
         brand_style_ids=brand_style_ids,
+        analysis_ids=analysis_ids,
+        checklist_ids=checklist_ids,
+        page_blueprint_ids=page_blueprint_ids,
+        page_ids=page_ids,
+        note_ids=note_ids,
     )
     return Response(content=content, media_type="text/plain; charset=utf-8")
 
@@ -49,9 +65,15 @@ def download_resource_context(
     ugc_creative_ids: list[int] = Query(default=[]),
     ad_copy_ids: list[int] = Query(default=[]),
     brand_style_ids: list[int] = Query(default=[]),
+    analysis_ids: list[int] = Query(default=[]),
+    checklist_ids: list[int] = Query(default=[]),
+    page_blueprint_ids: list[int] = Query(default=[]),
+    page_ids: list[int] = Query(default=[]),
+    note_ids: list[int] = Query(default=[]),
     include_offer_facts: bool = Query(default=True),
     include_additional_contexts: bool = Query(default=True),
 ):
+    _reject_notes(include, note_ids)
     content = compose_resource_context(
         Container(), resource_type, resource_id, include, marketing_angle_ids,
         include_offer_facts, include_additional_contexts, order_by_path=True,
@@ -61,6 +83,11 @@ def download_resource_context(
         ad_copy_ids=ad_copy_ids,
         target_audience_ids=target_audience_ids,
         brand_style_ids=brand_style_ids,
+        analysis_ids=analysis_ids,
+        checklist_ids=checklist_ids,
+        page_blueprint_ids=page_blueprint_ids,
+        page_ids=page_ids,
+        note_ids=note_ids,
     )
     return Response(
         content=content,

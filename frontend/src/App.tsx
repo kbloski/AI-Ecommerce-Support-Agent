@@ -20,6 +20,8 @@ import AnalysisDetailPage from '@/pages/AnalysisDetailPage'
 import ChecklistDetailPage from '@/pages/ChecklistDetailPage'
 import UgcCreativeDetailPage from '@/pages/UgcCreativeDetailPage'
 import PageBlueprintDetailPage from '@/pages/PageBlueprintDetailPage'
+import PagesPage from '@/pages/PagesPage'
+import PageDetailPage from '@/pages/PageDetailPage'
 import SettingsPage from '@/pages/SettingsPage'
 import { OfferProfileTargetAudiencesPage } from '@/pages/EntityRelationPages'
 import {
@@ -63,7 +65,9 @@ function App() {
         <Route path="/offer-profiles/:offerProfileId/ugc-creatives" element={<OfferProfileUgcCreativesPage />} />
         <Route path="/ugc-creatives/:id" element={<UgcCreativeDetailPage />} />
         <Route path="/offer-profiles/:offerProfileId/page-blueprints" element={<OfferProfilePageBlueprintsPage />} />
+        <Route path="/offer-profiles/:offerProfileId/pages" element={<PagesPage />} />
         <Route path="/page-blueprints/:id" element={<PageBlueprintDetailPage />} />
+        <Route path="/pages/:id" element={<PageDetailPage />} />
         <Route path="/settings" element={<Navigate to="/settings/general" replace />} />
         <Route path="/settings/general" element={<SettingsPage />} />
       </Route>

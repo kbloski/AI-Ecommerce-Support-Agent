@@ -60,6 +60,8 @@ from infrastructure.repositories.page_blueprint_repository import PageBlueprintR
 from infrastructure.repositories.page_blueprint_sections_repository import PageBlueprintSectionsRepository
 from application.assemblers.page_blueprint_assembler import PageBlueprintAssembler
 from application.services.page_blueprint_service import PageBlueprintService
+from infrastructure.repositories.page_repository import PageRepository
+from application.services.page_service import PageService
 from infrastructure.repositories.app_properties_repository import AppPropertiesRepository
 from infrastructure.repositories.ad_copy_structures_repository import AdCopyStructuresRepository
 
@@ -187,6 +189,8 @@ class Container(containers.DeclarativeContainer):
         logger=logger,
         db=db
     )
+
+    page_repository = providers.Singleton(PageRepository, logger=logger, db=db)
 
 
     # --------------------------
@@ -380,6 +384,15 @@ class Container(containers.DeclarativeContainer):
         offer_profile_assembler=offer_profile_assembler
     )
 
+    page_blueprint_service = providers.Singleton(
+        PageBlueprintService,
+        logger=logger,
+        page_blueprint_repository=page_blueprint_repository,
+        page_blueprint_assembler=page_blueprint_assembler,
+    )
+
+    page_service = providers.Singleton(PageService, page_repository=page_repository)
+
     llm_context_composer = providers.Factory(
         LlmContextComposer,
         offer_profile_service=offer_profile_service,
@@ -392,6 +405,14 @@ class Container(containers.DeclarativeContainer):
         ad_creative_plans_repository=ad_creative_plans_repository,
         ugc_creative_repository=ugc_creative_repository,
         brand_styles_repository=brand_styles_repository,
+        analysis_repository=analysis_repository,
+        offer_profile_analysis_repository=offer_profile_analysis_repository,
+        analysis_assembler=analysis_assembler,
+        checklist_repository=checklist_repository,
+        checklist_assembler=checklist_assembler,
+        page_blueprint_service=page_blueprint_service,
+        page_service=page_service,
+        notes_repository=notes_repository,
     )
 
     ugc_creative_service = providers.Singleton(
@@ -399,11 +420,4 @@ class Container(containers.DeclarativeContainer):
         logger=logger,
         ugc_creative_repository=ugc_creative_repository,
         ugc_creative_assembler=ugc_creative_assembler
-    )
-
-    page_blueprint_service = providers.Singleton(
-        PageBlueprintService,
-        logger=logger,
-        page_blueprint_repository=page_blueprint_repository,
-        page_blueprint_assembler=page_blueprint_assembler,
     )

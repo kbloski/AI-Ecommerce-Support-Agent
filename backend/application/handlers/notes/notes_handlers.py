@@ -29,6 +29,13 @@ def update_note_handler(note_id, title, content):
     return note_to_dict(repository.update(note))
 
 
+def set_note_pinned_handler(note_id, is_pinned):
+    repository = Container().notes_repository()
+    note = _note(repository, note_id)
+    note.is_pinned = is_pinned
+    return note_to_dict(repository.update(note))
+
+
 def delete_note_handler(note_id):
     repository = Container().notes_repository()
     repository.delete(_note(repository, note_id))

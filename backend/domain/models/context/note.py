@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, Column, DateTime, Integer, String, Text
+from sqlalchemy import BigInteger, Boolean, Column, DateTime, Integer, String, Text, false
 from sqlalchemy.sql import func
 
 from domain.enums.table_name import TableName
@@ -11,5 +11,6 @@ class Note(Base):
     id = Column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
     title = Column(String(255), nullable=False)
     content = Column(Text, nullable=False)
+    is_pinned = Column(Boolean, nullable=False, default=False, server_default=false())
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

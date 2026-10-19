@@ -5,6 +5,11 @@ import { useListCreativePlansQuery } from '@/features/creativePlans/creativePlan
 import { useListUgcCreativesForOfferProfileQuery } from '@/features/ugcCreatives/ugcCreativesApi'
 import { useListAdCopiesQuery } from '@/features/adCopy/adCopyApi'
 import { useListBrandStylesQuery } from '@/features/brandStyles/brandStylesApi'
+import { useListAnalysisForOfferProfileQuery } from '@/features/analysis/analysisApi'
+import { useListChecklistsForOfferProfileQuery } from '@/features/checklists/checklistsApi'
+import { useListPageBlueprintForOfferProfileQuery } from '@/features/pageBlueprint/pageBlueprintApi'
+import { useListPagesQuery } from '@/features/pages/pagesApi'
+import { useListNotesQuery } from '@/features/notes/notesApi'
 import { useListProfileContextsQuery } from '@/features/additionalContexts/additionalContextsApi'
 import { useListOfferFactsQuery } from '@/features/offerFacts/offerFactsApi'
 import { useGetOfferProfileQuery } from '@/features/offerProfiles/offerProfilesApi'
@@ -18,8 +23,9 @@ const resourceNames: Record<ResourceContextType, string> = {
   offer_profile: 'Profil oferty',
 }
 
-function SelectableResourceSection({ number, title, items, selectedIds, onChange, itemLabel = (item) => String(item.name ?? `#${item.id}`) }: {
+function SelectableResourceSection({ number, title, items, selectedIds, onChange, itemLabel = (item) => String(item.name ?? `#${item.id}`), prefix = '3.' }: {
   number: number
+  prefix?: string
   title: string
   items?: Entity[]
   selectedIds: number[]
@@ -28,7 +34,7 @@ function SelectableResourceSection({ number, title, items, selectedIds, onChange
 }) {
   if (!items?.length) return null
   return <div className="mt-3 rounded-md border bg-muted/30 p-3">
-    <p className="font-medium">3.{number}. {title}</p>
+    <p className="font-medium">{prefix}{number}. {title}</p>
     <p className="mt-1 text-muted-foreground">Powiązany zasób · {items.length} dostępnych</p>
     <label className="mt-2 flex items-center gap-2"><input type="checkbox" checked={selectedIds.length > 0} onChange={(event) => onChange(event.target.checked ? items.map((item) => Number(item.id)) : [])} />Dołącz do kontekstu</label>
     {selectedIds.length > 0 && <div className="mt-2 space-y-2 border-l pl-3">{items.map((item) => {
@@ -39,9 +45,10 @@ function SelectableResourceSection({ number, title, items, selectedIds, onChange
 }
 
 /** Choose which related data goes into the context of a resource; shared by the export and the chat. */
-export function ResourceContextSelector({ initialRequest, onChange }: {
+export function ResourceContextSelector({ initialRequest, onChange, allowNotes = true }: {
   initialRequest: ResourceContextRequest
   onChange: (request: ResourceContextRequest, isReady: boolean) => void
+  allowNotes?: boolean
 }) {
   const isProfile = initialRequest.type === 'offer_profile'
   const hasEarlierResource = initialRequest.type !== 'offer_raw'
@@ -56,12 +63,22 @@ export function ResourceContextSelector({ initialRequest, onChange }: {
   const [ugcIds, setUgcIds] = useState<number[]>(initialRequest.ugcCreativeIds ?? [])
   const [copyIds, setCopyIds] = useState<number[]>(initialRequest.adCopyIds ?? [])
   const [brandStyleIds, setBrandStyleIds] = useState<number[]>(initialRequest.brandStyleIds ?? [])
+  const [analysisIds, setAnalysisIds] = useState<number[]>(initialRequest.analysisIds ?? [])
+  const [checklistIds, setChecklistIds] = useState<number[]>(initialRequest.checklistIds ?? [])
+  const [pageBlueprintIds, setPageBlueprintIds] = useState<number[]>(initialRequest.pageBlueprintIds ?? [])
+  const [pageIds, setPageIds] = useState<number[]>(initialRequest.pageIds ?? [])
+  const [noteIds, setNoteIds] = useState<number[]>(allowNotes ? initialRequest.noteIds ?? [] : [])
   const { data: angles, isLoading: anglesLoading, error: anglesError } = useListMarketingAnglesQuery(initialRequest.id, { skip: !isProfile })
   const { data: concepts, isLoading: conceptsLoading, error: conceptsError } = useListAdConceptsQuery(initialRequest.id, { skip: !isProfile })
   const { data: plans, isLoading: plansLoading, error: plansError } = useListCreativePlansQuery(initialRequest.id, { skip: !isProfile })
   const { data: ugcCreatives, isLoading: ugcLoading, error: ugcError } = useListUgcCreativesForOfferProfileQuery(initialRequest.id, { skip: !isProfile })
   const { data: adCopies, isLoading: copiesLoading, error: copiesError } = useListAdCopiesQuery(initialRequest.id, { skip: !isProfile })
   const { data: brandStyles, isLoading: brandStylesLoading, error: brandStylesError } = useListBrandStylesQuery(initialRequest.id, { skip: !isProfile })
+  const { data: analyses, isLoading: analysesLoading, error: analysesError } = useListAnalysisForOfferProfileQuery(initialRequest.id, { skip: !isProfile })
+  const { data: checklists, isLoading: checklistsLoading, error: checklistsError } = useListChecklistsForOfferProfileQuery(initialRequest.id, { skip: !isProfile })
+  const { data: pageBlueprints, isLoading: blueprintsLoading, error: blueprintsError } = useListPageBlueprintForOfferProfileQuery(initialRequest.id, { skip: !isProfile })
+  const { data: pages, isLoading: pagesLoading, error: pagesError } = useListPagesQuery(initialRequest.id, { skip: !isProfile })
+  const { data: notes, isLoading: notesLoading, error: notesError } = useListNotesQuery(undefined, { skip: !allowNotes })
   const { data: additionalContexts, error: additionalContextsError } = useListProfileContextsQuery(initialRequest.id, { skip: !isProfile })
   const { data: audiences, isLoading: audiencesLoading, error: audiencesError } = useListAllTargetAudiencesForOfferProfileQuery(initialRequest.id, { skip: !isProfile })
   const { data: profile } = useGetOfferProfileQuery(initialRequest.id, { skip: !isProfile })
@@ -87,7 +104,11 @@ export function ResourceContextSelector({ initialRequest, onChange }: {
   const ugcSectionNumber = planSectionNumber + Number((plans?.length ?? 0) > 0)
   const copySectionNumber = ugcSectionNumber + Number((ugcCreatives?.length ?? 0) > 0)
   const brandStyleSectionNumber = copySectionNumber + Number((adCopies?.length ?? 0) > 0)
-  const isReady = !(isProfile && (audiencesLoading || anglesLoading || conceptsLoading || plansLoading || ugcLoading || copiesLoading || brandStylesLoading))
+  const analysisSectionNumber = brandStyleSectionNumber + Number((brandStyles?.length ?? 0) > 0)
+  const checklistSectionNumber = analysisSectionNumber + Number((analyses?.length ?? 0) > 0)
+  const blueprintSectionNumber = checklistSectionNumber + Number((checklists?.length ?? 0) > 0)
+  const pageSectionNumber = blueprintSectionNumber + Number((pageBlueprints?.length ?? 0) > 0)
+  const isReady = (!allowNotes || !notesLoading) && !(isProfile && (audiencesLoading || anglesLoading || conceptsLoading || plansLoading || ugcLoading || copiesLoading || brandStylesLoading || analysesLoading || checklistsLoading || blueprintsLoading || pagesLoading))
 
   const include: ResourceContextInclude[] = []
   if (isProfile && includeSource) include.push('offer_source')
@@ -99,6 +120,11 @@ export function ResourceContextSelector({ initialRequest, onChange }: {
   if (isProfile && ugcIds.length) include.push('ugc_creative')
   if (isProfile && copyIds.length) include.push('ad_copy')
   if (isProfile && brandStyleIds.length) include.push('brand_style')
+  if (isProfile && analysisIds.length) include.push('analysis')
+  if (isProfile && checklistIds.length) include.push('checklist')
+  if (isProfile && pageBlueprintIds.length) include.push('page_blueprint')
+  if (isProfile && pageIds.length) include.push('page')
+  if (allowNotes && noteIds.length) include.push('note')
   const request: ResourceContextRequest = {
     type: initialRequest.type, id: initialRequest.id, include,
     targetAudienceIds: isProfile ? audienceIds : [],
@@ -108,6 +134,11 @@ export function ResourceContextSelector({ initialRequest, onChange }: {
     ugcCreativeIds: isProfile ? ugcIds : [],
     adCopyIds: isProfile ? copyIds : [],
     brandStyleIds: isProfile ? brandStyleIds : [],
+    analysisIds: isProfile ? analysisIds : [],
+    checklistIds: isProfile ? checklistIds : [],
+    pageBlueprintIds: isProfile ? pageBlueprintIds : [],
+    pageIds: isProfile ? pageIds : [],
+    noteIds: allowNotes ? noteIds : [],
     includeOfferFacts: hasEarlierResource && (!isProfile || includeSource) && includeFacts,
     includeAdditionalContexts: isProfile ? includeAdditionalContexts : undefined,
   }
@@ -175,7 +206,15 @@ export function ResourceContextSelector({ initialRequest, onChange }: {
       <SelectableResourceSection number={copySectionNumber} title="Ad copy" items={adCopies} selectedIds={copyIds} onChange={setCopyIds} />
       <SelectableResourceSection number={brandStyleSectionNumber} title="Brand styles" items={brandStyles} selectedIds={brandStyleIds} onChange={setBrandStyleIds}
         itemLabel={(item) => `${String(item.font_family)} · ${String(item.brand_color)} na ${String(item.background_color)}`} />
-      {(additionalContextsError || audiencesError || anglesError || conceptsError || plansError || ugcError || copiesError || brandStylesError) && <p role="alert" className="mt-2 text-destructive">Nie udało się pobrać części powiązanych danych profilu.</p>}
+      <SelectableResourceSection number={analysisSectionNumber} title="Analizy" items={analyses} selectedIds={analysisIds} onChange={setAnalysisIds} />
+      <SelectableResourceSection number={checklistSectionNumber} title="Checklisty" items={checklists} selectedIds={checklistIds} onChange={setChecklistIds} />
+      <SelectableResourceSection number={blueprintSectionNumber} title="Page blueprints" items={pageBlueprints} selectedIds={pageBlueprintIds} onChange={setPageBlueprintIds} />
+      <SelectableResourceSection number={pageSectionNumber} title="Pages" items={pages} selectedIds={pageIds} onChange={setPageIds} />
+      {(additionalContextsError || audiencesError || anglesError || conceptsError || plansError || ugcError || copiesError || brandStylesError || analysesError || checklistsError || blueprintsError || pagesError) && <p role="alert" className="mt-2 text-destructive">Nie udało się pobrać części powiązanych danych profilu.</p>}
     </div>}
+    {allowNotes && <SelectableResourceSection prefix="" number={isProfile ? 4 : hasEarlierResource ? 3 : 2} title="Notatki" items={notes} selectedIds={noteIds} onChange={setNoteIds}
+      itemLabel={(item) => String(item.title ?? `#${item.id}`)} />
+    }
+    {allowNotes && notesError && <p role="alert" className="text-destructive">Nie udało się pobrać notatek.</p>}
   </div>
 }

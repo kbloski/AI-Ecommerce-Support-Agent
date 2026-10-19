@@ -74,6 +74,25 @@ class ChatTests(unittest.TestCase):
         self.assertEqual([m["content"] for m in loaded["messages"]], ["Jakie są zalety produktu?", "Odpowiedź asystenta"])
         self.assertEqual([item["id"] for item in self.client.get("/chat/conversations").json()], [conversation["id"]])
 
+    def test_new_resource_selections_are_saved_and_used_in_chat(self):
+        context = {"type": "offer_profile", "id": 1,
+                   "include": ["analysis", "checklist", "page_blueprint", "page", "note"],
+                   "analysis_ids": [11], "checklist_ids": [12], "page_blueprint_ids": [13],
+                   "page_ids": [14], "note_ids": [15]}
+        response = self.client.post("/chat/conversations", json={"context": context})
+        self.assertEqual(response.status_code, 201, response.text)
+        conversation = response.json()
+        self.assertEqual(conversation["context"]["page_blueprint_ids"], [13])
+        self.assertEqual(conversation["context"]["note_ids"], [15])
+        self.assertEqual([selection.include_ids for selection in self.compose_calls[-1]["include"]],
+                         [(11,), (12,), (13,), (14,), (15,)])
+        loaded = self.client.get(f"/chat/conversations/{conversation['id']}").json()
+        self.assertEqual(loaded["context"]["page_ids"], [14])
+        preview = self.client.get(f"/chat/conversations/{conversation['id']}/context")
+        self.assertEqual(preview.status_code, 200, preview.text)
+        self.assertTrue(preview.headers["content-type"].startswith("text/plain"))
+        self.assertEqual(self.compose_calls[-1]["include"][-1].include_ids, (15,))
+
     def test_prompt_contains_fresh_context_and_full_history(self):
         conversation = self.create(title="Moja rozmowa")
         for content in ("Pierwsze pytanie", "Drugie pytanie"):
@@ -165,6 +184,21 @@ class ChatTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200, response.text)
         self.assertEqual(self.contents(conversation_id), ["Zmienione pytanie", "Odpowiedź na zmienione"])
         self.assertEqual(self.client.post(f"/chat/messages/{messages[1]['id']}/edit", json={"content": "x"}).status_code, 422)
+
+    def test_update_specific_user_and_generated_messages_in_place(self):
+        conversation_id, messages = self.conversation_with_two_turns()
+        original_ids = [message["id"] for message in messages]
+        for message, content in ((messages[0], "Poprawione pytanie"), (messages[1], "Poprawiona odpowiedź AI")):
+            response = self.client.post(f"/chat/messages/{message['id']}/update", json={"content": content})
+            self.assertEqual(response.status_code, 200, response.text)
+        loaded = self.client.get(f"/chat/conversations/{conversation_id}").json()["messages"]
+        self.assertEqual([message["id"] for message in loaded], original_ids)
+        self.assertEqual([message["content"] for message in loaded],
+                         ["Poprawione pytanie", "Poprawiona odpowiedź AI", "Pytanie 2", "Odpowiedź 2"])
+        self.assertIsNone(loaded[1]["prompt_tokens"])
+        self.assertIsNone(loaded[1]["completion_tokens"])
+        self.assertEqual(self.client.post(f"/chat/messages/{messages[1]['id']}/update", json={"content": " "}).status_code, 422)
+        self.assertEqual(self.client.post("/chat/messages/999/update", json={"content": "x"}).status_code, 404)
 
     def test_failed_regenerate_or_edit_keeps_everything(self):
         conversation_id, messages = self.conversation_with_two_turns()

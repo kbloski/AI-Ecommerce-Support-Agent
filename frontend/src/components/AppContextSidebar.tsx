@@ -21,6 +21,7 @@ import { useGetAnalysisQuery, useListAnalysisForOfferProfileQuery } from '@/feat
 import { useGetChecklistQuery, useListChecklistsForOfferProfileQuery } from '@/features/checklists/checklistsApi'
 import { useListUgcCreativesForOfferProfileQuery } from '@/features/ugcCreatives/ugcCreativesApi'
 import { useListPageBlueprintForOfferProfileQuery } from '@/features/pageBlueprint/pageBlueprintApi'
+import { useListPagesQuery } from '@/features/pages/pagesApi'
 
 const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
   cn(
@@ -93,6 +94,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     { pattern: '/offer-profiles/:offerProfileId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },
     { pattern: '/offer-profiles/:id/*', current: 'Profil oferty', attached: [['additional-contexts', 'Dodatkowe informacje']], process: [], resources: [] },
     { pattern: '/page-blueprints/:id/*', current: 'Page blueprints', process: [], resources: [] },
+    { pattern: '/pages/:id/*', current: 'Page', process: [], resources: [] },
     { pattern: '/ugc-creatives/:id/*', current: 'UGC creative', process: [], resources: [] },
   ] as const
   // Prefer the most specific route, otherwise an analysis URL would match OfferSource first.
@@ -124,6 +126,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   const checklists = useListChecklistsForOfferProfileQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const ugcCreatives = useListUgcCreativesForOfferProfileQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const pageBlueprints = useListPageBlueprintForOfferProfileQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
+  const pages = useListPagesQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const offerFacts = useListOfferFactsQuery({ offerSourceId: currentEntityId, pageSize: 1 }, { skip: !isOfferSourceSection })
   const offerProfiles = useListOfferProfilesQuery(currentEntityId, { skip: !isOfferSourceSection })
   const profileContexts = useListProfileContextsQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
@@ -144,6 +147,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     items: (checklist.data?.checklist_items as unknown[] | undefined)?.length,
     'ugc-creatives': ugcCreatives.data?.length,
     'page-blueprints': pageBlueprints.data?.length,
+    pages: pages.data?.length,
   }
   const attentionCounts: Record<string, number | undefined> = {
     'target-audiences': unreviewedTargetAudiences.data?.total_items,
@@ -274,7 +278,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
         {section.config.current === 'Profil oferty' && (
           <SidebarGroup title="Pages" className="mt-6">
             <div className="ml-2 border-l pl-2">
-              <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">Landing pages</span>
+              {navigationLink('pages', 'Pages', `${detailPath}/pages`)}
               {navigationLink('page-blueprints', 'Page blueprints', `${detailPath}/page-blueprints`)}
             </div>
           </SidebarGroup>

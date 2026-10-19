@@ -44,6 +44,8 @@ from domain.models.analysis.offer_profile_analysis import OfferProfileAnalysis
 from domain.models.creative.ugc_creative import UgcCreative
 from domain.models.page.page_blueprint import PageBlueprint
 from domain.models.page.page_blueprint_section import PageBlueprintSection
+from domain.models.page.page import Page
+from domain.models.page.page_section import PageSection
 
 # App settings
 from domain.models.settings.app_properties import AppProperties

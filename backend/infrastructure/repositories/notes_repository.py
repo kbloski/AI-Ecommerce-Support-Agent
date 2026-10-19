@@ -6,7 +6,7 @@ class NotesRepository:
         self.db = db
 
     def list_all(self):
-        return self.db.query(Note).order_by(Note.title, Note.id).all()
+        return self.db.query(Note).order_by(Note.is_pinned.desc(), Note.title, Note.id).all()
 
     def get_by_id(self, note_id):
         return self.db.get(Note, note_id)

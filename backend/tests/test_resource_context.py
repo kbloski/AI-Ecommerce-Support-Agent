@@ -116,6 +116,77 @@ class ResourceContextTests(unittest.TestCase):
             self.assertEqual(self.client.get("/resources/offer_source/3/context", params=[("include", kind), (key, "11")]).status_code, 422)
             self.assertEqual(self.client.get("/resources/offer_profile/3/context", params=[("include", kind), (key, "11"), (key, "11")]).status_code, 422)
 
+    def test_new_resources_are_available_for_preview_and_download(self):
+        params = [
+            ("include", "analysis"), ("analysis_ids", "11"),
+            ("include", "checklist"), ("checklist_ids", "12"),
+            ("include", "page_blueprint"), ("page_blueprint_ids", "13"),
+            ("include", "page"), ("page_ids", "14"),
+        ]
+        for suffix in ("", "/download"):
+            response = self.client.get(f"/resources/offer_profile/3/context{suffix}", params=params)
+            self.assertEqual(response.status_code, 200, response.text)
+            self.assertEqual(self.calls[-1][1], [
+                ContextSelection(ContextType.ANALYSIS, include_ids=(11,)),
+                ContextSelection(ContextType.CHECKLIST, include_ids=(12,)),
+                ContextSelection(ContextType.PAGE_BLUEPRINT, include_ids=(13,)),
+                ContextSelection(ContextType.PAGE, include_ids=(14,)),
+            ])
+        for kind, key in (("analysis", "analysis_ids"), ("checklist", "checklist_ids"),
+                          ("page_blueprint", "page_blueprint_ids"), ("page", "page_ids")):
+            self.assertEqual(self.client.get("/resources/offer_profile/3/context", params={"include": kind}).status_code, 422)
+            self.assertEqual(self.client.get("/resources/offer_profile/3/context", params={key: 11}).status_code, 422)
+            self.assertEqual(self.client.get("/resources/offer_profile/3/context", params=[("include", kind), (key, "11"), (key, "11")]).status_code, 422)
+        self.assertEqual(self.client.get("/resources/offer_source/3/context", params=[("include", "page"), ("page_ids", "14")]).status_code, 422)
+
+    def test_notes_are_rejected_by_export_endpoints(self):
+        for suffix in ("", "/download"):
+            for params in ({"include": "note"}, {"note_ids": 15},
+                           [("include", "note"), ("note_ids", "15")]):
+                response = self.client.get(f"/resources/offer_profile/3/context{suffix}", params=params)
+                self.assertEqual(response.status_code, 422, response.text)
+
+    def test_composer_exports_selected_documents_and_checks_profile_ownership(self):
+        def repo(items):
+            return SimpleNamespace(get_by_id=lambda item_id: items.get(item_id))
+
+        analysis = SimpleNamespace(id=11)
+        checklist = SimpleNamespace(id=12, offer_profile_id=3, name="Tasks")
+        blueprint = SimpleNamespace(offer_profile_id=3, to_content_dict=lambda: {"name": "Blueprint"})
+        composer = LlmContextComposer(
+            SimpleNamespace(build_llm_context=lambda id: f"profile:{id}"), None, None, None, None,
+            analysis_repository=repo({11: analysis}),
+            offer_profile_analysis_repository=SimpleNamespace(find_relation=lambda profile_id, item_id: object() if profile_id == 3 and item_id == 11 else None),
+            analysis_assembler=SimpleNamespace(assemble_dto=lambda dto: SimpleNamespace(to_content_dict=lambda: {"question": "Why?"})),
+            checklist_repository=repo({12: checklist}),
+            checklist_assembler=SimpleNamespace(assemble_dto=lambda dto: SimpleNamespace(to_content_dict=lambda: {"name": "Tasks"})),
+            page_blueprint_service=SimpleNamespace(get_page_blueprint_by_id=lambda id: blueprint),
+            page_service=SimpleNamespace(get_by_id=lambda id: {"id": id, "offer_profile_id": 3, "name": "Page", "sections": []}),
+            notes_repository=repo({15: SimpleNamespace(title="Note", content="Useful text")}),
+        )
+        selections = [ContextSelection(kind, include_ids=(item_id,)) for kind, item_id in (
+            (ContextType.ANALYSIS, 11), (ContextType.CHECKLIST, 12), (ContextType.PAGE_BLUEPRINT, 13),
+            (ContextType.PAGE, 14), (ContextType.NOTE, 15))]
+        result = composer.compose(ContextRef(ContextType.OFFER_PROFILE, 3), selections, order_by_path=True)
+        for expected in ("<analyses>", "<checklists>", "<page_blueprints>", "<pages>", "<notes>", "Useful text"):
+            self.assertIn(expected, result)
+        with self.assertRaises(ValueError):
+            composer.compose(ContextRef(ContextType.OFFER_PROFILE, 4), [ContextSelection(ContextType.CHECKLIST, include_ids=(12,))])
+        with self.assertRaises(ValueError):
+            composer.compose(ContextRef(ContextType.OFFER_PROFILE, 4), [ContextSelection(ContextType.ANALYSIS, include_ids=(11,))])
+        with self.assertRaises(LookupError):
+            composer.compose(ContextRef(ContextType.OFFER_PROFILE, 3), [ContextSelection(ContextType.NOTE, include_ids=(99,))])
+
+    def test_notes_can_accompany_raw_offer_context(self):
+        composer = LlmContextComposer(
+            None, None, SimpleNamespace(build_llm_context=lambda id: f"raw:{id}"), None, None,
+            notes_repository=SimpleNamespace(get_by_id=lambda id: SimpleNamespace(title="Reminder", content="Check facts")),
+        )
+        result = composer.compose(ContextRef(ContextType.OFFER_RAW, 4),
+                                  [ContextSelection(ContextType.NOTE, include_ids=(7,))])
+        self.assertIn("raw:4", result)
+        self.assertIn("Check facts", result)
+
     def test_fact_selection_is_used_for_preview_and_download(self):
         for suffix in ("", "/download"):
             response = self.client.get(

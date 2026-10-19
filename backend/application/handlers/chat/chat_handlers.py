@@ -46,6 +46,11 @@ def compose_context(container, context):
         ad_copy_ids=context.ad_copy_ids,
         target_audience_ids=context.target_audience_ids,
         brand_style_ids=context.brand_style_ids,
+        analysis_ids=context.analysis_ids,
+        checklist_ids=context.checklist_ids,
+        page_blueprint_ids=context.page_blueprint_ids,
+        page_ids=context.page_ids,
+        note_ids=context.note_ids,
     )
 
 
@@ -121,6 +126,12 @@ def get_conversation_handler(id):
     repo = Container().chat_repository()
     conversation = require_conversation(repo, id)
     return chat_conversation_to_dict(conversation, repo.messages_for(id))
+
+
+def get_conversation_context_handler(id):
+    container = Container()
+    conversation = require_conversation(container.chat_repository(), id)
+    return compose_context(container, ChatContext.model_validate(conversation.context))
 
 
 def create_conversation_handler(request):
@@ -265,7 +276,9 @@ def update_message_handler(message_id, request):
     conversation = require_conversation(repo, message.conversation_id)
     if message.content != request.content:
         message.content = request.content
-        # The model did not produce the edited text, so its answer token count no longer applies.
+        # The model did not produce the edited text, so its token counts no longer apply.
+        message.prompt_tokens = None
         message.completion_tokens = None
-        repo.save(message)
+        touch(conversation)
+        repo.save(conversation, message)
     return conversation_messages_response(repo, conversation)

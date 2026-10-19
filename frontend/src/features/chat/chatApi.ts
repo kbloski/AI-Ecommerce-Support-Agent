@@ -13,6 +13,11 @@ export interface ChatContext {
   ugc_creative_ids: number[]
   ad_copy_ids: number[]
   brand_style_ids: number[]
+  analysis_ids: number[]
+  checklist_ids: number[]
+  page_blueprint_ids: number[]
+  page_ids: number[]
+  note_ids: number[]
   include_offer_facts: boolean
   include_additional_contexts: boolean
 }
@@ -60,6 +65,11 @@ export const toChatContext =(request: ResourceContextRequest): ChatContext => ({
   ugc_creative_ids: request.ugcCreativeIds ?? [],
   ad_copy_ids: request.adCopyIds ?? [],
   brand_style_ids: request.brandStyleIds ?? [],
+  analysis_ids: request.analysisIds ?? [],
+  checklist_ids: request.checklistIds ?? [],
+  page_blueprint_ids: request.pageBlueprintIds ?? [],
+  page_ids: request.pageIds ?? [],
+  note_ids: request.noteIds ?? [],
   include_offer_facts: request.includeOfferFacts ?? true,
   include_additional_contexts: request.includeAdditionalContexts ?? true,
 })
@@ -75,6 +85,11 @@ export const toResourceRequest = (context: ChatContext): ResourceContextRequest 
   ugcCreativeIds: context.ugc_creative_ids,
   adCopyIds: context.ad_copy_ids,
   brandStyleIds: context.brand_style_ids ?? [],
+  analysisIds: context.analysis_ids ?? [],
+  checklistIds: context.checklist_ids ?? [],
+  pageBlueprintIds: context.page_blueprint_ids ?? [],
+  pageIds: context.page_ids ?? [],
+  noteIds: context.note_ids ?? [],
   includeOfferFacts: context.include_offer_facts,
   includeAdditionalContexts: context.include_additional_contexts,
 })
@@ -91,6 +106,10 @@ export const chatApi = api.injectEndpoints({
     }),
     getConversationUsage: builder.query<ChatUsage, number>({
       query: (id) => `/chat/conversations/${id}/usage`,
+      providesTags: (_result, _error, id) => [itemTag('ChatConversation', id)],
+    }),
+    getConversationContext: builder.query<string, number>({
+      query: (id) => ({ url: `/chat/conversations/${id}/context`, responseHandler: (response: Response) => response.text() }),
       providesTags: (_result, _error, id) => [itemTag('ChatConversation', id)],
     }),
     createConversation: builder.mutation<ChatConversation, { title?: string; context: ChatContext }>({
@@ -125,11 +144,16 @@ export const chatApi = api.injectEndpoints({
       query: ({ messageId, content }) => ({ url: `/chat/messages/${messageId}/edit`, method: 'POST', body: { content } }),
       invalidatesTags: (_result, _error, { conversationId }) => ['ChatConversation', itemTag('ChatConversation', conversationId)],
     }),
+    updateMessage: builder.mutation<ChatConversation, { messageId: number; conversationId: number; content: string }>({
+      query: ({ messageId, content }) => ({ url: `/chat/messages/${messageId}/update`, method: 'POST', body: { content } }),
+      invalidatesTags: (_result, _error, { conversationId }) => ['ChatConversation', itemTag('ChatConversation', conversationId)],
+    }),
   }),
 })
 
 export const {
-  useListConversationsQuery, useGetConversationQuery, useGetConversationUsageQuery, useCreateConversationMutation,
+  useListConversationsQuery, useGetConversationQuery, useGetConversationUsageQuery, useGetConversationContextQuery, useCreateConversationMutation,
   useUpdateConversationMutation, useDeleteConversationMutation, useSendMessageMutation,
   useForkFromMessageMutation, useDeleteMessageMutation, useRegenerateMessageMutation, useEditMessageMutation,
+  useUpdateMessageMutation,
 } = chatApi

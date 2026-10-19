@@ -22,6 +22,11 @@ def compose_resource_context(
     ad_copy_ids: list[int] | None = None,
     target_audience_ids: list[int] | None = None,
     brand_style_ids: list[int] | None = None,
+    analysis_ids: list[int] | None = None,
+    checklist_ids: list[int] | None = None,
+    page_blueprint_ids: list[int] | None = None,
+    page_ids: list[int] | None = None,
+    note_ids: list[int] | None = None,
 ) -> str:
     ad_concept_ids = ad_concept_ids or []
     selected_ids = {
@@ -31,6 +36,11 @@ def compose_resource_context(
         ContextType.UGC_CREATIVE: ugc_creative_ids or [],
         ContextType.AD_COPY: ad_copy_ids or [],
         ContextType.BRAND_STYLE: brand_style_ids or [],
+        ContextType.ANALYSIS: analysis_ids or [],
+        ContextType.CHECKLIST: checklist_ids or [],
+        ContextType.PAGE_BLUEPRINT: page_blueprint_ids or [],
+        ContextType.PAGE: page_ids or [],
+        ContextType.NOTE: note_ids or [],
     }
     target_audience_ids = target_audience_ids or []
     if target_audience_ids:
@@ -39,12 +49,12 @@ def compose_resource_context(
         raise HTTPException(422, f"Unsupported resource type: {resource_type.value}")
     if len(include) != len(set(include)):
         raise HTTPException(422, "Context selections must be unique")
-    if resource_type == ContextType.OFFER_RAW and (include or any(selected_ids.values())):
+    if resource_type == ContextType.OFFER_RAW and (set(include) - {ContextType.NOTE} or any(ids for kind, ids in selected_ids.items() if kind != ContextType.NOTE)):
         raise HTTPException(422, "Raw offer does not support related context")
     if resource_type != ContextType.OFFER_PROFILE and not include_additional_contexts:
         raise HTTPException(422, "Additional contexts can only be selected for an offer profile")
-    if resource_type == ContextType.OFFER_SOURCE and (set(include) - {ContextType.OFFER_RAW} or any(selected_ids.values())):
-        raise HTTPException(422, "Offer source can only include its raw offer")
+    if resource_type == ContextType.OFFER_SOURCE and (set(include) - {ContextType.OFFER_RAW, ContextType.NOTE} or any(ids for kind, ids in selected_ids.items() if kind != ContextType.NOTE)):
+        raise HTTPException(422, "Offer source can only include its raw offer and notes")
     for kind, ids in selected_ids.items():
         if ids and kind not in include:
             raise HTTPException(422, f"Select {kind.value} in include")

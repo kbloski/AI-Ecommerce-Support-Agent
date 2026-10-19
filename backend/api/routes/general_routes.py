@@ -1,4 +1,7 @@
 from application.dtos.page_blueprint.page_blueprint_fields import PageBlueprintFields, GeneratePageBlueprintRequest
+from application.dtos.page.page_fields import GeneratePageRequest
+from application.handlers.page.generate_page_handler import generate_page_handler
+from application.handlers.page.get_pages_handler import get_pages_handler, get_page_handler, delete_page_handler
 from typing import Any, Dict, List, Literal, Optional
 
 from fastapi import APIRouter, HTTPException, Query
@@ -465,6 +468,26 @@ def register_general_routes(router: APIRouter):
     @router.get("/page-blueprints/{id}/delete")
     def delete_page_blueprint_route_legacy_get(id: int):
         raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /page-blueprints/{id}/delete")
+
+
+    # -----------------------------
+    # Pages
+    # -----------------------------
+    @router.post("/offer-profiles/{offer_profile_id}/pages/generate")
+    def offer_profile_page_generate(offer_profile_id: int, payload: GeneratePageRequest):
+        return generate_page_handler(offer_profile_id, payload)
+
+    @router.get("/offer-profiles/{offer_profile_id}/pages")
+    def offer_profile_pages(offer_profile_id: int):
+        return get_pages_handler(offer_profile_id)
+
+    @router.get("/pages/{id}")
+    def page_detail(id: int):
+        return get_page_handler(id)
+
+    @router.delete("/pages/{id}/delete")
+    def delete_page_route(id: int):
+        return delete_page_handler(id)
 
 
     # -----------------------------

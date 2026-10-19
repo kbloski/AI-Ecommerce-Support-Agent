@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from 'react'
+import { Pin } from 'lucide-react'
 import { EntityList } from '@/components/EntityList'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import {
-  useCreateNoteMutation, useDeleteNoteMutation, useListNotesQuery, useUpdateNoteMutation,
+  useCreateNoteMutation, useDeleteNoteMutation, useListNotesQuery, useSetNotePinnedMutation, useUpdateNoteMutation,
   type Note,
 } from './notesApi'
 
@@ -17,6 +19,7 @@ export function NotesList() {
   const [create, createState] = useCreateNoteMutation()
   const [update, updateState] = useUpdateNoteMutation()
   const [remove, removeState] = useDeleteNoteMutation()
+  const [setPinned, pinState] = useSetNotePinnedMutation()
   const [actionError, setActionError] = useState('')
   const [dialogError, setDialogError] = useState('')
 
@@ -43,6 +46,12 @@ export function NotesList() {
     catch { setActionError('Nie udało się usunąć notatki.') }
   }
 
+  const togglePinned = async (note: Note) => {
+    setActionError('')
+    try { await setPinned({ id: note.id, is_pinned: !note.is_pinned }).unwrap() }
+    catch { setActionError('Nie udało się zmienić przypięcia notatki.') }
+  }
+
   return <>
     <EntityList
       title="Notatki"
@@ -52,8 +61,15 @@ export function NotesList() {
       totalItems={notes?.length}
       itemLabel={(item) => String(item.title)}
       itemDescription={(item) => String(item.content)}
+      itemBadges={(item) => (item as Note).is_pinned ? <Badge variant="default">Przypięta</Badge> : null}
       onEdit={(item) => openDialog({ mode: 'edit', note: item as Note })}
-      itemActions={(item) => <Button variant="ghost" size="sm" disabled={removeState.isLoading} onClick={() => void deleteNote(item as Note)}>Usuń</Button>}
+      itemActions={(item) => <>
+        <Button variant="ghost" size="sm" disabled={pinState.isLoading} aria-pressed={(item as Note).is_pinned}
+          onClick={() => void togglePinned(item as Note)}>
+          <Pin className="size-4" />{(item as Note).is_pinned ? 'Odepnij' : 'Przypnij'}
+        </Button>
+        <Button variant="ghost" size="sm" disabled={removeState.isLoading} onClick={() => void deleteNote(item as Note)}>Usuń</Button>
+      </>}
       emptyTitle="Brak notatek"
       emptyDescription="Dodaj pierwszą notatkę."
       contentBeforeList={actionError ? <p role="alert" className="text-sm text-destructive">{actionError}</p> : undefined}

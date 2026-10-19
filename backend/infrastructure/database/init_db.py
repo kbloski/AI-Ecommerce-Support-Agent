@@ -28,6 +28,7 @@ def init_db():
     _add_marketing_angle_fields()
     _migrate_ad_concept_modes_and_angles()
     _drop_offer_profile_notes()
+    _add_note_pinned_column()
     _add_chat_message_token_columns()
     from .creative_plans_migration import migrate_creative_plan_content
     migrate_creative_plan_content(engine)
@@ -369,6 +370,15 @@ def _drop_offer_profile_notes():
     with engine.begin() as conn:
         if "offer_profile_notes" in inspect(conn).get_table_names():
             conn.execute(text('DROP TABLE "offer_profile_notes"'))
+
+
+def _add_note_pinned_column():
+    with engine.begin() as conn:
+        if "notes" not in inspect(conn).get_table_names():
+            return
+        columns = {column["name"] for column in inspect(conn).get_columns("notes")}
+        if "is_pinned" not in columns:
+            conn.execute(text('ALTER TABLE "notes" ADD COLUMN is_pinned BOOLEAN NOT NULL DEFAULT 0'))
 
 
 def _rename_offer_source_summary_column():

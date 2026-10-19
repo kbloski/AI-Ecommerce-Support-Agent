@@ -29,4 +29,6 @@ class TableName(str, Enum):
     UGC_CREATIVES = "ugc_creatives"
     PAGE_BLUEPRINT = "page_blueprint"
     PAGE_BLUEPRINT_SECTIONS = "page_blueprint_sections"
+    PAGES = "pages"
+    PAGE_SECTIONS = "page_sections"
     APP_PROPERTIES = "app_properties"

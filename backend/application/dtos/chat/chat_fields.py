@@ -17,6 +17,11 @@ class ChatContext(BaseModel):
     ugc_creative_ids: list[int] = []
     ad_copy_ids: list[int] = []
     brand_style_ids: list[int] = []
+    analysis_ids: list[int] = []
+    checklist_ids: list[int] = []
+    page_blueprint_ids: list[int] = []
+    page_ids: list[int] = []
+    note_ids: list[int] = []
     include_offer_facts: bool = True
     include_additional_contexts: bool = True
 

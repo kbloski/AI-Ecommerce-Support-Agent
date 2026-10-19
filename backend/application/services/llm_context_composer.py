@@ -9,6 +9,8 @@ from application.services.offer_source_service import OfferSourceService
 from application.services.target_audience_service import TargetAudienceService
 from application.services.marketing_angle_service import MarketingAngleService
 from application.services.ad_concept_service import AdConceptService
+from application.mappers.analysis_mapper import AnalysisMapper
+from application.mappers.checklist_mapper import ChecklistMapper
 
 
 @dataclass(frozen=True)
@@ -37,6 +39,14 @@ class LlmContextComposer:
         ad_creative_plans_repository=None,
         ugc_creative_repository=None,
         brand_styles_repository=None,
+        analysis_repository=None,
+        offer_profile_analysis_repository=None,
+        analysis_assembler=None,
+        checklist_repository=None,
+        checklist_assembler=None,
+        page_blueprint_service=None,
+        page_service=None,
+        notes_repository=None,
     ):
         self.offer_profile_service = offer_profile_service
         self.target_audience_service = target_audience_service
@@ -50,6 +60,61 @@ class LlmContextComposer:
             ContextType.AD_COPY: ad_copies_repository,
             ContextType.BRAND_STYLE: brand_styles_repository,
         }
+        self.analysis_repository = analysis_repository
+        self.offer_profile_analysis_repository = offer_profile_analysis_repository
+        self.analysis_assembler = analysis_assembler
+        self.checklist_repository = checklist_repository
+        self.checklist_assembler = checklist_assembler
+        self.page_blueprint_service = page_blueprint_service
+        self.page_service = page_service
+        self.notes_repository = notes_repository
+
+    def _selected_documents(self, kind: ContextType, profile_id: int | None, ids: tuple[int, ...] | None) -> str:
+        if not ids or len(ids) != len(set(ids)):
+            raise ValueError(f"Select unique {kind.value} IDs")
+        items = []
+        for item_id in ids:
+            if kind == ContextType.NOTE:
+                item = self.notes_repository.get_by_id(item_id)
+                if item is None:
+                    raise LookupError(f"note {item_id} not found")
+                items.append({"title": item.title, "content": item.content})
+                continue
+            if kind == ContextType.ANALYSIS:
+                item = self.analysis_repository.get_by_id(item_id)
+                if item is None:
+                    raise LookupError(f"analysis {item_id} not found")
+                if self.offer_profile_analysis_repository.find_relation(profile_id, item_id) is None:
+                    raise ValueError("Selected analysis must belong to this offer profile")
+                dto = self.analysis_assembler.assemble_dto(AnalysisMapper.to_dto(item))
+                items.append(dto.to_content_dict())
+                continue
+            if kind == ContextType.CHECKLIST:
+                item = self.checklist_repository.get_by_id(item_id)
+                if item is None:
+                    raise LookupError(f"checklist {item_id} not found")
+                if item.offer_profile_id != profile_id:
+                    raise ValueError("Selected checklist must belong to this offer profile")
+                dto = self.checklist_assembler.assemble_dto(ChecklistMapper.to_dto(item))
+                items.append(dto.to_content_dict())
+                continue
+            if kind == ContextType.PAGE_BLUEPRINT:
+                dto = self.page_blueprint_service.get_page_blueprint_by_id(item_id)
+                if dto.offer_profile_id != profile_id:
+                    raise ValueError("Selected page blueprint must belong to this offer profile")
+                items.append(dto.to_content_dict())
+                continue
+            if kind == ContextType.PAGE:
+                page = self.page_service.get_by_id(item_id)
+                if page["offer_profile_id"] != profile_id:
+                    raise ValueError("Selected page must belong to this offer profile")
+                items.append({key: ([{field: value for field, value in section.items() if field != "id"}
+                                      for section in page["sections"]] if key == "sections" else value)
+                              for key, value in page.items() if key not in {"id", "offer_profile_id", "is_favorite"}})
+        tag = {ContextType.ANALYSIS: "analyses", ContextType.CHECKLIST: "checklists",
+               ContextType.PAGE_BLUEPRINT: "page_blueprints", ContextType.PAGE: "pages",
+               ContextType.NOTE: "notes"}[kind]
+        return build_llm_section(tag, json.dumps(items, ensure_ascii=False, indent=2))
 
     def _selected_profile_items(self, kind: ContextType, profile_id: int, ids: tuple[int, ...] | None) -> str:
         if not ids or len(ids) != len(set(ids)):
@@ -94,21 +159,27 @@ class LlmContextComposer:
             return self.offer_source_service.build_llm_context(source_id, include_related=False)
 
         if root.type == ContextType.OFFER_RAW:
-            if include:
-                raise ValueError("Offer raw context does not support related selections")
-            return self.offer_service.build_llm_context(root.id)
-        if root.type == ContextType.OFFER_SOURCE:
-            sections = [source_context(root.id)]
+            sections = [self.offer_service.build_llm_context(root.id)]
             for selection in include or []:
-                if selection.type != ContextType.OFFER_RAW or selection.include_ids is not None or selection.exclude_ids:
-                    raise ValueError("Offer source context only supports its raw offer without ID filters")
-                source = self.offer_source_service.get_offer_source_details_by_id(root.id)
-                sections.append(self.offer_service.build_llm_context(source.offer_id))
-            if len(include or []) > 1:
+                if selection.type != ContextType.NOTE or selection.exclude_ids:
+                    raise ValueError("Offer raw context only supports notes")
+                sections.append(self._selected_documents(ContextType.NOTE, None, selection.include_ids))
+            return "\n\n".join(sections)
+        if root.type == ContextType.OFFER_SOURCE:
+            sections = [(ContextType.OFFER_SOURCE, source_context(root.id))]
+            for selection in include or []:
+                if selection.type == ContextType.NOTE and not selection.exclude_ids:
+                    sections.append((ContextType.NOTE, self._selected_documents(ContextType.NOTE, None, selection.include_ids)))
+                elif selection.type == ContextType.OFFER_RAW and selection.include_ids is None and not selection.exclude_ids:
+                    source = self.offer_source_service.get_offer_source_details_by_id(root.id)
+                    sections.append((ContextType.OFFER_RAW, self.offer_service.build_llm_context(source.offer_id)))
+                else:
+                    raise ValueError("Offer source context only supports its raw offer and notes")
+            if len({selection.type for selection in include or []}) != len(include or []):
                 raise ValueError("Duplicate offer raw selection")
             if order_by_path:
-                sections.reverse()
-            return "\n\n".join(sections)
+                sections.sort(key=lambda item: {ContextType.OFFER_RAW: 0, ContextType.OFFER_SOURCE: 1, ContextType.NOTE: 2}[item[0]])
+            return "\n\n".join(content for _, content in sections)
         if root.type != ContextType.OFFER_PROFILE:
             raise ValueError(f"Unsupported context root: {root.type}")
 
@@ -152,6 +223,11 @@ class LlmContextComposer:
                     raise ValueError(f"{selection.type.value} does not support exclusions")
                 sections.append((selection.type, self._selected_profile_items(selection.type, root.id, selection.include_ids)))
                 continue
+            if selection.type in (ContextType.ANALYSIS, ContextType.CHECKLIST, ContextType.PAGE_BLUEPRINT, ContextType.PAGE, ContextType.NOTE):
+                if selection.exclude_ids:
+                    raise ValueError(f"{selection.type.value} does not support exclusions")
+                sections.append((selection.type, self._selected_documents(selection.type, root.id, selection.include_ids)))
+                continue
             if selection.type != ContextType.TARGET_AUDIENCES:
                 raise ValueError(f"Unsupported context selection: {selection.type}")
             try:
@@ -177,6 +253,11 @@ class LlmContextComposer:
                 ContextType.UGC_CREATIVE: 7,
                 ContextType.AD_COPY: 8,
                 ContextType.BRAND_STYLE: 9,
+                ContextType.ANALYSIS: 10,
+                ContextType.CHECKLIST: 11,
+                ContextType.PAGE_BLUEPRINT: 12,
+                ContextType.PAGE: 13,
+                ContextType.NOTE: 14,
             }
             sections.sort(key=lambda item: order[item[0]])
         return "\n\n".join(content for _, content in sections)

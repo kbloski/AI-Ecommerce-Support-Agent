@@ -7,6 +7,7 @@ import { useSidePanel } from '@/lib/sidePanel'
 import { ResourceExportPanel } from '@/features/resources/ResourceExportPanel'
 import { ChatPanel } from '@/features/chat/ChatPanel'
 import { ChatPanelTitle } from '@/features/chat/ChatPanelTitle'
+import { CreateNotePanel } from '@/features/notes/CreateNotePanel'
 
 interface SidebarSection {
   label: string
@@ -53,7 +54,7 @@ export function AppSidebar({ variant = 'sidebar', collapsed = false, onToggle, o
     <aside
       className={cn(
         variant === 'sidebar'
-          ? 'relative hidden shrink-0 flex-col border-r py-4 transition-[width] duration-200 ease-in-out md:flex'
+          ? 'relative z-20 hidden shrink-0 flex-col border-r py-4 transition-[width] duration-200 ease-in-out md:flex'
           : 'flex w-full flex-col p-2',
         variant === 'sidebar' && (isCollapsed ? 'w-16 px-2' : 'w-56 px-4'),
       )}
@@ -74,7 +75,34 @@ export function AppSidebar({ variant = 'sidebar', collapsed = false, onToggle, o
         )}
       </div>
       <nav className="space-y-1">
-        {SECTIONS.map(({ label, to, icon: Icon, panel, panelTitle }) => to ? (
+        {SECTIONS.map(({ label, to, icon: Icon, panel, panelTitle }) => label === 'Notatki' ? (
+          <div key={label} className="group relative">
+            <NavLink
+              to="/notes"
+              className={(state) => cn(navLinkClassName(state), isCollapsed && 'justify-center px-0')}
+              aria-label={isCollapsed ? label : undefined}
+              title={isCollapsed ? label : undefined}
+              onClick={onAction}
+            >
+              <Icon className="size-4 shrink-0" />
+              {!isCollapsed && label}
+            </NavLink>
+            <div className={cn(
+              'rounded-md border bg-popover p-1 text-popover-foreground shadow-md',
+              variant === 'sidebar'
+                ? 'absolute top-0 left-full z-30 hidden w-44 group-hover:block group-focus-within:block'
+                : 'mt-1 ml-6',
+            )}>
+              <button type="button" className="block w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent focus-visible:bg-accent"
+                onClick={() => { onAction?.(); openPanel({ title: 'Dodaj notatkę', content: <CreateNotePanel /> }) }}>
+                Dodaj notatkę
+              </button>
+              <NavLink to="/notes" className="block rounded-sm px-2 py-1.5 text-sm hover:bg-accent focus-visible:bg-accent" onClick={onAction}>
+                Zobacz wszystkie
+              </NavLink>
+            </div>
+          </div>
+        ) : to ? (
           <NavLink
             key={label}
             to={to}
