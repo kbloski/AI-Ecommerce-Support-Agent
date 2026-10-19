@@ -6,7 +6,6 @@ import GeneratedAdsPage from '@/pages/GeneratedAdsPage'
 import NotesPage from '@/pages/NotesPage'
 import OfferDetailPage from '@/pages/OfferDetailPage'
 import OfferProfileAdditionalContextsPage from '@/pages/OfferProfileAdditionalContextsPage'
-import OfferProfileNotesPage from '@/pages/OfferProfileNotesPage'
 import OfferProfileDetailPage from '@/pages/OfferProfileDetailPage'
 import OfferProfilesPage from '@/pages/OfferProfilesPage'
 import ExistingOfferProfilesPage from '@/pages/ExistingOfferProfilesPage'
@@ -63,7 +62,6 @@ function App() {
         <Route path="/offer-profiles/:offerProfileId/ad-copy" element={<AdCopyPage />} />
         <Route path="/offer-profiles/:offerProfileId/creative-plans" element={<CreativePlansPage />} />
         <Route path="/offer-profiles/:offerProfileId/additional-contexts" element={<OfferProfileAdditionalContextsPage />} />
-        <Route path="/offer-profiles/:offerProfileId/notes" element={<OfferProfileNotesPage />} />
         <Route path="/offer-profiles/:offerProfileId" element={<OfferProfileDetailPage />} />
         <Route path="/offer-sources/:offerSourceId/profiles" element={<OfferProfilesPage />} />
         <Route path="/offer-sources/:offerSourceId/facts" element={<OfferFactsPage />} />

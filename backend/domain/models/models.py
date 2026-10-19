@@ -67,4 +67,3 @@ from domain.models.settings.app_properties import AppProperties
 from domain.models.context.additional_context import AdditionalContext
 from domain.models.offer.offer_profile_additional_context import OfferProfileAdditionalContext
 from domain.models.context.note import Note
-from domain.models.offer.offer_profile_note import OfferProfileNote

@@ -32,6 +32,7 @@ def init_db():
     _add_target_audience_desires()
     _add_marketing_angle_fields()
     _migrate_ad_concept_modes_and_angles()
+    _drop_offer_profile_notes()
     from .creative_plans_migration import migrate_creative_plan_content
     migrate_creative_plan_content(engine)
     from .ugc_profile_migration import migrate_ugc_to_offer_profiles
@@ -676,6 +677,13 @@ def _remove_obsolete_offer_source_columns():
         for column in ("category", "value_proposition"):
             if column in columns:
                 conn.execute(text(f'ALTER TABLE "offer_sources" DROP COLUMN "{column}"'))
+
+
+def _drop_offer_profile_notes():
+    """Notes are no longer linked to offer profiles; the notes themselves are kept."""
+    with engine.begin() as conn:
+        if "offer_profile_notes" in inspect(conn).get_table_names():
+            conn.execute(text('DROP TABLE "offer_profile_notes"'))
 
 
 def _rename_offer_source_summary_column():

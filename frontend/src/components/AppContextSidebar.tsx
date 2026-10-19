@@ -9,7 +9,6 @@ import { useSidePanel } from '@/lib/sidePanel'
 import { usePersistentBoolean } from '@/lib/usePersistentBoolean'
 import type { useResizablePanel } from '@/lib/useResizablePanel'
 import { useListProfileContextsQuery } from '@/features/additionalContexts/additionalContextsApi'
-import { useListProfileNotesQuery } from '@/features/notes/notesApi'
 import { useListOfferProfilesQuery } from '@/features/offerProfiles/offerProfilesApi'
 import { useListOfferFactsQuery } from '@/features/offerFacts/offerFactsApi'
 import { useListOfferSourceForOfferQuery } from '@/features/offerSources/offerSourceApi'
@@ -107,7 +106,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     { pattern: '/offer-sources/:id/*', current: 'Offer source', entityType: 'offer_source', attached: [['facts', 'Fakty o produkcie']], process: [['profiles', 'Profile oferty'], ['brand-marketing', 'Marketing marki (przestarzały)']], resources: [] },
     { pattern: '/offer-profiles/:offerProfileId/analysis/:id/*', current: 'Analiza', process: [], resources: [['questions', 'Pytania']] },
     { pattern: '/offer-profiles/:offerProfileId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },
-    { pattern: '/offer-profiles/:id/*', current: 'Profil oferty', attached: [['additional-contexts', 'Dodatkowe informacje'], ['notes', 'Notatki']], process: [], resources: [] },
+    { pattern: '/offer-profiles/:id/*', current: 'Profil oferty', attached: [['additional-contexts', 'Dodatkowe informacje']], process: [], resources: [] },
     { pattern: '/brand-marketing/:id/*', current: 'Brand marketing', entityType: 'brand_marketing', process: [['marketing-strategies', 'Marketing strategy']], resources: [] },
     { pattern: '/marketing-strategy/:id/*', current: 'Marketing strategy', entityType: 'marketing_strategy', process: [['offer-strategies', 'Offer strategy']], resources: [] },
     { pattern: '/offer-strategy/:id/*', current: 'Offer strategy', entityType: 'offer_strategy', process: [['message-strategies', 'Message strategy']], resources: [] },
@@ -170,7 +169,6 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   const offerFacts = useListOfferFactsQuery({ offerSourceId: currentEntityId, pageSize: 1 }, { skip: !isOfferSourceSection })
   const offerProfiles = useListOfferProfilesQuery(currentEntityId, { skip: !isOfferSourceSection })
   const profileContexts = useListProfileContextsQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
-  const profileNotes = useListProfileNotesQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const resourceCounts: Record<string, number | undefined> = {
     'offer-sources': offerSources.data?.length,
     'target-audiences': targetAudiences.data?.total_items,
@@ -179,7 +177,6 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     'ad-copy': adCopies.data?.length,
     'creative-plans': creativePlans.data?.length,
     'additional-contexts': profileContexts.data?.length,
-    notes: profileNotes.data?.length,
     profiles: offerProfiles.data?.length,
     facts: offerFacts.data?.total_items,
     'brand-marketing': brandMarketing.data?.length,
