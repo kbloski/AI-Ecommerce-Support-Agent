@@ -20,6 +20,7 @@ def preview_resource_context(
     creative_plan_ids: list[int] = Query(default=[]),
     ugc_creative_ids: list[int] = Query(default=[]),
     ad_copy_ids: list[int] = Query(default=[]),
+    brand_style_ids: list[int] = Query(default=[]),
     include_offer_facts: bool = Query(default=True),
     include_additional_contexts: bool = Query(default=True),
 ):
@@ -31,6 +32,7 @@ def preview_resource_context(
         ugc_creative_ids=ugc_creative_ids,
         ad_copy_ids=ad_copy_ids,
         target_audience_ids=target_audience_ids,
+        brand_style_ids=brand_style_ids,
     )
     return Response(content=content, media_type="text/plain; charset=utf-8")
 
@@ -46,6 +48,7 @@ def download_resource_context(
     creative_plan_ids: list[int] = Query(default=[]),
     ugc_creative_ids: list[int] = Query(default=[]),
     ad_copy_ids: list[int] = Query(default=[]),
+    brand_style_ids: list[int] = Query(default=[]),
     include_offer_facts: bool = Query(default=True),
     include_additional_contexts: bool = Query(default=True),
 ):
@@ -57,6 +60,7 @@ def download_resource_context(
         ugc_creative_ids=ugc_creative_ids,
         ad_copy_ids=ad_copy_ids,
         target_audience_ids=target_audience_ids,
+        brand_style_ids=brand_style_ids,
     )
     return Response(
         content=content,

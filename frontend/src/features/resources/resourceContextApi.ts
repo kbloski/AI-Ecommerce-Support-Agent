@@ -1,7 +1,7 @@
 import { api } from '@/store/api'
 
 export type ResourceContextType = 'offer_raw' | 'offer_source' | 'offer_profile'
-export type ResourceContextInclude = 'offer_raw' | 'offer_source' | 'target_audiences' | 'marketing_angle' | 'ad_concept' | 'creative_plan' | 'ugc_creative' | 'ad_copy'
+export type ResourceContextInclude = 'offer_raw' | 'offer_source' | 'target_audiences' | 'marketing_angle' | 'ad_concept' | 'creative_plan' | 'ugc_creative' | 'ad_copy' | 'brand_style'
 
 export interface ResourceContextRequest {
   type: ResourceContextType
@@ -13,11 +13,12 @@ export interface ResourceContextRequest {
   creativePlanIds?: number[]
   ugcCreativeIds?: number[]
   adCopyIds?: number[]
+  brandStyleIds?: number[]
   includeOfferFacts?: boolean
   includeAdditionalContexts?: boolean
 }
 
-function contextUrl({ type, id, include = [], targetAudienceIds = [], marketingAngleIds = [], adConceptIds = [], creativePlanIds = [], ugcCreativeIds = [], adCopyIds = [], includeOfferFacts, includeAdditionalContexts }: ResourceContextRequest, download = false) {
+function contextUrl({ type, id, include = [], targetAudienceIds = [], marketingAngleIds = [], adConceptIds = [], creativePlanIds = [], ugcCreativeIds = [], adCopyIds = [], brandStyleIds = [], includeOfferFacts, includeAdditionalContexts }: ResourceContextRequest, download = false) {
   const params = new URLSearchParams()
   include.forEach((item) => params.append('include', item))
   targetAudienceIds.forEach((audienceId) => params.append('target_audience_ids', String(audienceId)))
@@ -26,6 +27,7 @@ function contextUrl({ type, id, include = [], targetAudienceIds = [], marketingA
   creativePlanIds.forEach((planId) => params.append('creative_plan_ids', String(planId)))
   ugcCreativeIds.forEach((creativeId) => params.append('ugc_creative_ids', String(creativeId)))
   adCopyIds.forEach((copyId) => params.append('ad_copy_ids', String(copyId)))
+  brandStyleIds.forEach((styleId) => params.append('brand_style_ids', String(styleId)))
   if (includeOfferFacts !== undefined) params.set('include_offer_facts', String(includeOfferFacts))
   if (includeAdditionalContexts !== undefined) params.set('include_additional_contexts', String(includeAdditionalContexts))
   const query = params.toString()
@@ -43,4 +45,4 @@ export const resourceContextApi = api.injectEndpoints({
   }),
 })
 
-export const { useLazyGetResourceContextQuery, useLazyDownloadResourceContextQuery } = resourceContextApi
+export const { useGetResourceContextQuery, useLazyGetResourceContextQuery, useLazyDownloadResourceContextQuery } = resourceContextApi

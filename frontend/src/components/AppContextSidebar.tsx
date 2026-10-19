@@ -1,6 +1,6 @@
 import { useId, type ReactNode } from 'react'
-import { ArrowLeft, ChevronDown, CodeXml } from 'lucide-react'
-import { Link, NavLink, matchPath, useLocation, useNavigate } from 'react-router-dom'
+import { ChevronDown, CodeXml } from 'lucide-react'
+import { Link, NavLink, matchPath, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { DownloadPipelinePathButton } from '@/components/DownloadPipelinePathButton'
 import { Button } from '@/components/ui/button'
@@ -99,9 +99,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     </aside>
   )
   const { pathname } = useLocation()
-  const navigate = useNavigate()
   const { contextualPanel, openPanel } = useSidePanel()
-  const showBackButton = pathname !== '/' && pathname !== '/offers'
   const sections = [
     { pattern: '/offers/:id/*', current: 'Oferta', entityType: 'offer', process: [['offer-sources', 'Źródła oferty']], resources: [] },
     { pattern: '/offer-sources/:id/*', current: 'Offer source', entityType: 'offer_source', attached: [['facts', 'Fakty o produkcie']], process: [['profiles', 'Profile oferty'], ['brand-marketing', 'Marketing marki (przestarzały)']], resources: [] },
@@ -258,16 +256,6 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
 
     return renderSidebar(
       <>
-        {showBackButton && (
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="mb-5 flex items-center gap-2 rounded-md px-2 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-          >
-            <ArrowLeft className="size-4" />
-            Wstecz
-          </button>
-        )}
         <Link
           to={currentPath}
           className="mb-6 block bg-muted/35 px-3 py-3 transition-colors hover:bg-muted/65"
@@ -381,16 +369,5 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     )
   }
 
-  return renderSidebar(
-    showBackButton ? (
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 rounded-md px-2 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-        >
-          <ArrowLeft className="size-4" />
-          Wstecz
-        </button>
-      ) : null,
-  )
+  return renderSidebar(null)
 }

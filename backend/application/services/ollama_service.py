@@ -11,6 +11,14 @@ def _with_fallback(value, fallback):
     return value if value is not None else fallback
 
 
+def _response_field(response, name):
+    """Read a field from the Ollama response object or dict; None when the server omits it."""
+    value = getattr(response, name, None)
+    if value is None and isinstance(response, dict):
+        value = response.get(name)
+    return value
+
+
 class OllamaService:
     def __init__(self, logger: Logger, settings: Settings, app_properties_repository: AppPropertiesRepository):
         self.logger = logger
@@ -57,7 +65,9 @@ class OllamaService:
 
             return LlmOllamaMessage(
                 role=OllamaMessageRole.ASSISTANT,
-                content=response["message"]["content"]
+                content=response["message"]["content"],
+                prompt_tokens=_response_field(response, "prompt_eval_count"),
+                completion_tokens=_response_field(response, "eval_count"),
             )
 
         except Exception as e:

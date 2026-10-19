@@ -39,15 +39,18 @@ function DialogOverlay({
 
 function DialogContent({
   className,
+  overlayProps,
   children,
   showCloseButton = true,
   ...props
 }: DialogPrimitive.Popup.Props & {
   showCloseButton?: boolean
+  /** e.g. forceRender for a dialog opened inside another dialog or sheet, whose backdrop is skipped by default */
+  overlayProps?: DialogPrimitive.Backdrop.Props
 }) {
   return (
     <DialogPortal>
-      <DialogOverlay />
+      <DialogOverlay {...overlayProps} />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(

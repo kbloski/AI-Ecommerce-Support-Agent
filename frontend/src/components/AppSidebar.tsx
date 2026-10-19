@@ -1,24 +1,31 @@
+import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, Download, LayoutDashboard, Megaphone, NotebookPen, Package, Settings, UsersRound } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Download, Layers, LayoutDashboard, MessageSquare, NotebookPen, Package, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useSidePanel } from '@/lib/sidePanel'
 import { ResourceExportPanel } from '@/features/resources/ResourceExportPanel'
+import { ChatPanel } from '@/features/chat/ChatPanel'
+import { ChatPanelTitle } from '@/features/chat/ChatPanelTitle'
 
 interface SidebarSection {
   label: string
   to?: string
   icon: typeof Package
+  /** Opens this content in the side panel instead of navigating. */
+  panel?: () => ReactNode
+  /** Custom side panel title; the label is used by default. */
+  panelTitle?: () => ReactNode
 }
 
 /** Top-level sections the user has access to. Add new entries here as new root-level sections appear. */
 const SECTIONS: SidebarSection[] = [
   { label: 'Dashboard', to: '/', icon: LayoutDashboard },
   { label: 'Tworzenie oferty', to: '/offers', icon: Package },
-  { label: 'Istniejące profile ofert', to: '/offer-profiles', icon: UsersRound },
+  { label: 'Profile ofert', to: '/offer-profiles', icon: Layers },
   { label: 'Notatki', to: '/notes', icon: NotebookPen },
-  { label: 'Export zasobów', icon: Download },
-  { label: 'Wygenerowane reklamy', to: '/generated-ads', icon: Megaphone },
+  { label: 'Chat', icon: MessageSquare, panel: () => <ChatPanel />, panelTitle: () => <ChatPanelTitle /> },
+  { label: 'Export zasobów', icon: Download, panel: () => <ResourceExportPanel /> },
   { label: 'Ustawienia', to: '/settings', icon: Settings },
 ]
 
@@ -67,7 +74,7 @@ export function AppSidebar({ variant = 'sidebar', collapsed = false, onToggle, o
         )}
       </div>
       <nav className="space-y-1">
-        {SECTIONS.map(({ label, to, icon: Icon }) => to ? (
+        {SECTIONS.map(({ label, to, icon: Icon, panel, panelTitle }) => to ? (
           <NavLink
             key={label}
             to={to}
@@ -82,7 +89,7 @@ export function AppSidebar({ variant = 'sidebar', collapsed = false, onToggle, o
         ) : (
           <button key={label} type="button" className={cn(navLinkClassName({ isActive: false }), 'w-full text-left', isCollapsed && 'justify-center px-0')}
             aria-label={isCollapsed ? label : undefined} title={isCollapsed ? label : undefined}
-            onClick={() => { onAction?.(); openPanel({ title: 'Export zasobów', content: <ResourceExportPanel /> }) }}>
+            onClick={() => { onAction?.(); if (panel) openPanel({ title: panelTitle?.() ?? label, content: panel() }) }}>
             <Icon className="size-4 shrink-0" />
             {!isCollapsed && label}
           </button>

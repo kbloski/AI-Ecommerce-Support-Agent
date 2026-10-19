@@ -7,7 +7,7 @@ export default function ExistingOfferProfilesPage() {
   return (
     <div className="w-full p-6 lg:p-10">
       <EntityList
-        title="Istniejące profile ofert"
+        title="Profile ofert"
         items={data}
         isLoading={isLoading}
         error={error}

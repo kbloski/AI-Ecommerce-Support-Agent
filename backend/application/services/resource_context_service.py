@@ -21,6 +21,7 @@ def compose_resource_context(
     ugc_creative_ids: list[int] | None = None,
     ad_copy_ids: list[int] | None = None,
     target_audience_ids: list[int] | None = None,
+    brand_style_ids: list[int] | None = None,
 ) -> str:
     ad_concept_ids = ad_concept_ids or []
     selected_ids = {
@@ -29,6 +30,7 @@ def compose_resource_context(
         ContextType.CREATIVE_PLAN: creative_plan_ids or [],
         ContextType.UGC_CREATIVE: ugc_creative_ids or [],
         ContextType.AD_COPY: ad_copy_ids or [],
+        ContextType.BRAND_STYLE: brand_style_ids or [],
     }
     target_audience_ids = target_audience_ids or []
     if target_audience_ids:

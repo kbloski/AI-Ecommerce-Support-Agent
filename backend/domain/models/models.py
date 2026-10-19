@@ -20,6 +20,10 @@ from domain.models.ad.ad_concept_marketing_angle import AdConceptMarketingAngle
 # Brand
 from domain.models.brand.brand_style import BrandStyle
 
+# Chat
+from domain.models.chat.chat_conversation import ChatConversation
+from domain.models.chat.chat_message import ChatMessage
+
 # OfferSource
 from domain.models.offer.offer_source import OfferSource
 

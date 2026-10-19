@@ -8,7 +8,12 @@ from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
+from fastapi import HTTPException
+
 from api.routes.brand_styles_routes import router
+from application.services.llm_context_composer import LlmContextComposer
+from application.services.resource_context_service import compose_resource_context
+from domain.enums.context_type import ContextType
 from domain.models import models
 from domain.models.brand.brand_style import BrandStyle
 from domain.models.offer.offer_profile import OfferProfile
@@ -104,6 +109,24 @@ class BrandStylesTests(unittest.TestCase):
         self.client.post("/offer-profiles/1/brand-styles/generate", json={})
         self.assertNotIn("suitable_for", self.messages[1].content)
         self.assertNotIn("<existing_brand_styles", self.messages[1].content)
+
+    def test_selected_styles_can_be_exported_in_resource_context(self):
+        own = self.client.post("/offer-profiles/1/brand-styles", json=self.FIELDS).json()
+        self.client.post("/offer-profiles/1/brand-styles", json={**self.FIELDS, "font_family": "Not selected"})
+        foreign = self.client.post("/offer-profiles/2/brand-styles", json=self.FIELDS).json()
+        composer = LlmContextComposer(
+            SimpleNamespace(build_llm_context=lambda id, **kwargs: "<offer_profile>A</offer_profile>"),
+            None, None, None, None, brand_styles_repository=self.repo,
+        )
+        container = SimpleNamespace(llm_context_composer=lambda: composer)
+        text = compose_resource_context(container, ContextType.OFFER_PROFILE, 1, [ContextType.BRAND_STYLE], [], order_by_path=True, brand_style_ids=[own["id"]])
+        self.assertIn("<brand_styles>", text)
+        self.assertIn('"brand_color": "#1A73E8"', text)
+        self.assertNotIn("Not selected", text)
+        self.assertLess(text.index("<offer_profile>"), text.index("<brand_styles>"))
+        with self.assertRaises(HTTPException) as error:
+            compose_resource_context(container, ContextType.OFFER_PROFILE, 1, [ContextType.BRAND_STYLE], [], brand_style_ids=[foreign["id"]])
+        self.assertEqual(error.exception.status_code, 422)
 
     def test_generate_rejects_invalid_ai_output(self):
         self.response = {"font_family": "Inter", "background_color": "white", "brand_color": "#000000"}

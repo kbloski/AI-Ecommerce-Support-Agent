@@ -11,6 +11,7 @@ export const TAG_TYPES = [
   'AdCopy',
   'CreativePlan',
   'BrandStyle',
+  'ChatConversation',
   'Analysis',
   'AnalysisQuestion',
   'Checklist',

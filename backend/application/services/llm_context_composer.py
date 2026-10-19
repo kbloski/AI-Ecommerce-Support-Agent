@@ -36,6 +36,7 @@ class LlmContextComposer:
         ad_copies_repository=None,
         ad_creative_plans_repository=None,
         ugc_creative_repository=None,
+        brand_styles_repository=None,
     ):
         self.offer_profile_service = offer_profile_service
         self.target_audience_service = target_audience_service
@@ -47,6 +48,7 @@ class LlmContextComposer:
             ContextType.CREATIVE_PLAN: ad_creative_plans_repository,
             ContextType.UGC_CREATIVE: ugc_creative_repository,
             ContextType.AD_COPY: ad_copies_repository,
+            ContextType.BRAND_STYLE: brand_styles_repository,
         }
 
     def _selected_profile_items(self, kind: ContextType, profile_id: int, ids: tuple[int, ...] | None) -> str:
@@ -59,6 +61,7 @@ class LlmContextComposer:
             ContextType.CREATIVE_PLAN: ("id", "name", "description", "format", "plan", "ad_concept_id", "is_reviewed"),
             ContextType.UGC_CREATIVE: ("id", "name", "customer_persona", "content_format", "angle", "hook_idea", "video_flow", "recording_style", "platform_fit", "cta", "why_it_should_work", "is_reviewed"),
             ContextType.AD_COPY: ("id", "name", "primary_text", "headline", "description", "cta", "is_reviewed"),
+            ContextType.BRAND_STYLE: ("id", "font_family", "background_color", "brand_color"),
         }[kind]
         items = []
         for item_id in ids:
@@ -72,6 +75,7 @@ class LlmContextComposer:
             ContextType.CREATIVE_PLAN: "creative_plans",
             ContextType.UGC_CREATIVE: "ugc_creatives",
             ContextType.AD_COPY: "ad_copies",
+            ContextType.BRAND_STYLE: "brand_styles",
         }[kind]
         return build_llm_section(tag, json.dumps(items, ensure_ascii=False, indent=2))
 
@@ -172,6 +176,7 @@ class LlmContextComposer:
                 ContextType.CREATIVE_PLAN: 6,
                 ContextType.UGC_CREATIVE: 7,
                 ContextType.AD_COPY: 8,
+                ContextType.BRAND_STYLE: 9,
             }
             sections.sort(key=lambda item: order[item[0]])
         return "\n\n".join(content for _, content in sections)

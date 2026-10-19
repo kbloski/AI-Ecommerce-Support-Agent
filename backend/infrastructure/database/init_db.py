@@ -33,6 +33,7 @@ def init_db():
     _add_marketing_angle_fields()
     _migrate_ad_concept_modes_and_angles()
     _drop_offer_profile_notes()
+    _add_chat_message_token_columns()
     from .creative_plans_migration import migrate_creative_plan_content
     migrate_creative_plan_content(engine)
     from .ugc_profile_migration import migrate_ugc_to_offer_profiles
@@ -677,6 +678,17 @@ def _remove_obsolete_offer_source_columns():
         for column in ("category", "value_proposition"):
             if column in columns:
                 conn.execute(text(f'ALTER TABLE "offer_sources" DROP COLUMN "{column}"'))
+
+
+def _add_chat_message_token_columns():
+    """Store exact token counts reported by the model for chat answers."""
+    with engine.begin() as conn:
+        if "chat_messages" not in inspect(conn).get_table_names():
+            return
+        columns = {column["name"] for column in inspect(conn).get_columns("chat_messages")}
+        for column in ("prompt_tokens", "completion_tokens"):
+            if column not in columns:
+                conn.execute(text(f'ALTER TABLE "chat_messages" ADD COLUMN "{column}" INTEGER'))
 
 
 def _drop_offer_profile_notes():

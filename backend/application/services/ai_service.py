@@ -48,6 +48,8 @@ class AiService:
         return LlmMessage(
             role=LlmMessageRole(response.role.value),
             content=response.content,
+            prompt_tokens=getattr(response, "prompt_tokens", None),
+            completion_tokens=getattr(response, "completion_tokens", None),
         )
 
     def chat_json(

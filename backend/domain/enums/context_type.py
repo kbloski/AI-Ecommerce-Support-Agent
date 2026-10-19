@@ -11,3 +11,4 @@ class ContextType(str, Enum):
     CREATIVE_PLAN = "creative_plan"
     UGC_CREATIVE = "ugc_creative"
     AD_COPY = "ad_copy"
+    BRAND_STYLE = "brand_style"
