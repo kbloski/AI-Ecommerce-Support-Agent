@@ -1,5 +1,26 @@
 [
   {
+    "id": "product_hero",
+    "name": "Product Hero",
+    "description": "Serves as the primary product presentation and purchasing section, combining product imagery, title, description, pricing, key details, selectable variants, availability, quantity controls, and purchase actions such as Add to Cart or Buy Now.",
+    "guidance": {
+      "shared_rules": [
+        "Align product information and purchasing actions with the actual offer and supported commerce functionality."
+      ],
+      "selection": {
+        "use_when": [
+          "The page needs a central product section where visitors can explore the product, evaluate its key details, configure available options, and initiate a purchase."
+        ],
+        "rules": [
+          "Establish a clear hierarchy between product imagery, essential information, pricing, and purchase controls.",
+          "Include variant selectors, quantity controls, and availability indicators only when applicable.",
+          "Support Add to Cart, Buy Now, or other purchase actions according to the actual purchasing flow.",
+          "Do not invent prices, discounts, stock status, variants, product attributes, or purchase conditions."
+        ]
+      }
+    }
+  },
+  {
     "id": "hero",
     "name": "Hero",
     "description": "Creates the first customer interaction, communicates the primary product value, and generates initial interest.",
