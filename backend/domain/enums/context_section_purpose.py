@@ -98,6 +98,26 @@ class ContextSectionPurpose(str, Enum):
         "for generation or production."
     )
 
+    # Design
+    COLOR_PHILOSOPHY = (
+        "Reference describing base colors, their associations, suitable brand types "
+        "and shades, used to choose colors that fit the desired brand perception."
+    )
+
+    TYPOGRAPHY_PHILOSOPHY = (
+        "Reference describing typeface styles, their brand personality, suitable brand "
+        "types and example fonts, used to choose fonts that fit the desired brand perception."
+    )
+
+    EXISTING_BRAND_STYLES = (
+        "Brand styles already created for this offer; new proposals should differ from them."
+    )
+
+    # Generation
+    GENERATION_INSTRUCTIONS = (
+        "Additional instructions from the user that guide this generation."
+    )
+
     # Page
     PAGE_STRATEGY = (
         "Strategic information about the page objective, target audience, primary "

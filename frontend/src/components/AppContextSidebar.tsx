@@ -17,6 +17,7 @@ import { useListMarketingAnglesQuery } from '@/features/marketingAngles/marketin
 import { useListAdConceptsQuery } from '@/features/adConcepts/adConceptsApi'
 import { useListAdCopiesQuery } from '@/features/adCopy/adCopyApi'
 import { useListCreativePlansQuery } from '@/features/creativePlans/creativePlansApi'
+import { useListBrandStylesQuery } from '@/features/brandStyles/brandStylesApi'
 import { useGetAnalysisQuery, useListAnalysisForOfferProfileQuery } from '@/features/analysis/analysisApi'
 import { useListBrandMarketingForOfferSourceQuery } from '@/features/brandMarketing/brandMarketingApi'
 import { useGetChecklistQuery, useListChecklistsForOfferProfileQuery } from '@/features/checklists/checklistsApi'
@@ -146,6 +147,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   const adConcepts = useListAdConceptsQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const adCopies = useListAdCopiesQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const creativePlans = useListCreativePlansQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
+  const brandStyles = useListBrandStylesQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const brandMarketing = useListBrandMarketingForOfferSourceQuery(offerSourceId, { skip: skipOfferSourceResources })
   const analyses = useListAnalysisForOfferProfileQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const analysis = useGetAnalysisQuery(currentEntityId, { skip: !isAnalysisSection || !Number.isInteger(currentEntityId) })
@@ -176,6 +178,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     'ad-concepts': adConcepts.data?.length,
     'ad-copy': adCopies.data?.length,
     'creative-plans': creativePlans.data?.length,
+    'brand-styles': brandStyles.data?.length,
     'additional-contexts': profileContexts.data?.length,
     profiles: offerProfiles.data?.length,
     facts: offerFacts.data?.total_items,
@@ -300,6 +303,13 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
               {section.config.resources.map(([slug, label]) => (
                 navigationLink(slug, label, `${detailPath}/${slug}`)
               ))}
+            </nav>
+          </SidebarGroup>
+        )}
+        {section.config.current === 'Profil oferty' && (
+          <SidebarGroup title="Brand" className="mb-6">
+            <nav className="ml-2 space-y-1 border-l pl-2">
+              {navigationLink('brand-styles', 'Brand styles', `${detailPath}/brand-styles`)}
             </nav>
           </SidebarGroup>
         )}

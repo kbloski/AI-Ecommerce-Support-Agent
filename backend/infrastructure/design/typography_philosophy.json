@@ -1,0 +1,104 @@
+{
+  "purpose": "Reference guide for AI-assisted brand font selection. It maps typeface styles to the brand personality they convey; it is independent of industry. The styles are practical design groupings, not rigid classifications. Check font licensing and language support before production use.",
+  "selection_guidelines": [
+    "Match the brand personality, target audience, and intended media rather than choosing a font solely by industry.",
+    "Prefer fonts with Polish Latin characters when creating Polish-language material.",
+    "Verify legibility at small sizes, adequate weight options, and availability in the intended rendering environment.",
+    "A single font family can be sufficient for both headings and body text.",
+    "If mixing families, pair contrasting but compatible fonts and keep the system simple.",
+    "Treat the examples as suggestions, not mandatory choices. Confirm licensing before commercial deployment."
+  ],
+  "styles": [
+    {
+      "style": "modern geometric sans-serif",
+      "description": "Clean, structured typefaces with geometric letterforms; contemporary, approachable, and visually consistent.",
+      "brand_personality": ["modern", "confident", "minimal", "friendly"],
+      "example_fonts": ["Poppins", "Montserrat", "Outfit", "Urbanist", "Manrope"],
+      "considerations": "Some geometric faces are less comfortable for long passages; test body readability."
+    },
+    {
+      "style": "neutral functional sans-serif",
+      "description": "Unobtrusive, highly legible typography designed to support information clarity and flexible interfaces.",
+      "brand_personality": ["clear", "practical", "reliable", "professional"],
+      "example_fonts": ["Inter", "Roboto", "Open Sans", "Source Sans 3", "Noto Sans"],
+      "considerations": "A neutral choice may need stronger color, layout, or imagery to feel distinctive."
+    },
+    {
+      "style": "humanist sans-serif",
+      "description": "Open, organic letterforms that balance readability with warmth and personality.",
+      "brand_personality": ["warm", "human", "trustworthy", "accessible"],
+      "example_fonts": ["Lato", "Nunito Sans", "Cabin", "Mulish", "PT Sans"],
+      "considerations": "Choose weights carefully to avoid a generic corporate appearance."
+    },
+    {
+      "style": "rounded sans-serif",
+      "description": "Soft shapes and rounded terminals create a playful, gentle, and welcoming impression.",
+      "brand_personality": ["playful", "kind", "casual", "approachable"],
+      "example_fonts": ["Nunito", "Quicksand", "Comfortaa", "Fredoka", "Baloo 2"],
+      "considerations": "Highly rounded or playful faces can reduce perceived formality and may work better for headings than long body copy."
+    },
+    {
+      "style": "elegant high-contrast serif",
+      "description": "Distinctive contrast between thick and thin strokes creates a refined, editorial, or luxurious look.",
+      "brand_personality": ["elegant", "premium", "expressive", "sophisticated"],
+      "example_fonts": ["Playfair Display", "Bodoni Moda", "Cormorant Garamond", "Prata", "DM Serif Display"],
+      "considerations": "Delicate strokes may suffer at small sizes; use strong contrast with the background and consider a simpler body face."
+    },
+    {
+      "style": "classic readable serif",
+      "description": "Traditional serif structures associated with editorial depth, stability, and long-form reading.",
+      "brand_personality": ["thoughtful", "credible", "cultured", "established"],
+      "example_fonts": ["Merriweather", "Libre Baskerville", "Source Serif 4", "Lora", "PT Serif"],
+      "considerations": "Serif designs vary substantially; verify on-screen rendering and the desired balance between traditional and modern."
+    },
+    {
+      "style": "contemporary editorial serif",
+      "description": "Expressive serifs that combine a literary or artisanal tone with a contemporary brand identity.",
+      "brand_personality": ["creative", "reflective", "warm", "distinctive"],
+      "example_fonts": ["Fraunces", "DM Serif Text", "Alegreya", "Spectral", "Literata"],
+      "considerations": "Expressive shapes are useful for memorable headlines; check body legibility and available optical sizes."
+    },
+    {
+      "style": "handwritten casual",
+      "description": "Letterforms inspired by everyday handwriting, suggesting spontaneity and personal connection.",
+      "brand_personality": ["personal", "friendly", "informal", "warm"],
+      "example_fonts": ["Caveat", "Kalam", "Patrick Hand", "Handlee", "Indie Flower"],
+      "considerations": "Best used sparingly for short headlines, notes, or accents; test Polish diacritics and avoid dense paragraphs."
+    },
+    {
+      "style": "expressive script",
+      "description": "Flowing, calligraphic letterforms that suggest emotion, elegance, or celebration.",
+      "brand_personality": ["romantic", "artistic", "personal", "decorative"],
+      "example_fonts": ["Dancing Script", "Allura", "Great Vibes", "Sacramento", "Parisienne"],
+      "considerations": "Usually unsuitable for paragraphs and small UI labels; check accented glyph coverage for Polish text."
+    },
+    {
+      "style": "bold display",
+      "description": "High-impact typography intended to attract attention in short messages and large-format designs.",
+      "brand_personality": ["bold", "energetic", "confident", "expressive"],
+      "example_fonts": ["Anton", "Bebas Neue", "Oswald", "Archivo Black", "Barlow Condensed"],
+      "considerations": "Use primarily for headlines, slogans, and advertising. Condensed or all-caps typography needs spacing checks."
+    },
+    {
+      "style": "technical monospace",
+      "description": "Fixed-width letterforms with a systematic and technical feel.",
+      "brand_personality": ["technical", "precise", "digital", "experimental"],
+      "example_fonts": ["JetBrains Mono", "IBM Plex Mono", "Space Mono", "Roboto Mono", "DM Mono"],
+      "considerations": "Use selectively in general marketing; long paragraphs can become visually dense."
+    },
+    {
+      "style": "retro and vintage",
+      "description": "Nostalgic or characterful letterforms that evoke specific historical moods without requiring a strictly historical identity.",
+      "brand_personality": ["nostalgic", "characterful", "playful", "artisanal"],
+      "example_fonts": ["Bree Serif", "Abril Fatface", "Righteous", "Josefin Sans", "Alfa Slab One"],
+      "considerations": "The examples span different visual eras; assess the actual visual fit, not just the category label."
+    },
+    {
+      "style": "slab serif",
+      "description": "Strong, block-like serifs create a sturdy, grounded, and memorable impression.",
+      "brand_personality": ["solid", "confident", "friendly", "authentic"],
+      "example_fonts": ["Roboto Slab", "Arvo", "Bitter", "Zilla Slab", "Rockwell"],
+      "considerations": "The category ranges from neutral text fonts to bold display faces; verify commercial licensing for each chosen font."
+    }
+  ]
+}

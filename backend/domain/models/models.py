@@ -17,6 +17,9 @@ from domain.models.ad.ad_copy import AdCopy
 from domain.models.ad.ad_creative_plan import AdCreativePlan
 from domain.models.ad.ad_concept_marketing_angle import AdConceptMarketingAngle
 
+# Brand
+from domain.models.brand.brand_style import BrandStyle
+
 # OfferSource
 from domain.models.offer.offer_source import OfferSource
 

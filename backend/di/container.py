@@ -20,6 +20,8 @@ from infrastructure.repositories.creative_angels_repository import CreativeAngle
 from infrastructure.repositories.execution_styles_repository import ExecutionStylesRepository
 from infrastructure.repositories.platforms_repository import PlatformsRepository
 from infrastructure.repositories.page_sections_repository import PageSectionsRepository
+from infrastructure.repositories.color_philosophy_repository import ColorPhilosophyRepository
+from infrastructure.repositories.typography_philosophy_repository import TypographyPhilosophyRepository
 from application.services.ad_framework_service import AdFrameworkService
 from application.services.creative_angle_service import CreativeAngleService
 from application.services.execution_style_service import ExecutionStyleService
@@ -40,6 +42,7 @@ from infrastructure.repositories.marketing_angles_repository import MarketingAng
 from infrastructure.repositories.ad_concepts_repository import AdConceptsRepository
 from infrastructure.repositories.ad_copies_repository import AdCopiesRepository
 from infrastructure.repositories.ad_creative_plans_repository import AdCreativePlansRepository
+from infrastructure.repositories.brand_styles_repository import BrandStylesRepository
 from application.assemblers.target_audience_assembler import TargetAudienceAssembler
 from infrastructure.repositories.analysis_repository import AnalysisRepository
 from infrastructure.repositories.offer_profile_analysis_repository import OfferProfileAnalysisRepository
@@ -166,6 +169,7 @@ class Container(containers.DeclarativeContainer):
     ad_concepts_repository = providers.Singleton(AdConceptsRepository, logger=logger, db=db)
     ad_copies_repository = providers.Singleton(AdCopiesRepository, logger=logger, db=db)
     ad_creative_plans_repository = providers.Singleton(AdCreativePlansRepository, logger=logger, db=db)
+    brand_styles_repository = providers.Singleton(BrandStylesRepository, logger=logger, db=db)
     ad_concept_service = providers.Factory(AdConceptService, ad_concepts_repository=ad_concepts_repository)
 
     checklist_repository = providers.Singleton(
@@ -449,6 +453,18 @@ class Container(containers.DeclarativeContainer):
 
     page_sections_repository = providers.Singleton(
         PageSectionsRepository,
+        logger=logger,
+        path_service=path_service,
+    )
+
+    color_philosophy_repository = providers.Singleton(
+        ColorPhilosophyRepository,
+        logger=logger,
+        path_service=path_service,
+    )
+
+    typography_philosophy_repository = providers.Singleton(
+        TypographyPhilosophyRepository,
         logger=logger,
         path_service=path_service,
     )

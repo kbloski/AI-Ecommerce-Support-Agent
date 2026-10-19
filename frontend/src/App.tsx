@@ -14,6 +14,7 @@ import MarketingAnglesPage from '@/pages/MarketingAnglesPage'
 import AdConceptsPage from '@/pages/AdConceptsPage'
 import AdCopyPage from '@/pages/AdCopyPage'
 import CreativePlansPage from '@/pages/CreativePlansPage'
+import BrandStylesPage from '@/pages/BrandStylesPage'
 import OfferSourcesPage from '@/pages/OfferSourcesPage'
 import OfferSourceDetailPage from '@/pages/OfferSourceDetailPage'
 import AnalysisDetailPage from '@/pages/AnalysisDetailPage'
@@ -61,6 +62,7 @@ function App() {
         <Route path="/offer-profiles/:offerProfileId/ad-concepts" element={<AdConceptsPage />} />
         <Route path="/offer-profiles/:offerProfileId/ad-copy" element={<AdCopyPage />} />
         <Route path="/offer-profiles/:offerProfileId/creative-plans" element={<CreativePlansPage />} />
+        <Route path="/offer-profiles/:offerProfileId/brand-styles" element={<BrandStylesPage />} />
         <Route path="/offer-profiles/:offerProfileId/additional-contexts" element={<OfferProfileAdditionalContextsPage />} />
         <Route path="/offer-profiles/:offerProfileId" element={<OfferProfileDetailPage />} />
         <Route path="/offer-sources/:offerSourceId/profiles" element={<OfferProfilesPage />} />

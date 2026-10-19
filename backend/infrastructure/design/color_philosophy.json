@@ -1,0 +1,433 @@
+{
+  "purpose": "Compact reference for AI-assisted brand color selection. It maps colors and shades to the perceptions they evoke; it is independent of industry. Associations and shade characters are contextual suggestions, not fixed rules. Prioritize brand personality, positioning and desired perception.",
+  "colors": [
+    {
+      "color": "red",
+      "description": "Bold, intense and emotionally charged.",
+      "associations": [
+        "energy",
+        "passion",
+        "urgency",
+        "confidence"
+      ],
+      "shades": [
+        {
+          "name": "bright red",
+          "character": "Vivid, urgent and energetic."
+        },
+        {
+          "name": "crimson",
+          "character": "Dramatic, confident and expressive."
+        },
+        {
+          "name": "burgundy",
+          "character": "Mature, rich and refined."
+        },
+        {
+          "name": "coral red",
+          "character": "Warm, lively and approachable."
+        }
+      ]
+    },
+    {
+      "color": "orange",
+      "description": "Warm, sociable and expressive.",
+      "associations": [
+        "enthusiasm",
+        "friendliness",
+        "creativity",
+        "activity"
+      ],
+      "shades": [
+        {
+          "name": "bright orange",
+          "character": "Playful, vivid and outgoing."
+        },
+        {
+          "name": "burnt orange",
+          "character": "Earthy, nostalgic and bold."
+        },
+        {
+          "name": "terracotta",
+          "character": "Warm, artisanal and grounded."
+        },
+        {
+          "name": "peach",
+          "character": "Gentle, friendly and inviting."
+        }
+      ]
+    },
+    {
+      "color": "yellow",
+      "description": "Bright, optimistic and attention-grabbing.",
+      "associations": [
+        "joy",
+        "optimism",
+        "energy",
+        "playfulness"
+      ],
+      "shades": [
+        {
+          "name": "lemon yellow",
+          "character": "Sharp, fresh and lively."
+        },
+        {
+          "name": "sunflower yellow",
+          "character": "Sunny, warm and welcoming."
+        },
+        {
+          "name": "mustard yellow",
+          "character": "Retro, earthy and distinctive."
+        },
+        {
+          "name": "pale yellow",
+          "character": "Soft, light and optimistic."
+        }
+      ]
+    },
+    {
+      "color": "green",
+      "description": "Natural, restorative and balanced.",
+      "associations": [
+        "growth",
+        "nature",
+        "renewal",
+        "balance"
+      ],
+      "shades": [
+        {
+          "name": "lime green",
+          "character": "Vivid, youthful and unconventional."
+        },
+        {
+          "name": "sage green",
+          "character": "Muted, natural and calming."
+        },
+        {
+          "name": "forest green",
+          "character": "Deep, established and elegant."
+        },
+        {
+          "name": "olive green",
+          "character": "Practical, earthy and restrained."
+        },
+        {
+          "name": "mint green",
+          "character": "Light, crisp and refreshing."
+        }
+      ]
+    },
+    {
+      "color": "blue",
+      "description": "Clear, composed and dependable.",
+      "associations": [
+        "trust",
+        "stability",
+        "clarity",
+        "calm"
+      ],
+      "shades": [
+        {
+          "name": "sky blue",
+          "character": "Open, gentle and friendly."
+        },
+        {
+          "name": "royal blue",
+          "character": "Confident, polished and vivid."
+        },
+        {
+          "name": "navy blue",
+          "character": "Formal, established and authoritative."
+        },
+        {
+          "name": "electric blue",
+          "character": "Dynamic, digital and futuristic."
+        },
+        {
+          "name": "dusty blue",
+          "character": "Muted, soft and composed."
+        }
+      ]
+    },
+    {
+      "color": "teal",
+      "description": "Fresh, balanced and quietly modern.",
+      "associations": [
+        "clarity",
+        "balance",
+        "renewal",
+        "composure"
+      ],
+      "shades": [
+        {
+          "name": "light teal",
+          "character": "Clean, airy and approachable."
+        },
+        {
+          "name": "turquoise",
+          "character": "Bright, refreshing and expressive."
+        },
+        {
+          "name": "deep teal",
+          "character": "Sophisticated, stable and modern."
+        },
+        {
+          "name": "muted teal",
+          "character": "Quiet, balanced and versatile."
+        }
+      ]
+    },
+    {
+      "color": "purple",
+      "description": "Imaginative, intriguing and distinctive.",
+      "associations": [
+        "creativity",
+        "individuality",
+        "mystery",
+        "luxury"
+      ],
+      "shades": [
+        {
+          "name": "lavender",
+          "character": "Soft, dreamy and soothing."
+        },
+        {
+          "name": "lilac",
+          "character": "Light, youthful and friendly."
+        },
+        {
+          "name": "vibrant violet",
+          "character": "Inventive, bold and energetic."
+        },
+        {
+          "name": "deep purple",
+          "character": "Rich, mysterious and dramatic."
+        },
+        {
+          "name": "plum",
+          "character": "Mature, warm and elegant."
+        }
+      ]
+    },
+    {
+      "color": "pink",
+      "description": "Warm, expressive and playful or delicate.",
+      "associations": [
+        "affection",
+        "playfulness",
+        "care",
+        "romance"
+      ],
+      "shades": [
+        {
+          "name": "blush pink",
+          "character": "Delicate, soft and gentle."
+        },
+        {
+          "name": "dusty rose",
+          "character": "Muted, romantic and refined."
+        },
+        {
+          "name": "bubblegum pink",
+          "character": "Sweet, youthful and playful."
+        },
+        {
+          "name": "hot pink",
+          "character": "Daring, vibrant and expressive."
+        },
+        {
+          "name": "mauve pink",
+          "character": "Subtle, mature and relaxed."
+        }
+      ]
+    },
+    {
+      "color": "brown",
+      "description": "Earthy, familiar and tactile.",
+      "associations": [
+        "authenticity",
+        "craft",
+        "warmth",
+        "stability"
+      ],
+      "shades": [
+        {
+          "name": "chocolate brown",
+          "character": "Deep, comforting and rich."
+        },
+        {
+          "name": "chestnut brown",
+          "character": "Traditional, warm and welcoming."
+        },
+        {
+          "name": "caramel brown",
+          "character": "Soft, inviting and indulgent."
+        },
+        {
+          "name": "taupe",
+          "character": "Neutral, understated and refined."
+        }
+      ]
+    },
+    {
+      "color": "beige",
+      "description": "Subtle, warm and understated.",
+      "associations": [
+        "simplicity",
+        "comfort",
+        "calm",
+        "naturalness"
+      ],
+      "shades": [
+        {
+          "name": "sand",
+          "character": "Airy, natural and relaxed."
+        },
+        {
+          "name": "warm beige",
+          "character": "Cozy, subtle and welcoming."
+        },
+        {
+          "name": "oatmeal",
+          "character": "Soft, organic and understated."
+        },
+        {
+          "name": "greige",
+          "character": "Neutral, contemporary and sophisticated."
+        }
+      ]
+    },
+    {
+      "color": "white",
+      "description": "Clean, open and visually spacious.",
+      "associations": [
+        "simplicity",
+        "clarity",
+        "freshness",
+        "purity"
+      ],
+      "shades": [
+        {
+          "name": "pure white",
+          "character": "Crisp, stark and minimal."
+        },
+        {
+          "name": "ivory",
+          "character": "Warm, classic and refined."
+        },
+        {
+          "name": "cream",
+          "character": "Soft, cozy and welcoming."
+        },
+        {
+          "name": "off-white",
+          "character": "Gentle, flexible and understated."
+        }
+      ]
+    },
+    {
+      "color": "gray",
+      "description": "Neutral, restrained and adaptable.",
+      "associations": [
+        "balance",
+        "modernity",
+        "practicality",
+        "professionalism"
+      ],
+      "shades": [
+        {
+          "name": "light gray",
+          "character": "Airy, quiet and unobtrusive."
+        },
+        {
+          "name": "cool gray",
+          "character": "Precise, technical and contemporary."
+        },
+        {
+          "name": "warm gray",
+          "character": "Soft, balanced and approachable."
+        },
+        {
+          "name": "slate gray",
+          "character": "Structured, grounded and mature."
+        },
+        {
+          "name": "charcoal gray",
+          "character": "Strong, polished and reserved."
+        }
+      ]
+    },
+    {
+      "color": "black",
+      "description": "Strong, minimal and sophisticated.",
+      "associations": [
+        "elegance",
+        "authority",
+        "exclusivity",
+        "contrast"
+      ],
+      "shades": [
+        {
+          "name": "jet black",
+          "character": "Dramatic, stark and uncompromising."
+        },
+        {
+          "name": "soft black",
+          "character": "Subtle, refined and less severe."
+        },
+        {
+          "name": "ink black",
+          "character": "Deep, editorial and elegant."
+        }
+      ]
+    },
+    {
+      "color": "gold",
+      "description": "Warm, ornamental and prestigious.",
+      "associations": [
+        "luxury",
+        "celebration",
+        "achievement",
+        "tradition"
+      ],
+      "shades": [
+        {
+          "name": "champagne gold",
+          "character": "Subtle, warm and refined."
+        },
+        {
+          "name": "antique gold",
+          "character": "Heritage-inspired, rich and traditional."
+        },
+        {
+          "name": "bright gold",
+          "character": "Radiant, celebratory and ornate."
+        }
+      ]
+    },
+    {
+      "color": "silver",
+      "description": "Cool, sleek and precise.",
+      "associations": [
+        "technology",
+        "modernity",
+        "precision",
+        "refinement"
+      ],
+      "shades": [
+        {
+          "name": "brushed silver",
+          "character": "Industrial, tactile and refined."
+        },
+        {
+          "name": "bright silver",
+          "character": "Shiny, sharp and futuristic."
+        },
+        {
+          "name": "soft silver",
+          "character": "Light, minimal and restrained."
+        }
+      ]
+    }
+  ]
+}

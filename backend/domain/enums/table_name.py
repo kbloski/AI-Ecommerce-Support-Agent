@@ -14,6 +14,7 @@ class TableName(str, Enum):
     AD_CONCEPTS = "ad_concepts"
     AD_COPIES = "ad_copies"
     AD_CREATIVE_PLANS = "ad_creative_plans"
+    BRAND_STYLES = "brand_styles"
     AD_CONCEPT_MARKETING_ANGLES = "ad_concept_marketing_angles"
     ANALYSIS = "analysis"
     OFFER_SOURCE_ANALYSIS = "offer_source_analysis"

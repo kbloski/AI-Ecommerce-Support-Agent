@@ -32,6 +32,10 @@ class PathService:
         self.PAGES_DIR = self.BASE_DIR / "infrastructure" / "pages"
         self.PAGE_SECTION_TYPES_FILE = self.PAGES_DIR / "page_section_types.json"
 
+        self.DESIGN_DIR = self.BASE_DIR / "infrastructure" / "design"
+        self.COLOR_PHILOSOPHY_FILE = self.DESIGN_DIR / "color_philosophy.json"
+        self.TYPOGRAPHY_PHILOSOPHY_FILE = self.DESIGN_DIR / "typography_philosophy.json"
+
         # self.DATA_DIR = self.BASE_DIR / "data"
         # self.RAW_ECOMMERCE_OFFER_SOURCE = self.DATA_DIR / "raw" / "ecommerce_offer_source"
         # self.ECOMMERCE_OFFER_SOURCE = self.DATA_DIR / "offer_source" / "ecommerce"
