@@ -1,35 +1,18 @@
+import { GeneratePageBlueprintForm } from '@/features/pageBlueprint/GeneratePageBlueprintForm'
 import { useState, type ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
 import { ResourceList } from '@/components/ResourceList'
 import { ListFilters, ReviewStatusFilter, ReviewStatusSortSelect, type ReviewStatusFilterValue, type ReviewStatusSort } from '@/components/ListFilters'
 import { Button } from '@/components/ui/button'
 import type { Entity } from '@/types'
-import { useGetOfferSourceQuery } from '@/features/offerSources/offerSourceApi'
-import { offerSourceLabel } from '@/features/offerSources/offerSourceLabel'
 import { useEditEntityPanel } from '@/lib/useEditEntityPanel'
 import { useSidePanel } from '@/lib/sidePanel'
 import { useCreateAnalysisMutation, useDeleteAnalysisMutation, useDeleteAnalysisQuestionMutation, useGenerateAnalysisAnswersMutation, useListAnalysisForOfferProfileQuery, useListAnalysisQuestionsQuery, useUpdateAnalysisQuestionMutation } from '@/features/analysis/analysisApi'
-import { useDeleteBrandMarketingMutation, useGenerateBrandMarketingMutation, useListBrandMarketingForOfferSourceQuery, useUpdateBrandMarketingMutation } from '@/features/brandMarketing/brandMarketingApi'
 import { useCreateChecklistMutation, useDeleteChecklistItemMutation, useDeleteChecklistMutation, useGenerateChecklistMutation, useGetChecklistQuery, useListChecklistsForOfferProfileQuery, useUpdateChecklistItemMutation } from '@/features/checklists/checklistsApi'
-import { useGetBrandMarketingQuery } from '@/features/brandMarketing/brandMarketingApi'
-import { useDeleteMarketingStrategyMutation, useGenerateMarketingStrategyMutation, useListMarketingStrategyForBrandMarketingQuery, useUpdateMarketingStrategyMutation } from '@/features/marketingStrategy/marketingStrategyApi'
-import { useGetMarketingStrategyQuery } from '@/features/marketingStrategy/marketingStrategyApi'
-import { useDeleteOfferStrategyMutation, useGenerateOfferStrategyMutation, useListOfferStrategyForMarketingStrategyQuery, useUpdateOfferStrategyMutation } from '@/features/offerStrategy/offerStrategyApi'
-import { useGetOfferStrategyQuery } from '@/features/offerStrategy/offerStrategyApi'
-import { useDeleteMessageStrategyMutation, useGenerateMessageStrategyMutation, useListMessageStrategyForOfferStrategyQuery, useUpdateMessageStrategyMutation } from '@/features/messageStrategy/messageStrategyApi'
-import { useGetMessageStrategyQuery } from '@/features/messageStrategy/messageStrategyApi'
 import { useDeleteUgcCreativeMutation, useListUgcCreativesForOfferProfileQuery, useUpdateUgcCreativeMutation } from '@/features/ugcCreatives/ugcCreativesApi'
 import { GenerateUgcCreativesForm } from '@/features/ugcCreatives/GenerateUgcCreativesForm'
-import { useDeletePageStrategyMutation, useGeneratePageStrategyMutation, useListPageStrategyForMessageStrategyQuery, useUpdatePageStrategyMutation } from '@/features/pageStrategy/pageStrategyApi'
-import { useGetPageStrategyQuery } from '@/features/pageStrategy/pageStrategyApi'
-import { useDeletePageRequirementsMutation, useGeneratePageRequirementsMutation, useListPageRequirementsForPageStrategyQuery } from '@/features/pageRequirements/pageRequirementsApi'
-import { useGetPageRequirementsQuery } from '@/features/pageRequirements/pageRequirementsApi'
-import { EditPageRequirementsForm } from '@/features/pageRequirements/EditPageRequirementsForm'
-import { useDeletePageBlueprintMutation, useGeneratePageBlueprintMutation, useListPageBlueprintForPageRequirementsQuery, useUpdatePageBlueprintMutation } from '@/features/pageBlueprint/pageBlueprintApi'
-import { useGetPageBlueprintQuery } from '@/features/pageBlueprint/pageBlueprintApi'
-import { useDeletePageContentPlanMutation, useGeneratePageContentPlanMutation, useListPageContentPlanForPageBlueprintQuery, useUpdatePageContentPlanMutation } from '@/features/pageContentPlan/pageContentPlanApi'
-import { useGetPageContentPlanQuery } from '@/features/pageContentPlan/pageContentPlanApi'
-import { useDeletePageCopyMutation, useGeneratePageCopyMutation, useListPageCopyForPageContentPlanQuery, useUpdatePageCopyMutation } from '@/features/pageCopy/pageCopyApi'
+import { useDeletePageBlueprintMutation, useListPageBlueprintForOfferProfileQuery } from '@/features/pageBlueprint/pageBlueprintApi'
+import { EditPageBlueprintForm } from '@/features/pageBlueprint/EditPageBlueprintForm'
 
 function ResourcePage({ title: _title, children }: { backTo: string; backLabel: string; title: string; children: ReactNode }) {
   return <div className="w-full space-y-6 p-6 lg:p-10">
@@ -47,18 +30,6 @@ export function OfferProfileAnalysesPage() {
   </ResourcePage>
 }
 
-export function OfferSourceBrandMarketingPage() {
-  const offerSourceId = Number(useParams().offerSourceId)
-  const { data } = useGetOfferSourceQuery(offerSourceId)
-  const list = useListBrandMarketingForOfferSourceQuery(offerSourceId)
-  const [generate, state] = useGenerateBrandMarketingMutation()
-  const [remove] = useDeleteBrandMarketingMutation()
-  const [update] = useUpdateBrandMarketingMutation()
-  const editEntity = useEditEntityPanel()
-  return <ResourcePage backTo={`/offer-sources/${offerSourceId}`} backLabel={offerSourceLabel(data)} title="Brand marketing">
-    <ResourceList title="Brand marketing" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(item) => `/brand-marketing/${item.id}`} itemLabel={(item) => (item.brand_name as string) ?? `#${item.id}`} onGenerate={() => generate({ offerSourceId })} isGenerating={state.isLoading} generateLabel="Generuj brand marketing" onEdit={(item) => editEntity('Brand marketing', item, (fields) => update({ id: item.id as number, fields }).unwrap())} onDelete={(item) => remove({ id: item.id as number, offerSourceId })} />
-  </ResourcePage>
-}
 
 export function OfferProfileChecklistsPage() {
   const { offerProfileId } = useParams(); const id = Number(offerProfileId)
@@ -158,9 +129,6 @@ function checklistLabel(data: Entity | undefined, checklistId: number) {
   return name && name !== 'analysis_checklist' ? name : `Checklista #${checklistId}`
 }
 
-export function BrandMarketingStrategiesPage() { const id=Number(useParams().id); const {data}=useGetBrandMarketingQuery(id); const list=useListMarketingStrategyForBrandMarketingQuery(id); const [generate,state]=useGenerateMarketingStrategyMutation(); const [remove]=useDeleteMarketingStrategyMutation(); const [update]=useUpdateMarketingStrategyMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/brand-marketing/${id}`} backLabel={(data?.brand_name as string)??'Brand marketing'} title="Marketing strategy"><ResourceList title="Marketing strategy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/marketing-strategy/${x.id}`} itemLabel={(x)=>(x.marketing_objective as string)??`#${x.id}`} onGenerate={()=>data&&generate(data)} isGenerating={state.isLoading} generateLabel="Generuj marketing strategy" onEdit={(x)=>editEntity('Marketing strategy',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,brandMarketingId:id})}/></ResourcePage> }
-export function MarketingOfferStrategiesPage() { const id=Number(useParams().id); const {data}=useGetMarketingStrategyQuery(id); const list=useListOfferStrategyForMarketingStrategyQuery(id); const [generate,state]=useGenerateOfferStrategyMutation(); const [remove]=useDeleteOfferStrategyMutation(); const [update]=useUpdateOfferStrategyMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/marketing-strategy/${id}`} backLabel="Marketing strategy" title="Offer strategy"><ResourceList title="Offer strategy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/offer-strategy/${x.id}`} itemLabel={(x)=>(x.offer_name as string)??`#${x.id}`} onGenerate={()=>data&&generate(data)} isGenerating={state.isLoading} generateLabel="Generuj offer strategy" onEdit={(x)=>editEntity('Offer strategy',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,marketingStrategyId:id})}/></ResourcePage> }
-export function OfferMessageStrategiesPage() { const id=Number(useParams().id); const {data}=useGetOfferStrategyQuery(id); const list=useListMessageStrategyForOfferStrategyQuery(id); const [generate,state]=useGenerateMessageStrategyMutation(); const [remove]=useDeleteMessageStrategyMutation(); const [update]=useUpdateMessageStrategyMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/offer-strategy/${id}`} backLabel={(data?.offer_name as string)??'Offer strategy'} title="Message strategy"><ResourceList title="Message strategy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/message-strategy/${x.id}`} itemLabel={(x)=>(x.core_message as string)??`#${x.id}`} onGenerate={()=>data&&generate(data)} isGenerating={state.isLoading} generateLabel="Generuj message strategy" onEdit={(x)=>editEntity('Message strategy',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,offerStrategyId:id})}/></ResourcePage> }
 
 export function OfferProfileUgcCreativesPage() {
   const id = Number(useParams().offerProfileId)
@@ -192,8 +160,33 @@ export function OfferProfileUgcCreativesPage() {
     />
   </ResourcePage>
 }
-export function MessagePageStrategiesPage() { const id=Number(useParams().id); const {data}=useGetMessageStrategyQuery(id); const list=useListPageStrategyForMessageStrategyQuery(id); const [generate,state]=useGeneratePageStrategyMutation(); const [remove]=useDeletePageStrategyMutation(); const [update]=useUpdatePageStrategyMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/message-strategy/${id}`} backLabel="Message strategy" title="Page strategy"><ResourceList title="Page strategy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/page-strategy/${x.id}`} itemLabel={(x)=>(x.name as string)??(x.goal as string)??`#${x.id}`} onGenerate={()=>data&&generate(data)} isGenerating={state.isLoading} generateLabel="Generuj page strategy" onEdit={(x)=>editEntity('Page strategy',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,messageStrategyId:id})}/></ResourcePage> }
-export function PageRequirementsPage() { const id=Number(useParams().id); const list=useListPageRequirementsForPageStrategyQuery(id); const [generate,state]=useGeneratePageRequirementsMutation(); const [remove]=useDeletePageRequirementsMutation(); const { openPanel, closePanel } = useSidePanel(); useGetPageStrategyQuery(id); return <ResourcePage backTo={`/page-strategy/${id}`} backLabel="Page strategy" title="Page requirements"><ResourceList title="Page requirements" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/page-requirements/${x.id}`} itemLabel={(x)=>(x.name as string)??`#${x.id}`} onGenerate={()=>generate(id)} isGenerating={state.isLoading} generateLabel="Generuj wymagania" additionalActions={<Button variant="outline" className="h-9" onClick={()=>openPanel({title:'Dodaj Page Requirements ręcznie',content:<EditPageRequirementsForm pageStrategyId={id} onSaved={closePanel}/>})}>Dodaj ręcznie</Button>} onEdit={(x)=>openPanel({title:'Edytuj wymagania dotyczące sekcji',content:<EditPageRequirementsForm pageRequirements={x} onSaved={closePanel}/>})} onDelete={(x)=>remove({id:x.id as number,pageStrategyId:id})}/></ResourcePage> }
-export function PageBlueprintsPage() { const id=Number(useParams().id); const list=useListPageBlueprintForPageRequirementsQuery(id); const [generate,state]=useGeneratePageBlueprintMutation(); const [remove]=useDeletePageBlueprintMutation(); useGetPageRequirementsQuery(id); const [update]=useUpdatePageBlueprintMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/page-requirements/${id}`} backLabel="Page requirements" title="Page blueprint"><ResourceList title="Page blueprint" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/page-blueprint/${x.id}`} itemLabel={(x)=>(x.page_type as string)??`#${x.id}`} onGenerate={()=>generate(id)} isGenerating={state.isLoading} generateLabel="Generuj page blueprint" onEdit={(x)=>editEntity('Page blueprint',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,pageRequirementsId:id})}/></ResourcePage> }
-export function PageContentPlansPage() { const id=Number(useParams().id); const list=useListPageContentPlanForPageBlueprintQuery(id); const [generate,state]=useGeneratePageContentPlanMutation(); const [remove]=useDeletePageContentPlanMutation(); useGetPageBlueprintQuery(id); const [update]=useUpdatePageContentPlanMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/page-blueprint/${id}`} backLabel="Page blueprint" title="Page content plan"><ResourceList title="Page content plan" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/page-content-plan/${x.id}`} itemLabel={(x)=>(x.name as string)??`#${x.id}`} onGenerate={()=>generate(id)} isGenerating={state.isLoading} generateLabel="Generuj content plan" onEdit={(x)=>editEntity('Page content plan',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,pageBlueprintId:id})}/></ResourcePage> }
-export function PageCopiesPage() { const id=Number(useParams().id); const list=useListPageCopyForPageContentPlanQuery(id); const [generate,state]=useGeneratePageCopyMutation(); const [remove]=useDeletePageCopyMutation(); useGetPageContentPlanQuery(id); const [update]=useUpdatePageCopyMutation(); const editEntity=useEditEntityPanel(); return <ResourcePage backTo={`/page-content-plan/${id}`} backLabel="Page content plan" title="Page copy"><ResourceList title="Page copy" items={list.data} isLoading={list.isLoading} error={list.error} linkTo={(x)=>`/page-copy/${x.id}`} itemLabel={(x)=>`#${x.id}`} onGenerate={()=>generate(id)} isGenerating={state.isLoading} generateLabel="Generuj page copy" onEdit={(x)=>editEntity('Page copy',x,(fields)=>update({id:x.id as number,fields}).unwrap())} onDelete={(x)=>remove({id:x.id as number,pageContentPlanId:id})}/></ResourcePage> }
+export function OfferProfilePageBlueprintsPage() {
+  const offerProfileId = Number(useParams().offerProfileId)
+  const list = useListPageBlueprintForOfferProfileQuery(offerProfileId)
+  const [remove] = useDeletePageBlueprintMutation()
+  const { openPanel, closePanel } = useSidePanel()
+
+  return <ResourcePage backTo={`/offer-profiles/${offerProfileId}`} backLabel="Profil oferty" title="Page blueprints">
+    <ResourceList
+      title="Page blueprints"
+      items={list.data}
+      isLoading={list.isLoading}
+      error={list.error}
+      linkTo={(item) => `/page-blueprints/${item.id}`}
+      itemLabel={(item) => (item.name as string) ?? `#${item.id}`}
+      onGenerate={() => openPanel({ title: "Generuj page blueprint", content: <GeneratePageBlueprintForm offerProfileId={offerProfileId} onSaved={closePanel} /> })}
+      generateLabel="Generuj page blueprint"
+      additionalActions={(
+        <Button variant="outline" className="h-9" onClick={() => openPanel({
+          title: 'Nowy page blueprint',
+          content: <EditPageBlueprintForm offerProfileId={offerProfileId} onSaved={closePanel} />,
+        })}>Dodaj blueprint</Button>
+      )}
+      onEdit={(item) => openPanel({
+        title: 'Edytuj page blueprint',
+        content: <EditPageBlueprintForm pageBlueprint={item} onSaved={closePanel} />,
+      })}
+      onDelete={(item) => remove({ id: Number(item.id), offerProfileId })}
+    />
+  </ResourcePage>
+}

@@ -41,26 +41,9 @@ from domain.models.analysis.question_answer import QuestionAnswer
 
 from domain.models.analysis.offer_profile_analysis import OfferProfileAnalysis
 
-# Brand marketing
-from domain.models.brand_marketing.brand_marketing import BrandMarketing
-
-# Marketing strategy
-from domain.models.marketing_strategy.marketing_strategy import MarketingStrategy
-
-# Offer strategy
-from domain.models.offer.offer_strategy import OfferStrategy
-
-# Message strategy
-from domain.models.message_strategy.message_strategy import MessageStrategy
-
-
 from domain.models.creative.ugc_creative import UgcCreative
-from domain.models.page.page_strategy import PageStrategy
-from domain.models.page.page_requirements import PageRequirements
-from domain.models.page.page_section_requirement import PageSectionRequirement
 from domain.models.page.page_blueprint import PageBlueprint
-from domain.models.page.page_content_plan import PageContentPlan
-from domain.models.page.page_copy import PageCopy
+from domain.models.page.page_blueprint_section import PageBlueprintSection
 
 # App settings
 from domain.models.settings.app_properties import AppProperties

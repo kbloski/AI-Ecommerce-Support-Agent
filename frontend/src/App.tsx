@@ -18,24 +18,15 @@ import OfferSourcesPage from '@/pages/OfferSourcesPage'
 import OfferSourceDetailPage from '@/pages/OfferSourceDetailPage'
 import AnalysisDetailPage from '@/pages/AnalysisDetailPage'
 import ChecklistDetailPage from '@/pages/ChecklistDetailPage'
-import BrandMarketingDetailPage from '@/pages/BrandMarketingDetailPage'
-import MarketingStrategyDetailPage from '@/pages/MarketingStrategyDetailPage'
-import OfferStrategyDetailPage from '@/pages/OfferStrategyDetailPage'
-import MessageStrategyDetailPage from '@/pages/MessageStrategyDetailPage'
 import UgcCreativeDetailPage from '@/pages/UgcCreativeDetailPage'
-import PageStrategyDetailPage from '@/pages/PageStrategyDetailPage'
-import PageRequirementsDetailPage from '@/pages/PageRequirementsDetailPage'
 import PageBlueprintDetailPage from '@/pages/PageBlueprintDetailPage'
-import PageContentPlanDetailPage from '@/pages/PageContentPlanDetailPage'
-import PageCopyDetailPage from '@/pages/PageCopyDetailPage'
 import SettingsPage from '@/pages/SettingsPage'
 import { OfferProfileTargetAudiencesPage } from '@/pages/EntityRelationPages'
 import {
   AnalysisQuestionsPage,
-  BrandMarketingStrategiesPage, ChecklistItemsPage, OfferProfileAnalysesPage,
-  OfferSourceBrandMarketingPage, MarketingOfferStrategiesPage,
-  MessagePageStrategiesPage, OfferProfileUgcCreativesPage, OfferMessageStrategiesPage,
-  PageRequirementsPage, PageBlueprintsPage, PageContentPlansPage, PageCopiesPage, OfferProfileChecklistsPage,
+  ChecklistItemsPage, OfferProfileAnalysesPage,
+  OfferProfileUgcCreativesPage,
+  OfferProfilePageBlueprintsPage, OfferProfileChecklistsPage,
 } from '@/pages/ResourcePages'
 
 function App() {
@@ -62,7 +53,6 @@ function App() {
         <Route path="/offer-sources/:offerSourceId/facts" element={<OfferFactsPage />} />
         <Route path="/offer-profiles/:offerProfileId/analyses" element={<OfferProfileAnalysesPage />} />
         <Route path="/offer-profiles/:offerProfileId/checklists" element={<OfferProfileChecklistsPage />} />
-        <Route path="/offer-sources/:offerSourceId/brand-marketing" element={<OfferSourceBrandMarketingPage />} />
         <Route path="/offer-profiles/:offerProfileId/analysis/:analysisId" element={<AnalysisDetailPage />} />
         <Route path="/offer-profiles/:offerProfileId/analysis/:analysisId/questions" element={<AnalysisQuestionsPage />} />
         <Route
@@ -70,25 +60,10 @@ function App() {
           element={<ChecklistDetailPage />}
         />
         <Route path="/offer-profiles/:offerProfileId/checklists/:checklistId/items" element={<ChecklistItemsPage />} />
-        <Route path="/brand-marketing/:id" element={<BrandMarketingDetailPage />} />
-        <Route path="/brand-marketing/:id/marketing-strategies" element={<BrandMarketingStrategiesPage />} />
-        <Route path="/marketing-strategy/:id" element={<MarketingStrategyDetailPage />} />
-        <Route path="/marketing-strategy/:id/offer-strategies" element={<MarketingOfferStrategiesPage />} />
-        <Route path="/offer-strategy/:id" element={<OfferStrategyDetailPage />} />
-        <Route path="/offer-strategy/:id/message-strategies" element={<OfferMessageStrategiesPage />} />
-        <Route path="/message-strategy/:id" element={<MessageStrategyDetailPage />} />
         <Route path="/offer-profiles/:offerProfileId/ugc-creatives" element={<OfferProfileUgcCreativesPage />} />
-        <Route path="/message-strategy/:id/page-strategies" element={<MessagePageStrategiesPage />} />
         <Route path="/ugc-creatives/:id" element={<UgcCreativeDetailPage />} />
-        <Route path="/page-strategy/:id" element={<PageStrategyDetailPage />} />
-        <Route path="/page-strategy/:id/page-requirements" element={<PageRequirementsPage />} />
-        <Route path="/page-requirements/:id" element={<PageRequirementsDetailPage />} />
-        <Route path="/page-requirements/:id/page-blueprints" element={<PageBlueprintsPage />} />
-        <Route path="/page-blueprint/:id" element={<PageBlueprintDetailPage />} />
-        <Route path="/page-blueprint/:id/content-plans" element={<PageContentPlansPage />} />
-        <Route path="/page-content-plan/:id" element={<PageContentPlanDetailPage />} />
-        <Route path="/page-content-plan/:id/page-copies" element={<PageCopiesPage />} />
-        <Route path="/page-copy/:id" element={<PageCopyDetailPage />} />
+        <Route path="/offer-profiles/:offerProfileId/page-blueprints" element={<OfferProfilePageBlueprintsPage />} />
+        <Route path="/page-blueprints/:id" element={<PageBlueprintDetailPage />} />
         <Route path="/settings" element={<Navigate to="/settings/general" replace />} />
         <Route path="/settings/general" element={<SettingsPage />} />
       </Route>

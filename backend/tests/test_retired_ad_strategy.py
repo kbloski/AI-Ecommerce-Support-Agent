@@ -34,7 +34,7 @@ class RetiredAdStrategyTests(unittest.TestCase):
             migration.init_db()
         tables = set(inspect(engine).get_table_names())
         self.assertTrue(tables.isdisjoint(RETIRED_AD_STRATEGY_TABLES))
-        self.assertTrue({"message_strategy", "page_strategy", "ugc_creatives", "ad_concepts", "ad_copies", "ad_creative_plans"}.issubset(tables))
+        self.assertTrue({"ugc_creatives", "ad_concepts", "ad_copies", "ad_creative_plans"}.issubset(tables))
         with engine.connect() as conn:
             self.assertEqual(conn.execute(text("SELECT name FROM offers_raw WHERE id=1")).scalar(), "Offer")
             self.assertEqual(conn.exec_driver_sql("PRAGMA foreign_key_check").all(), [])

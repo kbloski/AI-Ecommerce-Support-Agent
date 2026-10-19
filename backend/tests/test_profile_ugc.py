@@ -77,6 +77,10 @@ class ProfileUgcTests(unittest.TestCase):
     def legacy_table(self):
         self.db.close()
         with self.engine.begin() as conn:
+            conn.execute(text("CREATE TABLE brand_marketing (id INTEGER PRIMARY KEY, offer_source_id INTEGER REFERENCES offer_sources(id))"))
+            conn.execute(text("CREATE TABLE marketing_strategy (id INTEGER PRIMARY KEY, brand_marketing_id INTEGER REFERENCES brand_marketing(id))"))
+            conn.execute(text("CREATE TABLE offer_strategy (id INTEGER PRIMARY KEY, marketing_strategy_id INTEGER REFERENCES marketing_strategy(id))"))
+            conn.execute(text("CREATE TABLE message_strategy (id INTEGER PRIMARY KEY, offer_strategy_id INTEGER REFERENCES offer_strategy(id))"))
             conn.execute(text("INSERT INTO brand_marketing (id, offer_source_id) VALUES (1, 1)"))
             conn.execute(text("INSERT INTO marketing_strategy (id, brand_marketing_id) VALUES (1, 1)"))
             conn.execute(text("INSERT INTO offer_strategy (id, marketing_strategy_id) VALUES (1, 1)"))

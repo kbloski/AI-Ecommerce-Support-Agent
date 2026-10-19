@@ -53,37 +53,13 @@ from infrastructure.repositories.question_answer_repository import QuestionAnswe
 from infrastructure.repositories.checklist_repository import ChecklistRepository
 from infrastructure.repositories.checklist_items_repository import ChecklistItemsRepository
 from application.assemblers.checklist_assembler import ChecklistAssembler
-from infrastructure.repositories.brand_marketing_repository import BrandMarketingRepository
-from application.assemblers.brand_marketing_assembler import BrandMarketingAssembler
-from application.services.brand_marketing_service import BrandMarketingService
-from infrastructure.repositories.marketing_strategy_repository import MarketingStrategyRepository
-from application.assemblers.marketing_strategy_assembler import MarketingStrategyAssembler
-from application.services.marketing_strategy_service import MarketingStrategyService
-from infrastructure.repositories.offer_strategy_repository import OfferStrategyRepository
-from application.assemblers.offer_strategy_assembler import OfferStrategyAssembler
-from application.services.offer_strategy_service import OfferStrategyService
-from infrastructure.repositories.message_strategy_repository import MessageStrategyRepository
-from application.assemblers.message_strategy_assembler import MessageStrategyAssembler
-from application.services.message_strategy_service import MessageStrategyService
 from infrastructure.repositories.ugc_creative_repository import UgcCreativeRepository
 from application.assemblers.ugc_creative_assembler import UgcCreativeAssembler
 from application.services.ugc_creative_service import UgcCreativeService
-from infrastructure.repositories.page_strategy_repository import PageStrategyRepository
-from application.assemblers.page_strategy_assembler import PageStrategyAssembler
-from application.services.page_strategy_service import PageStrategyService
-from infrastructure.repositories.page_requirements_repository import PageRequirementsRepository
-from infrastructure.repositories.page_section_requirements_repository import PageSectionRequirementsRepository
-from application.assemblers.page_requirements_assembler import PageRequirementsAssembler
-from application.services.page_requirements_service import PageRequirementsService
 from infrastructure.repositories.page_blueprint_repository import PageBlueprintRepository
+from infrastructure.repositories.page_blueprint_sections_repository import PageBlueprintSectionsRepository
 from application.assemblers.page_blueprint_assembler import PageBlueprintAssembler
 from application.services.page_blueprint_service import PageBlueprintService
-from infrastructure.repositories.page_content_plan_repository import PageContentPlanRepository
-from application.assemblers.page_content_plan_assembler import PageContentPlanAssembler
-from application.services.page_content_plan_service import PageContentPlanService
-from infrastructure.repositories.page_copy_repository import PageCopyRepository
-from application.assemblers.page_copy_assembler import PageCopyAssembler
-from application.services.page_copy_service import PageCopyService
 from infrastructure.repositories.app_properties_repository import AppPropertiesRepository
 from infrastructure.repositories.ad_copy_structures_repository import AdCopyStructuresRepository
 
@@ -194,50 +170,8 @@ class Container(containers.DeclarativeContainer):
         db=db
     )
 
-    brand_marketing_repository = providers.Singleton(
-        BrandMarketingRepository,
-        logger=logger,
-        db=db
-    )
-
-    marketing_strategy_repository = providers.Singleton(
-        MarketingStrategyRepository,
-        logger=logger,
-        db=db
-    )
-
-    offer_strategy_repository = providers.Singleton(
-        OfferStrategyRepository,
-        logger=logger,
-        db=db
-    )
-
-    message_strategy_repository = providers.Singleton(
-        MessageStrategyRepository,
-        logger=logger,
-        db=db
-    )
-
     ugc_creative_repository = providers.Singleton(
         UgcCreativeRepository,
-        logger=logger,
-        db=db
-    )
-
-    page_strategy_repository = providers.Singleton(
-        PageStrategyRepository,
-        logger=logger,
-        db=db
-    )
-
-    page_requirements_repository = providers.Singleton(
-        PageRequirementsRepository,
-        logger=logger,
-        db=db
-    )
-
-    page_section_requirements_repository = providers.Singleton(
-        PageSectionRequirementsRepository,
         logger=logger,
         db=db
     )
@@ -248,17 +182,12 @@ class Container(containers.DeclarativeContainer):
         db=db
     )
 
-    page_content_plan_repository = providers.Singleton(
-        PageContentPlanRepository,
+    page_blueprint_sections_repository = providers.Singleton(
+        PageBlueprintSectionsRepository,
         logger=logger,
         db=db
     )
 
-    page_copy_repository = providers.Singleton(
-        PageCopyRepository,
-        logger=logger,
-        db=db
-    )
 
     # --------------------------
     # Assemblery
@@ -295,56 +224,18 @@ class Container(containers.DeclarativeContainer):
         checklist_items_repository=checklist_items_repository
     )
 
-    brand_marketing_assembler = providers.Singleton(
-        BrandMarketingAssembler,
-        logger=logger,
-    )
-
-    marketing_strategy_assembler = providers.Singleton(
-        MarketingStrategyAssembler,
-        logger=logger,
-    )
-
-    offer_strategy_assembler = providers.Singleton(
-        OfferStrategyAssembler,
-        logger=logger,
-    )
-
-    message_strategy_assembler = providers.Singleton(
-        MessageStrategyAssembler,
-        logger=logger,
-    )
-
     ugc_creative_assembler = providers.Singleton(
         UgcCreativeAssembler,
         logger=logger,
     )
 
-    page_strategy_assembler = providers.Singleton(
-        PageStrategyAssembler,
-        logger=logger,
-    )
-
-    page_requirements_assembler = providers.Singleton(
-        PageRequirementsAssembler,
-        logger=logger,
-        page_section_requirements_repository=page_section_requirements_repository
-    )
-
     page_blueprint_assembler = providers.Singleton(
         PageBlueprintAssembler,
         logger=logger,
+        page_blueprint_sections_repository=page_blueprint_sections_repository
     )
 
-    page_content_plan_assembler = providers.Singleton(
-        PageContentPlanAssembler,
-        logger=logger,
-    )
 
-    page_copy_assembler = providers.Singleton(
-        PageCopyAssembler,
-        logger=logger,
-    )
     # --------------------------
     # Serwisy
     # --------------------------
@@ -424,7 +315,6 @@ class Container(containers.DeclarativeContainer):
         PageSectionsService,
         logger=logger,
         page_sections_repository=page_sections_repository,
-        page_section_requirements_repository=page_section_requirements_repository,
     )
 
     app_properties_repository = providers.Singleton(
@@ -504,34 +394,6 @@ class Container(containers.DeclarativeContainer):
         brand_styles_repository=brand_styles_repository,
     )
 
-    brand_marketing_service = providers.Singleton(
-        BrandMarketingService,
-        logger=logger,
-        brand_marketing_repository=brand_marketing_repository,
-        brand_marketing_assembler=brand_marketing_assembler
-    )
-
-    marketing_strategy_service = providers.Singleton(
-        MarketingStrategyService,
-        logger=logger,
-        marketing_strategy_repository=marketing_strategy_repository,
-        marketing_strategy_assembler=marketing_strategy_assembler
-    )
-
-    offer_strategy_service = providers.Singleton(
-        OfferStrategyService,
-        logger=logger,
-        offer_strategy_repository=offer_strategy_repository,
-        offer_strategy_assembler=offer_strategy_assembler
-    )
-
-    message_strategy_service = providers.Singleton(
-        MessageStrategyService,
-        logger=logger,
-        message_strategy_repository=message_strategy_repository,
-        message_strategy_assembler=message_strategy_assembler
-    )
-
     ugc_creative_service = providers.Singleton(
         UgcCreativeService,
         logger=logger,
@@ -539,38 +401,9 @@ class Container(containers.DeclarativeContainer):
         ugc_creative_assembler=ugc_creative_assembler
     )
 
-    page_strategy_service = providers.Singleton(
-        PageStrategyService,
-        logger=logger,
-        page_strategy_repository=page_strategy_repository,
-        page_strategy_assembler=page_strategy_assembler
-    )
-
-    page_requirements_service = providers.Singleton(
-        PageRequirementsService,
-        logger=logger,
-        page_requirements_repository=page_requirements_repository,
-        page_requirements_assembler=page_requirements_assembler,
-        page_sections_service=page_sections_service,
-    )
-
     page_blueprint_service = providers.Singleton(
         PageBlueprintService,
         logger=logger,
         page_blueprint_repository=page_blueprint_repository,
-        page_blueprint_assembler=page_blueprint_assembler
-    )
-
-    page_content_plan_service = providers.Singleton(
-        PageContentPlanService,
-        logger=logger,
-        page_content_plan_repository=page_content_plan_repository,
-        page_content_plan_assembler=page_content_plan_assembler
-    )
-
-    page_copy_service = providers.Singleton(
-        PageCopyService,
-        logger=logger,
-        page_copy_repository=page_copy_repository,
-        page_copy_assembler=page_copy_assembler
+        page_blueprint_assembler=page_blueprint_assembler,
     )

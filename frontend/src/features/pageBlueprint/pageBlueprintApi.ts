@@ -2,35 +2,64 @@ import { api } from '@/store/api'
 import { listTag, itemTag } from '@/lib/tags'
 import type { Entity } from '@/types'
 
+import type { PageBlueprintFields } from './pageBlueprintFields'
+
+export type PageBlueprintPageType = 'product_page' | null
+
 export const pageBlueprintApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    listPageBlueprintForPageRequirements: builder.query<Entity[], number>({
-      query: (pageRequirementsId) => `/page-requirements/${pageRequirementsId}/page-blueprint`,
-      providesTags: (result, _err, pageRequirementsId) => [
+    listPageBlueprintForOfferProfile: builder.query<Entity[], number>({
+      query: (offerProfileId) => `/offer-profiles/${offerProfileId}/page-blueprints`,
+      providesTags: (result, _err, offerProfileId) => [
         ...(result ?? []).map((item) => itemTag('PageBlueprint', item.id)),
-        listTag('PageBlueprint', pageRequirementsId),
+        listTag('PageBlueprint', offerProfileId),
       ],
     }),
     getPageBlueprint: builder.query<Entity, number>({
-      query: (id) => `/page-blueprint/${id}`,
+      query: (id) => `/page-blueprints/${id}`,
       providesTags: (_result, _err, id) => [itemTag('PageBlueprint', id)],
     }),
-    updatePageBlueprint: builder.mutation<Entity, { id: number; fields: Record<string, unknown> }>({
-      query: ({ id, fields }) => ({
-        url: `/page-blueprint/${id}/update`,
+    createPageBlueprint: builder.mutation<
+      Entity,
+      { offerProfileId: number; fields: PageBlueprintFields }
+    >({
+      query: ({ offerProfileId, fields }) => ({
+        url: `/offer-profiles/${offerProfileId}/page-blueprints/create`,
         method: 'POST',
-        body: { fields },
+        body: fields,
       }),
-      invalidatesTags: (_result, _err, { id }) => [itemTag('PageBlueprint', id)],
+      invalidatesTags: (_result, _err, { offerProfileId }) => [
+        listTag('PageBlueprint', offerProfileId),
+      ],
     }),
-    generatePageBlueprint: builder.mutation<Entity, number>({
-      query: (pageRequirementsId) => ({ url: `/page-requirements/${pageRequirementsId}/page-blueprint/generate`, method: 'POST' }),
-      invalidatesTags: (_result, _err, pageRequirementsId) => [listTag('PageBlueprint', pageRequirementsId)],
+    generatePageBlueprint: builder.mutation<Entity, { offerProfileId: number; pageType: PageBlueprintPageType; sectionCount: number | null; generationInstructions: string }>({
+      query: ({ offerProfileId, pageType, sectionCount, generationInstructions }) => ({
+        url: `/offer-profiles/${offerProfileId}/page-blueprints/generate`,
+        method: 'POST',
+        body: { page_type: pageType, section_count: sectionCount, generation_instructions: generationInstructions },
+      }),
+      invalidatesTags: (_result, _err, { offerProfileId }) => [
+        listTag('PageBlueprint', offerProfileId),
+      ],
     }),
-    deletePageBlueprint: builder.mutation<void, { id: number; pageRequirementsId: number }>({
-      query: ({ id }) => ({ url: `/page-blueprint/${id}/delete`, method: 'DELETE' }),
-      invalidatesTags: (_result, _err, { id, pageRequirementsId }) => [
-        listTag('PageBlueprint', pageRequirementsId),
+    updatePageBlueprint: builder.mutation<
+      Entity,
+      { id: number; offerProfileId: number; fields: PageBlueprintFields }
+    >({
+      query: ({ id, fields }) => ({
+        url: `/page-blueprints/${id}/update`,
+        method: 'POST',
+        body: fields,
+      }),
+      invalidatesTags: (_result, _err, { id, offerProfileId }) => [
+        itemTag('PageBlueprint', id),
+        listTag('PageBlueprint', offerProfileId),
+      ],
+    }),
+    deletePageBlueprint: builder.mutation<void, { id: number; offerProfileId: number }>({
+      query: ({ id }) => ({ url: `/page-blueprints/${id}/delete`, method: 'DELETE' }),
+      invalidatesTags: (_result, _err, { id, offerProfileId }) => [
+        listTag('PageBlueprint', offerProfileId),
         itemTag('PageBlueprint', id),
       ],
     }),
@@ -38,9 +67,10 @@ export const pageBlueprintApi = api.injectEndpoints({
 })
 
 export const {
-  useListPageBlueprintForPageRequirementsQuery,
+  useListPageBlueprintForOfferProfileQuery,
   useGetPageBlueprintQuery,
+  useCreatePageBlueprintMutation,
   useGeneratePageBlueprintMutation,
-  useDeletePageBlueprintMutation,
   useUpdatePageBlueprintMutation,
+  useDeletePageBlueprintMutation,
 } = pageBlueprintApi

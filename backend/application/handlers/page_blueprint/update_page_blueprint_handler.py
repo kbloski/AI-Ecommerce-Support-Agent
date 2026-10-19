@@ -1,20 +1,23 @@
-from typing import Any, Dict
+from fastapi import HTTPException
 
+from application.dtos.page_blueprint.page_blueprint_fields import PageBlueprintFields
 from di.container import Container
-from application.mappers.page_blueprint_mapper import PageBlueprintMapper
-
-DENYLIST = {"id", "page_strategy_id", "page_requirements_id", "created_at", "updated_at"}
+from infrastructure.database.unit_of_work import unit_of_work
 
 
-def update_page_blueprint_handler(id: int, fields: Dict[str, Any]):
+def update_page_blueprint_handler(id: int, name: str, sections: list[dict], description: str = ""):
+    fields = PageBlueprintFields(name=name, description=description, sections=sections)
     container = Container()
-    page_blueprint_repository = container.page_blueprint_repository()
-
-    item = page_blueprint_repository.get_by_id(id)
-
-    for key, value in fields.items():
-        if key not in DENYLIST:
-            setattr(item, key, value)
-
-    updated = page_blueprint_repository.update(item)
-    return PageBlueprintMapper.to_dto(updated).to_dict()
+    repository = container.page_blueprint_repository()
+    item = repository.get_by_id(id)
+    if item is None:
+        raise HTTPException(404, f"Page blueprint {id} not found")
+    try:
+        with unit_of_work(container.db()):
+            container.page_blueprint_sections_repository().replace_for_blueprint(id, fields.sections)
+            item.name = fields.name
+            item.description = fields.description
+            repository.update(item)
+    except ValueError as error:
+        raise HTTPException(422, str(error)) from error
+    return container.page_blueprint_service().get_page_blueprint_by_id(id)

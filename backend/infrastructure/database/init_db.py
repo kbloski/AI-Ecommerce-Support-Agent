@@ -19,10 +19,7 @@ def init_db():
     migrate_research_to_offer_profiles(engine)
     _add_missing_favorite_columns()
     _add_missing_is_reviewed_columns()
-    _add_missing_page_strategy_name_column()
     _add_missing_page_requirements_name_column()
-    _add_missing_page_content_plan_name_column()
-    _add_missing_page_blueprint_columns()
     _rename_page_section_requirement_column()
     _migrate_offer_facts_optional_evidence()
     _migrate_target_audiences_to_offer_profiles()
@@ -36,6 +33,12 @@ def init_db():
     migrate_creative_plan_content(engine)
     from .ugc_profile_migration import migrate_ugc_to_offer_profiles
     migrate_ugc_to_offer_profiles(engine)
+    from .page_blueprints_migration import migrate_page_blueprints_to_profiles
+    migrate_page_blueprints_to_profiles(engine)
+    from .page_blueprint_sections_migration import migrate_page_blueprint_sections
+    migrate_page_blueprint_sections(engine)
+    from .retired_brand_marketing_migration import remove_retired_brand_marketing_pipeline
+    remove_retired_brand_marketing_pipeline(engine)
     Base.metadata.create_all(bind=engine)
 
 
@@ -195,28 +198,6 @@ def _add_missing_is_reviewed_columns():
                     )
 
 
-def _add_missing_page_strategy_name_column():
-    """Add a required display name and derive names for existing strategies."""
-    inspector = inspect(engine)
-    if "page_strategy" not in inspector.get_table_names():
-        return
-
-    columns = {column["name"] for column in inspector.get_columns("page_strategy")}
-    with engine.begin() as conn:
-        if "name" not in columns:
-            conn.execute(text(
-                "ALTER TABLE page_strategy "
-                "ADD COLUMN name VARCHAR NOT NULL DEFAULT 'Page Strategy'"
-            ))
-        conn.execute(text("""
-            UPDATE page_strategy
-            SET name = CASE
-                WHEN goal IS NOT NULL AND TRIM(goal) != '' THEN SUBSTR(goal, 1, 255)
-                ELSE 'Page Strategy ' || id
-            END
-            WHERE name IS NULL OR TRIM(name) = '' OR name = 'Page Strategy'
-        """))
-
 def _add_missing_page_requirements_name_column():
     """Add a required display name and derive one for existing requirements."""
     inspector = inspect(engine)
@@ -236,41 +217,6 @@ def _add_missing_page_requirements_name_column():
             WHERE name IS NULL OR TRIM(name) = '' OR name = 'Page Requirements'
         """))
 
-def _add_missing_page_content_plan_name_column():
-    """Add a required display name and derive one for existing content plans."""
-    inspector = inspect(engine)
-    if "page_content_plan" not in inspector.get_table_names():
-        return
-
-    columns = {column["name"] for column in inspector.get_columns("page_content_plan")}
-    with engine.begin() as conn:
-        if "name" not in columns:
-            conn.execute(text(
-                "ALTER TABLE page_content_plan "
-                "ADD COLUMN name VARCHAR NOT NULL DEFAULT 'Page Content Plan'"
-            ))
-        conn.execute(text("""
-            UPDATE page_content_plan
-            SET name = 'Page Content Plan ' || id
-            WHERE name IS NULL OR TRIM(name) = '' OR name = 'Page Content Plan'
-        """))
-
-def _add_missing_page_blueprint_columns():
-    """Additive migration: adds `page_requirements_id` to `page_blueprint`
-    rows created before the PAGE_REQUIREMENTS stage existed. Nullable so
-    existing rows (still linked via `page_strategy_id`) stay valid."""
-    inspector = inspect(engine)
-    existing_tables = set(inspector.get_table_names())
-
-    if "page_blueprint" not in existing_tables:
-        return
-
-    columns = {c["name"] for c in inspector.get_columns("page_blueprint")}
-    if "page_requirements_id" not in columns:
-        with engine.begin() as conn:
-            conn.execute(
-                text('ALTER TABLE "page_blueprint" ADD COLUMN page_requirements_id INTEGER')
-            )
 
 def _rename_page_section_requirement_column():
     """Renames `page_section_type` to `page_section_type_id` on

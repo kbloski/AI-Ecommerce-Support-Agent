@@ -7,16 +7,8 @@ from domain.models.offer.offer_source import OfferSource
 from domain.models.audience.target_audience import TargetAudience
 from domain.models.analysis.analysis import Analysis
 from domain.models.checklist.checklist import Checklist
-from domain.models.brand_marketing.brand_marketing import BrandMarketing
-from domain.models.marketing_strategy.marketing_strategy import MarketingStrategy
-from domain.models.offer.offer_strategy import OfferStrategy
-from domain.models.message_strategy.message_strategy import MessageStrategy
 from domain.models.creative.ugc_creative import UgcCreative
-from domain.models.page.page_strategy import PageStrategy
-from domain.models.page.page_requirements import PageRequirements
 from domain.models.page.page_blueprint import PageBlueprint
-from domain.models.page.page_content_plan import PageContentPlan
-from domain.models.page.page_copy import PageCopy
 
 # Table name -> model, for the entities that have their own list + detail
 # page in the frontend (and can therefore be marked as favorite).
@@ -26,14 +18,6 @@ FAVORITABLE_MODELS: Dict[str, Type[Base]] = {
     TableName.TARGET_AUDIENCES.value: TargetAudience,
     TableName.ANALYSIS.value: Analysis,
     TableName.CHECKLIST.value: Checklist,
-    TableName.BRAND_MARKETING.value: BrandMarketing,
-    TableName.MARKETING_STRATEGY.value: MarketingStrategy,
-    TableName.OFFER_STRATEGY.value: OfferStrategy,
-    TableName.MESSAGE_STRATEGY.value: MessageStrategy,
     TableName.UGC_CREATIVES.value: UgcCreative,
-    TableName.PAGE_STRATEGY.value: PageStrategy,
-    TableName.PAGE_REQUIREMENTS.value: PageRequirements,
     TableName.PAGE_BLUEPRINT.value: PageBlueprint,
-    TableName.PAGE_CONTENT_PLAN.value: PageContentPlan,
-    TableName.PAGE_COPY.value: PageCopy,
 }

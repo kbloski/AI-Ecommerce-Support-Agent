@@ -18,17 +18,9 @@ import { useListAdCopiesQuery } from '@/features/adCopy/adCopyApi'
 import { useListCreativePlansQuery } from '@/features/creativePlans/creativePlansApi'
 import { useListBrandStylesQuery } from '@/features/brandStyles/brandStylesApi'
 import { useGetAnalysisQuery, useListAnalysisForOfferProfileQuery } from '@/features/analysis/analysisApi'
-import { useListBrandMarketingForOfferSourceQuery } from '@/features/brandMarketing/brandMarketingApi'
 import { useGetChecklistQuery, useListChecklistsForOfferProfileQuery } from '@/features/checklists/checklistsApi'
-import { useListMarketingStrategyForBrandMarketingQuery } from '@/features/marketingStrategy/marketingStrategyApi'
-import { useListOfferStrategyForMarketingStrategyQuery } from '@/features/offerStrategy/offerStrategyApi'
-import { useListMessageStrategyForOfferStrategyQuery } from '@/features/messageStrategy/messageStrategyApi'
 import { useListUgcCreativesForOfferProfileQuery } from '@/features/ugcCreatives/ugcCreativesApi'
-import { useListPageStrategyForMessageStrategyQuery } from '@/features/pageStrategy/pageStrategyApi'
-import { useListPageRequirementsForPageStrategyQuery } from '@/features/pageRequirements/pageRequirementsApi'
-import { useListPageBlueprintForPageRequirementsQuery } from '@/features/pageBlueprint/pageBlueprintApi'
-import { useListPageContentPlanForPageBlueprintQuery } from '@/features/pageContentPlan/pageContentPlanApi'
-import { useListPageCopyForPageContentPlanQuery } from '@/features/pageCopy/pageCopyApi'
+import { useListPageBlueprintForOfferProfileQuery } from '@/features/pageBlueprint/pageBlueprintApi'
 
 const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
   cn(
@@ -96,28 +88,18 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   const { contextualPanel, openPanel } = useSidePanel()
   const sections = [
     { pattern: '/offers/:id/*', current: 'Oferta', process: [['offer-sources', 'Źródła oferty']], resources: [] },
-    { pattern: '/offer-sources/:id/*', current: 'Offer source', attached: [['facts', 'Fakty o produkcie']], process: [['profiles', 'Profile oferty'], ['brand-marketing', 'Marketing marki (przestarzały)']], resources: [] },
+    { pattern: '/offer-sources/:id/*', current: 'Offer source', attached: [['facts', 'Fakty o produkcie']], process: [['profiles', 'Profile oferty']], resources: [] },
     { pattern: '/offer-profiles/:offerProfileId/analysis/:id/*', current: 'Analiza', process: [], resources: [['questions', 'Pytania']] },
     { pattern: '/offer-profiles/:offerProfileId/checklists/:id/*', current: 'Checklista', process: [], resources: [['items', 'Zadania']] },
     { pattern: '/offer-profiles/:id/*', current: 'Profil oferty', attached: [['additional-contexts', 'Dodatkowe informacje']], process: [], resources: [] },
-    { pattern: '/brand-marketing/:id/*', current: 'Brand marketing', process: [['marketing-strategies', 'Marketing strategy']], resources: [] },
-    { pattern: '/marketing-strategy/:id/*', current: 'Marketing strategy', process: [['offer-strategies', 'Offer strategy']], resources: [] },
-    { pattern: '/offer-strategy/:id/*', current: 'Offer strategy', process: [['message-strategies', 'Message strategy']], resources: [] },
-    { pattern: '/message-strategy/:id/*', current: 'Message strategy', process: [['page-strategies', 'Page strategy']], resources: [] },
-    { pattern: '/page-strategy/:id/*', current: 'Page strategy', process: [['page-requirements', 'Page requirements']], resources: [] },
-    { pattern: '/page-requirements/:id/*', current: 'Page requirements', process: [['page-blueprints', 'Page blueprint']], resources: [] },
-    { pattern: '/page-blueprint/:id/*', current: 'Page blueprint', process: [['content-plans', 'Content plan']], resources: [] },
-    { pattern: '/page-content-plan/:id/*', current: 'Content plan', process: [['page-copies', 'Page copy']], resources: [] },
+    { pattern: '/page-blueprints/:id/*', current: 'Page blueprints', process: [], resources: [] },
     { pattern: '/ugc-creatives/:id/*', current: 'UGC creative', process: [], resources: [] },
-    { pattern: '/page-copy/:id/*', current: 'Page copy', process: [], resources: [] },
   ] as const
   // Prefer the most specific route, otherwise an analysis URL would match OfferSource first.
   const section = [...sections].sort((a, b) => b.pattern.length - a.pattern.length)
     .map((config) => ({ config, match: matchPath(config.pattern, pathname) }))
     .find(({ match }) => match)
   const isOfferSourceSection = section?.config.current === 'Offer source'
-  const offerSourceId = Number(section?.match?.params.id)
-  const skipOfferSourceResources = !isOfferSourceSection || !Number.isInteger(offerSourceId)
   const currentEntityId = Number(section?.match?.params.id)
   const isAnalysisSection = section?.config.current === 'Analiza'
   const isChecklistSection = section?.config.current === 'Checklista'
@@ -135,21 +117,13 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
   const adCopies = useListAdCopiesQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const creativePlans = useListCreativePlansQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const brandStyles = useListBrandStylesQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
-  const brandMarketing = useListBrandMarketingForOfferSourceQuery(offerSourceId, { skip: skipOfferSourceResources })
   const analyses = useListAnalysisForOfferProfileQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const analysis = useGetAnalysisQuery(currentEntityId, { skip: !isAnalysisSection || !Number.isInteger(currentEntityId) })
   const checklist = useGetChecklistQuery(currentEntityId, { skip: !isChecklistSection || !Number.isInteger(currentEntityId) })
   const offerSources = useListOfferSourceForOfferQuery(currentEntityId, { skip: !isCurrentStage('Oferta') })
   const checklists = useListChecklistsForOfferProfileQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
-  const marketingStrategies = useListMarketingStrategyForBrandMarketingQuery(currentEntityId, { skip: !isCurrentStage('Brand marketing') })
-  const offerStrategies = useListOfferStrategyForMarketingStrategyQuery(currentEntityId, { skip: !isCurrentStage('Marketing strategy') })
-  const messageStrategies = useListMessageStrategyForOfferStrategyQuery(currentEntityId, { skip: !isCurrentStage('Offer strategy') })
   const ugcCreatives = useListUgcCreativesForOfferProfileQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
-  const pageStrategies = useListPageStrategyForMessageStrategyQuery(currentEntityId, { skip: !isCurrentStage('Message strategy') })
-  const pageRequirements = useListPageRequirementsForPageStrategyQuery(currentEntityId, { skip: !isCurrentStage('Page strategy') })
-  const pageBlueprints = useListPageBlueprintForPageRequirementsQuery(currentEntityId, { skip: !isCurrentStage('Page requirements') })
-  const pageContentPlans = useListPageContentPlanForPageBlueprintQuery(currentEntityId, { skip: !isCurrentStage('Page blueprint') })
-  const pageCopies = useListPageCopyForPageContentPlanQuery(currentEntityId, { skip: !isCurrentStage('Content plan') })
+  const pageBlueprints = useListPageBlueprintForOfferProfileQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
   const offerFacts = useListOfferFactsQuery({ offerSourceId: currentEntityId, pageSize: 1 }, { skip: !isOfferSourceSection })
   const offerProfiles = useListOfferProfilesQuery(currentEntityId, { skip: !isOfferSourceSection })
   const profileContexts = useListProfileContextsQuery(currentEntityId, { skip: !isCurrentStage('Profil oferty') })
@@ -164,20 +138,12 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
     'additional-contexts': profileContexts.data?.length,
     profiles: offerProfiles.data?.length,
     facts: offerFacts.data?.total_items,
-    'brand-marketing': brandMarketing.data?.length,
     analyses: analyses.data?.length,
     checklists: checklists.data?.length,
     questions: (analysis.data?.analysis_questions as unknown[] | undefined)?.length,
     items: (checklist.data?.checklist_items as unknown[] | undefined)?.length,
-    'marketing-strategies': marketingStrategies.data?.length,
-    'offer-strategies': offerStrategies.data?.length,
-    'message-strategies': messageStrategies.data?.length,
     'ugc-creatives': ugcCreatives.data?.length,
-    'page-strategies': pageStrategies.data?.length,
-    'page-requirements': pageRequirements.data?.length,
     'page-blueprints': pageBlueprints.data?.length,
-    'content-plans': pageContentPlans.data?.length,
-    'page-copies': pageCopies.data?.length,
   }
   const attentionCounts: Record<string, number | undefined> = {
     'target-audiences': unreviewedTargetAudiences.data?.total_items,
@@ -309,7 +275,7 @@ export function AppContextSidebar({ variant = 'sidebar', width = 224, resize }: 
           <SidebarGroup title="Pages" className="mt-6">
             <div className="ml-2 border-l pl-2">
               <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">Landing pages</span>
-              <span aria-disabled="true" className="flex min-w-0 cursor-not-allowed rounded-md px-3 py-2 text-sm text-muted-foreground/50">Sales pages</span>
+              {navigationLink('page-blueprints', 'Page blueprints', `${detailPath}/page-blueprints`)}
             </div>
           </SidebarGroup>
         )}

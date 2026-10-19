@@ -13,29 +13,7 @@ class ContextSectionPurpose(str, Enum):
         "constraints, and the actual scope of the product."
     )
 
-    BRAND_STRATEGY = (
-        "Strategic information about brand positioning, meaning, desired perception, "
-        "personality, and communication direction."
-    )
-
-    MARKETING_STRATEGY = (
-        "Strategic information about target audiences, channels, customer journey, "
-        "customer acquisition, and marketing priorities."
-    )
-
-    OFFER_STRATEGY = (
-        "Strategic information about how the offer should be presented, including "
-        "its value, benefits, value mechanism, and reasons to buy."
-    )
-
-    MESSAGE_STRATEGY = (
-        "Information defining which messages, arguments, benefits, objections, "
-        "and claims may be used in marketing communication."
-    )
-
-
     # Advertising & Creative
-
 
     AD_FRAMEWORK = (
         "Information defining the required advertising framework, its ordered steps, "
@@ -98,27 +76,8 @@ class ContextSectionPurpose(str, Enum):
     )
 
     # Page
-    PAGE_STRATEGY = (
-        "Strategic information about the page objective, target audience, primary "
-        "message, and how the page should guide users toward the desired action."
-    )
-
-    PAGE_REQUIREMENTS = (
-        "Information defining page requirements and constraints, including required, "
-        "optional, and excluded elements, as well as other structural rules."
-    )
 
     PAGE_BLUEPRINT = (
-        "Information defining the page structure, section order, and the role of each "
-        "section in communication and conversion."
-    )
-
-    PAGE_CONTENT_PLAN = (
-        "Information defining which messages, arguments, proof points, and content "
-        "should appear within each section of the page."
-    )
-
-    PAGE_COPY = (
-        "Information containing the final page copy, including headlines, body text, "
-        "arguments, proof, calls to action, and other written content."
+        "Information defining page blueprint and constraints, including required, "
+        "optional, and excluded elements, as well as other structural rules."
     )

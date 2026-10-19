@@ -1,3 +1,4 @@
+from application.dtos.page_blueprint.page_blueprint_fields import PageBlueprintFields, GeneratePageBlueprintRequest
 from typing import Any, Dict, List, Literal, Optional
 
 from fastapi import APIRouter, HTTPException, Query
@@ -19,13 +20,6 @@ from application.handlers.offer_sources.get_offer_sources_handler import get_off
 from application.handlers.offer_sources.delete_offer_source_handler import delete_offer_source_handler
 from application.handlers.offers.update_offer_handler import update_offer_handler
 from application.handlers.offer_sources.update_offer_source_handler import update_offer_source_handler
-from application.handlers.brand_marketing.update_brand_marketing_handler import update_brand_marketing_handler
-from application.handlers.marketing_strategy.update_marketing_strategy_handler import update_marketing_strategy_handler
-from application.handlers.offer_strategy.update_offer_strategy_handler import update_offer_strategy_handler
-from application.handlers.page_strategy.update_page_strategy_handler import update_page_strategy_handler
-from application.handlers.page_blueprint.update_page_blueprint_handler import update_page_blueprint_handler
-from application.handlers.page_content_plan.update_page_content_plan_handler import update_page_content_plan_handler
-from application.handlers.page_copy.update_page_copy_handler import update_page_copy_handler
 from application.handlers.target_audience.generate_target_audience_handler import generate_target_audience_handler
 from application.handlers.target_audience.get_target_audience_handler import get_target_audience_handler
 from application.handlers.target_audience.get_target_audience_preview_handler import get_target_audience_preview_handler
@@ -48,52 +42,19 @@ from application.handlers.checklist.delete_checklist_item_handler import delete_
 from application.handlers.checklist.delete_checklist_handler import delete_checklist_handler
 from application.handlers.checklist.update_checklist_item_handler import update_checklist_item_handler
 from application.handlers.advertisement.offer_source_advertisement_generate_handler import offer_source_advertisement_generate_handler
-from application.handlers.brand_marketing.generate_brand_marketing_handler import generate_brand_marketing_handler
-from application.handlers.brand_marketing.get_brand_marketing_handler import get_brand_marketing_handler
-from application.handlers.brand_marketing.get_offer_source_brand_marketings_handler import get_offer_source_brand_marketings_handler
-from application.handlers.brand_marketing.delete_brand_marketing_handler import delete_brand_marketing_handler
-from application.handlers.marketing_strategy.generate_marketing_strategy_handler import generate_marketing_strategy_handler
-from application.handlers.marketing_strategy.get_marketing_strategy_handler import get_marketing_strategy_handler
-from application.handlers.marketing_strategy.get_brand_marketing_marketing_strategies_handler import get_brand_marketing_marketing_strategies_handler
-from application.handlers.marketing_strategy.delete_marketing_strategy_handler import delete_marketing_strategy_handler
-from application.handlers.offer_strategy.generate_offer_strategy_handler import generate_offer_strategy_handler
-from application.handlers.offer_strategy.get_offer_strategy_handler import get_offer_strategy_handler
-from application.handlers.offer_strategy.get_marketing_strategy_offer_strategies_handler import get_marketing_strategy_offer_strategies_handler
-from application.handlers.offer_strategy.delete_offer_strategy_handler import delete_offer_strategy_handler
-from application.handlers.message_strategy.generate_message_strategy_handler import generate_message_strategy_handler
-from application.handlers.message_strategy.get_message_strategy_handler import get_message_strategy_handler
-from application.handlers.message_strategy.get_offer_strategy_message_strategies_handler import get_offer_strategy_message_strategies_handler
-from application.handlers.message_strategy.delete_message_strategy_handler import delete_message_strategy_handler
-from application.handlers.message_strategy.update_message_strategy_handler import update_message_strategy_handler
-from application.handlers.page_strategy.generate_page_strategy_json_handler import generate_page_strategy_json_handler
 from application.handlers.ugc_creatives.generate_ugc_creatives_handler import generate_ugc_creatives_handler
 from application.dtos.ugc_creatives.ugc_generation_fields import GenerateUgcRequest
 from application.handlers.ugc_creatives.get_ugc_creative_handler import get_ugc_creative_handler
 from application.handlers.ugc_creatives.get_offer_profile_ugc_creatives_handler import get_offer_profile_ugc_creatives_handler
 from application.handlers.ugc_creatives.delete_ugc_creative_handler import delete_ugc_creative_handler
 from application.handlers.ugc_creatives.update_ugc_creative_handler import update_ugc_creative_handler
-from application.handlers.page_strategy.get_page_strategy_handler import get_page_strategy_handler
-from application.handlers.page_strategy.get_message_strategy_page_strategies_handler import get_message_strategy_page_strategies_handler
-from application.handlers.page_strategy.delete_page_strategy_handler import delete_page_strategy_handler
-from application.handlers.page_requirements.create_page_requirements_handler import create_page_requirements_handler
-from application.handlers.page_requirements.generate_page_requirements_handler import generate_page_requirements_handler
-from application.handlers.page_requirements.get_page_requirements_handler import get_page_requirements_handler
-from application.handlers.page_requirements.get_page_strategy_page_requirements_handler import get_page_strategy_page_requirements_handler
-from application.handlers.page_requirements.update_page_requirements_handler import update_page_requirements_handler
-from application.handlers.page_requirements.delete_page_requirements_handler import delete_page_requirements_handler
+from application.handlers.page_blueprint.create_page_blueprint_handler import create_page_blueprint_handler
 from application.handlers.page_blueprint.generate_page_blueprint_handler import generate_page_blueprint_handler
 from application.handlers.page_blueprint.get_page_blueprint_handler import get_page_blueprint_handler
-from application.handlers.page_blueprint.get_page_requirements_page_blueprints_handler import get_page_requirements_page_blueprints_handler
+from application.handlers.page_blueprint.get_offer_profile_page_blueprint_handler import get_offer_profile_page_blueprint_handler
+from application.handlers.page_blueprint.update_page_blueprint_handler import update_page_blueprint_handler
 from application.handlers.page_blueprint.delete_page_blueprint_handler import delete_page_blueprint_handler
 from application.handlers.ads.list_page_sections_handler import list_page_sections_handler
-from application.handlers.page_content_plan.generate_page_content_plan_handler import generate_page_content_plan_handler
-from application.handlers.page_content_plan.get_page_content_plan_handler import get_page_content_plan_handler
-from application.handlers.page_content_plan.get_page_blueprint_page_content_plans_handler import get_page_blueprint_page_content_plans_handler
-from application.handlers.page_content_plan.delete_page_content_plan_handler import delete_page_content_plan_handler
-from application.handlers.page_copy.generate_page_copy_handler import generate_page_copy_handler
-from application.handlers.page_copy.get_page_copy_handler import get_page_copy_handler
-from application.handlers.page_copy.get_page_content_plan_page_copies_handler import get_page_content_plan_page_copies_handler
-from application.handlers.page_copy.delete_page_copy_handler import delete_page_copy_handler
 from application.handlers.settings.get_rule_set_handler import get_rule_set_handler
 from application.handlers.settings.save_rule_set_handler import save_rule_set_handler
 from domain.enums.llm_rule_set import LlmRuleSet
@@ -120,17 +81,6 @@ class OllamaSettingsFields(BaseModel):
 
 class SaveOllamaSettingsRequest(BaseModel):
     fields: OllamaSettingsFields
-
-
-class PageSectionRequirementInput(BaseModel):
-    page_section_type_id: str
-    requirement_type: str
-    position: Optional[int] = None
-
-
-class UpdatePageRequirementsRequest(BaseModel):
-    name: str
-    section_requirements: List[PageSectionRequirementInput]
 
 
 class UpdateTargetAudienceRequest(BaseModel):
@@ -175,42 +125,11 @@ def register_general_routes(router: APIRouter):
     def _legacy_get_3(offer_profile_id: str, analyse_id: str, checklist_id: str):
         raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/checklists/{checklist_id}/generate")
 
-    @router.get("/offer-sources/{offer_source_id}/brand-marketing/generate")
-    def _legacy_get_4(offer_source_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-sources/{offer_source_id}/brand-marketing/generate")
-
-    @router.get("/offer-sources/{offer_source_id}/brand-marketing/{brand_marketing_id}/marketing-strategy/generate")
-    def _legacy_get_5(offer_source_id: str, brand_marketing_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-sources/{offer_source_id}/brand-marketing/{brand_marketing_id}/marketing-strategy/generate")
-
-    @router.get("/marketing-strategy/{marketing_strategy_id}/offer-strategy/generate")
-    def _legacy_get_6(marketing_strategy_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /marketing-strategy/{marketing_strategy_id}/offer-strategy/generate")
-
-    @router.get("/offer-strategy/{offer_strategy_id}/message-strategy/generate")
-    def _legacy_get_7(offer_strategy_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-strategy/{offer_strategy_id}/message-strategy/generate")
-
     @router.get("/offer-profiles/{offer_profile_id}/ugc-creatives/generate")
     def _legacy_get_8(offer_profile_id: str):
         raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/ugc-creatives/generate")
 
 
-    @router.get("/message-strategy/{message_strategy_id}/page-strategy/generate")
-    def _legacy_get_11(message_strategy_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /message-strategy/{message_strategy_id}/page-strategy/generate")
-
-    @router.get("/page-requirements/{page_requirements_id}/page-blueprint/generate")
-    def _legacy_get_12(page_requirements_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /page-requirements/{page_requirements_id}/page-blueprint/generate")
-
-    @router.get("/page-blueprint/{page_blueprint_id}/page-content-plan/generate")
-    def _legacy_get_13(page_blueprint_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /page-blueprint/{page_blueprint_id}/page-content-plan/generate")
-
-    @router.get("/page-content-plan/{page_content_plan_id}/page-copy/generate")
-    def _legacy_get_14(page_content_plan_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /page-content-plan/{page_content_plan_id}/page-copy/generate")
 
     @router.get("/offer-profiles/{offer_profile_id}/analysis/create")
     def _legacy_get_15(offer_profile_id: str):
@@ -220,9 +139,6 @@ def register_general_routes(router: APIRouter):
     def _legacy_get_16(offer_profile_id: str, analysis_id: str):
         raise HTTPException(status_code=410, detail="This endpoint now requires POST /offer-profiles/{offer_profile_id}/checklists/create")
 
-    @router.get("/page-strategy/{page_strategy_id}/page-requirements/create")
-    def _legacy_get_17(page_strategy_id: str):
-        raise HTTPException(status_code=410, detail="This endpoint now requires POST /page-strategy/{page_strategy_id}/page-requirements/create")
 
     @router.get("/offers/create")
     def _legacy_get_18():
@@ -450,128 +366,6 @@ def register_general_routes(router: APIRouter):
 
 
     # -----------------------------
-    # Brand marketing
-    # -----------------------------
-    @router.post("/offer-sources/{offer_source_id}/brand-marketing/generate")
-    def offer_source_brand_marketing_generate( offer_source_id: int ):
-        return generate_brand_marketing_handler( offer_source_id=offer_source_id )
-
-    @router.get("/offer-sources/{offer_source_id}/brand-marketing")
-    def get_offer_source_brand_marketing( offer_source_id: int ):
-        return get_offer_source_brand_marketings_handler( offer_source_id=offer_source_id )
-
-    @router.get("/brand-marketing/{id}")
-    def get_brand_marketing( id: int ):
-        return get_brand_marketing_handler( id=id )
-
-    @router.post("/brand-marketing/{id}/update")
-    def update_brand_marketing_route(id: int, payload: UpdateFieldsRequest):
-        return update_brand_marketing_handler(id=id, fields=payload.fields)
-
-    @router.delete("/brand-marketing/{id}/delete")
-    def delete_brand_marketing_route(id: int):
-        return delete_brand_marketing_handler(id=id)
-
-    @router.get("/brand-marketing/{id}/delete")
-    def delete_brand_marketing_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /brand-marketing/{id}/delete")
-
-
-    # -----------------------------
-    # Marketing strategy
-    # -----------------------------
-    @router.post("/offer-sources/{offer_source_id}/brand-marketing/{brand_marketing_id}/marketing-strategy/generate")
-    def offer_source_marketing_strategy_generate(offer_source_id: int, brand_marketing_id: int):
-        try:
-            return generate_marketing_strategy_handler(
-                offer_source_id=offer_source_id,
-                brand_marketing_id=brand_marketing_id,
-            )
-        except ValueError as e:
-            raise HTTPException(status_code=400, detail=str(e))
-
-    @router.get("/brand-marketing/{brand_marketing_id}/marketing-strategy")
-    def get_brand_marketing_marketing_strategies( brand_marketing_id: int ):
-        return get_brand_marketing_marketing_strategies_handler( brand_marketing_id=brand_marketing_id )
-
-    @router.get("/marketing-strategy/{id}")
-    def get_marketing_strategy( id: int ):
-        return get_marketing_strategy_handler( id=id )
-
-    @router.post("/marketing-strategy/{id}/update")
-    def update_marketing_strategy_route(id: int, payload: UpdateFieldsRequest):
-        return update_marketing_strategy_handler(id=id, fields=payload.fields)
-
-    @router.delete("/marketing-strategy/{id}/delete")
-    def delete_marketing_strategy_route(id: int):
-        return delete_marketing_strategy_handler(id=id)
-
-    @router.get("/marketing-strategy/{id}/delete")
-    def delete_marketing_strategy_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /marketing-strategy/{id}/delete")
-
-
-    # -----------------------------
-    # Offer strategy
-    # -----------------------------
-    @router.post("/marketing-strategy/{marketing_strategy_id}/offer-strategy/generate")
-    def offer_source_offer_strategy_generate(  marketing_strategy_id: int ):
-        return generate_offer_strategy_handler(
-            marketing_strategy_id=marketing_strategy_id
-        )
-
-    @router.get("/marketing-strategy/{marketing_strategy_id}/offer-strategy")
-    def get_marketing_strategy_offer_strategies( marketing_strategy_id: int ):
-        return get_marketing_strategy_offer_strategies_handler( marketing_strategy_id=marketing_strategy_id )
-
-    @router.get("/offer-strategy/{id}")
-    def get_offer_strategy( id: int ):
-        return get_offer_strategy_handler( id=id )
-
-    @router.post("/offer-strategy/{id}/update")
-    def update_offer_strategy_route(id: int, payload: UpdateFieldsRequest):
-        return update_offer_strategy_handler(id=id, fields=payload.fields)
-
-    @router.delete("/offer-strategy/{id}/delete")
-    def delete_offer_strategy_route(id: int):
-        return delete_offer_strategy_handler(id=id)
-
-    @router.get("/offer-strategy/{id}/delete")
-    def delete_offer_strategy_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /offer-strategy/{id}/delete")
-
-
-    # -----------------------------
-    # Message strategy
-    # -----------------------------
-    @router.post("/offer-strategy/{offer_strategy_id}/message-strategy/generate")
-    def offer_source_message_strategy_generate( offer_strategy_id: int ):
-        return generate_message_strategy_handler(
-            offer_strategy_id=offer_strategy_id
-        )
-
-    @router.get("/offer-strategy/{offer_strategy_id}/message-strategy")
-    def get_offer_strategy_message_strategies( offer_strategy_id: int ):
-        return get_offer_strategy_message_strategies_handler( offer_strategy_id=offer_strategy_id )
-
-    @router.get("/message-strategy/{id}")
-    def get_message_strategy( id: int ):
-        return get_message_strategy_handler( id=id )
-
-    @router.post("/message-strategy/{id}/update")
-    def update_message_strategy_route(id: int, payload: UpdateFieldsRequest):
-        return update_message_strategy_handler(id=id, fields=payload.fields)
-
-    @router.delete("/message-strategy/{id}/delete")
-    def delete_message_strategy_route(id: int):
-        return delete_message_strategy_handler(id=id)
-
-    @router.get("/message-strategy/{id}/delete")
-    def delete_message_strategy_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /message-strategy/{id}/delete")
-
-
-    # -----------------------------
     # UGC creatives
     # -----------------------------
     @router.post("/offer-profiles/{offer_profile_id}/ugc-creatives/generate")
@@ -629,166 +423,48 @@ def register_general_routes(router: APIRouter):
 
 
     # -----------------------------
-    # Page strategy
+    # Page blueprints
     # -----------------------------
-    @router.post("/message-strategy/{message_strategy_id}/page-strategy/generate")
-    def message_strategy_page_strategy_generate( message_strategy_id: int ):
-        return generate_page_strategy_json_handler(
-            message_strategy_id=message_strategy_id
-        )
-
-    @router.get("/message-strategy/{message_strategy_id}/page-strategy")
-    def get_message_strategy_page_strategies( message_strategy_id: int ):
-        return get_message_strategy_page_strategies_handler( message_strategy_id=message_strategy_id )
-
-    @router.get("/page-strategy/{id}")
-    def get_page_strategy( id: int ):
-        return get_page_strategy_handler( id=id )
-
-    @router.post("/page-strategy/{id}/update")
-    def update_page_strategy_route(id: int, payload: UpdateFieldsRequest):
-        return update_page_strategy_handler(id=id, fields=payload.fields)
-
-    @router.delete("/page-strategy/{id}/delete")
-    def delete_page_strategy_route(id: int):
-        return delete_page_strategy_handler(id=id)
-
-    @router.get("/page-strategy/{id}/delete")
-    def delete_page_strategy_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /page-strategy/{id}/delete")
-
-
-    # -----------------------------
-    # Page requirements
-    # -----------------------------
-    @router.post("/page-strategy/{page_strategy_id}/page-requirements/create")
-    def page_strategy_page_requirements_create(
-        page_strategy_id: int,
-        payload: UpdatePageRequirementsRequest,
+    @router.post("/offer-profiles/{offer_profile_id}/page-blueprints/create")
+    def offer_profile_page_blueprint_create(
+        offer_profile_id: int,
+        payload: PageBlueprintFields,
     ):
-        return create_page_requirements_handler(
-            page_strategy_id=page_strategy_id,
+        return create_page_blueprint_handler(
+            offer_profile_id=offer_profile_id,
             name=payload.name,
-            section_requirements=[item.dict() for item in payload.section_requirements],
+            description=payload.description,
+            sections=[item.model_dump() for item in payload.sections],
         )
 
-    @router.post("/page-strategy/{page_strategy_id}/page-requirements/generate")
-    def page_strategy_page_requirements_generate(page_strategy_id: int):
-        return generate_page_requirements_handler(page_strategy_id=page_strategy_id)
+    @router.post("/offer-profiles/{offer_profile_id}/page-blueprints/generate")
+    def offer_profile_page_blueprint_generate(offer_profile_id: int, payload: GeneratePageBlueprintRequest):
+        return generate_page_blueprint_handler(offer_profile_id=offer_profile_id, request=payload)
 
-    @router.get("/page-strategy/{page_strategy_id}/page-requirements")
-    def get_page_strategy_page_requirements( page_strategy_id: int ):
-        return get_page_strategy_page_requirements_handler( page_strategy_id=page_strategy_id )
+    @router.get("/offer-profiles/{offer_profile_id}/page-blueprints")
+    def get_offer_profile_page_blueprint( offer_profile_id: int ):
+        return get_offer_profile_page_blueprint_handler( offer_profile_id=offer_profile_id )
 
-    @router.get("/page-requirements/{id}")
-    def get_page_requirements( id: int ):
-        return get_page_requirements_handler( id=id )
-
-    @router.post("/page-requirements/{id}/update")
-    def update_page_requirements_route(id: int, payload: UpdatePageRequirementsRequest):
-        return update_page_requirements_handler(
-            id=id,
-            name=payload.name,
-            section_requirements=[item.dict() for item in payload.section_requirements],
-        )
-
-    @router.delete("/page-requirements/{id}/delete")
-    def delete_page_requirements_route(id: int):
-        return delete_page_requirements_handler(id=id)
-
-    @router.get("/page-requirements/{id}/delete")
-    def delete_page_requirements_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /page-requirements/{id}/delete")
-
-
-    # -----------------------------
-    # Page blueprint
-    # -----------------------------
-    @router.post("/page-requirements/{page_requirements_id}/page-blueprint/generate")
-    def page_requirements_page_blueprint_generate( page_requirements_id: int ):
-        return generate_page_blueprint_handler(
-            page_requirements_id=page_requirements_id
-        )
-
-    @router.get("/page-requirements/{page_requirements_id}/page-blueprint")
-    def get_page_requirements_page_blueprints( page_requirements_id: int ):
-        return get_page_requirements_page_blueprints_handler( page_requirements_id=page_requirements_id )
-
-    @router.get("/page-blueprint/{id}")
+    @router.get("/page-blueprints/{id}")
     def get_page_blueprint( id: int ):
         return get_page_blueprint_handler( id=id )
 
-    @router.post("/page-blueprint/{id}/update")
-    def update_page_blueprint_route(id: int, payload: UpdateFieldsRequest):
-        return update_page_blueprint_handler(id=id, fields=payload.fields)
+    @router.post("/page-blueprints/{id}/update")
+    def update_page_blueprint_route(id: int, payload: PageBlueprintFields):
+        return update_page_blueprint_handler(
+            id=id,
+            name=payload.name,
+            description=payload.description,
+            sections=[item.model_dump() for item in payload.sections],
+        )
 
-    @router.delete("/page-blueprint/{id}/delete")
+    @router.delete("/page-blueprints/{id}/delete")
     def delete_page_blueprint_route(id: int):
         return delete_page_blueprint_handler(id=id)
 
-    @router.get("/page-blueprint/{id}/delete")
+    @router.get("/page-blueprints/{id}/delete")
     def delete_page_blueprint_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /page-blueprint/{id}/delete")
-
-
-    # -----------------------------
-    # Page content plan
-    # -----------------------------
-    @router.post("/page-blueprint/{page_blueprint_id}/page-content-plan/generate")
-    def page_blueprint_page_content_plan_generate( page_blueprint_id: int ):
-        return generate_page_content_plan_handler(
-            page_blueprint_id=page_blueprint_id
-        )
-
-    @router.get("/page-blueprint/{page_blueprint_id}/page-content-plan")
-    def get_page_blueprint_page_content_plans( page_blueprint_id: int ):
-        return get_page_blueprint_page_content_plans_handler( page_blueprint_id=page_blueprint_id )
-
-    @router.get("/page-content-plan/{id}")
-    def get_page_content_plan( id: int ):
-        return get_page_content_plan_handler( id=id )
-
-    @router.post("/page-content-plan/{id}/update")
-    def update_page_content_plan_route(id: int, payload: UpdateFieldsRequest):
-        return update_page_content_plan_handler(id=id, fields=payload.fields)
-
-    @router.delete("/page-content-plan/{id}/delete")
-    def delete_page_content_plan_route(id: int):
-        return delete_page_content_plan_handler(id=id)
-
-    @router.get("/page-content-plan/{id}/delete")
-    def delete_page_content_plan_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /page-content-plan/{id}/delete")
-
-
-    # -----------------------------
-    # Page copy
-    # -----------------------------
-    @router.post("/page-content-plan/{page_content_plan_id}/page-copy/generate")
-    def page_content_plan_page_copy_generate( page_content_plan_id: int ):
-        return generate_page_copy_handler(
-            page_content_plan_id=page_content_plan_id
-        )
-
-    @router.get("/page-content-plan/{page_content_plan_id}/page-copy")
-    def get_page_content_plan_page_copies( page_content_plan_id: int ):
-        return get_page_content_plan_page_copies_handler( page_content_plan_id=page_content_plan_id )
-
-    @router.get("/page-copy/{id}")
-    def get_page_copy( id: int ):
-        return get_page_copy_handler( id=id )
-
-    @router.post("/page-copy/{id}/update")
-    def update_page_copy_route(id: int, payload: UpdateFieldsRequest):
-        return update_page_copy_handler(id=id, fields=payload.fields)
-
-    @router.delete("/page-copy/{id}/delete")
-    def delete_page_copy_route(id: int):
-        return delete_page_copy_handler(id=id)
-
-    @router.get("/page-copy/{id}/delete")
-    def delete_page_copy_route_legacy_get(id: int):
-        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /page-copy/{id}/delete")
+        raise HTTPException(status_code=410, detail="This endpoint now requires DELETE /page-blueprints/{id}/delete")
 
 
     # -----------------------------

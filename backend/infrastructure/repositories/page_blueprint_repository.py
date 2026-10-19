@@ -1,6 +1,5 @@
-from typing import List, Optional
-
 from sqlalchemy.orm import Session
+from typing import List, Optional
 
 from domain.models.page.page_blueprint import PageBlueprint
 from infrastructure.logging.logger import Logger
@@ -11,22 +10,19 @@ class PageBlueprintRepository:
         self.logger = logger
         self.db = db
 
-    # ➕ CREATE
     def create(self, item: PageBlueprint) -> PageBlueprint:
         self.db.add(item)
-        self.db.commit()
+        self.db.flush()
         self.db.refresh(item)
         return item
 
-    # 🔍 GET BY ID
     def get_by_id(self, id: int) -> Optional[PageBlueprint]:
         return self.db.query(PageBlueprint).filter(PageBlueprint.id == id).first()
 
-    # 🔍 GET BY PAGE REQUIREMENTS ID
-    def get_by_page_requirements_id(self, page_requirements_id: int) -> List[PageBlueprint]:
+    def get_by_offer_profile_id(self, offer_profile_id: int) -> List[PageBlueprint]:
         return (
             self.db.query(PageBlueprint)
-            .filter(PageBlueprint.page_requirements_id == page_requirements_id)
+            .filter(PageBlueprint.offer_profile_id == offer_profile_id)
             .all()
         )
 
@@ -40,12 +36,10 @@ class PageBlueprintRepository:
             if key != "_sa_instance_state":
                 setattr(existing_item, key, value)
 
-        self.db.commit()
+        self.db.flush()
         self.db.refresh(existing_item)
-
         return existing_item
 
-    # ❌ DELETE
     def delete(self, id: int) -> bool:
         item = self.db.query(PageBlueprint).filter(PageBlueprint.id == id).first()
 
