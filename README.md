@@ -27,6 +27,7 @@ py -3.10 -m venv venv
 ```
 
 Jeżeli `py` nie jest dostępne, możesz użyć bezpośredniej ścieżki do Pythona:
+np: >D:\Python\3.10\python.exe -m venv venv
 
 ```powershell
 ~\3.10\python.exe -m venv venv

@@ -1,12 +1,21 @@
 import { useCallback, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { useLazyDownloadResourceContextQuery, useLazyGetResourceContextQuery } from './resourceContextApi'
 import type { ResourceContextRequest } from './resourceContextApi'
 import { ResourceContextSelector } from './ResourceContextSelector'
 import { downloadTextFile } from '@/lib/downloadTextFile'
 
+function exportFilename(name: string, date = new Date()) {
+  const datePrefix = [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-')
+  const safeName = name.trim().replace(/\.txt$/i, '').replace(/[<>:"/\\|?*]/g, '-').replace(/[. ]+$/g, '') || 'eksport'
+  return `${datePrefix} ${safeName}.txt`
+}
+
 export function ResourceContextExportPanel({ initialRequest }: { initialRequest: ResourceContextRequest }) {
   const [request, setRequest] = useState<ResourceContextRequest>(initialRequest)
+  const [filename, setFilename] = useState(`${initialRequest.type}_${initialRequest.id}_context`)
   const [isReady, setIsReady] = useState(false)
   const [step, setStep] = useState<'select' | 'preview'>('select')
   const [preview, setPreview] = useState<string | null>(null)
@@ -33,7 +42,7 @@ export function ResourceContextExportPanel({ initialRequest }: { initialRequest:
     setError(null)
     try {
       const content = await downloadContext(request).unwrap()
-      downloadTextFile(`${initialRequest.type}_${initialRequest.id}_context.txt`, content)
+      downloadTextFile(exportFilename(filename), content)
     } catch {
       setError('Nie udało się pobrać kontekstu.')
     }
@@ -45,6 +54,11 @@ export function ResourceContextExportPanel({ initialRequest }: { initialRequest:
       <ResourceContextSelector initialRequest={initialRequest} onChange={onSelectionChange} allowNotes={false} />
     </div>
     {step === 'preview' && <pre className="min-h-0 flex-1 overflow-auto whitespace-pre-wrap break-words rounded-md border bg-muted/30 p-3 text-xs">{preview}</pre>}
+    <div className="space-y-2">
+      <Label htmlFor="resource-export-filename">Nazwa pliku</Label>
+      <Input id="resource-export-filename" value={filename} onChange={(event) => setFilename(event.target.value)} aria-describedby="resource-export-filename-preview" />
+      <p id="resource-export-filename-preview" className="text-xs text-muted-foreground">Plik zostanie zapisany jako: {exportFilename(filename)}</p>
+    </div>
     {error && <p role="alert" className="text-destructive">{error}</p>}
     <div className="flex flex-wrap gap-2 border-t pt-4">
       {step === 'select' ? <Button type="button" onClick={() => void showPreview()} disabled={isPreviewing || !isReady}>{isPreviewing ? 'Składanie kontekstu…' : 'Złóż i zobacz kontekst'}</Button> : <>
