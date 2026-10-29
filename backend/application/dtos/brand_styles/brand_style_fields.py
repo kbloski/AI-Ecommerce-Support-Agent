@@ -8,10 +8,11 @@ class BrandStyleFields(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
     font_family: str = Field(min_length=1, max_length=255)
-    background_color: str = Field(pattern=HEX_COLOR_PATTERN)
     brand_color: str = Field(pattern=HEX_COLOR_PATTERN)
+    text_color: str = Field(pattern=HEX_COLOR_PATTERN)
+    background_color: str = Field(pattern=HEX_COLOR_PATTERN)
 
-    @field_validator("background_color", "brand_color")
+    @field_validator("brand_color", "text_color", "background_color")
     @classmethod
     def normalize_color(cls, value):
         return value.upper()

@@ -126,7 +126,7 @@ class LlmContextComposer:
             ContextType.CREATIVE_PLAN: ("id", "name", "description", "format", "plan", "ad_concept_id", "is_reviewed"),
             ContextType.UGC_CREATIVE: ("id", "name", "customer_persona", "content_format", "angle", "hook_idea", "video_flow", "recording_style", "platform_fit", "cta", "why_it_should_work", "is_reviewed"),
             ContextType.AD_COPY: ("id", "name", "primary_text", "headline", "description", "cta", "is_reviewed"),
-            ContextType.BRAND_STYLE: ("id", "font_family", "background_color", "brand_color"),
+            ContextType.BRAND_STYLE: ("id", "font_family", "brand_color", "text_color", "background_color"),
         }[kind]
         items = []
         for item_id in ids:

@@ -27,8 +27,9 @@ export default function BrandStylesPage() {
     emptyTitle="Brak brand styles" emptyDescription="Wygeneruj styl marki lub dodaj font i kolory ręcznie."
     itemLabel={(item) => String(item.font_family ?? `#${item.id}`)}
     itemDetails={(item) => <div className="space-y-2 text-sm">
-      <ColorRow label="Kolor tła" value={String(item.background_color)} />
       <ColorRow label="Kolor marki" value={String(item.brand_color)} />
+      <ColorRow label="Kolor tekstu" value={String(item.text_color)} />
+      <ColorRow label="Kolor tła" value={String(item.background_color)} />
     </div>}
     contentBeforeList={actionError ? <p role="alert" className="text-sm text-destructive">{actionError}</p> : undefined}
     actions={<>
@@ -85,11 +86,12 @@ function BrandStyleForm({ offerProfileId, item, onSaved }: { offerProfileId: num
     const form = new FormData(event.currentTarget)
     const fields: BrandStyleFields = {
       font_family: String(form.get('font_family') ?? '').trim(),
-      background_color: String(form.get('background_color') ?? '').trim(),
       brand_color: String(form.get('brand_color') ?? '').trim(),
+      text_color: String(form.get('text_color') ?? '').trim(),
+      background_color: String(form.get('background_color') ?? '').trim(),
     }
     if (!fields.font_family) { setError('Podaj font.'); return }
-    if (!HEX_COLOR.test(fields.background_color) || !HEX_COLOR.test(fields.brand_color)) { setError('Kolory podaj w formacie #RRGGBB.'); return }
+    if (!HEX_COLOR.test(fields.brand_color) || !HEX_COLOR.test(fields.text_color) || !HEX_COLOR.test(fields.background_color)) { setError('Kolory podaj w formacie #RRGGBB.'); return }
     setError('')
     try {
       if (item) await update({ id: Number(item.id), offerProfileId, fields }).unwrap()
@@ -99,8 +101,9 @@ function BrandStyleForm({ offerProfileId, item, onSaved }: { offerProfileId: num
   }
   return <form onSubmit={(event) => void submit(event)} className="space-y-4">
     <label className="block space-y-2"><span>Font family</span><Input name="font_family" maxLength={255} defaultValue={String(item?.font_family ?? '')} placeholder="Np. Inter, sans-serif" required /></label>
-    <ColorField name="background_color" label="Kolor tła" defaultValue={String(item?.background_color ?? '#FFFFFF')} />
     <ColorField name="brand_color" label="Kolor marki" defaultValue={String(item?.brand_color ?? '#000000')} />
+    <ColorField name="text_color" label="Kolor tekstu" defaultValue={String(item?.text_color ?? '#000000')} />
+    <ColorField name="background_color" label="Kolor tła" defaultValue={String(item?.background_color ?? '#FFFFFF')} />
     {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
     <Button type="submit" disabled={createState.isLoading || updateState.isLoading}>Zapisz</Button>
   </form>

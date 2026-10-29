@@ -205,7 +205,7 @@ export function ResourceContextSelector({ initialRequest, onChange, allowNotes =
       <SelectableResourceSection number={ugcSectionNumber} title="UGC" items={ugcCreatives} selectedIds={ugcIds} onChange={setUgcIds} />
       <SelectableResourceSection number={copySectionNumber} title="Ad copy" items={adCopies} selectedIds={copyIds} onChange={setCopyIds} />
       <SelectableResourceSection number={brandStyleSectionNumber} title="Brand styles" items={brandStyles} selectedIds={brandStyleIds} onChange={setBrandStyleIds}
-        itemLabel={(item) => `${String(item.font_family)} · ${String(item.brand_color)} na ${String(item.background_color)}`} />
+        itemLabel={(item) => `${String(item.font_family)} · marka ${String(item.brand_color)} · tekst ${String(item.text_color)} · tło ${String(item.background_color)}`} />
       <SelectableResourceSection number={analysisSectionNumber} title="Analizy" items={analyses} selectedIds={analysisIds} onChange={setAnalysisIds} />
       <SelectableResourceSection number={checklistSectionNumber} title="Checklisty" items={checklists} selectedIds={checklistIds} onChange={setChecklistIds} />
       <SelectableResourceSection number={blueprintSectionNumber} title="Page blueprints" items={pageBlueprints} selectedIds={pageBlueprintIds} onChange={setPageBlueprintIds} />

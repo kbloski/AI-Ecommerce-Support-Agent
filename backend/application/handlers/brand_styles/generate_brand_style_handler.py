@@ -38,10 +38,12 @@ Work through these steps in order, writing each result into the JSON:
 6. font_family: a font from that style's example_fonts with a CSS fallback,
    e.g. "Inter, sans-serif".
 7. brand_color: the chosen shade as a hex value that faithfully matches
-   the shade name. It is the accent used for headings, buttons and key
-   elements, so it must reach a contrast ratio of at least 3:1 against
-   background_color; choose a deeper version of the shade if needed.
-8. background_color: the page background, usually a light neutral that
+   the shade name. It is the accent used for buttons and key elements, so
+   it must reach a contrast ratio of at least 3:1 against background_color;
+   choose a deeper version of the shade if needed.
+8. text_color: the main body text color, chosen for readability. It must
+   reach a contrast ratio of at least 4.5:1 against background_color.
+9. background_color: the page background, usually a light neutral that
    complements brand_color; use a dark background only when brand_traits
    clearly call for it.
 
@@ -57,7 +59,8 @@ Return ONLY a JSON object with the fields in this order:
     "shade": "...",
     "typography_style": "...", 
     "font_family": "...",
-    "brand_color": "#RRGGBB", 
+    "brand_color": "#RRGGBB",
+    "text_color": "#RRGGBB",
     "background_color": "#RRGGBB"
 }
 Colors must be 6-digit hex values.

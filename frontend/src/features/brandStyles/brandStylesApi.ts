@@ -4,8 +4,9 @@ import type { Entity } from '@/types'
 
 export interface BrandStyleFields {
   font_family: string
-  background_color: string
   brand_color: string
+  text_color: string
+  background_color: string
 }
 
 export const brandStylesApi = api.injectEndpoints({

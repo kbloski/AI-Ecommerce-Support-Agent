@@ -40,7 +40,20 @@ def init_db():
     migrate_page_blueprint_sections(engine)
     from .retired_brand_marketing_migration import remove_retired_brand_marketing_pipeline
     remove_retired_brand_marketing_pipeline(engine)
+    _add_brand_style_text_color()
     Base.metadata.create_all(bind=engine)
+
+
+def _add_brand_style_text_color():
+    with engine.begin() as conn:
+        if "brand_styles" not in inspect(conn).get_table_names():
+            return
+        columns = {column["name"] for column in inspect(conn).get_columns("brand_styles")}
+        if "text_color" not in columns:
+            conn.execute(text(
+                "ALTER TABLE brand_styles ADD COLUMN text_color VARCHAR(7) "
+                "NOT NULL DEFAULT '#000000'"
+            ))
 
 
 def _remove_retired_offer_elements():
